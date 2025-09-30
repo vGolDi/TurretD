@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e70d8eb9fe23ec243aa537d84992b184, type: 3}
+  m_Name: BasicTurret_lvl2
+  m_EditorClassIdentifier: 
+  turretName: BasicTurret_lvl2
+  description: 
+  displayPrefab: {fileID: 4965840905587660564, guid: 6a6ed3eaca9c3d541a39ce5bbf2abde2, type: 3}
+  damage: 30
+  fireRate: 10
+  range: 5
+  cost: 0
+  upgradeCost: 75
+  upgradePaths:
+  - {fileID: 11400000, guid: 2a1b4a6cd1f8cd8429e5c8cf6ec461c3, type: 2}
+  - {fileID: 11400000, guid: 180f9aa0cde48ae42bd9581072cadb7a, type: 2}
