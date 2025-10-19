@@ -1,25 +1,33 @@
 using System;
+using Photon.Pun;
 using UnityEngine;
 
 [RequireComponent(typeof(TurretInteract))]
 public class Turret : MonoBehaviour
 {
-    [Header("Konfiguracja z ScriptableObject")]
-    [Tooltip("Dane tej instancji wie¿yczki")]
-    [SerializeField] private TurretData turretData;
+    [Header("Configuration")]
+    [SerializeField, Tooltip("Data for this turret instance")]
+    private TurretData turretData;
 
-    [Header("Czêœæ obiektowa do obracania (np. g³owa wie¿yczki)")]
-    [Tooltip("Element wie¿y, który ma siê obracaæ za celem")]
-    [SerializeField] private Transform rotatingPart;
+    [Header("Rotating Part")]
+    [SerializeField, Tooltip("Transform that rotates towards target (e.g., turret head)")]
+    private Transform rotatingPart;
 
-    [Header("Tryb dzia³ania")]
+    [Header("Behavior")]
     [SerializeField] private bool autoFire = true;
 
+    // Runtime variables
     private float fireCooldown = 0f;
     private EnemyHealth currentTarget;
-
     private TurretInteract turretInteract;
+    private PhotonView ownerPhotonView; // Player who built this turret
+
+    // Events
     public event Action OnUpgraded;
+
+    // TODO: Add elemental type
+    // public ElementType elementType;
+
     private void Awake()
     {
         turretInteract = GetComponent<TurretInteract>();
@@ -52,8 +60,13 @@ public class Turret : MonoBehaviour
     {
         if (target == null) return;
         //target.TakeDamage((int)turretData.damage);
-        target.TakeDamage((int)turretData.damage, true);
-        Debug.Log($"[Turret] Zada³em {turretData.damage} dmg przeciwnikowi {target.name}");
+        int ownerID = ownerPhotonView != null ? ownerPhotonView.ViewID : -1;
+        target.TakeDamage((int)turretData.damage, ownerID);
+
+        // TODO: Spawn projectile instead of instant damage
+        // TODO: Apply elemental effects (burn, freeze, etc.)
+
+        Debug.Log($"[Turret] {turretData.turretName} dealt {turretData.damage} damage to {target.name}");
     }
 
     private bool IsTargetInRange(EnemyHealth target)
@@ -65,72 +78,112 @@ public class Turret : MonoBehaviour
     private EnemyHealth FindNewTarget()
     {
         Collider[] hits = Physics.OverlapSphere(transform.position, turretData.range);
+
+        EnemyHealth nearestEnemy = null;
+        float nearestDistance = Mathf.Infinity;
+
         foreach (Collider hit in hits)
         {
             EnemyHealth potential = hit.GetComponent<EnemyHealth>();
-            if (potential != null) return potential;
+            if (potential != null)
+            {
+                float distance = Vector3.Distance(transform.position, hit.transform.position);
+                if (distance < nearestDistance)
+                {
+                    nearestDistance = distance;
+                    nearestEnemy = potential;
+                }
+            }
         }
-        return null;
+
+        return nearestEnemy;
     }
 
     private void RotateTowards(Transform target)
     {
-        if (rotatingPart == null) return;
+        if (rotatingPart == null || target == null) return;
 
         Vector3 direction = target.position - rotatingPart.position;
-        direction.y = 0f; 
+        direction.y = 0f; // Keep rotation on horizontal plane only
+
         if (direction == Vector3.zero) return;
 
         Quaternion lookRotation = Quaternion.LookRotation(direction);
-        rotatingPart.rotation = Quaternion.Slerp(rotatingPart.rotation, lookRotation, Time.deltaTime * 5f);
+        rotatingPart.rotation = Quaternion.Slerp(
+            rotatingPart.rotation,
+            lookRotation,
+            Time.deltaTime * 5f
+        );
     }
-    public void Initialize(TurretData data)
+    public void Initialize(TurretData data, PhotonView owner)
     {
         this.turretData = data;
+        this.ownerPhotonView = owner;
         UpdateVisuals();
     }
 
     private void UpdateVisuals()
     {
-        // 1. Zniszcz stary model, jeœli istnieje
-        if (transform.childCount > 0)
+        // 1. Destroy old model
+        foreach (Transform child in transform)
         {
-            foreach (Transform child in transform) { Destroy(child.gameObject); }
+            Destroy(child.gameObject);
         }
 
-        // 2. Stwórz nowy model wizualny
+        // 2. Instantiate new visual prefab
         if (turretData.displayPrefab != null)
         {
-            GameObject display = Instantiate(turretData.displayPrefab, transform.position, transform.rotation, transform);
+            GameObject display = Instantiate(
+                turretData.displayPrefab,
+                transform.position,
+                transform.rotation,
+                transform
+            );
 
-            // Logika znajdowania czêœci obrotowej
-            rotatingPart = display.transform.Find("RotatingPart") ?? display.transform;
+            // Find rotating part (convention: child named "RotatingPart")
+            rotatingPart = display.transform.Find("RotatingPart");
+            if (rotatingPart == null)
+            {
+                rotatingPart = display.transform; // Fallback to root
+            }
 
-            // 3. ZnajdŸ kontroler UI i przeka¿ go do skryptu interakcji
+            // 3. Link UI controller to TurretInteract
             TurretUiController uiController = display.GetComponent<TurretUiController>();
-
             if (turretInteract != null && uiController != null)
             {
-                // To jest kluczowy moment - Turret "mówi" TurretInteract, z którym UI ma pracowaæ
                 turretInteract.LinkUiController(uiController);
-
-
             }
         }
     }
 
     public void Upgrade(int pathIndex)
     {
-        if (turretData.upgradePaths == null || pathIndex < 0 || pathIndex >= turretData.upgradePaths.Length) return;
+        if (turretData.upgradePaths == null ||
+           pathIndex < 0 ||
+           pathIndex >= turretData.upgradePaths.Length)
+        {
+            Debug.LogWarning($"[Turret] Invalid upgrade path index: {pathIndex}");
+            return;
+        }
 
         TurretData chosenUpgrade = turretData.upgradePaths[pathIndex];
 
-        if (PlayerGold.Instance.SpendGold(chosenUpgrade.upgradeCost))
+        // Check if owner can afford it
+        if (ownerPhotonView != null && ownerPhotonView.IsMine)
         {
-            turretData = chosenUpgrade;
-            UpdateVisuals();
-            OnUpgraded?.Invoke(); // Og³oœ ulepszenie
-            Debug.Log($"Ulepszono do: {turretData.turretName}");
+            PlayerGold playerGold = ownerPhotonView.GetComponent<PlayerGold>();
+            if (playerGold != null && playerGold.SpendGold(chosenUpgrade.upgradeCost))
+            {
+                turretData = chosenUpgrade;
+                UpdateVisuals();
+                OnUpgraded?.Invoke();
+
+                Debug.Log($"[Turret] Upgraded to: {turretData.turretName}");
+            }
+            else
+            {
+                Debug.Log($"[Turret] Cannot afford upgrade ({chosenUpgrade.upgradeCost} gold)");
+            }
         }
     }
 
@@ -139,7 +192,10 @@ public class Turret : MonoBehaviour
     {
         return turretData.upgradePaths;
     }
-
+    public PhotonView GetOwner()
+    {
+        return ownerPhotonView;
+    }
     private void OnDrawGizmosSelected()
     {
         if (turretData != null)

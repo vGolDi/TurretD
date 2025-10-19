@@ -3,13 +3,17 @@ using Photon.Pun;
 
 public class TurretInteract : MonoBehaviour
 {
-    [Header("Ustawienia")]
-    [Tooltip("Czy UI ma siê pokazywaæ automatycznie, gdy gracz podejdzie?")]
-    [SerializeField] private bool showUiOnProximity = true;
+    [Header("Settings")]
+    [SerializeField, Tooltip("Show UI automatically when player is nearby?")]
+    private bool showUiOnProximity = true;
+
+    [SerializeField, Tooltip("Detection radius for proximity trigger")]
+    private float proximityRadius = 3f;
 
     private Turret turret;
     private TurretUiController turretUI;
     private bool playerIsInRange = false;
+
 
     private void Awake()
     {
@@ -17,7 +21,6 @@ public class TurretInteract : MonoBehaviour
         
     }
 
-    // Nowa metoda, któr¹ Turret wywo³uje, aby "pod³¹czyæ" UI
     public void LinkUiController(TurretUiController newUiController)
     {
         turretUI = newUiController;
@@ -39,8 +42,13 @@ public class TurretInteract : MonoBehaviour
         {
             return;
         }
+        PhotonView ownerView = turret?.GetOwner();
+        if (ownerView != null && !ownerView.IsMine)
+        {
+            Debug.Log("[TurretInteract] This turret belongs to another player!");
+            return;
+        }
 
-        // Prze³¹cz widocznoœæ UI
         if (turretUI != null && turretUI.IsVisible())
         {
             Hide();
@@ -53,9 +61,11 @@ public class TurretInteract : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player"))
+        PhotonView pv = other.GetComponent<PhotonView>();
+        if (pv != null && pv.IsMine && other.CompareTag("Player"))
         {
             playerIsInRange = true;
+
             if (showUiOnProximity)
             {
                 Show();
@@ -65,7 +75,8 @@ public class TurretInteract : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.CompareTag("Player"))
+        PhotonView pv = other.GetComponent<PhotonView>();
+        if (pv != null && pv.IsMine && other.CompareTag("Player"))
         {
             playerIsInRange = false;
             Hide();
@@ -80,5 +91,10 @@ public class TurretInteract : MonoBehaviour
     private void Hide()
     {
         turretUI?.Hide();
+    }
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(transform.position, proximityRadius);
     }
 }

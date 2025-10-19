@@ -2,115 +2,120 @@ using UnityEngine;
 using System.Collections;
 using Photon.Pun;
 
+/// <summary>
+/// Handles visual ghost turret placement and building logic
+/// Works only for local player
+/// </summary>
 public class PlayerBuilder : MonoBehaviour
 {
-    [Header("Konfiguracja Budowania")]
+    [Header("Build Configuration")]
     [SerializeField] private GameObject turretLogicPrefab;
     [SerializeField] private float yOffset = 0f;
     [SerializeField] private LayerMask buildableLayers;
     [SerializeField] private float maxBuildDistance = 100f;
 
-    [Header("Materia³y dla 'Ducha'")]
+    [Header("Ghost Materials")]
     [SerializeField] private Material validPlacementMaterial;
     [SerializeField] private Material invalidPlacementMaterial;
 
-    [Header("Zasiêg wie¿yczki (Prefab)")] // ADDED
-    [SerializeField] private GameObject rangeIndicatorPrefab; // ADDED
+    [Header("Range Indicator")]
+    [SerializeField] private GameObject rangeIndicatorPrefab;
 
+    // Runtime variables
     private Camera cam;
     private GameObject ghostTurretInstance;
-    private GameObject rangeIndicatorInstance; // ADDED
+    private GameObject rangeIndicatorInstance;
     private TurretData currentTurretToBuild;
     private bool canPlaceTurret = false;
 
-
     private PhotonView photonView;
     private BuildManager buildManager;
+
     private void Awake()
     {
         photonView = GetComponent<PhotonView>();
-        cam = Camera.main;
-       
         buildManager = GetComponent<BuildManager>();
+        cam = Camera.main;
     }
+
     private void Start()
     {
-        // --- DODAJ TEN FRAGMENT ---
-        // Jeœli ten obiekt gracza nale¿y do mnie (jestem lokalnym graczem),
-        // to wyœlij RPC do wszystkich, ¿eby siê zameldowaæ.
+        // Announce player join (for debugging multiplayer)
         if (photonView.IsMine)
         {
-            photonView.RPC("AnnouncePlayerJoined", RpcTarget.AllBuffered, PhotonNetwork.LocalPlayer.NickName);
+            string nickName = PhotonNetwork.LocalPlayer.NickName;
+            if (string.IsNullOrEmpty(nickName))
+            {
+                nickName = $"Player_{photonView.Owner.ActorNumber}";
+            }
+
+            Debug.Log($"<color=green>[PlayerBuilder] Player joined: {nickName}</color>");
         }
     }
 
-    // Ta metoda zostanie wywo³ana na wszystkich instancjach gry (u wszystkich graczy)
-    [PunRPC]
-    void AnnouncePlayerJoined(string nickName)
-    {
-        // Sprawdzamy, czy nickName nie jest pusty, i przypisujemy domyœlny, jeœli tak
-        if (string.IsNullOrEmpty(nickName))
-        {
-            nickName = $"Gracz_{photonView.Owner.ActorNumber}";
-        }
-
-        Debug.Log($"<color=green><b>GRACZ DO£¥CZY£ DO GRY:</b> {nickName} (ID: {photonView.ViewID})</color>");
-    }
-
+    /// <summary>
+    /// Enters build mode with ghost turret preview
+    /// </summary>
     public void ActivateBuildMode(TurretData turretData)
     {
+        // Clean up previous ghost
         if (ghostTurretInstance != null) Destroy(ghostTurretInstance);
-        if (rangeIndicatorInstance != null) Destroy(rangeIndicatorInstance); // ADDED
+        if (rangeIndicatorInstance != null) Destroy(rangeIndicatorInstance);
 
         currentTurretToBuild = turretData;
+
+        // Create ghost turret
         ghostTurretInstance = Instantiate(currentTurretToBuild.displayPrefab);
 
+        // Disable all colliders on ghost
         foreach (var collider in ghostTurretInstance.GetComponentsInChildren<Collider>())
         {
             collider.enabled = false;
         }
 
-        // ADDED: Stwórz wizualizacjê zasiêgu
+        // Create range indicator
         if (rangeIndicatorPrefab != null)
         {
             rangeIndicatorInstance = Instantiate(rangeIndicatorPrefab);
             float diameter = currentTurretToBuild.range * 2f;
             rangeIndicatorInstance.transform.localScale = new Vector3(diameter, 0.01f, diameter);
-        }
 
-        // Ustaw przezroczysty materia³
-        Renderer renderer = rangeIndicatorInstance.GetComponent<Renderer>();
-        if (renderer != null)
-        {
-            renderer.material = validPlacementMaterial; // Lub osobny materia³ do zasiêgu
-        }
+            // Set transparent material
+            Renderer renderer = rangeIndicatorInstance.GetComponent<Renderer>();
+            if (renderer != null)
+            {
+                renderer.material = validPlacementMaterial;
+            }
 
-        // Wy³¹cz kolizje
-        Collider colider = rangeIndicatorInstance.GetComponent<Collider>();
-        if (colider != null)
-        {
-            colider.enabled = false;
+            // Disable collider
+            Collider collider = rangeIndicatorInstance.GetComponent<Collider>();
+            if (collider != null)
+            {
+                collider.enabled = false;
+            }
         }
-
     }
 
+    /// <summary>
+    /// Exits build mode and destroys ghost
+    /// </summary>
     public void DeactivateBuildMode()
     {
         if (ghostTurretInstance != null) Destroy(ghostTurretInstance);
-        if (rangeIndicatorInstance != null) Destroy(rangeIndicatorInstance); // ADDED
+        if (rangeIndicatorInstance != null) Destroy(rangeIndicatorInstance);
         currentTurretToBuild = null;
     }
 
     private void Update()
     {
-        if (!photonView.IsMine)
-        {
-            return;
-        }
+        // Only for local player
+        if (!photonView.IsMine) return;
+
         if (ghostTurretInstance != null)
         {
             MoveGhostTurret();
 
+            // Place turret on LMB
             if (Input.GetMouseButtonDown(0) && canPlaceTurret)
             {
                 PlaceTurret();
@@ -118,41 +123,37 @@ public class PlayerBuilder : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Updates ghost turret position based on mouse raycast
+    /// Checks for valid placement (no overlap with paths, other turrets)
+    /// </summary>
     private void MoveGhostTurret()
     {
         Ray ray = cam.ScreenPointToRay(Input.mousePosition);
+
         if (Physics.Raycast(ray, out RaycastHit hit, maxBuildDistance, buildableLayers))
         {
             Vector3 buildPosition = hit.point + new Vector3(0, yOffset, 0);
 
+            // Update ghost position
             ghostTurretInstance.transform.position = buildPosition;
             ghostTurretInstance.transform.rotation = Quaternion.identity;
 
-            if (rangeIndicatorInstance != null) // ADDED
+            // Update range indicator
+            if (rangeIndicatorInstance != null)
             {
                 rangeIndicatorInstance.transform.position = buildPosition;
             }
 
-            Collider[] overlaps = Physics.OverlapBox(
-                ghostTurretInstance.transform.position,
-                ghostTurretInstance.transform.localScale / 2f,
-                Quaternion.identity,
-                LayerMask.GetMask("Path")
-            );
+            // Check for overlaps with invalid areas (paths, other turrets)
+            canPlaceTurret = IsValidPlacement(buildPosition);
 
-            if (overlaps.Length > 0)
-            {
-                canPlaceTurret = false;
-                SetGhostMaterial(invalidPlacementMaterial);
-            }
-            else
-            {
-                canPlaceTurret = true;
-                SetGhostMaterial(validPlacementMaterial);
-            }
+            // Update ghost material
+            SetGhostMaterial(canPlaceTurret ? validPlacementMaterial : invalidPlacementMaterial);
         }
         else
         {
+            // Hide ghost when not aiming at buildable surface
             ghostTurretInstance.transform.position = new Vector3(0, -1000, 0);
             if (rangeIndicatorInstance != null)
             {
@@ -163,6 +164,40 @@ public class PlayerBuilder : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Checks if placement is valid (no overlaps with paths or other turrets)
+    /// </summary>
+    private bool IsValidPlacement(Vector3 position)
+    {
+        // Check overlap with Path layer
+        Collider[] pathOverlaps = Physics.OverlapBox(
+            position,
+            ghostTurretInstance.transform.localScale / 2f,
+            Quaternion.identity,
+            LayerMask.GetMask("Path")
+        );
+
+        if (pathOverlaps.Length > 0)
+        {
+            return false; // Blocking path
+        }
+
+        // Check overlap with other turrets
+        Collider[] turretOverlaps = Physics.OverlapSphere(position, 1f);
+        foreach (var col in turretOverlaps)
+        {
+            if (col.GetComponent<Turret>() != null)
+            {
+                return false; // Too close to another turret
+            }
+        }
+
+        return true;
+    }
+
+    /// <summary>
+    /// Applies material to all renderers in ghost turret
+    /// </summary>
     private void SetGhostMaterial(Material material)
     {
         foreach (var renderer in ghostTurretInstance.GetComponentsInChildren<Renderer>())
@@ -171,26 +206,43 @@ public class PlayerBuilder : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Actually places the turret (deducts gold, spawns GameObject)
+    /// </summary>
     private void PlaceTurret()
     {
-        if (!PlayerGold.Instance.SpendGold(currentTurretToBuild.cost))
+        // Double-check gold
+        if (!PlayerGold.LocalInstance.SpendGold(currentTurretToBuild.cost))
         {
-            Debug.Log("Za ma³o z³ota!");
+            Debug.Log("[PlayerBuilder] Not enough gold!");
             buildManager.ExitBuildMode();
             return;
         }
 
-        GameObject turret = Instantiate(turretLogicPrefab, ghostTurretInstance.transform.position, Quaternion.identity);
+        // Instantiate turret logic prefab
+        GameObject turret = Instantiate(
+            turretLogicPrefab,
+            ghostTurretInstance.transform.position,
+            Quaternion.identity
+        );
+
+        // Initialize with data after next frame (ensures all components are ready)
         StartCoroutine(DelayedInitializeTurret(turret, currentTurretToBuild));
 
-        Debug.Log($"[Builder] Postawiono {currentTurretToBuild.turretName}.");
+        Debug.Log($"[PlayerBuilder] Built {currentTurretToBuild.turretName} at {turret.transform.position}");
 
+        // Notify BuildManager
         if (buildManager != null)
         {
             buildManager.OnTurretBuilt();
         }
+
+        // TODO: Play build sound/VFX
     }
 
+    /// <summary>
+    /// Waits one frame then initializes turret (ensures components are ready)
+    /// </summary>
     private IEnumerator DelayedInitializeTurret(GameObject turret, TurretData data)
     {
         yield return null;
@@ -198,7 +250,7 @@ public class PlayerBuilder : MonoBehaviour
         Turret turretScript = turret.GetComponent<Turret>();
         if (turretScript != null)
         {
-            turretScript.Initialize(data);
+            turretScript.Initialize(data, photonView); // Pass owner's PhotonView
         }
     }
 }

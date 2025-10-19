@@ -40,6 +40,9 @@ MonoBehaviour:
   - Fire
   - RespawnSpaceship
   - AnnouncePlayerJoined
+  - RPC_StartCountdown
+  - RPC_PlayerDied
+  - RPC_SyncHealth
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

@@ -1,66 +1,51 @@
-using System.Collections.Generic;
-using Photon.Pun;
 using UnityEngine;
-using UnityEngine.InputSystem;
+using Photon.Pun;
 
-
+/// <summary>
+/// Manages turret building via hotbar system
+/// Handles selection, build mode entry/exit
+/// </summary>
 public class BuildManager : MonoBehaviour
 {
-    [Header("Konfiguracja Paska Skrótów")]
-    [Tooltip("Lista wie¿yczek dostêpnych do budowy na pasku skrótów (np. 5 slotów).")]
+    [Header("Hotbar Configuration")]
+    [Tooltip("Turrets available on hotbar (keys 1-5)")]
     [SerializeField] private TurretData[] turretHotbar;
 
-    private bool isInBuildMode = false;
     private TurretData selectedTurret;
-
-    private PlayerBuilder _playerBuilder;
-    private PlayerBuilder playerBuilder
-    {
-        get
-        {
-            if (_playerBuilder == null) _playerBuilder = GetComponent<PlayerBuilder>();
-            return _playerBuilder;
-        }
-    }
-
-    private PlayerInputManager _playerInputManager;
-    private PlayerInputManager playerInputManager
-    {
-        get
-        {
-            if (_playerInputManager == null) _playerInputManager = GetComponent<PlayerInputManager>();
-            return _playerInputManager;
-        }
-    }
-
+    private PlayerBuilder playerBuilder;
+    private PlayerInputManager playerInputManager;
     private PhotonView photonView;
-
-    public bool IsInBuildMode() => isInBuildMode;
 
     private void Awake()
     {
+        playerBuilder = GetComponent<PlayerBuilder>();
+        playerInputManager = GetComponent<PlayerInputManager>();
         photonView = GetComponent<PhotonView>();
     }
 
     private void Update()
     {
-        if (photonView == null || !photonView.IsMine)
-        {
-            return;
-        }
+        // Only process input for local player
+        if (photonView == null || !photonView.IsMine) return;
 
         HandleHotbarInput();
 
-        // U¿ywamy w³aœciwoœci, która jest bezpieczna
-        if (playerInputManager.IsInBuildMode && (Input.GetMouseButtonDown(1) || Input.GetKeyDown(KeyCode.Escape)))
+        // Exit build mode with RMB or ESC
+        if (playerInputManager.IsInBuildMode)
         {
-            ExitBuildMode();
+            if (Input.GetMouseButtonDown(1) || Input.GetKeyDown(KeyCode.Escape))
+            {
+                ExitBuildMode();
+            }
         }
     }
 
+    /// <summary>
+    /// Checks for hotbar key presses (1-5)
+    /// </summary>
     private void HandleHotbarInput()
     {
-        for (int i = 0; i < turretHotbar.Length; i++)
+        for (int i = 0; i < turretHotbar.Length && i < 9; i++) // Support up to keys 1-9
         {
             if (Input.GetKeyDown(KeyCode.Alpha1 + i))
             {
@@ -70,31 +55,50 @@ public class BuildManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Attempts to enter build mode with selected turret
+    /// </summary>
     public void SelectTurretToBuild(TurretData turret)
     {
-        if (playerBuilder == null || playerInputManager == null) return;
-
-        if (PlayerGold.Instance.HasEnough(turret.cost))
+        if (playerBuilder == null || playerInputManager == null || turret == null)
         {
+            Debug.LogWarning("[BuildManager] Missing component or null turret");
+            return;
+        }
+
+        // Check if player can afford it
+        if (PlayerGold.LocalInstance.HasEnough(turret.cost))
+        {
+            selectedTurret = turret;
             playerInputManager.EnterBuildMode();
             playerBuilder.ActivateBuildMode(turret);
         }
         else
         {
-            Debug.Log($"Za ma³o z³ota, by wybraæ {turret.turretName}");
+            Debug.Log($"[BuildManager] Not enough gold for {turret.turretName} (need {turret.cost})");
+            // TODO: Play error sound/show UI feedback
         }
     }
 
+    /// <summary>
+    /// Exits build mode and cancels turret placement
+    /// </summary>
     public void ExitBuildMode()
     {
         if (playerBuilder == null || playerInputManager == null) return;
+
         playerInputManager.ExitBuildMode();
         playerBuilder.DeactivateBuildMode();
+        selectedTurret = null;
     }
 
-    // Metoda, któr¹ PlayerBuilder wywo³a po pomyœlnym zbudowaniu
+    /// <summary>
+    /// Called by PlayerBuilder after successful turret placement
+    /// </summary>
     public void OnTurretBuilt()
     {
         ExitBuildMode();
     }
+
+    public bool IsInBuildMode() => playerInputManager?.IsInBuildMode ?? false;
 }

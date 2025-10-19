@@ -18,7 +18,7 @@ MonoBehaviour:
   damage: 30
   fireRate: 10
   range: 5
-  cost: 0
+  cost: 75
   upgradeCost: 75
   upgradePaths:
   - {fileID: 11400000, guid: 2a1b4a6cd1f8cd8429e5c8cf6ec461c3, type: 2}

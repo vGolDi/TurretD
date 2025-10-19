@@ -1,13 +1,27 @@
 using UnityEngine;
+using Photon.Pun;
 
+/// <summary>
+/// Handles mouse click interactions with turrets
+/// Uses raycast to detect clickable objects
+/// </summary>
 public class InteractionManager : MonoBehaviour
 {
-    [SerializeField] private LayerMask turretLayer;
+    [Header("Interaction Settings")]
+    [SerializeField, Tooltip("Layer containing turrets")]
+    private LayerMask interactableLayers;
+
+    [SerializeField, Tooltip("Maximum interaction distance")]
+    private float maxInteractionDistance = 100f;
+
     private Camera cam;
     private BuildManager buildManager;
+    private PhotonView photonView;
+
     private void Awake()
     {
         buildManager = GetComponent<BuildManager>();
+        photonView = GetComponent<PhotonView>();
     }
 
     private void Start()
@@ -17,25 +31,48 @@ public class InteractionManager : MonoBehaviour
 
     private void Update()
     {
-        // Sprawdzaj klikniêcia tylko, jeœli NIE jesteœmy w trybie budowania
-        if (buildManager != null && !buildManager.IsInBuildMode())
+        // Only process for local player
+        if (!photonView.IsMine) return;
+
+        // Don't process clicks during build mode
+        if (buildManager != null && buildManager.IsInBuildMode())
         {
-            if (Input.GetMouseButtonDown(0))
+            return;
+        }
+
+        // Check for left mouse click
+        if (Input.GetMouseButtonDown(0))
+        {
+            TryInteract();
+        }
+    }
+
+    /// <summary>
+    /// Casts ray from mouse position and attempts to interact with hit object
+    /// </summary>
+    private void TryInteract()
+    {
+        Ray ray = cam.ScreenPointToRay(Input.mousePosition);
+
+        if (Physics.Raycast(ray, out RaycastHit hit, maxInteractionDistance, interactableLayers))
+        {
+            // Check if hit object has interactable component
+            var interactable = hit.collider.GetComponentInParent<TurretInteract>();
+
+            if (interactable != null)
             {
-                Ray ray = cam.ScreenPointToRay(Input.mousePosition);
-                if (Physics.Raycast(ray, out RaycastHit hit, 100f, turretLayer))
-                {
-                    // SprawdŸ, czy klikniêty obiekt ma komponent interakcji
-                    var interactable = hit.collider.GetComponentInParent<TurretInteract>();
-                    if (interactable != null)
-                    {
-                        interactable.OnClicked();
-                    }
-                }
+                interactable.OnClicked();
             }
         }
     }
-}
-// Metoda pomocnicza, któr¹ trzeba dodaæ do BuildManager.cs
-// public bool IsInBuildMode() => isInBuildMode;
 
+    // Debug visualization
+    private void OnDrawGizmos()
+    {
+        if (cam == null) return;
+
+        Ray ray = cam.ScreenPointToRay(Input.mousePosition);
+        Gizmos.color = Color.cyan;
+        Gizmos.DrawRay(ray.origin, ray.direction * maxInteractionDistance);
+    }
+}
