@@ -375,7 +375,7 @@ public class Turret : MonoBehaviour
         {
             // Calculate projectile travel time
             float distanceToEnemy = Vector3.Distance(spawnPos, enemyPosition);
-            float projectileSpeed = 15f; // Default speed - should match your projectile
+            float projectileSpeed = 60f; // <-- ZMIEÑ NA 60 (pasuje do nowej prêdkoœci)
 
             // Apply speed multiplier from TurretData
             if (turretData.projectileSpeedMultiplier > 0)
@@ -385,10 +385,18 @@ public class Turret : MonoBehaviour
 
             float timeToReach = distanceToEnemy / projectileSpeed;
 
+            // ========== NOWE: Extra lead dla dalekich celów ==========
+            // Add extra lead time for far targets (NavMesh turns)
+            float extraLead = 1.0f + (distanceToEnemy / 10f); // +10% per 10 units distance
+            extraLead = Mathf.Clamp(extraLead, 1.0f, 1.5f); // Max 50% extra
+
+            timeToReach *= extraLead;
+            // ========================================================
+
             // Predict where enemy will be
             predictedPosition = enemyPosition + (enemyAgent.velocity * timeToReach);
 
-            Debug.Log($"[Turret] Prediction: Enemy moving at {enemyAgent.velocity.magnitude:F2} m/s, leading by {timeToReach:F2}s");
+            Debug.Log($"[Turret] Prediction: Enemy at {distanceToEnemy:F1}m, speed {enemyAgent.velocity.magnitude:F2} m/s, lead {timeToReach:F2}s (extra: {extraLead:F2}x)");
         }
 
         Vector3 directionToTarget = (predictedPosition - spawnPos).normalized;
@@ -437,6 +445,12 @@ public class Turret : MonoBehaviour
         }
 
         Debug.Log($"[Turret] Fired at {target.name} - Current: {enemyPosition}, Predicted: {predictedPosition}");
+        if (Application.isPlaying)
+        {
+            Debug.DrawLine(spawnPos, enemyPosition, Color.yellow, 0.5f); // Current
+            Debug.DrawLine(enemyPosition, predictedPosition, Color.green, 0.5f); // Prediction
+            Debug.DrawLine(spawnPos, predictedPosition, Color.red, 0.5f); // Shot direction
+        }
     }
     // ====================================================
 
