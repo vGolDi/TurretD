@@ -439,6 +439,7 @@ GameObject:
   - component: {fileID: 9040753575320132891}
   - component: {fileID: 1147611536688311246}
   - component: {fileID: 354177296588094364}
+  - component: {fileID: -7844970920060943452}
   m_Layer: 3
   m_Name: Enemy Variant
   m_TagString: Enemy
@@ -490,6 +491,8 @@ MeshRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -511,6 +514,7 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
@@ -590,10 +594,10 @@ Rigidbody:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8399832402143531616}
-  serializedVersion: 4
+  serializedVersion: 5
   m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
@@ -623,6 +627,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHP: 100
+  elementType: 3
+  showDamageNumbers: 1
   goldReward: 20
 --- !u!114 &354177296588094364
 MonoBehaviour:
@@ -636,3 +642,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c398163e0d200e429a5f1bff52722fe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  waypointReachDistance: 0.2
+  baseSpeed: 3.5
+--- !u!114 &-7844970920060943452
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8399832402143531616}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5577db6b894beae45aefb4820f8ae0a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ElementumDefense.StatusEffects.StatusEffectManager

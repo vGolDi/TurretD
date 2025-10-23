@@ -197,26 +197,12 @@ public class GameStartCountdown : MonoBehaviour
         if (waveManager != null)
         {
             Debug.Log("[Countdown] Calling waveManager.StartWaves()...");
-            waveManager.StartWaves();
+            waveManager.StartWaves(); // Teraz tylko lokalny gracz uruchamia swoje fale
             Debug.Log("[Countdown]  Waves started!");
         }
         else
         {
-            Debug.LogError("[Countdown]  WaveManager is NULL! Cannot start waves!");
-            Debug.LogError("[Countdown] Check if WaveManager is assigned in Arena_Prefab!");
-
-            // Try to find WaveManager in parent
-            WaveManager foundWaveManager = GetComponentInParent<WaveManager>();
-            if (foundWaveManager != null)
-            {
-                Debug.Log("[Countdown] Found WaveManager in parent - using it!");
-                waveManager = foundWaveManager;
-                waveManager.StartWaves();
-            }
-            else
-            {
-                Debug.LogError("[Countdown] Could not find WaveManager anywhere!");
-            }
+            Debug.LogError("[Countdown] WaveManager is NULL! Cannot start waves!");
         }
     }
 

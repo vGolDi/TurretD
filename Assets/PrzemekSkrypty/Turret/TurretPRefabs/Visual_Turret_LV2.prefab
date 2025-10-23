@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 1841737283452258452}
   - component: {fileID: 4803784945667958435}
   - component: {fileID: 4563802637159963207}
-  m_Layer: 5
+  m_Layer: 7
   m_Name: Text (TMP)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -145,7 +145,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8371894371839109504}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: RotatingPart
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -177,7 +177,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3410206176344422626}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Base
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -212,7 +212,7 @@ GameObject:
   - component: {fileID: 8871584528441845420}
   - component: {fileID: 7862774404265592344}
   - component: {fileID: 8774284919899216375}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -262,6 +262,8 @@ MeshRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -283,6 +285,7 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
@@ -318,7 +321,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6272120377768486923}
   - component: {fileID: 4416046631687215615}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Visual_Turret_LV2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -362,6 +365,8 @@ MonoBehaviour:
   buttonTexts:
   - {fileID: 4563802637159963207}
   - {fileID: 5611937882053834502}
+  turretNameText: {fileID: 0}
+  turretStatsText: {fileID: 0}
 --- !u!1 &5451051619029308937
 GameObject:
   m_ObjectHideFlags: 0
@@ -374,7 +379,7 @@ GameObject:
   - component: {fileID: 6879198354329233549}
   - component: {fileID: 6027684427532696091}
   - component: {fileID: 6969580158258518560}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -424,6 +429,8 @@ MeshRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -445,6 +452,7 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
@@ -481,7 +489,7 @@ GameObject:
   - component: {fileID: 9006155381859318015}
   - component: {fileID: 540401537576842159}
   - component: {fileID: 5611937882053834502}
-  m_Layer: 5
+  m_Layer: 7
   m_Name: Text (TMP)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -618,7 +626,7 @@ GameObject:
   - component: {fileID: 8256781288869617821}
   - component: {fileID: 2565026335869719603}
   - component: {fileID: 1735958527032551426}
-  m_Layer: 5
+  m_Layer: 7
   m_Name: Button (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -739,7 +747,7 @@ GameObject:
   - component: {fileID: 1906169949411486094}
   - component: {fileID: 6189966418624988511}
   - component: {fileID: 5433724633695869305}
-  m_Layer: 5
+  m_Layer: 7
   m_Name: Button
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -917,6 +925,10 @@ PrefabInstance:
       value: UI
       objectReference: {fileID: 0}
     - target: {fileID: 2409308578030127332, guid: 71580ddf1af214a44b0f97b350662180, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 2409308578030127332, guid: 71580ddf1af214a44b0f97b350662180, type: 3}
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
@@ -931,6 +943,10 @@ PrefabInstance:
     - target: {fileID: 3967908581772909708, guid: 71580ddf1af214a44b0f97b350662180, type: 3}
       propertyPath: m_Name
       value: UpgradePanel
+      objectReference: {fileID: 0}
+    - target: {fileID: 3967908581772909708, guid: 71580ddf1af214a44b0f97b350662180, type: 3}
+      propertyPath: m_Layer
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 3967908581772909708, guid: 71580ddf1af214a44b0f97b350662180, type: 3}
       propertyPath: m_IsActive

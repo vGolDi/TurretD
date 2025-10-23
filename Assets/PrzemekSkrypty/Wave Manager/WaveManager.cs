@@ -1,87 +1,71 @@
-using System.Collections;
+using System.IO;
 using UnityEngine;
+using System.Collections;
 using TMPro;
-using Photon.Pun;
 
 /// <summary>
-/// Controls wave spawning, progression, and game flow
-/// In multiplayer: each player has their own WaveManager instance
+/// Manages wave spawning and UI display
+/// Only runs waves for local player's arena
 /// </summary>
 public class WaveManager : MonoBehaviour
 {
     [Header("Wave Configuration")]
-    [SerializeField, Tooltip("List of waves to spawn")]
-    private WaveData[] waves;
+    [SerializeField] private WaveData[] waves;
 
     [Header("Spawn Points")]
-    [SerializeField, Tooltip("Starting positions for enemies (one per path)")]
-    private Transform[] spawnPoints;
+    [SerializeField] private Transform[] spawnPoints;
 
     [Header("Paths")]
-    [SerializeField, Tooltip("Enemy movement paths")]
-    private Paths[] paths;
+    [SerializeField] private Paths[] paths;
 
     [Header("UI")]
     [SerializeField] private TMP_Text waveInfoText;
-    [SerializeField] private TMP_Text waveProgressText;
     [SerializeField] private float waveInfoDisplayTime = 2f;
+    [SerializeField] private TMP_Text waveProgressText; // Nowy tekst dla progressu fali
 
     // Runtime state
     private int currentWaveIndex = 0;
     private bool isSpawning = false;
     private int enemiesAlive = 0;
-
-    private PhotonView photonView;
-
-    private void Awake()
-    {
-        photonView = GetComponent<PhotonView>();
-    }
+    private int totalEnemiesInCurrentWave = 0;
 
     private void Start()
     {
-        ValidateSetup();
-    }
+        Debug.Log($"[WaveManager] Started on {gameObject.name}");
 
-    /// <summary>
-    /// Validates wave manager setup (paths, spawn points, etc.)
-    /// </summary>
-    private void ValidateSetup()
-    {
+        // Validate setup
         if (waves == null || waves.Length == 0)
         {
             Debug.LogError("[WaveManager] No waves assigned!");
+            return;
         }
 
         if (spawnPoints == null || spawnPoints.Length == 0)
         {
             Debug.LogError("[WaveManager] No spawn points assigned!");
+            return;
         }
 
         if (paths == null || paths.Length == 0)
         {
             Debug.LogError("[WaveManager] No paths assigned!");
-        }
-
-        // Validate each path
-        if (paths != null)
-        {
-            for (int i = 0; i < paths.Length; i++)
-            {
-                if (paths[i] != null && !paths[i].IsValid())
-                {
-                    Debug.LogError($"[WaveManager] Path {i} is invalid!");
-                }
-            }
+            return;
         }
     }
 
     /// <summary>
-    /// Starts wave spawning sequence
-    /// Called by GameStartCountdown or UI button
+    /// Starts wave spawning sequence (only for local player's arena)
     /// </summary>
     public void StartWaves()
     {
+        // CRITICAL FIX: Only start waves for LOCAL player's arena!
+        ArenaOwner arenaOwner = GetComponentInParent<ArenaOwner>();
+        if (arenaOwner != null && arenaOwner.ownerPhotonView != null && !arenaOwner.ownerPhotonView.IsMine)
+        {
+            Debug.Log("[WaveManager] Not starting waves - this is not my arena!");
+            return;
+        }
+
         if (isSpawning)
         {
             Debug.LogWarning("[WaveManager] Waves already running!");
@@ -103,6 +87,13 @@ public class WaveManager : MonoBehaviour
             currentWaveIndex = i;
             WaveData currentWave = waves[i];
 
+            // Calculate total enemies in this wave
+            totalEnemiesInCurrentWave = 0;
+            foreach (var part in currentWave.waveParts)
+            {
+                totalEnemiesInCurrentWave += part.enemyCount;
+            }
+
             // Show wave start notification
             StartCoroutine(ShowWaveInfo($"Wave {currentWaveIndex + 1}/{waves.Length}"));
 
@@ -112,19 +103,15 @@ public class WaveManager : MonoBehaviour
             // Wait for all enemies to be killed
             yield return new WaitUntil(() => enemiesAlive <= 0);
 
-            // Grant wave completion bonus
-            if (currentWave.waveCompletionBonus > 0 && photonView != null && photonView.IsMine)
-            {
-                PlayerGold.LocalInstance?.AddGold(currentWave.waveCompletionBonus);
-                Debug.Log($"[WaveManager] Wave {currentWaveIndex + 1} completed! Bonus: {currentWave.waveCompletionBonus} gold");
-            }
-
             // Delay before next wave
             yield return new WaitForSeconds(currentWave.delayAfterWave);
         }
 
         isSpawning = false;
-        OnAllWavesCompleted();
+        Debug.Log("[WaveManager] All waves completed!");
+
+        // Optional: Show victory message
+        StartCoroutine(ShowWaveInfo("ALL WAVES COMPLETED!"));
     }
 
     /// <summary>
@@ -132,6 +119,9 @@ public class WaveManager : MonoBehaviour
     /// </summary>
     private IEnumerator SpawnWave(WaveData wave)
     {
+        enemiesAlive = 0; // Reset counter for this wave
+        UpdateWaveProgressUI();
+
         foreach (WavePart part in wave.waveParts)
         {
             // Validate path index
@@ -149,7 +139,7 @@ public class WaveManager : MonoBehaviour
             }
 
             // Spawn enemies
-            for (int i = 0; i < part.enemyCount; i++)
+            for (int j = 0; j < part.enemyCount; j++)
             {
                 SpawnEnemy(part.enemyPrefab, spawnPoints[part.pathIndex], paths[part.pathIndex]);
                 yield return new WaitForSeconds(part.spawnInterval);
@@ -170,10 +160,8 @@ public class WaveManager : MonoBehaviour
 
         GameObject enemyObj = Instantiate(enemyPrefab, spawnPoint.position, Quaternion.identity);
 
-        // CRITICAL FIX: Set arena as parent so enemy can find ArenaOwner!
-        enemyObj.transform.SetParent(transform.root); // Arena_Prefab is root
-
-        Debug.Log($"[WaveManager] Spawned enemy at {spawnPoint.position}, parent: {enemyObj.transform.parent.name}");
+        // Set parent to arena (for proper cleanup)
+        enemyObj.transform.SetParent(transform.root);
 
         // Set path
         EnemyMovement movement = enemyObj.GetComponent<EnemyMovement>();
@@ -184,6 +172,7 @@ public class WaveManager : MonoBehaviour
 
         // Track alive count
         enemiesAlive++;
+        UpdateWaveProgressUI();
 
         // Subscribe to death event
         EnemyHealth health = enemyObj.GetComponent<EnemyHealth>();
@@ -198,7 +187,11 @@ public class WaveManager : MonoBehaviour
     /// </summary>
     private IEnumerator TrackEnemyLifetime(GameObject enemy)
     {
-        yield return new WaitUntil(() => enemy == null);
+        while (enemy != null)
+        {
+            yield return null;
+        }
+
         enemiesAlive--;
         UpdateWaveProgressUI();
     }
@@ -211,46 +204,35 @@ public class WaveManager : MonoBehaviour
         if (waveInfoText != null)
         {
             waveInfoText.text = message;
-            waveInfoText.gameObject.SetActive(true); // W³¹cz GameObject
+            waveInfoText.gameObject.SetActive(true);
             Debug.Log($"[WaveManager] Showing wave info: {message}");
-        }
-        else
-        {
-            Debug.LogWarning("[WaveManager] waveInfoText is NULL!");
         }
 
         yield return new WaitForSeconds(waveInfoDisplayTime);
 
         if (waveInfoText != null)
         {
-            waveInfoText.gameObject.SetActive(false); // Wy³¹cz GameObject
+            waveInfoText.gameObject.SetActive(false);
             Debug.Log($"[WaveManager] Hiding wave info");
         }
     }
 
     /// <summary>
-    /// Updates wave progress UI
+    /// Updates wave progress UI (enemies left)
     /// </summary>
     private void UpdateWaveProgressUI()
     {
         if (waveProgressText != null)
         {
-            waveProgressText.text = $"Wave {currentWaveIndex + 1}/{waves.Length}\nEnemies: {enemiesAlive}";
+            if (currentWaveIndex < waves.Length)
+            {
+                waveProgressText.text = $"Wave {currentWaveIndex + 1}/{waves.Length}\nEnemies: {enemiesAlive}/{totalEnemiesInCurrentWave}";
+            }
+            else
+            {
+                waveProgressText.text = "All waves completed!";
+            }
         }
-    }
-
-    /// <summary>
-    /// Called when all waves are completed
-    /// </summary>
-    private void OnAllWavesCompleted()
-    {
-        Debug.Log("[WaveManager] All waves completed!");
-
-        // TODO: Show victory screen
-        // TODO: Calculate final score
-        // TODO: Award achievements
-
-        StartCoroutine(ShowWaveInfo("VICTORY!"));
     }
 
     /// <summary>
@@ -265,16 +247,7 @@ public class WaveManager : MonoBehaviour
             Destroy(enemy);
         }
         enemiesAlive = 0;
+        UpdateWaveProgressUI();
         Debug.Log("[WaveManager] Cleared all enemies");
-    }
-
-    // Editor helper
-    private void OnValidate()
-    {
-        // Auto-find paths if not assigned
-        if (paths == null || paths.Length == 0)
-        {
-            paths = FindObjectsOfType<Paths>();
-        }
     }
 }

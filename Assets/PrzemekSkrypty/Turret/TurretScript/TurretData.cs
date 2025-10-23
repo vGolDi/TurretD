@@ -1,4 +1,6 @@
 using UnityEngine;
+using ElementumDefense.Elements;
+using ElementumDefense.StatusEffects;
 
 [CreateAssetMenu(fileName = "New Turret", menuName = "Tower Defense/Turret")]
 public class TurretData : ScriptableObject
@@ -37,11 +39,34 @@ public class TurretData : ScriptableObject
     public TurretData[] upgradePaths;
 
     // TODO: Add elemental type
-    // public ElementType elementType;
+    [Header("Element")]
+    [Tooltip("Elemental type of this turret")]
+    public ElementType elementType = ElementType.None;
 
     // TODO: Add special effects
-    // public TurretEffect[] specialEffects; // (slow, burn, freeze, etc.)
+    [Header("Status Effects")]
+    [Tooltip("Which status effect does this turret apply?")]
+    public StatusEffectType appliedEffect = StatusEffectType.Burn;
 
+    [Tooltip("Chance to apply effect (0-100%)")]
+    [Range(0f, 100f)]
+    public float effectChance = 30f;
+
+    [Tooltip("Effect duration in seconds")]
+    public float effectDuration = 3f;
+
+    [Tooltip("Effect strength (DPS for DOT, slow % for Slow)")]
+    public float effectStrength = 5f;
+
+    [Header("Projectile")]
+    [Tooltip("Projectile prefab to spawn when shooting (leave empty for instant damage)")]
+    public GameObject projectilePrefab;
+
+    [Tooltip("Projectile spawn offset from turret (local space)")]
+    public Vector3 projectileSpawnOffset = new Vector3(0f, 1f, 0f);
+
+    [Tooltip("Projectile speed multiplier")]
+    public float projectileSpeedMultiplier = 1f;
     // TODO: Add synergy bonuses
     // public SynergyData[] synergyWith;
 }

@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 8899142343827661844}
   - component: {fileID: 3392649062527906740}
   - component: {fileID: 1199253174686863596}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Icosphere
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -61,6 +61,8 @@ MeshRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -82,6 +84,7 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
@@ -95,7 +98,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8371894371839109504}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: RotatingPart
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -127,7 +130,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3410206176344422626}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Base
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -160,7 +163,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6272120377768486923}
   - component: {fileID: 4416046631687215615}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Visual_Turret_LV3A
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -200,6 +203,8 @@ MonoBehaviour:
   uiPanel: {fileID: 5230887608830601999}
   upgradeButtons: []
   buttonTexts: []
+  turretNameText: {fileID: 0}
+  turretStatsText: {fileID: 0}
 --- !u!1 &9177926506735787909
 GameObject:
   m_ObjectHideFlags: 0
@@ -212,7 +217,7 @@ GameObject:
   - component: {fileID: 318395365903139098}
   - component: {fileID: 5508323720694446076}
   - component: {fileID: 7547416124015681358}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Circle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -262,6 +267,8 @@ MeshRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -284,6 +291,7 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
@@ -335,6 +343,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: UI
       objectReference: {fileID: 0}
+    - target: {fileID: 2409308578030127332, guid: 71580ddf1af214a44b0f97b350662180, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
     - target: {fileID: 3268722907800699450, guid: 71580ddf1af214a44b0f97b350662180, type: 3}
       propertyPath: m_SizeDelta.x
       value: 5
@@ -346,6 +358,10 @@ PrefabInstance:
     - target: {fileID: 3967908581772909708, guid: 71580ddf1af214a44b0f97b350662180, type: 3}
       propertyPath: m_Name
       value: UpgradePanel
+      objectReference: {fileID: 0}
+    - target: {fileID: 3967908581772909708, guid: 71580ddf1af214a44b0f97b350662180, type: 3}
+      propertyPath: m_Layer
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 4012961747304768037, guid: 71580ddf1af214a44b0f97b350662180, type: 3}
       propertyPath: m_Pivot.x

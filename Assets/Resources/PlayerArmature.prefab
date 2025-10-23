@@ -516,8 +516,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   turretHotbar:
+  - {fileID: 11400000, guid: 48fa49effc929664a87001b01e45f281, type: 2}
   - {fileID: 11400000, guid: dcdac1595ca2afc45976fb81df584480, type: 2}
-  - {fileID: 11400000, guid: 810c549acbd7dd14cba87837a3eed1f9, type: 2}
 --- !u!114 &6582935591620130701
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -686,8 +686,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   turretHotbar:
+  - {fileID: 11400000, guid: 48fa49effc929664a87001b01e45f281, type: 2}
   - {fileID: 11400000, guid: dcdac1595ca2afc45976fb81df584480, type: 2}
-  - {fileID: 11400000, guid: 810c549acbd7dd14cba87837a3eed1f9, type: 2}
 --- !u!114 &1418561371067728763
 MonoBehaviour:
   m_ObjectHideFlags: 0
