@@ -59,7 +59,7 @@ namespace ElementumDefense.StatusEffects
             newEffect.Initialize(enemyHealth, newEffect.MaxDuration);
             activeEffects.Add(newEffect);
 
-            Debug.Log($"[StatusEffectManager] Applied {newEffect.Icon} {newEffect.DisplayName} to {gameObject.name}");
+           // Debug.Log($"[StatusEffectManager] Applied {newEffect.Icon} {newEffect.DisplayName} to {gameObject.name}");
         }
 
         public void RemoveEffect(StatusEffectType effectType)
@@ -179,8 +179,8 @@ namespace ElementumDefense.StatusEffects
 
             if (screenPos.z > 0)
             {
-                string effectsText = string.Join(" ", activeEffects.Select(e => e.Icon));
-                GUI.Label(new Rect(screenPos.x - 50, Screen.height - screenPos.y - 20, 100, 20), effectsText);
+                //string effectsText = string.Join(" ", activeEffects.Select(e => e.Icon));
+              //  GUI.Label(new Rect(screenPos.x - 50, Screen.height - screenPos.y - 20, 100, 20), effectsText);
             }
         }
     }

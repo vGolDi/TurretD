@@ -440,6 +440,7 @@ GameObject:
   - component: {fileID: 1147611536688311246}
   - component: {fileID: 354177296588094364}
   - component: {fileID: -7844970920060943452}
+  - component: {fileID: 3105399027368534284}
   m_Layer: 3
   m_Name: Enemy Variant
   m_TagString: Enemy
@@ -644,6 +645,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   waypointReachDistance: 0.2
   baseSpeed: 3.5
+  avoidancePriority: 50
+  avoidanceRadius: 0.5
+  avoidanceWeight: 0.5
+  pathRefreshInterval: 0.3
+  stuckThreshold: 0.05
 --- !u!114 &-7844970920060943452
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -656,3 +662,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5577db6b894beae45aefb4820f8ae0a3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ElementumDefense.StatusEffects.StatusEffectManager
+--- !u!114 &3105399027368534284
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8399832402143531616}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d2dba1f015d0b6c40878ec79d52d20d9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ElementumDefense.UI.StatusEffectDisplay
+  yOffset: 4
+  iconSize: 1
+  iconSpacing: 5
+  showDurationBar: 1

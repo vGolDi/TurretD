@@ -10,7 +10,7 @@ namespace ElementumDefense.StatusEffects
     {
         public override StatusEffectType EffectType => StatusEffectType.Poison;
         public override string DisplayName => "Poisoned";
-        public override string Icon => "🌿";
+       //public override string Icon => "🌿";
 
         public override int MaxStacks => 5; // Stacks higher than burn
         public override bool IsStackable => true;

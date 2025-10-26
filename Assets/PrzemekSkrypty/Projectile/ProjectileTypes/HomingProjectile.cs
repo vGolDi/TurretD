@@ -18,6 +18,15 @@ namespace ElementumDefense.Projectiles
             Vector3 targetPos = GetTargetPosition();
             Vector3 direction = (targetPos - transform.position).normalized;
 
+            // ========== DODAJ: Check if target still exists ==========
+            if (target == null)
+            {
+                // Fly straight if target died
+                transform.position += transform.forward * speed * Time.deltaTime;
+                return;
+            }
+            // =========================================================
+
             // Blend between straight and homing
             Vector3 desiredDirection = Vector3.Lerp(transform.forward, direction, homingStrength);
 
@@ -37,3 +46,4 @@ namespace ElementumDefense.Projectiles
         }
     }
 }
+

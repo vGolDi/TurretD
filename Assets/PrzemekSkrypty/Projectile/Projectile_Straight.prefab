@@ -153,8 +153,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1828eb8089bbb9742a850b8b5c555eca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ElementumDefense.Projectiles.StraightProjectile
-  speed: 30
-  lifetime: 1
+  speed: 20
+  lifetime: 2
   hitLayers:
     serializedVersion: 2
     m_Bits: 8

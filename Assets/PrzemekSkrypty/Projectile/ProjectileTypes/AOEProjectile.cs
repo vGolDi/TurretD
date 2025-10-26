@@ -4,14 +4,14 @@ using UnityEngine;
 namespace ElementumDefense.Projectiles
 {
     /// <summary>
-    /// Projectile that deals area damage on impact
+    /// Projectile that deals area damage on impact (INSTANT EXPLOSION)
     /// Good for: Explosions, fireballs, rockets
     /// </summary>
-    public class AOEProjectile : StraightProjectile // Inherits straight movement
+    public class AOEProjectile : StraightProjectile
     {
         [Header("AOE Settings")]
         [SerializeField] private float explosionRadius = 3f;
-        [SerializeField] private float damageMultiplier = 0.7f; // AOE damage = 70% of main damage
+        [SerializeField] private float damageMultiplier = 0.7f;
         [SerializeField] private GameObject explosionEffectPrefab;
 
         protected override void OnHitTarget(EnemyHealth primaryTarget)
@@ -34,16 +34,20 @@ namespace ElementumDefense.Projectiles
 
                 // Calculate distance falloff
                 float distance = Vector3.Distance(transform.position, hit.transform.position);
-                float falloff = 1f - (distance / explosionRadius);
+                float falloff = Mathf.Clamp01(1f - (distance / explosionRadius));
 
                 // Deal reduced damage
                 int aoeDamage = Mathf.RoundToInt(damage * damageMultiplier * falloff);
-                enemy.TakeDamage(aoeDamage, -1, elementType);
 
-                // Apply status effect with reduced chance
-                if (statusChance > 0f && Random.Range(0f, 100f) <= statusChance * 0.5f)
+                if (aoeDamage > 0) 
                 {
-                    ApplyStatusEffect(enemy);
+                    enemy.TakeDamage(aoeDamage, -1, elementType);
+
+                    // Apply status effect with reduced chance
+                    if (statusChance > 0f && Random.Range(0f, 100f) <= statusChance * 0.5f)
+                    {
+                        ApplyStatusEffect(enemy);
+                    }
                 }
             }
 
@@ -78,7 +82,6 @@ namespace ElementumDefense.Projectiles
             }
         }
 
-        // Visualize explosion radius in editor
         private void OnDrawGizmosSelected()
         {
             Gizmos.color = new Color(1f, 0f, 0f, 0.3f);

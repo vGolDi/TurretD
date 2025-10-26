@@ -10,7 +10,7 @@ namespace ElementumDefense.StatusEffects
     {
         public override StatusEffectType EffectType => StatusEffectType.Slow;
         public override string DisplayName => "Slowed";
-        public override string Icon => "SLOW";
+       //public override string Icon => "SLOW";
 
         public override bool RefreshOnReapply => true;
 

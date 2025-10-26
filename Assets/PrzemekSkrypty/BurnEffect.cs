@@ -15,7 +15,7 @@ namespace ElementumDefense.StatusEffects
 
         public override StatusEffectType EffectType => StatusEffectType.Burn;
         public override string DisplayName => "Burning";
-        public override string Icon => "FIREICON";
+        //public override string Icon => "FIREICON";
 
         public override int MaxStacks => 3; // Can stack up to 3 times
         public override bool IsStackable => true;

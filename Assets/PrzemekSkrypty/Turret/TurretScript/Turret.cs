@@ -425,7 +425,7 @@ public class Turret : MonoBehaviour
             Debug.LogError($"[Turret] Failed to spawn projectile for {turretData.turretName}!");
             return;
         }
-
+        ProjectileStatsManager.Instance?.RegisterShotFired(); // jak cos do wyjebania 
         // Initialize projectile with combat data
         projectile.Initialize(
             target,
@@ -597,7 +597,7 @@ public class Turret : MonoBehaviour
         if (newEffect != null)
         {
             effectManager.ApplyEffect(newEffect);
-            Debug.Log($"[Turret] Applied {newEffect.Icon} {newEffect.DisplayName} to {target.name}");
+           // Debug.Log($"[Turret] Applied {newEffect.Icon} {newEffect.DisplayName} to {target.name}");
         }
     }
 

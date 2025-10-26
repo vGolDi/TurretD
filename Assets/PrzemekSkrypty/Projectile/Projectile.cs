@@ -24,6 +24,10 @@ namespace ElementumDefense.Projectiles
         [SerializeField] protected GameObject impactEffectPrefab;
         [SerializeField] protected float impactEffectLifetime = 2f;
 
+        [Header("AOE Options")]
+        [SerializeField] protected bool hasAOE = false;
+        [SerializeField] protected float baseAOERadius = 0f;
+        [SerializeField] protected float aoeDamageMultiplier = 0.7f;
         // ==========================================
         // RUNTIME DATA
         // ==========================================
@@ -88,7 +92,10 @@ namespace ElementumDefense.Projectiles
             {
                 trailEffect.Play();
             }
-
+            if (ProjectileStatsManager.Instance != null)
+            {
+                ProjectileStatsManager.Instance.RegisterShotFired();
+            }
             OnInitialized();
         }
 
@@ -161,7 +168,12 @@ namespace ElementumDefense.Projectiles
             if (hasHit) return;
             hasHit = true;
 
-            // Deal damage
+            // Register hit
+            if (ProjectileStatsManager.Instance != null)
+            {
+                ProjectileStatsManager.Instance.RegisterHit();
+            }
+            // Deal damage to primary target
             enemy.TakeDamage(damage, -1, elementType);
 
             // Try apply status effect
@@ -170,11 +182,15 @@ namespace ElementumDefense.Projectiles
                 ApplyStatusEffect(enemy);
             }
 
+            // ========== NOWE: AOE Damage ==========
+            if (hasAOE && baseAOERadius > 0f)
+            {
+                ApplyAOEDamage(enemy);
+            }
+            // ======================================
+
             // Spawn impact effect
             SpawnImpactEffect();
-
-            // Play hit sound
-            // TODO: AudioManager.PlaySound("projectile_impact");
 
             Debug.Log($"[Projectile] Hit {enemy.name} for {damage} damage ({elementType})");
 
@@ -182,6 +198,47 @@ namespace ElementumDefense.Projectiles
             ReturnToPool();
         }
 
+        /// <summary>
+        /// Applies AOE damage to nearby enemies (if enabled)
+        /// </summary>
+        protected virtual void ApplyAOEDamage(EnemyHealth primaryTarget)
+        {
+            Collider[] hits = Physics.OverlapSphere(transform.position, baseAOERadius);
+
+            int secondaryHits = 0;
+
+            foreach (Collider hit in hits)
+            {
+                EnemyHealth enemy = hit.GetComponent<EnemyHealth>();
+
+                // Skip primary target and non-enemies
+                if (enemy == null || enemy == primaryTarget) continue;
+
+                // Calculate distance falloff
+                float distance = Vector3.Distance(transform.position, hit.transform.position);
+                float falloff = Mathf.Clamp01(1f - (distance / baseAOERadius));
+
+                // Deal reduced damage
+                int aoeDamage = Mathf.RoundToInt(damage * aoeDamageMultiplier * falloff);
+
+                if (aoeDamage > 0)
+                {
+                    enemy.TakeDamage(aoeDamage, -1, elementType);
+                    secondaryHits++;
+
+                    // Apply status effect with reduced chance
+                    if (statusChance > 0f && Random.Range(0f, 100f) <= statusChance * 0.5f)
+                    {
+                        ApplyStatusEffect(enemy);
+                    }
+                }
+            }
+
+            if (secondaryHits > 0)
+            {
+                Debug.Log($"[Projectile] AOE hit {secondaryHits} additional enemies");
+            }
+        }               
         // ==========================================
         // STATUS EFFECTS
         // ==========================================

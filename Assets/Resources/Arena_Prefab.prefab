@@ -137,8 +137,8 @@ MonoBehaviour:
   paths:
   - {fileID: 3545526393426983319}
   waveInfoText: {fileID: 2465484704324787338}
-  waveProgressText: {fileID: 7095642611468746479}
   waveInfoDisplayTime: 2
+  waveProgressText: {fileID: 7095642611468746479}
 --- !u!114 &5386772951359386912
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -284,7 +284,7 @@ GameObject:
   - component: {fileID: 3108950715548185774}
   - component: {fileID: 8656652524919524433}
   - component: {fileID: 4739764319933271387}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Map
   m_TagString: Untagged
   m_Icon: {fileID: 0}

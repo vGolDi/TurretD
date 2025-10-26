@@ -11,7 +11,7 @@ namespace ElementumDefense.StatusEffects
     {
         public override StatusEffectType EffectType => StatusEffectType.Freeze;
         public override string DisplayName => "Frozen";
-        public override string Icon => "FREEZEICON";
+      //  public override string Icon => "FREEZEICON";
 
         public override int MaxStacks => 1;
         public override bool IsStackable => false;

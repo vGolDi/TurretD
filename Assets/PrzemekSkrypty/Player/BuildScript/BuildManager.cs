@@ -1,5 +1,6 @@
 using UnityEngine;
 using Photon.Pun;
+using ElementumDefense.UI;
 
 /// <summary>
 /// Manages turret building via hotbar system
@@ -16,11 +17,15 @@ public class BuildManager : MonoBehaviour
     private PlayerInputManager playerInputManager;
     private PhotonView photonView;
 
+    private HotbarUI hotbarUI;
+
     private void Awake()
     {
         playerBuilder = GetComponent<PlayerBuilder>();
         playerInputManager = GetComponent<PlayerInputManager>();
         photonView = GetComponent<PhotonView>();
+
+        hotbarUI = FindObjectOfType<HotbarUI>();
     }
 
     private void Update()
@@ -50,6 +55,12 @@ public class BuildManager : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.Alpha1 + i))
             {
                 SelectTurretToBuild(turretHotbar[i]);
+                // ========== NOWE: Notify hotbar ==========
+                if (hotbarUI != null)
+                {
+                    hotbarUI.OnHotkeyPressed(i);
+                }
+                // =========================================
                 break;
             }
         }

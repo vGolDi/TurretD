@@ -1,6 +1,7 @@
 using Photon.Pun;
 using UnityEngine;
 using ElementumDefense.Elements;
+using ElementumDefense.UI;
 
 public class EnemyHealth : MonoBehaviour
 {
@@ -37,25 +38,57 @@ public class EnemyHealth : MonoBehaviour
     /// <param name="baseDamage">Raw damage before modifiers</param>
     /// <param name="attackerPhotonViewID">PhotonView ID of turret owner</param>
     /// <param name="damageElement">Element type of attacking turret</param>
+    //public void TakeDamage(int baseDamage, int attackerPhotonViewID = -1, ElementType damageElement = ElementType.None)
+    //{
+    //    // Calculate elemental modifier
+    //    float elementMultiplier = ElementUtility.GetDamageMultiplier(damageElement, elementType);
+    //    int finalDamage = Mathf.RoundToInt(baseDamage * elementMultiplier);
+
+    //    currentHP -= finalDamage;
+
+    //    // NOWE: Log damage with element info
+    //    Debug.Log($"[EnemyHealth] {gameObject.name} took {finalDamage} damage " +
+    //              $"(base: {baseDamage}, element: {damageElement} vs {elementType}, mult: {elementMultiplier}x)");
+
+    //    // NOWE: Show damage number (opcjonalne - zrobimy póŸniej)
+    //    if (showDamageNumbers)
+    //    {
+    //        ShowDamageNumber(finalDamage, elementMultiplier);
+    //    }
+
+    //    // Update healthbar
+    //    if (healthBar != null)
+    //    {
+    //        healthBar.SetHealth(currentHP);
+    //    }
+
+    //    if (currentHP <= 0 && !killRewardGiven)
+    //    {
+    //        killRewardGiven = true;
+    //        Die(attackerPhotonViewID);
+    //    }
+    //}
     public void TakeDamage(int baseDamage, int attackerPhotonViewID = -1, ElementType damageElement = ElementType.None)
     {
-        // Calculate elemental modifier
         float elementMultiplier = ElementUtility.GetDamageMultiplier(damageElement, elementType);
         int finalDamage = Mathf.RoundToInt(baseDamage * elementMultiplier);
 
         currentHP -= finalDamage;
 
-        // NOWE: Log damage with element info
-        Debug.Log($"[EnemyHealth] {gameObject.name} took {finalDamage} damage " +
-                  $"(base: {baseDamage}, element: {damageElement} vs {elementType}, mult: {elementMultiplier}x)");
-
-        // NOWE: Show damage number (opcjonalne - zrobimy póŸniej)
-        if (showDamageNumbers)
+        // ========== ZMIENIONE: Show damage number ==========
+        if (showDamageNumbers && DamageNumberManager.Instance != null)
         {
-            ShowDamageNumber(finalDamage, elementMultiplier);
-        }
+            DamageNumberType numberType = DamageNumberType.Normal;
 
-        // Update healthbar
+            if (elementMultiplier > 1.0f)
+                numberType = DamageNumberType.Effective; // Green
+            else if (elementMultiplier < 1.0f)
+                numberType = DamageNumberType.Resisted;  // Red
+
+            DamageNumberManager.Instance.ShowDamageNumberAtEnemy(this, finalDamage, numberType);
+        }
+        // ===================================================
+
         if (healthBar != null)
         {
             healthBar.SetHealth(currentHP);

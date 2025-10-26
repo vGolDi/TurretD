@@ -2,15 +2,16 @@ using UnityEngine;
 
 namespace ElementumDefense.Projectiles
 {
-    /// <summary>
-    /// Projectile that flies in an arc (parabola)
-    /// Good for: Mortars, catapults, artillery
-    /// </summary>
     public class ArcProjectile : Projectile
     {
         [Header("Arc Settings")]
-        [SerializeField] private float arcHeight = 3f; // Peak height of arc
+        [SerializeField] private float arcHeight = 3f;
         [SerializeField] private AnimationCurve arcCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
+
+        // ========== NOWE: Collision detection ==========
+        [Header("Collision")]
+        [SerializeField] private float collisionCheckRadius = 0.5f; // How close to trigger hit
+        // ===============================================
 
         private Vector3 startPosition;
         private float journeyLength;
@@ -42,6 +43,10 @@ namespace ElementumDefense.Projectiles
             // Combine horizontal + vertical
             transform.position = horizontalPos + Vector3.up * arcOffset;
 
+            // ========== NOWE: Mid-flight collision check ==========
+            CheckMidFlightCollision();
+            // =====================================================
+
             // Rotate to face movement direction (optional)
             if (progress < 0.99f)
             {
@@ -72,10 +77,42 @@ namespace ElementumDefense.Projectiles
             }
         }
 
+        // ========== NOWA FUNKCJA ==========
+        /// <summary>
+        /// Checks for collision during flight (prevents missing moving targets)
+        /// </summary>
+        private void CheckMidFlightCollision()
+        {
+            if (hasHit) return;
+
+            // Check sphere around projectile
+            Collider[] hits = Physics.OverlapSphere(transform.position, collisionCheckRadius);
+
+            foreach (Collider hit in hits)
+            {
+                EnemyHealth enemy = hit.GetComponent<EnemyHealth>();
+
+                // If we hit our target (or any enemy if target died)
+                if (enemy != null && (enemy == target || target == null))
+                {
+                    OnHitTarget(enemy);
+                    return;
+                }
+            }
+        }
+        // ==================================
+
         protected override void CheckCollision()
         {
-            // Arc projectiles don't use OnTriggerEnter
-            // They hit when reaching target position
+            // Arc projectiles use CheckMidFlightCollision() instead
         }
+
+        // ========== NOWE: Debug visualization ==========
+        private void OnDrawGizmos()
+        {
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawWireSphere(transform.position, collisionCheckRadius);
+        }
+        // ===============================================
     }
 }

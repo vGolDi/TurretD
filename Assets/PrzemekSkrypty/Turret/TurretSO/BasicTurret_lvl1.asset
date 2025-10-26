@@ -15,8 +15,8 @@ MonoBehaviour:
   turretName: BasicTurret_FIRE_lvl1
   description: 
   displayPrefab: {fileID: 7093221099308707038, guid: b04921f96bd91a44898303c54e8d5f5f, type: 3}
-  damage: 10
-  fireRate: 5
+  damage: 0
+  fireRate: 0.1
   range: 4
   cost: 50
   upgradeCost: 0
@@ -26,7 +26,7 @@ MonoBehaviour:
   appliedEffect: 0
   effectChance: 50
   effectDuration: 3
-  effectStrength: 5
-  projectilePrefab: {fileID: 2239567479213953964, guid: 9a1be654a5c11eb4eb719e4468e6450b, type: 3}
-  projectileSpawnOffset: {x: 0, y: 1, z: 0.5}
+  effectStrength: 1
+  projectilePrefab: {fileID: 2239567479213953964, guid: bdaf3829777f6f54f88399cbbb3c62e3, type: 3}
+  projectileSpawnOffset: {x: 0, y: 1, z: 0}
   projectileSpeedMultiplier: 1

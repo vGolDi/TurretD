@@ -15,7 +15,7 @@ MonoBehaviour:
   turretName: WATER_BasicTurret_lvl1
   description: 
   displayPrefab: {fileID: 7093221099308707038, guid: b04921f96bd91a44898303c54e8d5f5f, type: 3}
-  damage: 5
+  damage: 50
   fireRate: 1
   range: 5
   cost: 50
@@ -27,6 +27,6 @@ MonoBehaviour:
   effectChance: 48.3
   effectDuration: 6
   effectStrength: 2
-  projectilePrefab: {fileID: 2239567479213953964, guid: 9a1be654a5c11eb4eb719e4468e6450b, type: 3}
+  projectilePrefab: {fileID: 2239567479213953964, guid: 7b996059193cff542963e33de57f2263, type: 3}
   projectileSpawnOffset: {x: 0, y: 1, z: 0.5}
   projectileSpeedMultiplier: 1

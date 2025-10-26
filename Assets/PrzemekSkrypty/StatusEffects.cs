@@ -26,7 +26,7 @@ namespace ElementumDefense.StatusEffects
         /// <summary>
         /// Icon/emoji for debug display
         /// </summary>
-        public abstract string Icon { get; }
+       // public abstract string Icon { get; }
 
         /// <summary>
         /// Remaining duration in seconds
@@ -102,7 +102,7 @@ namespace ElementumDefense.StatusEffects
         /// </summary>
         protected virtual void OnApplied()
         {
-            Debug.Log($"[StatusEffect] {Icon} {DisplayName} applied to {targetGameObject.name} for {MaxDuration}s");
+           // Debug.Log($"[StatusEffect] {Icon} {DisplayName} applied to {targetGameObject.name} for {MaxDuration}s");
         }
 
         /// <summary>
@@ -122,7 +122,7 @@ namespace ElementumDefense.StatusEffects
             if (RefreshOnReapply)
             {
                 RemainingDuration = MaxDuration;
-                Debug.Log($"[StatusEffect] {Icon} {DisplayName} refreshed on {targetGameObject.name}");
+                //Debug.Log($"[StatusEffect] {Icon} {DisplayName} refreshed on {targetGameObject.name}");
             }
         }
 
@@ -134,7 +134,7 @@ namespace ElementumDefense.StatusEffects
             if (IsStackable && StackCount < MaxStacks)
             {
                 StackCount++;
-                Debug.Log($"[StatusEffect] {Icon} {DisplayName} stack added ({StackCount}/{MaxStacks})");
+               // Debug.Log($"[StatusEffect] {Icon} {DisplayName} stack added ({StackCount}/{MaxStacks})");
             }
         }
 
@@ -143,7 +143,7 @@ namespace ElementumDefense.StatusEffects
         /// </summary>
         public virtual void OnExpired()
         {
-            Debug.Log($"[StatusEffect] {Icon} {DisplayName} expired on {targetGameObject.name}");
+           // Debug.Log($"[StatusEffect] {Icon} {DisplayName} expired on {targetGameObject.name}");
         }
 
         /// <summary>
@@ -151,7 +151,7 @@ namespace ElementumDefense.StatusEffects
         /// </summary>
         public virtual void OnRemoved()
         {
-            Debug.Log($"[StatusEffect] {Icon} {DisplayName} removed from {targetGameObject.name}");
+           // Debug.Log($"[StatusEffect] {Icon} {DisplayName} removed from {targetGameObject.name}");
         }
 
         // ==========================================
