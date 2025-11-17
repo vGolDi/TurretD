@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System;
 using Photon.Pun;
 using TMPro;
@@ -9,11 +9,10 @@ public class PlayerHealth : MonoBehaviour
     [SerializeField] private int maxHealth = 100;
     [SerializeField] private int currentHealth;
 
-    //events
     public event Action<int, int> OnHealthChanged;
     public event Action OnPlayerDied;
 
-    public static PlayerHealth LocalInstance {  get; private set; }
+    public static PlayerHealth LocalInstance { get; private set; }
 
     private PhotonView photonView;
     private bool isDead = false;
@@ -22,23 +21,88 @@ public class PlayerHealth : MonoBehaviour
     public int MaxHealth => maxHealth;
     public bool IsDead => isDead;
 
+    //private void Awake()
+    //{
+    //    photonView = GetComponent<PhotonView>();
+    //    Debug.Log($"========== PLAYERHEALTH AWAKE ==========");
+    //    Debug.Log($"[PlayerHealth] GameObject: {gameObject.name}");
+    //    Debug.Log($"[PlayerHealth] GameObject.activeInHierarchy: {gameObject.activeInHierarchy}");
+    //    Debug.Log($"[PlayerHealth] Component enabled: {enabled}");
+    //    // ========== ZMIENIONE: Dodaj walidację ==========
+    //    if (photonView == null)
+    //    {
+    //        Debug.LogError($"[PlayerHealth] No PhotonView on {gameObject.name}!");
+    //        return;
+    //    }
+
+    //    Debug.Log($"[PlayerHealth] Awake - ViewID: {photonView.ViewID}, IsMine: {photonView.IsMine}, Owner: {photonView.Owner?.NickName}");
+
+    //    if (photonView.IsMine)
+    //    {
+    //        LocalInstance = this;
+    //        Debug.Log($"[PlayerHealth] Set as LocalInstance");
+    //    }
+    //    // ================================================
+    //}
     private void Awake()
     {
+        Debug.Log($"========== PLAYERHEALTH AWAKE ==========");
+        Debug.Log($"[PlayerHealth] GameObject: {gameObject.name}");
+        Debug.Log($"[PlayerHealth] GameObject path: {GetFullPath(transform)}");
+
         photonView = GetComponent<PhotonView>();
 
-        if(photonView != null && photonView.IsMine)
+        if (photonView == null)
+        {
+            Debug.LogError($"[PlayerHealth] No PhotonView on {gameObject.name}!");
+            return;
+        }
+
+        Debug.Log($"[PlayerHealth] ViewID: {photonView.ViewID}, IsMine: {photonView.IsMine}, Owner: {photonView.Owner?.NickName}");
+
+        if (photonView.IsMine)
         {
             LocalInstance = this;
+            Debug.Log($"[PlayerHealth] Set as LocalInstance");
         }
+    }
+
+    // Helper method
+    private string GetFullPath(Transform t)
+    {
+        string path = t.name;
+        while (t.parent != null)
+        {
+            t = t.parent;
+            path = t.name + "/" + path;
+        }
+        return path;
     }
     private void Start()
     {
         currentHealth = maxHealth;
         OnHealthChanged?.Invoke(currentHealth, maxHealth);
+
+        // ========== NOWE: Notify HealthUI that player spawned ==========
+        //HealthUI healthUI = FindAnyObjectByType<HealthUI>();
+        //if (healthUI != null)
+        //{
+        //    healthUI.OnPlayerSpawned(this);
+        //    Debug.Log($"[PlayerHealth] Notified HealthUI about spawn");
+        //}
+        //// ===============================================================
     }
 
     public void TakeDamage(int damage)
     {
+        // ========== DODAJ: Sprawdź czy PhotonView jest OK ==========
+        if (photonView == null || photonView.ViewID == 0)
+        {
+            Debug.LogError("[PlayerHealth] Invalid PhotonView - cannot sync damage!");
+            return;
+        }
+        // ===========================================================
+
         currentHealth -= damage;
         currentHealth = Mathf.Max(0, currentHealth);
 
@@ -48,7 +112,18 @@ public class PlayerHealth : MonoBehaviour
 
         if (photonView.IsMine)
         {
-            photonView.RPC("RPC_SyncHealth", RpcTarget.OthersBuffered, currentHealth);
+            Debug.Log($"[PlayerHealth] Syncing health to others via RPC (ViewID: {photonView.ViewID})");
+
+            // ========== ZMIENIONE: Sprawdź ViewID przed RPC ==========
+            if (photonView.ViewID != 0)
+            {
+                photonView.RPC("RPC_SyncHealth", RpcTarget.OthersBuffered, currentHealth);
+            }
+            else
+            {
+                Debug.LogError("[PlayerHealth] ViewID is 0 - cannot send RPC!");
+            }
+            // =========================================================
         }
 
         if (currentHealth <= 0 && !isDead)
@@ -56,10 +131,18 @@ public class PlayerHealth : MonoBehaviour
             Die();
         }
     }
-    
+
     public void Heal(int amount)
     {
         if (isDead) return;
+
+        // ========== DODAJ: Walidacja PhotonView ==========
+        if (photonView == null || photonView.ViewID == 0)
+        {
+            Debug.LogError("[PlayerHealth] Invalid PhotonView - cannot sync heal!");
+            return;
+        }
+        // =================================================
 
         currentHealth += amount;
         currentHealth = Mathf.Min(maxHealth, currentHealth);
@@ -70,13 +153,18 @@ public class PlayerHealth : MonoBehaviour
 
         if (photonView.IsMine)
         {
-            photonView.RPC("RPC_SyncHealth", RpcTarget.OthersBuffered, currentHealth);
+            if (photonView.ViewID != 0)
+            {
+                photonView.RPC("RPC_SyncHealth", RpcTarget.OthersBuffered, currentHealth);
+            }
         }
     }
 
     [PunRPC]
     private void RPC_SyncHealth(int newHealth)
     {
+        Debug.Log($"[PlayerHealth] RPC_SyncHealth received: {newHealth}");
+
         currentHealth = newHealth;
         OnHealthChanged?.Invoke(currentHealth, maxHealth);
 
@@ -95,24 +183,20 @@ public class PlayerHealth : MonoBehaviour
 
         OnPlayerDied?.Invoke();
 
-        // Notify all players about death
-        if (photonView.IsMine)
+        if (photonView.IsMine && photonView.ViewID != 0)
         {
             photonView.RPC("RPC_PlayerDied", RpcTarget.AllBuffered);
         }
 
-        // Trigger game end
         GameEndManager gameEndManager = FindAnyObjectByType<GameEndManager>();
         if (gameEndManager != null)
         {
             if (photonView.IsMine)
             {
-                // I died = I lost
                 gameEndManager.ShowDefeat();
             }
             else
             {
-                // Enemy died = I won
                 gameEndManager.ShowVictory();
             }
         }
@@ -121,6 +205,7 @@ public class PlayerHealth : MonoBehaviour
     [PunRPC]
     private void RPC_PlayerDied()
     {
+        Debug.Log($"[PlayerHealth] RPC_PlayerDied received");
         isDead = true;
         OnPlayerDied?.Invoke();
     }
@@ -130,8 +215,28 @@ public class PlayerHealth : MonoBehaviour
         return photonView;
     }
 
+    private void OnDisable()
+    {
+        Debug.Log($"========== PLAYERHEALTH ONDISABLE ==========");
+        Debug.Log($"[PlayerHealth] GameObject: {gameObject.name}");
+        Debug.Log($"[PlayerHealth] ViewID: {photonView?.ViewID}");
+        Debug.Log($"[PlayerHealth] IsMine: {photonView?.IsMine}");
+        Debug.Log($"[PlayerHealth] ⚠️ DISABLED BY:");
+
+        System.Diagnostics.StackTrace stackTrace = new System.Diagnostics.StackTrace(true);
+        Debug.Log(stackTrace.ToString());
+    }
+
     private void OnDestroy()
     {
+        Debug.Log($"========== PLAYERHEALTH ONDESTROY ==========");
+        Debug.Log($"[PlayerHealth] ViewID: {photonView?.ViewID}");
+        Debug.Log($"[PlayerHealth] IsMine: {photonView?.IsMine}");
+        Debug.Log($"[PlayerHealth] 💀 DESTROYED BY:");
+
+        System.Diagnostics.StackTrace stackTrace = new System.Diagnostics.StackTrace(true);
+        Debug.Log(stackTrace.ToString());
+
         if (LocalInstance == this)
         {
             LocalInstance = null;

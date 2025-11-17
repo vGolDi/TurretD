@@ -1,16 +1,28 @@
-using UnityEngine;
+﻿using UnityEngine;
 using Photon.Pun;
 using System.Collections.Generic;
 
+
+[System.Serializable]
+public struct ArenaPrefabEntry
+{
+    public string arenaType; // np. "Fire", "Ice"
+    public string prefabName; // np. "Arena_Fire_Prefab"
+}
 public class GameManager_MP : MonoBehaviour
 {
     [Header("Prefab References")]
     [SerializeField] private string playerPrefabName = "Player_MP";
-    [SerializeField] private string arenaPrefabName = "Arena_Prefab";
+   // [SerializeField] private string arenaPrefabName = "Arena_Prefab";
 
     [Header("Spawn Configuration")]
     [SerializeField] private Transform[] spawnPoints;
     [SerializeField] private Vector3 arenaOffset = Vector3.zero;
+
+    [Header("Arena Prefabs")]
+    [SerializeField] private ArenaPrefabEntry[] arenaPrefabs;
+    private const string ARENA_TYPE_KEY = "arenaType";
+    private string arenaPrefabNameToLoad;
 
     private Dictionary<int, GameObject> playerArenas = new Dictionary<int, GameObject>();
     private Dictionary<int, GameObject> playerObjects = new Dictionary<int, GameObject>();
@@ -39,9 +51,27 @@ public class GameManager_MP : MonoBehaviour
             return;
         }
 
-        ValidateSetup();
+        // Logika wyboru areny
+        if (PhotonNetwork.CurrentRoom.CustomProperties.TryGetValue(ARENA_TYPE_KEY, out object arenaTypeObj))
+        {
+            string arenaType = (string)arenaTypeObj;
+            arenaPrefabNameToLoad = GetPrefabNameForArenaType(arenaType);
 
-        // CRITICAL: Wait one frame before spawning to ensure Photon is ready
+            Debug.Log($"[GameManager_MP] Odczytano typ areny z pokoju: {arenaType}. Ładuję prefab: {arenaPrefabNameToLoad}");
+
+            if (string.IsNullOrEmpty(arenaPrefabNameToLoad))
+            {
+                Debug.LogError($"Nie znaleziono prefaba dla areny typu: {arenaType}! Ładuję domyślny.");
+                arenaPrefabNameToLoad = "Arena_Prefab"; // Fallback
+            }
+        }
+        else
+        {
+            Debug.LogError("Nie znaleziono właściwości areny w pokoju! Ładuję domyślny.");
+            arenaPrefabNameToLoad = "Arena_Prefab"; // Fallback
+        }
+
+        ValidateSetup();
         StartCoroutine(DelayedSpawn());
     }
 
@@ -83,8 +113,8 @@ public class GameManager_MP : MonoBehaviour
         GameObject playerPrefab = Resources.Load<GameObject>(playerPrefabName);
         Debug.Log($"[GameManager_MP] Player prefab '{playerPrefabName}': {(playerPrefab != null ? "FOUND" : "NOT FOUND")}");
 
-        GameObject arenaPrefab = Resources.Load<GameObject>(arenaPrefabName);
-        Debug.Log($"[GameManager_MP] Arena prefab '{arenaPrefabName}': {(arenaPrefab != null ? "FOUND" : "NOT FOUND")}");
+        GameObject arenaPrefab = Resources.Load<GameObject>(arenaPrefabNameToLoad);
+        Debug.Log($"[GameManager_MP] Arena prefab '{arenaPrefabNameToLoad}': {(arenaPrefab != null ? "FOUND" : "NOT FOUND")}");
     }
 
     private void SpawnPlayerAndArena()
@@ -120,10 +150,10 @@ public class GameManager_MP : MonoBehaviour
     {
         Debug.Log($"========== SPAWNING ARENA FOR PLAYER {actorNumber} ==========");
 
-        GameObject arenaPrefab = Resources.Load<GameObject>(arenaPrefabName);
+        GameObject arenaPrefab = Resources.Load<GameObject>(arenaPrefabNameToLoad);
         if (arenaPrefab == null)
         {
-            Debug.LogError("[GameManager_MP] Arena prefab not found!");
+            Debug.LogError($"[GameManager_MP] Arena prefab '{arenaPrefabNameToLoad}' not found in Resources folder!");
             return;
         }
 
@@ -133,32 +163,136 @@ public class GameManager_MP : MonoBehaviour
         GameObject arena = Instantiate(arenaPrefab, arenaPosition, spawnPoint.rotation);
         arena.name = $"Arena_Player{actorNumber}";
 
-        // USU� TO ST�D! 
-        // ArenaOwner arenaOwner = arena.GetComponent<ArenaOwner>();
-        // if (arenaOwner != null)
-        // {
-        //     arenaOwner.SetOwner(photonView);
-        // }
+        // ... (logi walidacyjne, np. WaveManager, Paths) ...
 
-        // Validation logs
-        WaveManager waveManager = arena.GetComponentInChildren<WaveManager>();
-        GameStartCountdown countdown = arena.GetComponentInChildren<GameStartCountdown>();
-        Paths[] paths = arena.GetComponentsInChildren<Paths>();
+        // ========== POPRAWIONE POWIĄZANIE z PreGameManager ==========
+        // Znajdź komponenty w nowo stworzonej arenie
+        GameStartCountdown foundCountdown = arena.GetComponentInChildren<GameStartCountdown>();
 
-        Debug.Log($"[GameManager_MP] Arena components:");
-        Debug.Log($"  - WaveManager: {(waveManager != null ? "FOUND" : "MISSING")}");
-        Debug.Log($"  - GameStartCountdown: {(countdown != null ? "FOUND" : "MISSING")}");
-        Debug.Log($"  - Paths count: {paths.Length}");
+        // PreGameManager jest jeden na całą scenę
+        PreGameManager preGameManager = FindObjectOfType<PreGameManager>();
+
+        if (preGameManager != null && foundCountdown != null)
+        {
+            Debug.Log("[GameManager_MP] Uruchamianie fazy PreGame...");
+            preGameManager.StartPreGamePhase(foundCountdown); // To jest OK
+        }
+        else
+        {
+            Debug.LogError("Nie znaleziono PreGameManager lub GameStartCountdown! Gra nie wystartuje poprawnie. Uruchamiam countdown awaryjnie.");
+            foundCountdown?.StartCountdown(); // Awaryjnie wywołujemy nową metodę
+        }
+        // ==========================================================
 
         playerArenas[actorNumber] = arena;
-
         Debug.Log($"[GameManager_MP]  Arena spawned for Player {actorNumber}");
-    }
+        //Debug.Log($"========== SPAWNING ARENA FOR PLAYER {actorNumber} ==========");
 
+        //GameObject arenaPrefab = Resources.Load<GameObject>(arenaPrefabName);
+        //if (arenaPrefab == null)
+        //{
+        //    Debug.LogError("[GameManager_MP] Arena prefab not found!");
+        //    return;
+        //}
+
+        //Vector3 arenaPosition = spawnPoint.position + arenaOffset;
+        //Debug.Log($"[GameManager_MP] Arena position: {arenaPosition}");
+
+        //GameObject arena = Instantiate(arenaPrefab, arenaPosition, spawnPoint.rotation);
+        //arena.name = $"Arena_Player{actorNumber}";
+
+        //// Znajdź komponenty
+        //WaveManager waveManager = arena.GetComponentInChildren<WaveManager>();
+
+        //// ========== NOWE: Zarejestruj WaveManager w GameController ==========
+        //GameStartCountdown countdown = FindFirstObjectByType<GameStartCountdown>();
+        //if (countdown != null && waveManager != null)
+        //{
+        //    countdown.RegisterWaveManager(waveManager);
+        //    Debug.Log($"[GameManager_MP] Registered WaveManager with GameController");
+        //}
+        //else
+        //{
+        //    Debug.LogError($"[GameManager_MP] Countdown: {countdown != null}, WaveManager: {waveManager != null}");
+        //}
+        //// ====================================================================
+
+        //playerArenas[actorNumber] = arena;
+
+        //Debug.Log($"[GameManager_MP] ✅ Arena spawned for Player {actorNumber}");
+        ////Debug.Log($"========== SPAWNING ARENA FOR PLAYER {actorNumber} ==========");
+
+        ////GameObject arenaPrefab = Resources.Load<GameObject>(arenaPrefabName);
+        ////if (arenaPrefab == null)
+        ////{
+        ////    Debug.LogError("[GameManager_MP] Arena prefab not found!");
+        ////    return;
+        ////}
+
+        ////Vector3 arenaPosition = spawnPoint.position + arenaOffset;
+        ////Debug.Log($"[GameManager_MP] Arena position: {arenaPosition}");
+
+        ////GameObject arena = Instantiate(arenaPrefab, arenaPosition, spawnPoint.rotation);
+        ////arena.name = $"Arena_Player{actorNumber}";
+
+        ////// USUŃ TO STĄD! 
+        ////// ArenaOwner arenaOwner = arena.GetComponent<ArenaOwner>();
+        ////// if (arenaOwner != null)
+        ////// {
+        //////     arenaOwner.SetOwner(photonView);
+        ////// }
+
+        ////// Validation logs
+        ////WaveManager waveManager = arena.GetComponentInChildren<WaveManager>();
+        ////GameStartCountdown countdown = arena.GetComponentInChildren<GameStartCountdown>();
+        ////Paths[] paths = arena.GetComponentsInChildren<Paths>();
+
+        ////Debug.Log($"[GameManager_MP] Arena components:");
+        ////Debug.Log($"  - WaveManager: {(waveManager != null ? "FOUND" : "MISSING")}");
+        ////Debug.Log($"  - GameStartCountdown: {(countdown != null ? "FOUND" : "MISSING")}");
+        ////Debug.Log($"  - Paths count: {paths.Length}");
+
+        ////playerArenas[actorNumber] = arena;
+
+        ////Debug.Log($"[GameManager_MP]  Arena spawned for Player {actorNumber}");
+    }
+    private string GetPrefabNameForArenaType(string arenaType)
+    {
+        foreach (var entry in arenaPrefabs)
+        {
+            if (entry.arenaType.Equals(arenaType, System.StringComparison.OrdinalIgnoreCase))
+            {
+                return entry.prefabName;
+            }
+        }
+        return null;
+    }
     private void SpawnPlayer(Transform spawnPoint, int actorNumber)
     {
+        //Debug.Log($"========== SPAWNING PLAYER {actorNumber} ==========");
+        //Debug.Log($"[GameManager_MP] Player spawn position: {spawnPoint.position}");
+
+        //GameObject playerObject = PhotonNetwork.Instantiate(
+        //    playerPrefabName,
+        //    spawnPoint.position,
+        //    spawnPoint.rotation
+        //);
+
+        //Debug.Log($"[GameManager_MP] Player instantiated: {playerObject.name}");
         Debug.Log($"========== SPAWNING PLAYER {actorNumber} ==========");
         Debug.Log($"[GameManager_MP] Player spawn position: {spawnPoint.position}");
+        Debug.Log($"[GameManager_MP] PhotonNetwork.IsConnected: {PhotonNetwork.IsConnected}");
+        Debug.Log($"[GameManager_MP] PhotonNetwork.InRoom: {PhotonNetwork.InRoom}");
+
+        // ========== DODAJ: Sprawdź czy prefab istnieje ==========
+        GameObject prefabCheck = Resources.Load<GameObject>(playerPrefabName);
+        Debug.Log($"[GameManager_MP] Prefab '{playerPrefabName}' exists in Resources: {prefabCheck != null}");
+        if (prefabCheck != null)
+        {
+            PlayerHealth healthCheck = prefabCheck.GetComponentInChildren<PlayerHealth>();
+            Debug.Log($"[GameManager_MP] Prefab has PlayerHealth: {healthCheck != null}");
+        }
+        // =========================================================
 
         GameObject playerObject = PhotonNetwork.Instantiate(
             playerPrefabName,
@@ -167,6 +301,17 @@ public class GameManager_MP : MonoBehaviour
         );
 
         Debug.Log($"[GameManager_MP] Player instantiated: {playerObject.name}");
+        Debug.Log($"[GameManager_MP] Player has {playerObject.transform.childCount} children");
+
+        // ========== DODAJ: Sprawdź PlayerHealth na zaspawnowanym obiekcie ==========
+        PlayerHealth health = playerObject.GetComponentInChildren<PlayerHealth>();
+        Debug.Log($"[GameManager_MP] Spawned player has PlayerHealth: {health != null}");
+        if (health != null)
+        {
+            Debug.Log($"[GameManager_MP] PlayerHealth.enabled: {health.enabled}");
+            Debug.Log($"[GameManager_MP] PlayerHealth.gameObject.activeInHierarchy: {health.gameObject.activeInHierarchy}");
+        }
+        // ===========================================================================
 
         PhotonView pv = playerObject.GetComponent<PhotonView>();
         if (pv != null)

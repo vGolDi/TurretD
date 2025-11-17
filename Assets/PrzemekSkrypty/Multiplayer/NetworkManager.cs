@@ -279,6 +279,10 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     [SerializeField] private string gameVersion = "0.1";
     [SerializeField] private string gameSceneName = "SampleScene";
 
+    [Header("Arena Settings")]
+    [SerializeField] private string[] availableArenaTypes = { "Fire", "Ice", "Earth" };
+    private const string ARENA_TYPE_KEY = "arenaType";
+
     private bool isLoadingGame = false;
 
     private void Start()
@@ -392,6 +396,26 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
     private void CheckPlayerCount()
     {
+        //if (isLoadingGame)
+        //{
+        //    Debug.Log("[NetworkManager] Already loading game - skipping");
+        //    return;
+        //}
+
+        //Debug.Log($"[NetworkManager] CheckPlayerCount: {PhotonNetwork.CurrentRoom.PlayerCount}/{maxPlayersPerRoom}, IsMasterClient: {PhotonNetwork.IsMasterClient}");
+
+        //if (PhotonNetwork.CurrentRoom.PlayerCount >= maxPlayersPerRoom)
+        //{
+        //    isLoadingGame = true;
+        //    UpdateStatus("Match found! Starting game...");
+
+        //    if (waitingText != null) waitingText.SetActive(false);
+
+        //    Debug.Log("[NetworkManager] Starting game in 1 second...");
+
+        //    //  Wszyscy gracze ³aduj¹ scenê
+        //    StartCoroutine(LoadGameSceneCoroutine());
+        //}
         if (isLoadingGame)
         {
             Debug.Log("[NetworkManager] Already loading game - skipping");
@@ -402,27 +426,58 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
         if (PhotonNetwork.CurrentRoom.PlayerCount >= maxPlayersPerRoom)
         {
-            isLoadingGame = true;
-            UpdateStatus("Match found! Starting game...");
-
+            UpdateStatus("Match found! Preparing game...");
             if (waitingText != null) waitingText.SetActive(false);
 
-            Debug.Log("[NetworkManager] Starting game in 1 second...");
+            // Tylko Master Client losuje arenê i uruchamia grê dla wszystkich
+            if (PhotonNetwork.IsMasterClient)
+            {
+                // 1. Losuj arenê
+                string chosenArena = availableArenaTypes[Random.Range(0, availableArenaTypes.Length)];
+                Debug.Log($"[NetworkManager] Master Client wylosowa³ arenê: {chosenArena}");
 
-            //  Wszyscy gracze ³aduj¹ scenê
-            StartCoroutine(LoadGameSceneCoroutine());
+                // 2. Ustaw w³aœciwoœæ pokoju, aby wszyscy gracze j¹ znali
+                ExitGames.Client.Photon.Hashtable roomProps = new ExitGames.Client.Photon.Hashtable
+                {
+                    { ARENA_TYPE_KEY, chosenArena }
+                };
+                PhotonNetwork.CurrentRoom.SetCustomProperties(roomProps);
+
+                // 3. Zamknij pokój, ¿eby nikt wiêcej nie do³¹czy³
+                PhotonNetwork.CurrentRoom.IsOpen = false;
+
+                // 4. Wywo³aj RPC, ¿eby wszyscy gracze za³adowali scenê
+                Debug.Log("[NetworkManager] Sending RPC to load game scene for all players...");
+                photonView.RPC("RPC_LoadGameScene", RpcTarget.All);
+            }
         }
     }
+    [PunRPC]
+    private void RPC_LoadGameScene()
+    {
+        if (isLoadingGame) return;
+        isLoadingGame = true;
+
+        Debug.Log($"[NetworkManager] Otrzymano sygna³ do za³adowania sceny gry: {gameSceneName}");
+        StartCoroutine(LoadGameSceneCoroutine());
+    }
+    // ===================================
 
     private System.Collections.IEnumerator LoadGameSceneCoroutine()
     {
         yield return new WaitForSeconds(1f);
-
         Debug.Log($"[NetworkManager] Loading scene: {gameSceneName} (Local load)");
-
-        //  KLUCZOWA ZMIANA: U¿yj normalnego SceneManager
         SceneManager.LoadScene(gameSceneName);
     }
+    //private System.Collections.IEnumerator LoadGameSceneCoroutine()
+    //{
+    //    yield return new WaitForSeconds(1f);
+
+    //    Debug.Log($"[NetworkManager] Loading scene: {gameSceneName} (Local load)");
+
+    //    //  KLUCZOWA ZMIANA: U¿yj normalnego SceneManager
+    //    SceneManager.LoadScene(gameSceneName);
+    //}
 
     private void UpdateStatus(string message)
     {

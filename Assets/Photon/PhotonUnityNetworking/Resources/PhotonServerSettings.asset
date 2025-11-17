@@ -43,6 +43,15 @@ MonoBehaviour:
   - RPC_StartCountdown
   - RPC_PlayerDied
   - RPC_SyncHealth
+  - RPC_ReceiveRarityCombination
+  - RPC_PlayerSelectedSabotage
+  - RPC_ReceiveSabotageRarities
+  - RPC_PlayerDraftComplete
+  - RPC_StartWaves
+  - RPC_LoadGameScene
+  - RPC_EndDraft
+  - RPC_PlayerIsReady
+  - RPC_EndDraft_Public
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

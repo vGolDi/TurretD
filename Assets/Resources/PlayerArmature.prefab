@@ -155,6 +155,9 @@ GameObject:
   - component: {fileID: 8191898322271192458}
   - component: {fileID: 8443854457273866600}
   - component: {fileID: 1755303372287176825}
+  - component: {fileID: 3996564806253181415}
+  - component: {fileID: 593598051380815277}
+  - component: {fileID: 7998198607994484587}
   m_Layer: 0
   m_Name: PlayerArmature
   m_TagString: Player
@@ -480,7 +483,7 @@ MonoBehaviour:
   Group: 0
   prefixField: -1
   Synchronization: 3
-  OwnershipTransfer: 1
+  OwnershipTransfer: 0
   observableSearch: 0
   ObservedComponents:
   - {fileID: 0}
@@ -572,6 +575,59 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerHealth
   maxHealth: 100
   currentHealth: 100
+--- !u!114 &3996564806253181415
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 746025431052519908}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5c009bae5710aae49ab3bc02fed17c8f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ElementumDefense.Cards.DraftManager
+  playerDeck: {fileID: 0}
+  starterDraftTime: 60
+  midGameDraftTime: 30
+  wavesBetweenDrafts: 5
+  starterRaritySlots: 0200000001000000010000000000000000000000
+  midGameChoices: 3
+--- !u!114 &593598051380815277
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 746025431052519908}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 562b656e927cb2842b01be99423cfa5d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ElementumDefense.Cards.SabotageDraftManager
+  wavesBetweenSabotages: 5
+  sabotageChoiceTime: 20
+  revealDuration: 5
+  sabotageChoices: 3
+--- !u!114 &7998198607994484587
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 746025431052519908}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 499efd1f5618d444e8bac95f326ddc20, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ElementumDefense.Cards.PlayerCardManager
+  activeCards: []
+  damageMultiplier: 1
+  fireRateMultiplier: 1
+  rangeMultiplier: 1
+  turretCostMultiplier: 1
+  passiveGoldPerSecond: 0
+  activeSabotages: []
 --- !u!1 &857115390088595478
 GameObject:
   m_ObjectHideFlags: 0

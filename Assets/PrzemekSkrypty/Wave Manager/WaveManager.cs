@@ -2,6 +2,7 @@ using System.IO;
 using UnityEngine;
 using System.Collections;
 using TMPro;
+using ElementumDefense.Cards;
 
 /// <summary>
 /// Manages wave spawning and UI display
@@ -29,9 +30,24 @@ public class WaveManager : MonoBehaviour
     private int enemiesAlive = 0;
     private int totalEnemiesInCurrentWave = 0;
 
+    private DraftManager draftManager;
+    private SabotageDraftManager sabotageDraftManager;
+    private ArenaOwner arenaOwner;
+
     private void Start()
     {
         Debug.Log($"[WaveManager] Started on {gameObject.name}");
+
+        arenaOwner = GetComponentInParent<ArenaOwner>();
+
+        if (arenaOwner?.ownerPhotonView != null)
+        {
+            draftManager = arenaOwner.ownerPhotonView.GetComponent<DraftManager>();
+            sabotageDraftManager = arenaOwner.ownerPhotonView.GetComponent<SabotageDraftManager>();
+
+            Debug.Log($"[WaveManager] Found DraftManager: {(draftManager != null ? "YES" : "NO")}");
+            Debug.Log($"[WaveManager] Found SabotageDraftManager: {(sabotageDraftManager != null ? "YES" : "NO")}");
+        }
 
         // Validate setup
         if (waves == null || waves.Length == 0)
@@ -94,6 +110,27 @@ public class WaveManager : MonoBehaviour
                 totalEnemiesInCurrentWave += part.enemyCount;
             }
 
+            if (draftManager != null && currentWaveIndex > 0)
+            {
+                draftManager.CheckMidGameDraft(currentWaveIndex);
+
+                // Wait for draft to finish
+                while (draftManager.IsDrafting)
+                {
+                    yield return null;
+                }
+            }
+            if (sabotageDraftManager != null && currentWaveIndex > 0)
+            {
+                sabotageDraftManager.CheckSabotageDraft(currentWaveIndex);
+
+                // Wait for sabotage draft to finish
+                while (sabotageDraftManager.IsDrafting)
+                {
+                    yield return null;
+                }
+            }
+
             // Show wave start notification
             StartCoroutine(ShowWaveInfo($"Wave {currentWaveIndex + 1}/{waves.Length}"));
 
@@ -102,6 +139,13 @@ public class WaveManager : MonoBehaviour
 
             // Wait for all enemies to be killed
             yield return new WaitUntil(() => enemiesAlive <= 0);
+
+            ArenaOwner arenaOwner = GetComponentInParent<ArenaOwner>();
+            if (arenaOwner?.ownerPhotonView != null)
+            {
+                PlayerCardManager cardManager = arenaOwner.ownerPhotonView.GetComponent<PlayerCardManager>();
+                cardManager?.OnWaveCompleted();
+            }
 
             // Delay before next wave
             yield return new WaitForSeconds(currentWave.delayAfterWave);

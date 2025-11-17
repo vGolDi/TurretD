@@ -1,6 +1,7 @@
 using UnityEngine;
 using Photon.Pun;
 using ElementumDefense.UI;
+using ElementumDefense.Cards;
 
 /// <summary>
 /// Manages turret building via hotbar system
@@ -25,7 +26,7 @@ public class BuildManager : MonoBehaviour
         playerInputManager = GetComponent<PlayerInputManager>();
         photonView = GetComponent<PhotonView>();
 
-        hotbarUI = FindObjectOfType<HotbarUI>();
+        hotbarUI = FindFirstObjectByType<HotbarUI>();
     }
 
     private void Update()
@@ -71,14 +72,19 @@ public class BuildManager : MonoBehaviour
     /// </summary>
     public void SelectTurretToBuild(TurretData turret)
     {
-        if (playerBuilder == null || playerInputManager == null || turret == null)
-        {
-            Debug.LogWarning("[BuildManager] Missing component or null turret");
-            return;
-        }
+        if (turret == null) return;
 
-        // Check if player can afford it
-        if (PlayerGold.LocalInstance.HasEnough(turret.cost))
+        // ========== NOWE: Apply cost modifier ==========
+        int finalCost = turret.cost;
+
+        PlayerCardManager cardManager = GetComponent<PlayerCardManager>();
+        if (cardManager != null)
+        {
+            finalCost = cardManager.GetModifiedTurretCost(turret.cost);
+        }
+        // ================================================
+
+        if (PlayerGold.LocalInstance.HasEnough(finalCost))
         {
             selectedTurret = turret;
             playerInputManager.EnterBuildMode();
@@ -86,8 +92,7 @@ public class BuildManager : MonoBehaviour
         }
         else
         {
-            Debug.Log($"[BuildManager] Not enough gold for {turret.turretName} (need {turret.cost})");
-            // TODO: Play error sound/show UI feedback
+            Debug.Log($"[BuildManager] Not enough gold (need {finalCost})");
         }
     }
 

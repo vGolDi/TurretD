@@ -62,7 +62,7 @@ namespace ElementumDefense.UI
         {
             // Find player components
             playerGold = PlayerGold.LocalInstance;
-            buildManager = FindObjectOfType<BuildManager>();
+            buildManager = FindFirstObjectByType<BuildManager>();
 
             if (playerGold == null)
             {

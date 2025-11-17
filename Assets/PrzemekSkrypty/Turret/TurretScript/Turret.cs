@@ -255,7 +255,8 @@ using Photon.Pun;
 using UnityEngine;
 using ElementumDefense.Elements;
 using ElementumDefense.StatusEffects;
-using ElementumDefense.Projectiles; // NOWE!
+using ElementumDefense.Projectiles;
+using ElementumDefense.Cards;
 
 [RequireComponent(typeof(TurretInteract))]
 public class Turret : MonoBehaviour
@@ -505,6 +506,16 @@ public class Turret : MonoBehaviour
     {
         this.turretData = data;
         this.ownerPhotonView = owner;
+
+        PlayerCardManager cardManager = owner?.GetComponent<PlayerCardManager>();
+        if (cardManager != null)
+        {
+            turretData.damage = cardManager.GetModifiedTurretDamage((int)turretData.damage);
+            turretData.fireRate = cardManager.GetModifiedFireRate(turretData.fireRate);
+            turretData.range = cardManager.GetModifiedRange(turretData.range);
+        }
+        // ================================================
+
         UpdateVisuals();
     }
 

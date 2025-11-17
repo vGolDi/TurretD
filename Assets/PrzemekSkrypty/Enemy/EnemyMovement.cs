@@ -20,16 +20,16 @@ public class EnemyMovement : MonoBehaviour
     private float currentSpeedModifier = 1f;
     private StatusEffectManager statusEffectManager;
 
-    [Header("NavMesh Avoidance")]
-    [SerializeField, Tooltip("Avoidance priority (lower = higher priority)")]
-    private int avoidancePriority = 50;
+    //[Header("NavMesh Avoidance")]
+    //[SerializeField, Tooltip("Avoidance priority (lower = higher priority)")]
+    //private int avoidancePriority = 50;
 
     [SerializeField, Tooltip("Avoidance radius")]
     private float avoidanceRadius = 0.5f;
 
-    [SerializeField, Tooltip("How much to avoid other agents (0-1)")]
-    [Range(0f, 1f)]
-    private float avoidanceWeight = 0.5f;
+    //[SerializeField, Tooltip("How much to avoid other agents (0-1)")]
+    //[Range(0f, 1f)]
+    //private float avoidanceWeight = 0.5f;
 
     // ========== NOWE: Path Refresh System ==========
     [Header("Path Refresh (Bug Fix)")]

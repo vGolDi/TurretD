@@ -13,11 +13,13 @@ public class MainMenuController : MonoBehaviour
     [SerializeField] private GameObject mainMenuPanel;
     [SerializeField] private GameObject settingsPanel;
     [SerializeField] private GameObject creditsPanel;
-    [SerializeField] private GameObject loadingPanel; // NEW!
+    [SerializeField] private GameObject loadingPanel;
+    [SerializeField] private GameObject deckbuilderPanel;
 
     [Header("Main Menu Buttons")]
     [SerializeField] private Button multiPlayerButton;
     [SerializeField] private Button settingsButton;
+    [SerializeField] private Button deckbuilderButton;
     [SerializeField] private Button creditsButton;
     [SerializeField] private Button quitButton;
 
@@ -67,6 +69,9 @@ public class MainMenuController : MonoBehaviour
         // Setup main menu button listeners
         if (multiPlayerButton != null)
             multiPlayerButton.onClick.AddListener(() => { PlayButtonSound(); StartMultiPlayer(); });
+
+        if (deckbuilderButton != null)
+            deckbuilderButton.onClick.AddListener(() => { PlayButtonSound(); OpenDeckbuilder(); });
 
         if (settingsButton != null)
             settingsButton.onClick.AddListener(() => { PlayButtonSound(); OpenSettings(); });
@@ -190,6 +195,14 @@ public class MainMenuController : MonoBehaviour
     #region Panel Management
 
     /// <summary>
+    /// Opens deckbuilder panel
+    /// </summary>
+    public void OpenDeckbuilder()
+    {
+        ShowPanel(deckbuilderPanel);
+        Debug.Log("[MainMenu] Opened deckbuilder");
+    }
+    /// <summary>
     /// Opens settings panel
     /// </summary>
     public void OpenSettings()
@@ -225,6 +238,7 @@ public class MainMenuController : MonoBehaviour
         settingsPanel?.SetActive(panel == settingsPanel);
         creditsPanel?.SetActive(panel == creditsPanel);
         loadingPanel?.SetActive(panel == loadingPanel);
+        deckbuilderPanel?.SetActive(panel == deckbuilderPanel);
     }
 
     #endregion

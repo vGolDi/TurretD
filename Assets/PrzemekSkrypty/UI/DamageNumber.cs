@@ -52,7 +52,7 @@ namespace ElementumDefense.UI
                 // Metoda 2: Jeúli Camera.main nie dzia≥a, znajdü pierwszπ aktywnπ
                 if (mainCamera == null)
                 {
-                    mainCamera = FindObjectOfType<Camera>();
+                    mainCamera = FindFirstObjectByType<Camera>();
                 }
 
                 // Debug
