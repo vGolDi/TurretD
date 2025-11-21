@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using TMPro;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 
 namespace ElementumDefense.Cards
 {
@@ -456,6 +457,7 @@ private void RefreshCollectionDisplay()
                     Image cardIcon = slotObj.transform.Find("CardIcon")?.GetComponent<Image>();
                     TextMeshProUGUI cardName = slotObj.transform.Find("CardName")?.GetComponent<TextMeshProUGUI>();
                     TextMeshProUGUI rarityText = slotObj.transform.Find("RarityText")?.GetComponent<TextMeshProUGUI>();
+                    TextMeshProUGUI description = slotObj.transform.Find("Description")?.GetComponent<TextMeshProUGUI>();
                     Image rarityBorder = slotObj.transform.Find("RarityBorder")?.GetComponent<Image>();
                     Image topLine = slotObj.transform.Find("LineTop")?.GetComponent<Image>();
                     Image bottomLine = slotObj.transform.Find("LineBottom")?.GetComponent<Image>();
@@ -477,7 +479,10 @@ private void RefreshCollectionDisplay()
                     {
                         rarityBorder.color = card.GetRarityColor();
                     }
-                    
+                    if (description != null)
+                    {
+                        description.text = card.description;
+                    }
                     // DODANE: Ustaw linie (jeśli istnieją)
                     if (topLine != null)
                     {
@@ -531,7 +536,8 @@ private void RefreshDeckDisplay()
                 // Spróbuj różnych ścieżek dla LineTop i LineBottom
                 Image lineTop = slotObj.transform.Find("LineTop")?.GetComponent<Image>();
                 Image lineBottom = slotObj.transform.Find("LineBottom")?.GetComponent<Image>();
-                
+                TextMeshProUGUI description = slotObj.transform.Find("Description")?.GetComponent<TextMeshProUGUI>();
+
                 Button removeButton = slotObj.GetComponent<Button>();
 
                 if (fullCardImage != null)
@@ -559,7 +565,10 @@ private void RefreshDeckDisplay()
                 {
                     rarityBorder.color = card.GetRarityColor();
                 }
-                
+                if (description != null)
+                {
+                    description.text = card.description;
+                }
                 // Ustaw kolor linii górnej i dolnej
                 if (lineTop != null)
                 {

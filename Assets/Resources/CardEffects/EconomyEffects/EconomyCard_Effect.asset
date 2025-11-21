@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e9cd153034c4c52418fcfa6e6c153cd5, type: 3}
   m_Name: EconomyCard_Effect
   m_EditorClassIdentifier: Assembly-CSharp::ElementumDefense.Cards.EconomyCardEffect
-  effectDescription: Effect description...
+  effectDescription: +50 gold instantly - 5 gold per second
   goldPerSecond: 5
   instantGoldBonus: 50
   turretCostDiscount: 0
