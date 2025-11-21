@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.Collections.Generic;
@@ -425,7 +425,7 @@ namespace ElementumDefense.Cards
         /// <summary>
         /// Refreshes collection display (left side)
         /// </summary>
-        private void RefreshCollectionDisplay()
+private void RefreshCollectionDisplay()
         {
             if (collectionContent == null || cardSlotPrefab == null || playerCollection == null) return;
 
@@ -440,20 +440,60 @@ namespace ElementumDefense.Cards
             {
                 GameObject slotObj = Instantiate(cardSlotPrefab, collectionContent);
 
-                // Znajdź elementy po nazwie
-                Image cardIcon = slotObj.transform.Find("CardIcon")?.GetComponent<Image>();
-                TextMeshProUGUI cardName = slotObj.transform.Find("CardName")?.GetComponent<TextMeshProUGUI>();
-                Button clickButton = slotObj.GetComponent<Button>();
-
-                // Ustaw dane
-                if (cardIcon != null) cardIcon.sprite = card.cardIcon;
-                if (cardName != null) cardName.text = card.cardName;
-
-                // Ustaw kliknięcie
-                if (clickButton != null)
+                // Spróbuj użyć DeckbuilderCardSlot jeśli istnieje
+                DeckbuilderCardSlot cardSlot = slotObj.GetComponent<DeckbuilderCardSlot>();
+                
+                if (cardSlot != null)
                 {
-                    clickButton.onClick.RemoveAllListeners();
-                    clickButton.onClick.AddListener(() => AddCardToDeck(card));
+                    // Użyj metody SetCard() która prawidłowo ustawia wszystkie elementy
+                    bool unlocked = playerCollection.IsUnlocked(card);
+                    cardSlot.SetCard(card, unlocked);
+                    cardSlot.SetClickCallback(() => AddCardToDeck(card));
+                }
+                else
+                {
+                    // Fallback - ręczne ustawienie
+                    Image cardIcon = slotObj.transform.Find("CardIcon")?.GetComponent<Image>();
+                    TextMeshProUGUI cardName = slotObj.transform.Find("CardName")?.GetComponent<TextMeshProUGUI>();
+                    TextMeshProUGUI rarityText = slotObj.transform.Find("RarityText")?.GetComponent<TextMeshProUGUI>();
+                    Image rarityBorder = slotObj.transform.Find("RarityBorder")?.GetComponent<Image>();
+                    Image topLine = slotObj.transform.Find("LineTop")?.GetComponent<Image>();
+                    Image bottomLine = slotObj.transform.Find("LineBottom")?.GetComponent<Image>();
+                    Button clickButton = slotObj.GetComponent<Button>();
+
+                    // Ustaw dane karty
+                    if (cardIcon != null) cardIcon.sprite = card.cardIcon;
+                    if (cardName != null) cardName.text = card.cardName;
+                    
+                    // DODANE: Ustaw rarity text
+                    if (rarityText != null)
+                    {
+                        rarityText.text = card.rarity.ToString();
+                        rarityText.color = card.GetRarityColor();
+                    }
+                    
+                    // DODANE: Ustaw ramkę rzadkości
+                    if (rarityBorder != null)
+                    {
+                        rarityBorder.color = card.GetRarityColor();
+                    }
+                    
+                    // DODANE: Ustaw linie (jeśli istnieją)
+                    if (topLine != null)
+                    {
+                        topLine.color = card.GetRarityColor();
+                    }
+                    if (bottomLine != null)
+                    {
+                        bottomLine.color = card.GetRarityColor();
+                    }
+
+                    // Ustaw kliknięcie
+                    if (clickButton != null)
+                    {
+                        clickButton.onClick.RemoveAllListeners();
+                        clickButton.onClick.AddListener(() => AddCardToDeck(card));
+                    }
                 }
             }
         }
@@ -461,7 +501,7 @@ namespace ElementumDefense.Cards
         /// <summary>
         /// Refreshes deck display (right side)
         /// </summary>
-        private void RefreshDeckDisplay()
+private void RefreshDeckDisplay()
         {
             if (deckContent == null || deckCardSlotPrefab == null || currentDeck == null) return;
 
@@ -486,6 +526,12 @@ namespace ElementumDefense.Cards
                 Image fullCardImage = slotObj.transform.Find("Header/IconMask/FullCardImage")?.GetComponent<Image>();
                 TextMeshProUGUI cardNameText = slotObj.transform.Find("Header/CardName")?.GetComponent<TextMeshProUGUI>();
                 TextMeshProUGUI rarityText = slotObj.transform.Find("Header/RarityText")?.GetComponent<TextMeshProUGUI>();
+                Image rarityBorder = slotObj.transform.Find("RarityBorder")?.GetComponent<Image>();
+                
+                // Spróbuj różnych ścieżek dla LineTop i LineBottom
+                Image lineTop = slotObj.transform.Find("LineTop")?.GetComponent<Image>();
+                Image lineBottom = slotObj.transform.Find("LineBottom")?.GetComponent<Image>();
+                
                 Button removeButton = slotObj.GetComponent<Button>();
 
                 if (fullCardImage != null)
@@ -495,10 +541,6 @@ namespace ElementumDefense.Cards
                         fullCardImage.sprite = card.cardIcon;
                         fullCardImage.color = Color.white;
                     }
-                }
-                else
-                {
-                    Debug.LogError($"[DeckbuilderUI] Nie znaleziono 'FullCardImage' w prefabie!");
                 }
 
                 if (cardNameText != null)
@@ -510,6 +552,23 @@ namespace ElementumDefense.Cards
                 {
                     rarityText.text = card.rarity.ToString();
                     rarityText.color = card.GetRarityColor();
+                }
+                
+                // Ustaw kolor ramki rzadkości
+                if (rarityBorder != null)
+                {
+                    rarityBorder.color = card.GetRarityColor();
+                }
+                
+                // Ustaw kolor linii górnej i dolnej
+                if (lineTop != null)
+                {
+                    lineTop.color = card.GetRarityColor();
+                }
+                
+                if (lineBottom != null)
+                {
+                    lineBottom.color = card.GetRarityColor();
                 }
 
                 if (removeButton != null)
@@ -553,7 +612,7 @@ namespace ElementumDefense.Cards
         /// <summary>
         /// Updates deck size and rarity counters
         /// </summary>
-        private void UpdateCounters()
+private void UpdateCounters()
         {
             if (currentDeck == null) return;
 
@@ -576,22 +635,25 @@ namespace ElementumDefense.Cards
             // Rarity counts
             var (leg, rare, com) = currentDeck.GetRarityCounts();
 
+            // LEGENDARY COUNTER
             if (legendaryCountText != null)
             {
-                legendaryCountText.text = $"{leg}/{DeckData.MAX_LEGENDARY}";
-                legendaryCountText.color = leg <= DeckData.MAX_LEGENDARY ? Color.white : Color.red;
+                legendaryCountText.text = $"LEGENDARY\n{leg}/{DeckData.MAX_LEGENDARY}";
+                legendaryCountText.color = new Color(1f, 0.8f, 0f); // Gold
             }
 
+            // RARE COUNTER
             if (rareCountText != null)
             {
-                rareCountText.text = $"{rare}/{DeckData.MAX_RARE}";
-                rareCountText.color = rare <= DeckData.MAX_RARE ? Color.white : Color.red;
+                rareCountText.text = $"RARE\n{rare}/{DeckData.MAX_RARE}";
+                rareCountText.color = new Color(0.3f, 0.6f, 1f); // Blue
             }
 
+            // COMMON COUNTER
             if (commonCountText != null)
             {
-                commonCountText.text = $"{com}/{DeckData.MAX_COMMON}";
-                commonCountText.color = com <= DeckData.MAX_COMMON ? Color.white : Color.red;
+                commonCountText.text = $"COMMON\n{com}/{DeckData.MAX_COMMON}";
+                commonCountText.color = new Color(0.8f, 0.8f, 0.8f); // Gray
             }
         }
 
@@ -657,6 +719,10 @@ namespace ElementumDefense.Cards
         public GameObject lockedOverlay;
         public Button clickButton;
 
+        //test
+        public Image TopLine;
+        public Image BottomLine;
+
         private CardData currentCard;
         private bool isUnlocked;
 
@@ -685,7 +751,12 @@ namespace ElementumDefense.Cards
             {
                 rarityBorder.color = card.GetRarityColor();
             }
-
+            //test
+            if (TopLine != null && BottomLine != null)
+            {
+                TopLine.color = card.GetRarityColor();
+                BottomLine.color = card.GetRarityColor();
+            }
             // Locked state
             if (lockedOverlay != null)
             {

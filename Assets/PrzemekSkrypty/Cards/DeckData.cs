@@ -23,7 +23,7 @@ namespace ElementumDefense.Cards
         public List<CardData> cards = new List<CardData>();
 
         [Header("Limits")]
-        public const int MIN_DECK_SIZE = 25;
+        public const int MIN_DECK_SIZE = 30;
         public const int MAX_DECK_SIZE = 30;
 
         public const int MAX_LEGENDARY = 5;

@@ -1,5 +1,6 @@
-﻿using UnityEngine;
+using UnityEngine;
 using ElementumDefense.Elements;
+using UnityEngine.UI;
 
 namespace ElementumDefense.Cards
 {
@@ -89,17 +90,26 @@ namespace ElementumDefense.Cards
         /// <summary>
         /// Returns rarity color for UI
         /// </summary>
-        public Color GetRarityColor()
+public Color GetRarityColor()
         {
-            if (cardColor != Color.white)
-                return cardColor;
-
+            // ZAWSZE zwracaj kolor bazujący na rarity - ignoruj cardColor
+            // To zapewnia spójność kolorów dla wszystkich kart tego samego rarity
             return rarity switch
             {
                 CardRarity.Common => new Color(0.8f, 0.8f, 0.8f),    // Gray
                 CardRarity.Rare => new Color(0.3f, 0.6f, 1f),        // Blue
                 CardRarity.Legendary => new Color(1f, 0.8f, 0f),     // Gold
                 _ => Color.white
+            };
+        }
+        public string GetRarityName()
+        {
+            return rarity switch
+            {
+                CardRarity.Common => "COMMON",
+                CardRarity.Rare => "RARE",
+                CardRarity.Legendary => "LEGENDARY",
+                _ => "UNKNOWN"
             };
         }
 

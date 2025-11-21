@@ -18,7 +18,7 @@ MonoBehaviour:
   cardType: 1
   activationType: 1
   cardIcon: {fileID: 0}
-  cardColor: {r: 0.8, g: 0.8, b: 0.8, a: 1}
+  cardColor: {r: 0.98469853, g: 1, b: 0, a: 1}
   associatedElement: 0
   maxCopiesInDeck: 0
   requiredLevel: 1

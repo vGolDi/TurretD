@@ -138,6 +138,11 @@ namespace ElementumDefense.Cards
             TextMeshProUGUI cardName = slotObj.transform.Find("CardName")?.GetComponent<TextMeshProUGUI>();
             TextMeshProUGUI description = slotObj.transform.Find("Description")?.GetComponent<TextMeshProUGUI>();
             Image rarityBorder = slotObj.transform.Find("RarityBorder")?.GetComponent<Image>();
+            //test
+            Image topLine = slotObj.transform.Find("LineTop")?.GetComponent<Image>();
+            Image botLine = slotObj.transform.Find("LineBottom")?.GetComponent<Image>();
+            TextMeshProUGUI rarityText = slotObj.transform.Find("RarityText")?.GetComponent<TextMeshProUGUI>();
+
             Button selectBtn = slotObj.GetComponent<Button>();
             Button mulliganBtn = slotObj.transform.Find("MulliganButton")?.GetComponent<Button>();
 
@@ -152,6 +157,18 @@ namespace ElementumDefense.Cards
 
             if (rarityBorder != null)
                 rarityBorder.color = card.GetRarityColor();
+
+            //test 
+            if (topLine != null && botLine != null)
+            {
+                topLine.color = card.GetRarityColor();
+                botLine.color = card.GetRarityColor();
+            }
+            if (rarityText != null)
+            {
+                rarityText.text = card.GetRarityName();
+                rarityText.color = card.GetRarityColor(); // Opcjonalnie: ten sam kolor co border
+            }
 
             if (isStarter)
             {
