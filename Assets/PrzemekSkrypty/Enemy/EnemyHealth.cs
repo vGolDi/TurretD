@@ -106,7 +106,7 @@ public class EnemyHealth : MonoBehaviour
     }
     private void Die(int killerPhotonViewID)
     {
-        // Award gold to the player who killed this enemy
+        // 1. Waluta (istniej¹cy kod)
         if (killerPhotonViewID != -1)
         {
             PhotonView killerView = PhotonView.Find(killerPhotonViewID);
@@ -120,6 +120,21 @@ public class EnemyHealth : MonoBehaviour
             }
         }
 
+        // 2. DODAJ TO: Raportowanie do QuestManagera
+        // Sprawdzamy czy to my zabiliœmy (killerPhotonViewID != -1 oznacza ¿e trafi³a go wie¿a/pocisk)
+        // Wa¿ne: Musimy siê upewniæ, ¿e zaliczamy to lokalnemu graczowi tylko jeœli to JEGO wie¿a zabi³a,
+        // LUB w trybie single/co-op po prostu zaliczamy.
+
+        // Wersja prosta (zalicza œmieræ ka¿demu na mapie - dobre dla Co-op):
+        if (ElementumDefense.Progression.QuestManager.Instance != null)
+        {
+            ElementumDefense.Progression.QuestManager.Instance.ReportProgress(
+                ElementumDefense.Progression.QuestType.KillEnemies,
+                1
+            );
+        }
+
+        // 3. VFX i zniszczenie (istniej¹cy kod)
         // TODO: Death VFX/SFX
         Destroy(gameObject);
     }

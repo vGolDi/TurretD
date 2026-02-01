@@ -24,5 +24,5 @@ MonoBehaviour:
   requiredLevel: 1
   unlockCost: 100
   canDropFromLootbox: 1
-  isStarterCard: 0
+  isStarterCard: 1
   cardEffect: {fileID: 11400000, guid: c3aee0e53b19603428691d10003422e1, type: 2}

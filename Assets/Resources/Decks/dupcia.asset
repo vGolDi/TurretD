@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fadca0cdbc546ff4c947051accfdaa59, type: 3}
   m_Name: dupcia
   m_EditorClassIdentifier: Assembly-CSharp::ElementumDefense.Cards.DeckData
-  deckName: dupcia
+  deckName: FireDeck
   preferredArena: 1
   cards:
   - {fileID: 11400000, guid: 1b4fda16bb2767541b5e9b9fc0ac3641, type: 2}

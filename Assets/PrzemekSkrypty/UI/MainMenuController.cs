@@ -23,6 +23,17 @@ public class MainMenuController : MonoBehaviour
     [SerializeField] private Button creditsButton;
     [SerializeField] private Button quitButton;
 
+    [Header("Play Selection UI")]
+    [SerializeField] private GameObject playSelectionPanel; // Przypisz nowy panel w Inspektorze
+    [SerializeField] private Button playCasualButton;
+    [SerializeField] private Button playRankedButton;
+    [SerializeField] private Button playCustomButton;
+    [SerializeField] private Button playBackButton; // Powrót do Main Menu
+
+    [Header("Rank Display")]
+    [SerializeField] private TMP_Text rankText; // Tekst pod przyciskiem Ranked
+    [SerializeField] private TMP_Text eloText;
+
     [Header("Scene Names")]
 
     [SerializeField, Tooltip("Multiplayer lobby scene name")]
@@ -103,6 +114,11 @@ public class MainMenuController : MonoBehaviour
         if (versionText != null)
             versionText.text = $"v{gameVersion}";
 
+        if (playCasualButton != null) playCasualButton.onClick.AddListener(() => SetModeAndPlay(ElementumDefense.Cards.GameMode.Casual));
+        if (playRankedButton != null) playRankedButton.onClick.AddListener(() => SetModeAndPlay(ElementumDefense.Cards.GameMode.Ranked));
+        // Custom na razie wy³¹czony lub placeholder
+        if (playCustomButton != null) playCustomButton.interactable = false;
+        if (playBackButton != null) playBackButton.onClick.AddListener(BackToMainMenu);
         // Setup audio
         audioSource = gameObject.AddComponent<AudioSource>();
 
@@ -116,10 +132,35 @@ public class MainMenuController : MonoBehaviour
     /// </summary>
     public void StartMultiPlayer()
     {
-        Debug.Log("[MainMenu] Starting multiplayer...");
+        Debug.Log("[MainMenu] Opening Play Selection...");
+        ShowPanel(playSelectionPanel);
+        UpdateRankDisplay();
+    }
+    private void SetModeAndPlay(ElementumDefense.Cards.GameMode mode)
+    {
+        // Ustawiamy tryb w singletonie PlayerCollection
+        var player = ElementumDefense.Cards.PlayerCollection.Instance;
+        if (player != null)
+        {
+            player.SelectedGameMode = mode;
+        }
+
+        Debug.Log($"[MainMenu] Selected mode: {mode}. Loading Lobby...");
+        // Teraz ³adujemy scenê lobby (tak jak wczeœniej robi³o to StartMultiPlayer)
         LoadSceneAsync(multiPlayerScene);
     }
 
+    private void UpdateRankDisplay()
+    {
+        var player = ElementumDefense.Cards.PlayerCollection.Instance;
+        if (player != null && rankText != null)
+        {
+            rankText.text = player.GetRankName();
+            rankText.color = player.GetRankColor();
+
+            if (eloText != null) eloText.text = $"{player.GetElo()} ELO";
+        }
+    }
     /// <summary>
     /// Loads scene with loading screen
     /// </summary>
@@ -239,6 +280,7 @@ public class MainMenuController : MonoBehaviour
         creditsPanel?.SetActive(panel == creditsPanel);
         loadingPanel?.SetActive(panel == loadingPanel);
         deckbuilderPanel?.SetActive(panel == deckbuilderPanel);
+        playSelectionPanel?.SetActive(panel == playSelectionPanel);
     }
 
     #endregion

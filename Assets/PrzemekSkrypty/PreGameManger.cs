@@ -4,6 +4,7 @@ using System.Collections;
 using ElementumDefense.Cards;
 using Photon.Pun;
 using Photon.Realtime;
+using System.Collections.Generic;
 
 public class PreGameManager : MonoBehaviourPunCallbacks
 {
@@ -144,18 +145,34 @@ public class PreGameManager : MonoBehaviourPunCallbacks
     {
         if (deckWasSelected) return;
 
-        DeckData[] savedDecks = Resources.LoadAll<DeckData>("Decks");
+        // ZMIANA: Pobierz z PlayerCollection
+        List<DeckData> myDecks = PlayerCollection.Instance.GetPlayerDecks();
 
-        if (savedDecks.Length > 0)
+        if (myDecks.Count > 0)
         {
-            OnDeckSelected(savedDecks[0]);
+            OnDeckSelected(myDecks[0]);
         }
         else
         {
-            Debug.LogError("[PreGameManager] Brak decków do auto-wyboru!");
-            // Fallback - oznacz jako gotowy bez decku
-            MarkDeckAsSelected();
+            // Fallback
+            DeckData[] resDecks = Resources.LoadAll<DeckData>("Decks");
+            if (resDecks.Length > 0) OnDeckSelected(resDecks[0]);
+            else MarkDeckAsSelected();
         }
+        //if (deckWasSelected) return;
+
+        //DeckData[] savedDecks = Resources.LoadAll<DeckData>("Decks");
+
+        //if (savedDecks.Length > 0)
+        //{
+        //    OnDeckSelected(savedDecks[0]);
+        //}
+        //else
+        //{
+        //    Debug.LogError("[PreGameManager] Brak decków do auto-wyboru!");
+        //    // Fallback - oznacz jako gotowy bez decku
+        //    MarkDeckAsSelected();
+        //}
     }
 
     // ✅ ZMODYFIKOWANA - NIE URUCHAMIA OD RAZU COUNTDOWN
@@ -268,21 +285,44 @@ public class PreGameManager : MonoBehaviourPunCallbacks
     {
         if (deckSelectionContainer == null || deckSelectionButtonPrefab == null) return;
 
-        foreach (Transform child in deckSelectionContainer)
+        foreach (Transform child in deckSelectionContainer) Destroy(child.gameObject);
+
+        // ZMIANA: Pobierz talie z PlayerCollection
+        List<DeckData> myDecks = PlayerCollection.Instance.GetPlayerDecks();
+
+        Debug.Log($"[PreGameManager] Found {myDecks.Count} decks for user.");
+
+        if (myDecks.Count == 0)
         {
-            Destroy(child.gameObject);
+            // Fallback - jeśli gracz nie ma talii (błąd?), spróbuj załadować domyślną z Resources
+            // To tylko zabezpieczenie
+            Debug.LogWarning("No user decks found! Checking Resources backup...");
+            DeckData[] resDecks = Resources.LoadAll<DeckData>("Decks");
+            if (resDecks.Length > 0) CreateDeckButton(resDecks[0]);
+            return;
         }
 
-        DeckData[] savedDecks = Resources.LoadAll<DeckData>("Decks");
-
-        Debug.Log($"[PreGameManager] Znaleziono {savedDecks.Length} zapisanych decków.");
-
-        if (savedDecks.Length == 0) return;
-
-        foreach (DeckData deck in savedDecks)
+        foreach (DeckData deck in myDecks)
         {
             CreateDeckButton(deck);
         }
+        //if (deckSelectionContainer == null || deckSelectionButtonPrefab == null) return;
+
+        //foreach (Transform child in deckSelectionContainer)
+        //{
+        //    Destroy(child.gameObject);
+        //}
+
+        //DeckData[] savedDecks = Resources.LoadAll<DeckData>("Decks");
+
+        //Debug.Log($"[PreGameManager] Znaleziono {savedDecks.Length} zapisanych decków.");
+
+        //if (savedDecks.Length == 0) return;
+
+        //foreach (DeckData deck in savedDecks)
+        //{
+        //    CreateDeckButton(deck);
+        //}
     }
 
     private void CreateDeckButton(DeckData deck)

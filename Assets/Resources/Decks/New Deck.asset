@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fadca0cdbc546ff4c947051accfdaa59, type: 3}
   m_Name: New Deck
   m_EditorClassIdentifier: Assembly-CSharp::ElementumDefense.Cards.DeckData
-  deckName: New Deck
-  preferredArena: 1
+  deckName: WaterDeck
+  preferredArena: 2
   cards:
   - {fileID: 11400000, guid: 1ae8c8c0905ccb34a9560c844eb85c38, type: 2}
   - {fileID: 11400000, guid: 1ae8c8c0905ccb34a9560c844eb85c38, type: 2}

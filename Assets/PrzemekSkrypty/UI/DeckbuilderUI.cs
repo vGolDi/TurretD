@@ -140,49 +140,73 @@ namespace ElementumDefense.Cards
         /// </summary>
         private void SaveDeck()
         {
-            if (currentDeck == null)
-            {
-                Debug.LogError("[DeckbuilderUI] No deck to save!");
-                return;
-            }
+            if (currentDeck == null) return;
 
-            // Update deck name from input
             if (deckNameInput != null)
-            {
                 currentDeck.deckName = deckNameInput.text;
-            }
 
-            // Validate before saving
             if (!currentDeck.IsValid(out string errorMessage))
             {
-                Debug.LogWarning($"[DeckbuilderUI] Cannot save invalid deck: {errorMessage}");
-                // TODO: Show error popup
+                Debug.LogWarning($"Invalid deck: {errorMessage}");
                 return;
             }
 
-            // Save to Resources (or custom save system)
-            string path = $"Assets/Resources/Decks/{currentDeck.deckName}.asset";
+            // ZMIANA: Zapisujemy przez PlayerCollection (do JSON gracza)
+            playerCollection.SaveUserDeck(currentDeck);
 
-#if UNITY_EDITOR
-            UnityEditor.AssetDatabase.CreateAsset(currentDeck, path);
-            UnityEditor.AssetDatabase.SaveAssets();
-            Debug.Log($"[DeckbuilderUI] Saved deck to: {path}");
-#else
-            // Runtime save (to JSON)
-            string json = JsonUtility.ToJson(new DeckSaveData(currentDeck), true);
-            string savePath = System.IO.Path.Combine(Application.persistentDataPath, $"{currentDeck.deckName}.deck");
-            System.IO.File.WriteAllText(savePath, json);
-            Debug.Log($"[DeckbuilderUI] Saved deck to: {savePath}");
-#endif
+            Debug.Log($"[DeckbuilderUI] Saved deck '{currentDeck.deckName}' to user profile.");
+            //            if (currentDeck == null)
+            //            {
+            //                Debug.LogError("[DeckbuilderUI] No deck to save!");
+            //                return;
+            //            }
+
+            //            // Update deck name from input
+            //            if (deckNameInput != null)
+            //            {
+            //                currentDeck.deckName = deckNameInput.text;
+            //            }
+
+            //            // Validate before saving
+            //            if (!currentDeck.IsValid(out string errorMessage))
+            //            {
+            //                Debug.LogWarning($"[DeckbuilderUI] Cannot save invalid deck: {errorMessage}");
+            //                // TODO: Show error popup
+            //                return;
+            //            }
+
+            //            // Save to Resources (or custom save system)
+            //            string path = $"Assets/Resources/Decks/{currentDeck.deckName}.asset";
+
+            //#if UNITY_EDITOR
+            //            UnityEditor.AssetDatabase.CreateAsset(currentDeck, path);
+            //            UnityEditor.AssetDatabase.SaveAssets();
+            //            Debug.Log($"[DeckbuilderUI] Saved deck to: {path}");
+            //#else
+            //            // Runtime save (to JSON)
+            //            string json = JsonUtility.ToJson(new DeckSaveData(currentDeck), true);
+            //            string savePath = System.IO.Path.Combine(Application.persistentDataPath, $"{currentDeck.deckName}.deck");
+            //            System.IO.File.WriteAllText(savePath, json);
+            //            Debug.Log($"[DeckbuilderUI] Saved deck to: {savePath}");
+            //#endif
         }
 
         /// <summary>
         /// Loads deck from file (TODO: show file browser)
         /// </summary>
-        private void LoadDeck()
+        private void LoadDeck(DeckData deckToLoad)
         {
-            // TODO: Implement deck loading UI (file browser or dropdown)
-            Debug.Log("[DeckbuilderUI] Load deck - not implemented yet");
+            if (deckToLoad == null) return;
+
+            // Klonujemy talię z pamięci PlayerCollection do edytora
+            currentDeck = Instantiate(deckToLoad);
+            currentDeck.name = deckToLoad.deckName;
+
+            if (deckNameInput != null) deckNameInput.text = currentDeck.deckName;
+
+            RefreshDeckDisplay();
+            ValidateDeck();
+            CloseLoadDeckPanel();
         }
 
         /// <summary>
@@ -270,62 +294,91 @@ namespace ElementumDefense.Cards
         /// </summary>
         private void OpenLoadDeckPanel()
         {
-            if (loadDeckPanel == null || loadDeckContent == null || loadDeckSlotPrefab == null)
+            //if (loadDeckPanel == null || loadDeckContent == null || loadDeckSlotPrefab == null)
+            //{
+            //    Debug.LogError("[DeckbuilderUI] Load Deck UI nie jest skonfigurowane!");
+            //    return;
+            //}
+
+            //// Wyczyść starą listę
+            //foreach (Transform child in loadDeckContent)
+            //{
+            //    Destroy(child.gameObject);
+            //}
+
+            //// Wczytaj wszystkie DeckData z folderu Resources/Decks
+            //DeckData[] savedDecks = Resources.LoadAll<DeckData>("Decks");
+
+            //Debug.Log($"[DeckbuilderUI] Znaleziono {savedDecks.Length} zapisanych decków.");
+
+            //if (savedDecks.Length == 0)
+            //{
+            //    Debug.LogWarning("[DeckbuilderUI] Nie znaleziono żadnych zapisanych decków w folderze Resources/Decks/");
+            //    // Opcjonalnie: Pokaż tekst "No saved decks"
+            //}
+
+            //// Stwórz przycisk dla każdego zapisanego decku
+            //foreach (DeckData deck in savedDecks)
+            //{
+            //    // ========== POPRAWKA KRYTYCZNA ==========
+            //    // Stwórz lokalną kopię zmiennej, aby lambda ją poprawnie przechwyciła
+            //    DeckData currentDeckToLoad = deck;
+            //    // =========================================
+
+            //    GameObject slotObj = Instantiate(loadDeckSlotPrefab, loadDeckContent);
+
+            //    // Znajdź elementy i ustaw dane
+            //    TextMeshProUGUI deckNameText = slotObj.GetComponentInChildren<TextMeshProUGUI>();
+            //    Button selectButton = slotObj.GetComponent<Button>();
+
+            //    if (deckNameText != null)
+            //    {
+            //        deckNameText.text = currentDeckToLoad.deckName;
+            //    }
+
+            //    if (selectButton != null)
+            //    {
+            //        // Usuń poprzednie listenery na wszelki wypadek
+            //        selectButton.onClick.RemoveAllListeners();
+
+            //        // Dodaj listener z lokalną kopią zmiennej
+            //        selectButton.onClick.AddListener(() => {
+            //            Debug.Log($"[DeckbuilderUI] Kliknięto przycisk, aby załadować deck: {currentDeckToLoad.deckName}");
+            //            LoadDeck(currentDeckToLoad);
+            //        });
+            //    }
+            //}
+
+            //// Pokaż panel
+            //loadDeckPanel.SetActive(true);
+            if (loadDeckPanel == null || loadDeckContent == null || loadDeckSlotPrefab == null) return;
+
+            foreach (Transform child in loadDeckContent) Destroy(child.gameObject);
+
+            // ZMIANA: Pobieramy talie z PlayerCollection (konkretnego gracza)
+            List<DeckData> playerDecks = playerCollection.GetPlayerDecks();
+
+            Debug.Log($"[DeckbuilderUI] Found {playerDecks.Count} player decks.");
+
+            foreach (DeckData deck in playerDecks)
             {
-                Debug.LogError("[DeckbuilderUI] Load Deck UI nie jest skonfigurowane!");
-                return;
-            }
-
-            // Wyczyść starą listę
-            foreach (Transform child in loadDeckContent)
-            {
-                Destroy(child.gameObject);
-            }
-
-            // Wczytaj wszystkie DeckData z folderu Resources/Decks
-            DeckData[] savedDecks = Resources.LoadAll<DeckData>("Decks");
-
-            Debug.Log($"[DeckbuilderUI] Znaleziono {savedDecks.Length} zapisanych decków.");
-
-            if (savedDecks.Length == 0)
-            {
-                Debug.LogWarning("[DeckbuilderUI] Nie znaleziono żadnych zapisanych decków w folderze Resources/Decks/");
-                // Opcjonalnie: Pokaż tekst "No saved decks"
-            }
-
-            // Stwórz przycisk dla każdego zapisanego decku
-            foreach (DeckData deck in savedDecks)
-            {
-                // ========== POPRAWKA KRYTYCZNA ==========
-                // Stwórz lokalną kopię zmiennej, aby lambda ją poprawnie przechwyciła
                 DeckData currentDeckToLoad = deck;
-                // =========================================
-
                 GameObject slotObj = Instantiate(loadDeckSlotPrefab, loadDeckContent);
 
-                // Znajdź elementy i ustaw dane
                 TextMeshProUGUI deckNameText = slotObj.GetComponentInChildren<TextMeshProUGUI>();
                 Button selectButton = slotObj.GetComponent<Button>();
 
-                if (deckNameText != null)
-                {
-                    deckNameText.text = currentDeckToLoad.deckName;
-                }
+                if (deckNameText != null) deckNameText.text = currentDeckToLoad.deckName;
 
                 if (selectButton != null)
                 {
-                    // Usuń poprzednie listenery na wszelki wypadek
                     selectButton.onClick.RemoveAllListeners();
-
-                    // Dodaj listener z lokalną kopią zmiennej
                     selectButton.onClick.AddListener(() => {
-                        Debug.Log($"[DeckbuilderUI] Kliknięto przycisk, aby załadować deck: {currentDeckToLoad.deckName}");
                         LoadDeck(currentDeckToLoad);
                     });
                 }
             }
 
-            // Pokaż panel
             loadDeckPanel.SetActive(true);
         }
 
@@ -340,37 +393,7 @@ namespace ElementumDefense.Cards
             }
         }
 
-        /// <summary>
-        /// Wczytuje wybrany deck i odświeża UI.
-        /// Ta metoda jest teraz wywoływana z OpenLoadDeckPanel.
-        /// </summary>
-        public void LoadDeck(DeckData deckToLoad)
-        {
-            if (deckToLoad == null)
-            {
-                Debug.LogError("[DeckbuilderUI] Próbowano załadować pusty deck!");
-                return;
-            }
-
-            // WAŻNE: Musimy stworzyć kopię, a nie używać referencji do pliku z Resources!
-            // Inaczej edytowalibyśmy oryginalny plik.
-            currentDeck = Instantiate(deckToLoad);
-            currentDeck.name = deckToLoad.name; // Instantiate dodaje "(Clone)" do nazwy
-
-            Debug.Log($"[DeckbuilderUI] Załadowano deck: {currentDeck.deckName}");
-
-            // Zaktualizuj UI z danymi załadowanego decku
-            if (deckNameInput != null)
-            {
-                deckNameInput.text = currentDeck.deckName;
-            }
-            // TODO: Zaktualizuj też dropdown z areną, jeśli go używasz
-
-            // Odśwież widok i zamknij panel
-            RefreshDeckDisplay();
-            ValidateDeck();
-            CloseLoadDeckPanel();
-        }
+   
         // ==========================================
         // CARD ADDING/REMOVING
         // ==========================================
@@ -647,21 +670,21 @@ private void UpdateCounters()
             // LEGENDARY COUNTER
             if (legendaryCountText != null)
             {
-                legendaryCountText.text = $"LEGENDARY\n{leg}/{DeckData.MAX_LEGENDARY}";
+                legendaryCountText.text = $"LEGENDARY  {leg}/{DeckData.MAX_LEGENDARY}";
                 legendaryCountText.color = new Color(1f, 0.8f, 0f); // Gold
             }
 
             // RARE COUNTER
             if (rareCountText != null)
             {
-                rareCountText.text = $"RARE\n{rare}/{DeckData.MAX_RARE}";
+                rareCountText.text = $"RARE  {rare}/{DeckData.MAX_RARE}";
                 rareCountText.color = new Color(0.3f, 0.6f, 1f); // Blue
             }
 
             // COMMON COUNTER
             if (commonCountText != null)
             {
-                commonCountText.text = $"COMMON\n{com}/{DeckData.MAX_COMMON}";
+                commonCountText.text = $"COMMON  {com}/{DeckData.MAX_COMMON}";
                 commonCountText.color = new Color(0.8f, 0.8f, 0.8f); // Gray
             }
         }

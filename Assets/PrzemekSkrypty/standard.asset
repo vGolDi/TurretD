@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5071c7f1c8e94241a34f1ebf1be4968, type: 3}
+  m_Name: standard
+  m_EditorClassIdentifier: Assembly-CSharp::ElementumDefense.Cards.LootboxData
+  boxName: Standard Box
+  cardCount: 3
+  priceGold: 1000
+  legendaryChance: 5
+  rareChance: 25
+  commonChance: 70
+  refundCommonGold: 50
+  refundRareGold: 150
+  refundLegendaryCrystals: 10

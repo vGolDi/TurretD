@@ -60,6 +60,12 @@ namespace ElementumDefense.Projectiles
         {
             TotalKills++;
             OnKillRegistered?.Invoke(TotalKills);
+
+            // INTEGRACJA Z QUESTAMI
+            if (ElementumDefense.Progression.QuestManager.Instance != null)
+            {
+                ElementumDefense.Progression.QuestManager.Instance.ReportProgress(ElementumDefense.Progression.QuestType.KillEnemies, 1);
+            }
         }
 
         public void RegisterDamage(int amount)
