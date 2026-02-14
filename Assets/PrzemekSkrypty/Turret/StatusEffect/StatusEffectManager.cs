@@ -1,17 +1,23 @@
+// Assets/PrzemekSkrypty/StatusEffects/StatusEffectManager.cs
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using System; // <-- NOWE
+using System;
 
 namespace ElementumDefense.StatusEffects
 {
     public class StatusEffectManager : MonoBehaviour
     {
-        // ========== NOWE: Events ==========
+        // Events
+        public event Action<StatusEffectType> OnEffectApplied;
+        public event Action<StatusEffectType> OnEffectExpired;
+        public event Action<StatusEffectType, int> OnEffectStacked; // type, newStackCount
         public event Action OnSlowEffectEnded;
         public event Action OnFreezeEffectEnded;
         public event Action OnAnyEffectEnded;
-        // ==================================
+
+        [Header("Debug")]
+        [SerializeField] private bool logEffects = false;
 
         private List<StatusEffect> activeEffects = new List<StatusEffect>();
         private EnemyHealth enemyHealth;
@@ -31,21 +37,35 @@ namespace ElementumDefense.StatusEffects
 
         private void Update()
         {
+            if (activeEffects.Count == 0) return;
+
             UpdateEffects(Time.deltaTime);
             RecalculateModifiers();
         }
+
+        // ==========================================
+        // APPLY / REMOVE
+        // ==========================================
 
         public void ApplyEffect(StatusEffect newEffect)
         {
             if (newEffect == null) return;
 
+            // SprawdŸ immunitet (opcjonalne - do implementacji)
+            // if (IsImmuneToEffect(newEffect.EffectType)) return;
+
             StatusEffect existingEffect = GetEffect(newEffect.EffectType);
 
             if (existingEffect != null)
             {
-                if (existingEffect.IsStackable)
+                // Efekt ju¿ istnieje - stack lub refresh
+                if (existingEffect.IsStackable && existingEffect.StackCount < existingEffect.MaxStacks)
                 {
                     existingEffect.OnStackAdded();
+                    OnEffectStacked?.Invoke(existingEffect.EffectType, existingEffect.StackCount);
+
+                    if (logEffects)
+                        Debug.Log($"[StatusEffect] {existingEffect.DisplayName} stacked to {existingEffect.StackCount}");
                 }
 
                 if (existingEffect.RefreshOnReapply)
@@ -56,10 +76,14 @@ namespace ElementumDefense.StatusEffects
                 return;
             }
 
+            // Nowy efekt
             newEffect.Initialize(enemyHealth, newEffect.MaxDuration);
             activeEffects.Add(newEffect);
 
-           // Debug.Log($"[StatusEffectManager] Applied {newEffect.Icon} {newEffect.DisplayName} to {gameObject.name}");
+            OnEffectApplied?.Invoke(newEffect.EffectType);
+
+            if (logEffects)
+                Debug.Log($"[StatusEffect] Applied {newEffect.DisplayName} to {gameObject.name} for {newEffect.MaxDuration}s");
         }
 
         public void RemoveEffect(StatusEffectType effectType)
@@ -69,6 +93,7 @@ namespace ElementumDefense.StatusEffects
             {
                 effect.OnRemoved();
                 activeEffects.Remove(effect);
+                TriggerEffectEndedEvents(effectType);
             }
         }
 
@@ -77,11 +102,21 @@ namespace ElementumDefense.StatusEffects
             foreach (var effect in activeEffects.ToList())
             {
                 effect.OnRemoved();
+                TriggerEffectEndedEvents(effect.EffectType);
             }
             activeEffects.Clear();
 
-            Debug.Log($"[StatusEffectManager] Cleansed all effects from {gameObject.name}");
+            // Reset modifiers
+            cachedSpeedMultiplier = 1f;
+            cachedIsFrozen = false;
+
+            if (enemyMovement != null)
+                enemyMovement.SetSpeedModifier(1f);
         }
+
+        // ==========================================
+        // UPDATE LOOP
+        // ==========================================
 
         private void UpdateEffects(float deltaTime)
         {
@@ -92,38 +127,35 @@ namespace ElementumDefense.StatusEffects
 
                 if (effect.IsExpired)
                 {
-                    // ========== NOWE: Trigger events ==========
-                    TriggerEffectEndedEvents(effect.EffectType);
-                    // ===========================================
-
                     effect.OnExpired();
                     activeEffects.RemoveAt(i);
+                    TriggerEffectEndedEvents(effect.EffectType);
+
+                    if (logEffects)
+                        Debug.Log($"[StatusEffect] {effect.DisplayName} expired on {gameObject.name}");
                 }
             }
         }
 
-        // ========== NOWA FUNKCJA ==========
-        /// <summary>
-        /// Triggers appropriate events when effect ends
-        /// </summary>
         private void TriggerEffectEndedEvents(StatusEffectType effectType)
         {
+            OnEffectExpired?.Invoke(effectType);
             OnAnyEffectEnded?.Invoke();
 
             switch (effectType)
             {
                 case StatusEffectType.Slow:
                     OnSlowEffectEnded?.Invoke();
-                    Debug.Log($"[StatusEffectManager] Slow effect ended - event triggered");
                     break;
-
                 case StatusEffectType.Freeze:
                     OnFreezeEffectEnded?.Invoke();
-                    Debug.Log($"[StatusEffectManager] Freeze effect ended - event triggered");
                     break;
             }
         }
-        // ==================================
+
+        // ==========================================
+        // MODIFIER CALCULATION
+        // ==========================================
 
         private void RecalculateModifiers()
         {
@@ -132,24 +164,47 @@ namespace ElementumDefense.StatusEffects
 
             foreach (var effect in activeEffects)
             {
-                if (effect is FreezeEffect)
+                // Freeze = complete stop
+                if (effect.EffectType == StatusEffectType.Freeze)
                 {
                     cachedIsFrozen = true;
                     cachedSpeedMultiplier = 0f;
-                    return;
+                    break; // Nie trzeba sprawdzaæ dalej
                 }
 
+                // Stun = also stops movement
+                if (effect.EffectType == StatusEffectType.Stun)
+                {
+                    cachedIsFrozen = true;
+                    cachedSpeedMultiplier = 0f;
+                    break;
+                }
+
+                // Slow = reduce speed
                 if (effect is SlowEffect slowEffect)
                 {
                     cachedSpeedMultiplier *= slowEffect.SlowMultiplier;
                 }
+
+                // Speed buff = increase speed
+                if (effect.EffectType == StatusEffectType.Speed)
+                {
+                    cachedSpeedMultiplier *= 1.5f; // Dostosuj mno¿nik
+                }
             }
+
+            // Clamp speed
+            cachedSpeedMultiplier = Mathf.Clamp(cachedSpeedMultiplier, 0f, 3f);
 
             if (enemyMovement != null)
             {
                 enemyMovement.SetSpeedModifier(cachedSpeedMultiplier);
             }
         }
+
+        // ==========================================
+        // QUERIES
+        // ==========================================
 
         public StatusEffect GetEffect(StatusEffectType type)
         {
@@ -171,17 +226,32 @@ namespace ElementumDefense.StatusEffects
             return activeEffects.Count;
         }
 
-        private void OnGUI()
+        /// <summary>
+        /// Checks if enemy has any movement-impairing effect
+        /// </summary>
+        public bool IsMovementImpaired()
         {
-            if (activeEffects.Count == 0) return;
+            return cachedIsFrozen || cachedSpeedMultiplier < 1f;
+        }
 
-            Vector3 screenPos = Camera.main.WorldToScreenPoint(transform.position + Vector3.up * 2f);
+        /// <summary>
+        /// Gets total DOT damage per second from all active effects
+        /// </summary>
+        public float GetTotalDOTDamage()
+        {
+            float totalDOT = 0f;
 
-            if (screenPos.z > 0)
+            foreach (var effect in activeEffects)
             {
-                //string effectsText = string.Join(" ", activeEffects.Select(e => e.Icon));
-              //  GUI.Label(new Rect(screenPos.x - 50, Screen.height - screenPos.y - 20, 100, 20), effectsText);
+                if (effect is BurnEffect burn)
+                {
+                    // BurnEffect doesn't expose DPS publicly, but you could add it
+                    totalDOT += 5f * effect.StackCount; // Placeholder
+                }
+                // Add other DOT effects here
             }
+
+            return totalDOT;
         }
     }
 }

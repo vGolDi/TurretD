@@ -1,7 +1,6 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using System.Text;
 
 public class TurretUiController : MonoBehaviour
 {
@@ -10,21 +9,21 @@ public class TurretUiController : MonoBehaviour
     [SerializeField] private Button[] upgradeButtons;
     [SerializeField] private TextMeshProUGUI[] buttonTexts;
 
-    [Header("Stats Display (Optional)")]
+    [Header("Stats Display")]
     [SerializeField] private TextMeshProUGUI turretNameText;
     [SerializeField] private TextMeshProUGUI turretStatsText;
 
-    private Turret turret; // Owner turret logic
+    private Turret turret;
     private Camera mainCamera;
+
     private void Start()
     {
         mainCamera = Camera.main;
-        Hide(); // Start hidden
+        Hide();
     }
 
     private void LateUpdate()
     {
-        // Make UI face camera (billboard effect)
         if (uiPanel.activeSelf && mainCamera != null)
         {
             uiPanel.transform.LookAt(
@@ -34,15 +33,10 @@ public class TurretUiController : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Links this UI to its parent turret logic
-    /// Called by TurretInteract
-    /// </summary>
     public void LinkTurret(Turret ownerTurret)
     {
         turret = ownerTurret;
 
-        // Subscribe to upgrade event
         turret.OnUpgraded -= UpdateDisplay;
         turret.OnUpgraded += UpdateDisplay;
     }
@@ -68,67 +62,116 @@ public class TurretUiController : MonoBehaviour
         return uiPanel != null && uiPanel.activeSelf;
     }
 
-    /// <summary>
-    /// Refreshes UI with current turret data
-    /// </summary>
     private void UpdateDisplay()
     {
         if (turret == null) return;
 
-        TurretData[] availableUpgrades = turret.GetAvailableUpgrades();
+        // ========== NOWE: Show current stats with modifiers ==========
+        if (turretNameText != null && turret.TurretData != null)
+        {
+            turretNameText.text = turret.TurretData.turretName;
+        }
+
+        if (turretStatsText != null)
+        {
+            bool hasModifier = Mathf.Abs(turret.CurrentDamage - turret.BaseDamage) > 0.01f ||
+                               Mathf.Abs(turret.CurrentFireRate - turret.BaseFireRate) > 0.01f ||
+                               Mathf.Abs(turret.CurrentRange - turret.BaseRange) > 0.01f;
+
+            string stats = "";
+
+            // Damage
+            stats += $"⚔️ DMG: {turret.CurrentDamage:F0}";
+            if (Mathf.Abs(turret.CurrentDamage - turret.BaseDamage) > 0.01f)
+            {
+                float diff = turret.CurrentDamage - turret.BaseDamage;
+                string color = diff > 0 ? "green" : "red";
+                stats += $" <color={color}>({diff:+0.0;-0.0})</color>";
+            }
+            stats += "\n";
+
+            // Fire Rate
+            stats += $"⚡ FR: {turret.CurrentFireRate:F2}/s";
+            if (Mathf.Abs(turret.CurrentFireRate - turret.BaseFireRate) > 0.01f)
+            {
+                float diff = turret.CurrentFireRate - turret.BaseFireRate;
+                string color = diff > 0 ? "green" : "red";
+                stats += $" <color={color}>({diff:+0.00;-0.00})</color>";
+            }
+            stats += "\n";
+
+            // Range
+            stats += $"🎯 RNG: {turret.CurrentRange:F1}";
+            if (Mathf.Abs(turret.CurrentRange - turret.BaseRange) > 0.01f)
+            {
+                float diff = turret.CurrentRange - turret.BaseRange;
+                string color = diff > 0 ? "green" : "red";
+                stats += $" <color={color}>({diff:+0.0;-0.0})</color>";
+            }
+
+            turretStatsText.text = stats;
+        }
+        // ============================================================
 
         // Update upgrade buttons
+        TurretData[] availableUpgrades = turret.GetAvailableUpgrades();
+
         for (int i = 0; i < upgradeButtons.Length; i++)
         {
             if (availableUpgrades != null &&
                 i < availableUpgrades.Length &&
                 availableUpgrades[i] != null)
             {
-                // Show button with upgrade info
                 upgradeButtons[i].gameObject.SetActive(true);
                 TurretData upgrade = availableUpgrades[i];
 
                 buttonTexts[i].text = FormatUpgradeText(upgrade);
 
-                // Setup button click listener
-                int pathIndex = i; // Capture index for lambda
+                int pathIndex = i;
                 upgradeButtons[i].onClick.RemoveAllListeners();
                 upgradeButtons[i].onClick.AddListener(() => OnUpgradeButtonClicked(pathIndex));
             }
             else
             {
-                // Hide unused buttons
                 upgradeButtons[i].gameObject.SetActive(false);
             }
         }
-
-        // Update current stats display (if available)
-        // UpdateCurrentStats();
     }
 
-    /// <summary>
-    /// Formats upgrade button text with name and cost
-    /// TODO: Show stat differences (e.g., +5 damage, +2 range)
-    /// </summary>
     private string FormatUpgradeText(TurretData upgrade)
     {
+        // ========== NOWE: Show cost with modifier ==========
+        string costText = $"{upgrade.upgradeCost}";
+
+        // Try to get card manager for cost modifier
+        if (turret != null && turret.GetOwner() != null)
+        {
+            var cardMgr = turret.GetOwner()
+                .GetComponent<ElementumDefense.Cards.PlayerCardManager>();
+
+            if (cardMgr != null)
+            {
+                int modifiedCost = cardMgr.GetModifiedTurretCost(upgrade.upgradeCost);
+                if (modifiedCost != upgrade.upgradeCost)
+                {
+                    costText = $"<s>{upgrade.upgradeCost}</s> {modifiedCost}";
+                }
+            }
+        }
+        // ===================================================
+
         return $"<b>{upgrade.turretName}</b>\n" +
-               $"Cost: {upgrade.upgradeCost} Gold\n" +
+               $"Cost: {costText} Gold\n" +
                $"DMG: {upgrade.damage} | RNG: {upgrade.range}";
     }
 
-    /// <summary>
-    /// Called when player clicks an upgrade button
-    /// </summary>
     private void OnUpgradeButtonClicked(int pathIndex)
     {
         turret?.Upgrade(pathIndex);
-        // UI will auto-refresh via OnUpgraded event
     }
 
     private void OnDestroy()
     {
-        // Unsubscribe from events
         if (turret != null)
         {
             turret.OnUpgraded -= UpdateDisplay;

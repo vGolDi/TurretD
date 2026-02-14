@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using Unity.VisualScripting;
 
 namespace ElementumDefense.Cards
 {
@@ -22,20 +23,16 @@ namespace ElementumDefense.Cards
         private DraftManager draftManager;
         private bool isInitialized = false;
 
-        // ========== NOWE: Retry system ==========
         private float initializationRetryTimer = 0f;
-        private const float RETRY_INTERVAL = 0.5f; // Check every 0.5s
-        // ========================================
+        private const float RETRY_INTERVAL = 0.5f;
 
         private void Start()
         {
-            Debug.Log("[DraftUI] Waiting for DraftManager to spawn...");
             HideAllPanels();
         }
 
         private void Update()
         {
-            // ========== NOWE: Retry initialization ==========
             if (!isInitialized)
             {
                 initializationRetryTimer += Time.deltaTime;
@@ -46,38 +43,31 @@ namespace ElementumDefense.Cards
                     TryInitialize();
                 }
 
-                return; // Don't do anything else until initialized
+                return;
             }
-            // ================================================
         }
 
-        /// <summary>
-        /// Attempts to initialize (called repeatedly until successful)
-        /// </summary>
         private void TryInitialize()
         {
             draftManager = DraftManager.Instance;
 
-            if (draftManager == null)
-            {
-                Debug.LogWarning("[DraftUI] Still waiting for DraftManager...");
-                return;
-            }
+            if (draftManager == null) return;
 
-            // Success! Subscribe to events
             draftManager.OnStarterDraftOffered += ShowStarterDraft;
             draftManager.OnMidGameDraftOffered += ShowMidGameDraft;
             draftManager.OnDraftTimerUpdate += UpdateTimer;
 
-            // Setup buttons
+            // ========== NOWE: Subscribe to mid-game mulligan ==========
+            draftManager.OnMidGameCardMulliganed += OnMidGameSlotMulliganed;
+            // ==========================================================
+
             if (confirmStarterButton != null)
             {
                 confirmStarterButton.onClick.AddListener(ConfirmStarterDraft);
             }
 
             isInitialized = true;
-
-            Debug.Log("[DraftUI] ✅ Successfully initialized!");
+            Debug.Log("[DraftUI] ✅ Initialized!");
         }
 
         private void OnDestroy()
@@ -87,10 +77,16 @@ namespace ElementumDefense.Cards
                 draftManager.OnStarterDraftOffered -= ShowStarterDraft;
                 draftManager.OnMidGameDraftOffered -= ShowMidGameDraft;
                 draftManager.OnDraftTimerUpdate -= UpdateTimer;
+
+                // ========== NOWE ==========
+                draftManager.OnMidGameCardMulliganed -= OnMidGameSlotMulliganed;
+                // =========================
             }
         }
 
-        // ... rest of code stays the same ...
+        // ==========================================
+        // STARTER DRAFT (bez zmian)
+        // ==========================================
 
         private void ShowStarterDraft(CardData[] cards)
         {
@@ -108,9 +104,11 @@ namespace ElementumDefense.Cards
                     UpdateCardSlot(starterSlotObjects[i], cards[i], i, true);
                 }
             }
-
-            Debug.Log("[DraftUI] Showing starter draft");
         }
+
+        // ==========================================
+        // MID-GAME DRAFT (Z MULLIGAN)
+        // ==========================================
 
         private void ShowMidGameDraft(CardData[] cards)
         {
@@ -125,28 +123,38 @@ namespace ElementumDefense.Cards
             {
                 if (midGameSlotObjects[i] != null && cards[i] != null)
                 {
-                    UpdateCardSlot(midGameSlotObjects[i], cards[i], i, false);
+                    UpdateMidGameSlot(midGameSlotObjects[i], cards[i], i);
                 }
             }
 
-            Debug.Log("[DraftUI] Showing mid-game draft");
+            Debug.Log("[DraftUI] Showing mid-game draft with mulligan");
         }
 
-        private void UpdateCardSlot(GameObject slotObj, CardData card, int index, bool isStarter)
+        /// <summary>
+        /// Updates a mid-game card slot with SELECT + MULLIGAN buttons
+        /// </summary>
+        private void UpdateMidGameSlot(GameObject slotObj, CardData card, int index)
         {
+            // Find UI elements
             Image cardIcon = slotObj.transform.Find("CardIcon")?.GetComponent<Image>();
             TextMeshProUGUI cardName = slotObj.transform.Find("CardName")?.GetComponent<TextMeshProUGUI>();
             TextMeshProUGUI description = slotObj.transform.Find("Description")?.GetComponent<TextMeshProUGUI>();
             Image rarityBorder = slotObj.transform.Find("RarityBorder")?.GetComponent<Image>();
-            //test
             Image topLine = slotObj.transform.Find("LineTop")?.GetComponent<Image>();
             Image botLine = slotObj.transform.Find("LineBottom")?.GetComponent<Image>();
             TextMeshProUGUI rarityText = slotObj.transform.Find("RarityText")?.GetComponent<TextMeshProUGUI>();
 
-            Button selectBtn = slotObj.GetComponent<Button>();
-            Button mulliganBtn = slotObj.transform.Find("MulliganButton")?.GetComponent<Button>();
+            // ========== NOWE: Mulligan warning text ==========
+            TextMeshProUGUI mulliganWarning = slotObj.transform
+                .Find("MulliganWarning")?.GetComponent<TextMeshProUGUI>();
+            // =================================================
 
-            if (cardIcon != null)
+            Button selectBtn = slotObj.GetComponent<Button>();
+            Button mulliganBtn = slotObj.transform
+                .Find("MulliganButton")?.GetComponent<Button>();
+
+            // Populate card info
+            if (cardIcon != null && card.cardIcon != null)
                 cardIcon.sprite = card.cardIcon;
 
             if (cardName != null)
@@ -156,19 +164,192 @@ namespace ElementumDefense.Cards
                 description.text = card.description;
 
             if (rarityBorder != null)
-                rarityBorder.color = card.GetRarityColor();
+                rarityBorder.color = card.GetRarityColor().WithAlpha(0.2f);
 
-            //test 
             if (topLine != null && botLine != null)
             {
                 topLine.color = card.GetRarityColor();
                 botLine.color = card.GetRarityColor();
             }
+
             if (rarityText != null)
-            {
                 rarityText.text = card.GetRarityName();
-                rarityText.color = card.GetRarityColor(); // Opcjonalnie: ten sam kolor co border
+
+            // ========== SELECT BUTTON ==========
+            if (selectBtn != null)
+            {
+                selectBtn.onClick.RemoveAllListeners();
+                int capturedIndex = index;
+                selectBtn.onClick.AddListener(() => OnCardSelected(capturedIndex));
             }
+
+            // ========== NOWE: MULLIGAN BUTTON ==========
+            if (mulliganBtn != null)
+            {
+                mulliganBtn.onClick.RemoveAllListeners();
+                int capturedIndex = index;
+                mulliganBtn.onClick.AddListener(() =>
+                    OnMidGameMulliganClicked(capturedIndex));
+
+                // Check if already used
+                bool canMulligan = draftManager != null &&
+                                   draftManager.CanMulliganMidGameSlot(index);
+
+                mulliganBtn.interactable = canMulligan;
+
+                TextMeshProUGUI btnText =
+                    mulliganBtn.GetComponentInChildren<TextMeshProUGUI>();
+
+                if (btnText != null)
+                {
+                    btnText.text = canMulligan ? "🎲 Reroll" : "Used";
+                }
+            }
+            // ============================================
+
+            // ========== NOWE: Warning text ==========
+            if (mulliganWarning != null)
+            {
+                bool canMulligan = draftManager != null &&
+                                   draftManager.CanMulliganMidGameSlot(index);
+
+                mulliganWarning.gameObject.SetActive(canMulligan);
+                mulliganWarning.text = "⚠️ Random rarity!";
+                mulliganWarning.color = Color.yellow;
+            }
+            // ========================================
+        }
+
+        // ==========================================
+        // NOWE: Mid-game Mulligan handlers
+        // ==========================================
+
+        private void OnMidGameMulliganClicked(int slotIndex)
+        {
+            if (draftManager == null) return;
+
+            // Get old card info for animation/feedback
+            string oldCardName = "Unknown";
+            CardRarity oldRarity = CardRarity.Common;
+
+            if (slotIndex < midGameSlotObjects.Length)
+            {
+                TextMeshProUGUI nameText = midGameSlotObjects[slotIndex]
+                    .transform.Find("CardName")?.GetComponent<TextMeshProUGUI>();
+
+                if (nameText != null)
+                    oldCardName = nameText.text;
+            }
+
+            bool success = draftManager.MulliganMidGameCard(slotIndex);
+
+            if (success)
+            {
+                // Disable mulligan button immediately
+                Button mulliganBtn = midGameSlotObjects[slotIndex]
+                    .transform.Find("MulliganButton")?.GetComponent<Button>();
+
+                if (mulliganBtn != null)
+                {
+                    mulliganBtn.interactable = false;
+
+                    TextMeshProUGUI btnText =
+                        mulliganBtn.GetComponentInChildren<TextMeshProUGUI>();
+
+                    if (btnText != null)
+                        btnText.text = "Used";
+                }
+
+                // Hide warning
+                TextMeshProUGUI warning = midGameSlotObjects[slotIndex]
+                    .transform.Find("MulliganWarning")?.GetComponent<TextMeshProUGUI>();
+
+                if (warning != null)
+                    warning.gameObject.SetActive(false);
+
+                Debug.Log($"[DraftUI] Mid-game mulligan slot {slotIndex}");
+            }
+        }
+
+        /// <summary>
+        /// Called when a specific mid-game slot is mulliganed (event from DraftManager)
+        /// Updates only that slot's UI
+        /// </summary>
+        private void OnMidGameSlotMulliganed(int slotIndex, CardData newCard)
+        {
+            if (slotIndex < 0 || slotIndex >= midGameSlotObjects.Length) return;
+            if (midGameSlotObjects[slotIndex] == null || newCard == null) return;
+
+            // Update the specific slot
+            UpdateMidGameSlot(midGameSlotObjects[slotIndex], newCard, slotIndex);
+
+            Debug.Log($"[DraftUI] Updated mid-game slot {slotIndex} → {newCard.cardName} " +
+                      $"({newCard.rarity})");
+        }
+
+        // ==========================================
+        // CARD SELECTION
+        // ==========================================
+
+        private void OnCardSelected(int choiceIndex)
+        {
+            if (draftManager == null) return;
+
+            draftManager.SelectMidGameCard(choiceIndex);
+
+            if (midGameDraftPanel != null)
+            {
+                midGameDraftPanel.SetActive(false);
+            }
+
+            Debug.Log($"[DraftUI] Selected mid-game card {choiceIndex}");
+        }
+
+        // ==========================================
+        // STARTER DRAFT METHODS (bez zmian)
+        // ==========================================
+
+        private void UpdateCardSlot(GameObject slotObj, CardData card,
+            int index, bool isStarter)
+        {
+            Image cardIcon = slotObj.transform.Find("CardIcon")?.GetComponent<Image>();
+            TextMeshProUGUI cardName = slotObj.transform
+                .Find("CardName")?.GetComponent<TextMeshProUGUI>();
+            TextMeshProUGUI description = slotObj.transform
+                .Find("Description")?.GetComponent<TextMeshProUGUI>();
+            Image rarityBorder = slotObj.transform
+                .Find("RarityBorder")?.GetComponent<Image>();
+            Image topLine = slotObj.transform
+                .Find("LineTop")?.GetComponent<Image>();
+            Image botLine = slotObj.transform
+                .Find("LineBottom")?.GetComponent<Image>();
+            TextMeshProUGUI rarityText = slotObj.transform
+                .Find("RarityText")?.GetComponent<TextMeshProUGUI>();
+
+            Button selectBtn = slotObj.GetComponent<Button>();
+            Button mulliganBtn = slotObj.transform
+                .Find("MulliganButton")?.GetComponent<Button>();
+
+            if (cardIcon != null && card.cardIcon != null)
+                cardIcon.sprite = card.cardIcon;
+
+            if (cardName != null)
+                cardName.text = card.cardName;
+
+            if (description != null)
+                description.text = card.description;
+
+            if (rarityBorder != null)
+                rarityBorder.color = card.GetRarityColor().WithAlpha(0.2f);
+
+            if (topLine != null && botLine != null)
+            {
+                topLine.color = card.GetRarityColor();
+                botLine.color = card.GetRarityColor();
+            }
+
+            if (rarityText != null)
+                rarityText.text = card.GetRarityName();
 
             if (isStarter)
             {
@@ -176,17 +357,9 @@ namespace ElementumDefense.Cards
                 {
                     mulliganBtn.onClick.RemoveAllListeners();
                     int capturedIndex = index;
-                    mulliganBtn.onClick.AddListener(() => OnMulliganClicked(capturedIndex));
+                    mulliganBtn.onClick.AddListener(() =>
+                        OnMulliganClicked(capturedIndex));
                     mulliganBtn.interactable = true;
-                }
-            }
-            else
-            {
-                if (selectBtn != null)
-                {
-                    selectBtn.onClick.RemoveAllListeners();
-                    int capturedIndex = index;
-                    selectBtn.onClick.AddListener(() => OnCardSelected(capturedIndex));
                 }
             }
         }
@@ -197,67 +370,60 @@ namespace ElementumDefense.Cards
 
             if (success)
             {
-                Button mulliganBtn = starterSlotObjects[slotIndex].transform.Find("MulliganButton")?.GetComponent<Button>();
+                Button mulliganBtn = starterSlotObjects[slotIndex]
+                    .transform.Find("MulliganButton")?.GetComponent<Button>();
+
                 if (mulliganBtn != null)
                 {
                     mulliganBtn.interactable = false;
 
-                    TextMeshProUGUI btnText = mulliganBtn.GetComponentInChildren<TextMeshProUGUI>();
+                    TextMeshProUGUI btnText =
+                        mulliganBtn.GetComponentInChildren<TextMeshProUGUI>();
+
                     if (btnText != null)
                         btnText.text = "Used";
                 }
-
-                Debug.Log($"[DraftUI] Mulliganed slot {slotIndex}");
             }
-        }
-
-        private void OnCardSelected(int choiceIndex)
-        {
-            draftManager.SelectMidGameCard(choiceIndex);
-
-            if (midGameDraftPanel != null)
-            {
-                midGameDraftPanel.SetActive(false);
-            }
-
-            Debug.Log($"[DraftUI] Selected card {choiceIndex}");
         }
 
         private void ConfirmStarterDraft()
         {
-            Debug.Log("[DraftUI] Starter draft confirmed - calling DraftManager..."); // ← TEN LOG POWINIEN BYĆ!
-
-            // ========== TO MUSI BYĆ! ==========
             if (draftManager != null)
             {
-                draftManager.ConfirmStarterDraft(); // ← WYWOŁANIE!
-                Debug.Log("[DraftUI] Called draftManager.ConfirmStarterDraft()");
+                draftManager.ConfirmStarterDraft();
             }
-            else
-            {
-                Debug.LogError("[DraftUI] draftManager is NULL! Cannot confirm!");
-            }
-            // ==================================
 
-            // Hide panel
             if (starterDraftPanel != null)
             {
                 starterDraftPanel.SetActive(false);
             }
         }
 
+        // ==========================================
+        // TIMER
+        // ==========================================
+
         private void UpdateTimer(float timeRemaining)
         {
             string timeText = Mathf.CeilToInt(timeRemaining).ToString();
 
-            if (starterDraftPanel != null && starterDraftPanel.activeSelf && starterTimerText != null)
+            if (starterDraftPanel != null && starterDraftPanel.activeSelf &&
+                starterTimerText != null)
             {
                 starterTimerText.text = $"Time: {timeText}s";
             }
 
-            if (midGameDraftPanel != null && midGameDraftPanel.activeSelf && midGameTimerText != null)
+            if (midGameDraftPanel != null && midGameDraftPanel.activeSelf &&
+                midGameTimerText != null)
             {
                 midGameTimerText.text = $"Time: {timeText}s";
+
+                // ========== NOWE: Red timer when low ==========
+                if (timeRemaining <= 5f)
+                    midGameTimerText.color = Color.red;
+                else
+                    midGameTimerText.color = Color.white;
+                // ==============================================
             }
         }
 

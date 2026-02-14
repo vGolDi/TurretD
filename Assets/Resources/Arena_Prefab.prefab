@@ -407,10 +407,10 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 
+  m_text: WAVE START
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 91dd35a55c69589439ea831c3b5caf87, type: 2}
+  m_sharedMaterial: {fileID: 8079640713595413701, guid: 91dd35a55c69589439ea831c3b5caf87, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -440,7 +440,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 0
+  m_fontStyle: 1
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
   m_textAlignment: 65535
@@ -693,8 +693,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 720, y: 385}
-  m_SizeDelta: {x: 600, y: 100}
+  m_AnchoredPosition: {x: 660, y: 349.24066}
+  m_SizeDelta: {x: 600, y: 381.5187}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4213707195385429958
 CanvasRenderer:
@@ -724,10 +724,12 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 
+  m_text: 'WAVE 1/2
+
+    ENEMIES 0/40'
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 91dd35a55c69589439ea831c3b5caf87, type: 2}
+  m_sharedMaterial: {fileID: 8079640713595413701, guid: 91dd35a55c69589439ea831c3b5caf87, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -751,13 +753,13 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 48
-  m_fontSizeBase: 48
+  m_fontSize: 70
+  m_fontSizeBase: 70
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 0
+  m_fontStyle: 1
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
   m_textAlignment: 65535
@@ -1390,6 +1392,10 @@ MonoBehaviour:
   waves:
   - {fileID: 11400000, guid: 80b108933a3b4264b8963967c922c783, type: 2}
   - {fileID: 11400000, guid: 2ce83ddd03b47594abc450ac34eb76c7, type: 2}
+  - {fileID: 11400000, guid: a298f77eb95bf6b45a708eee91c7e7f8, type: 2}
+  - {fileID: 11400000, guid: db54710d9fd8f5d4dbf4a98fc807b4bb, type: 2}
+  - {fileID: 11400000, guid: 24d88e4b3ec9c8f4b8cab7129b4f7abd, type: 2}
+  - {fileID: 11400000, guid: db7e5f30e6d142141ac086606f4dd47e, type: 2}
   spawnPoints:
   - {fileID: 4363546881726186569}
   paths:
@@ -1468,8 +1474,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 285}
-  m_SizeDelta: {x: 600, y: 100}
+  m_AnchoredPosition: {x: 0, y: 241.73633}
+  m_SizeDelta: {x: 900, y: 186.5273}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8871053618677169184
 CanvasRenderer:
@@ -1499,10 +1505,10 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 
+  m_text: WAITING FOR OTHER PLAYERS
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 91dd35a55c69589439ea831c3b5caf87, type: 2}
+  m_sharedMaterial: {fileID: 8079640713595413701, guid: 91dd35a55c69589439ea831c3b5caf87, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1526,13 +1532,13 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 48
-  m_fontSizeBase: 48
+  m_fontSize: 55
+  m_fontSizeBase: 55
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 0
+  m_fontStyle: 1
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
   m_textAlignment: 65535

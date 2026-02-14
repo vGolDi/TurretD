@@ -12,14 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 68b61763f6aaed04aa36703e53b1af36, type: 3}
   m_Name: DisableUpgrades
   m_EditorClassIdentifier: Assembly-CSharp::ElementumDefense.Cards.SabotageCardData
-  sabotageName: Disable Upgrades
+  sabotageName: DisableUpgrades
   description: Opponent cannot upgrade turrets
   rarity: 1
   sabotageTag: 1
   durationType: 1
   duration: 15
   durationRounds: 0
-  sabotageIcon: {fileID: 0}
-  sabotageColor: {r: 1, g: 0, b: 0, a: 1}
+  sabotageIcon: {fileID: -1983326719, guid: fbc61234760eabb42b156a92652c95b1, type: 3}
+  sabotageColor: {r: 1, g: 1, b: 1, a: 1}
   dropWeight: 25
   sabotageEffect: {fileID: 11400000, guid: 84960b9910853eb48af7ec20bbd38f29, type: 2}

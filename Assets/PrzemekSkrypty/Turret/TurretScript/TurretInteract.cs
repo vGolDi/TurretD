@@ -38,7 +38,7 @@ public class TurretInteract : MonoBehaviour
 
     public void OnClicked()
     {
-        if (PlayerInputManager.LocalInstance != null && PlayerInputManager.LocalInstance.IsInBuildMode)
+        if (SimpleInputManager.LocalInstance != null && SimpleInputManager.LocalInstance.IsInBuildMode)
         {
             return;
         }

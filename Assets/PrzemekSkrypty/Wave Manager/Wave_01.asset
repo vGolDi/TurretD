@@ -14,7 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   waveParts:
   - enemyPrefab: {fileID: 8399832402143531616, guid: 69f8dcce5d1ca8d458f692fe8f288353, type: 3}
-    enemyCount: 20
+    enemyCount: 40
     spawnInterval: 0.7
     pathIndex: 0
   delayAfterWave: 5
+  waveCompletionBonus: 0

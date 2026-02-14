@@ -726,6 +726,8 @@ using System.Linq;
 using System.IO;
 using ElementumDefense.Auth;
 using ElementumDefense.Elements;
+using ElementumDefense.Progression;
+using ElementumDefense.Lootbox;
 
 namespace ElementumDefense.Cards
 {
@@ -760,6 +762,9 @@ namespace ElementumDefense.Cards
         // Wymagane XP na poziom: Level * 1000 (np. lvl 1 -> 1000, lvl 2 -> 2000)
         private const int BASE_XP_REQ = 1000;
 
+        [Header("Level Rewards")]
+        [SerializeField] private LevelRewardsConfig levelRewardsConfig;
+
         [Header("Ranked System")]
         [SerializeField] private int currentELO = 1000; // Startowe ELO
         public GameMode SelectedGameMode = GameMode.Casual;
@@ -779,6 +784,7 @@ namespace ElementumDefense.Cards
         public System.Action<int> OnGoldChanged;
         public System.Action<int> OnCrystalsChanged;
         public System.Action OnCollectionLoaded;
+        public System.Action<LootboxData> OnLootboxRewarded;
 
         // ==========================================
         // INITIALIZATION
@@ -1125,13 +1131,48 @@ namespace ElementumDefense.Cards
             OnLevelChanged?.Invoke(currentLevel);
             Debug.Log($"[Progression] LEVEL UP! Now level {currentLevel}");
 
-            // NAGRODA ZA LEVEL UP: Np. Lootbox
-            // Tutaj mo¿esz dodaæ darmow¹ skrzynkê, z³oto lub kryszta³y
-            AddGold(500);
-            AddCrystals(5);
+            // Pobierz nagrody z configu
+            if (levelRewardsConfig != null)
+            {
+                LevelReward reward = levelRewardsConfig.GetRewardsForLevel(currentLevel);
 
-            // Jeœli masz LootboxManager, mo¿esz wywo³aæ otwarcie (opcjonalne)
-            // LootboxManager.Instance.GiveFreeBox(); 
+                // Gold
+                if (reward.gold > 0)
+                {
+                    AddGold(reward.gold);
+                    Debug.Log($"[LevelUp] +{reward.gold} Gold");
+                }
+
+                // Crystals
+                if (reward.crystals > 0)
+                {
+                    AddCrystals(reward.crystals);
+                    Debug.Log($"[LevelUp] +{reward.crystals} Crystals");
+                }
+
+                // Lootbox
+                if (reward.lootbox != null && LootboxInventory.Instance != null)
+                {
+                    LootboxInventory.Instance.AddLootbox(reward.lootbox, 1);
+                    Debug.Log($"[LevelUp] Lootbox rewarded: {reward.lootbox.lootboxName}");
+
+                    // Opcjonalnie: Wywo³aj event dla UI
+                    OnLootboxRewarded?.Invoke(reward.lootbox);
+                }
+
+                // Special card unlock
+                if (reward.unlockCard != null && !IsUnlocked(reward.unlockCard))
+                {
+                    UnlockCard(reward.unlockCard);
+                    Debug.Log($"[LevelUp] Card unlocked: {reward.unlockCard.cardName}");
+                }
+            }
+            else
+            {
+                // Fallback jeœli brak configu
+                AddGold(500);
+                AddCrystals(5);
+            }
         }
 
         public int GetLevel() => currentLevel;
@@ -1226,7 +1267,24 @@ namespace ElementumDefense.Cards
             // Fallback
             return cards[cards.Count - 1];
         }
-        // ==========================================
+
+        public void GrantLevelUpReward(int forLevel)
+        {
+            if (levelRewardsConfig == null) return;
+
+            LevelReward reward = levelRewardsConfig.GetRewardsForLevel(forLevel);
+
+            if (reward.gold > 0) AddGold(reward.gold);
+            if (reward.crystals > 0) AddCrystals(reward.crystals);
+
+            if (reward.lootbox != null && LootboxInventory.Instance != null)
+            {
+                LootboxInventory.Instance.AddLootbox(reward.lootbox, 1);
+            }
+        }
+        // ========================
+        //
+        // ==================
         // DECK MANAGEMENT (NOWE)
         // ==========================================
 
@@ -1531,6 +1589,106 @@ namespace ElementumDefense.Cards
             // Dodajemy dok³adnie tyle XP, ile brakuje do nastêpnego poziomu
             int xpNeeded = GetXPForNextLevel() - currentXP;
             AddXP(xpNeeded);
+        }
+
+        [ContextMenu("Reset Level to 1")]
+        public void DebugResetLevel()
+        {
+            currentLevel = 1;
+            currentXP = 0;
+
+            OnLevelChanged?.Invoke(currentLevel);
+            OnXPChanged?.Invoke(currentXP, GetXPForNextLevel());
+
+            SaveCollection();
+            Debug.Log("<color=yellow>[Debug] Level reset to 1, XP reset to 0</color>");
+        }
+        [ContextMenu("Set Level to 10")]
+        public void DebugSetLevel10()
+        {
+            SetLevel(10);
+        }
+
+        [ContextMenu("Set Level to 25")]
+        public void DebugSetLevel25()
+        {
+            SetLevel(25);
+        }
+
+        [ContextMenu("Set Level to 50")]
+        public void DebugSetLevel50()
+        {
+            SetLevel(50);
+        }
+
+        [ContextMenu("Remove 1 Level")]
+        public void DebugRemoveLevel()
+        {
+            if (currentLevel > 1)
+            {
+                currentLevel--;
+                currentXP = 0;
+
+                OnLevelChanged?.Invoke(currentLevel);
+                OnXPChanged?.Invoke(currentXP, GetXPForNextLevel());
+
+                SaveCollection();
+                Debug.Log($"<color=yellow>[Debug] Level decreased to {currentLevel}</color>");
+            }
+            else
+            {
+                Debug.LogWarning("[Debug] Already at level 1!");
+            }
+        }
+
+        /// <summary>
+        /// Sets player level to specific value (public for external use)
+        /// </summary>
+        public void SetLevel(int level)
+        {
+            if (level < 1) level = 1;
+
+            currentLevel = level;
+            currentXP = 0;
+
+            OnLevelChanged?.Invoke(currentLevel);
+            OnXPChanged?.Invoke(currentXP, GetXPForNextLevel());
+
+            SaveCollection();
+            Debug.Log($"<color=green>[Debug] Level set to {currentLevel}</color>");
+        }
+        [ContextMenu("FULL RESET (Level, XP, ELO, Currency)")]
+        public void DebugFullProgressionReset()
+        {
+            currentLevel = 1;
+            currentXP = 0;
+            currentELO = 1000;
+            currentGold = 0;
+            currentCrystals = 0;
+
+            OnLevelChanged?.Invoke(currentLevel);
+            OnXPChanged?.Invoke(currentXP, GetXPForNextLevel());
+            OnEloChanged?.Invoke(currentELO);
+            OnGoldChanged?.Invoke(currentGold);
+            OnCrystalsChanged?.Invoke(currentCrystals);
+
+            SaveCollection();
+
+            Debug.Log("<color=red>[Debug] FULL RESET - Level: 1, XP: 0, ELO: 1000, Gold: 0, Crystals: 0</color>");
+        }
+
+        [ContextMenu("Print Player Stats")]
+        public void DebugPrintStats()
+        {
+            Debug.Log($"=== PLAYER STATS ===");
+            Debug.Log($"Level: {currentLevel}");
+            Debug.Log($"XP: {currentXP}/{GetXPForNextLevel()}");
+            Debug.Log($"ELO: {currentELO} ({GetRankName()})");
+            Debug.Log($"Gold: {currentGold}");
+            Debug.Log($"Crystals: {currentCrystals}");
+            Debug.Log($"Unlocked Cards: {unlockedCards.Count}/{allAvailableCards.Count}");
+            Debug.Log($"Decks: {playerDecks.Count}");
+            Debug.Log($"Save Path: {GetSavePath()}");
         }
         private void OnDestroy()
         {

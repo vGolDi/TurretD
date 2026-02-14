@@ -1,4 +1,4 @@
-using UnityEngine;
+        using UnityEngine;
 
 namespace ElementumDefense.StatusEffects
 {
@@ -27,7 +27,7 @@ namespace ElementumDefense.StatusEffects
 
         private float damagePerSecond;
         private float tickInterval = 0.5f; // Deal damage every 0.5s
-        private float tickTimer = 0f;
+        private float tickTimer = 0f;   
 
         private GameObject burnVFX; // Visual effect instance
 

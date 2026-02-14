@@ -90,7 +90,7 @@ namespace ElementumDefense.Cards
         /// <summary>
         /// Returns rarity color for UI
         /// </summary>
-public Color GetRarityColor()
+        public Color GetRarityColor()
         {
             // ZAWSZE zwracaj kolor bazujący na rarity - ignoruj cardColor
             // To zapewnia spójność kolorów dla wszystkich kart tego samego rarity
@@ -98,9 +98,13 @@ public Color GetRarityColor()
             {
                 CardRarity.Common => new Color(0.8f, 0.8f, 0.8f),    // Gray
                 CardRarity.Rare => new Color(0.3f, 0.6f, 1f),        // Blue
-                CardRarity.Legendary => new Color(1f, 0.8f, 0f),     // Gold
+                CardRarity.Legendary => new Color(1f, 0.8f, 0f),      // Gold
                 _ => Color.white
             };
+        }
+        public  Color WithAlpha(Color color, float alpha)
+        {
+            return new Color(color.r, color.g, color.b, alpha);
         }
         public string GetRarityName()
         {

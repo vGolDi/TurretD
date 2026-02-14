@@ -1,46 +1,37 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 using Photon.Pun;
 
 namespace ElementumDefense.Cards
 {
-    /// <summary>
-    /// Singleton managing global pool of sabotage cards
-    /// Handles weighted random selection with rarity sync and tag filtering
-    /// </summary>
     public class SabotagePool : MonoBehaviourPunCallbacks
     {
         public static SabotagePool Instance { get; private set; }
 
         [Header("Sabotage Card Pool")]
-        [Tooltip("All available sabotage cards (~50 cards)")]
         [SerializeField] private List<SabotageCardData> allSabotageCards = new List<SabotageCardData>();
 
         [Header("Drop Rate Settings")]
-        [Tooltip("Base drop weights by rarity (if card has no custom weight)")]
         [SerializeField] private float legendaryBaseWeight = 5f;
         [SerializeField] private float rareBaseWeight = 25f;
         [SerializeField] private float commonBaseWeight = 70f;
 
         [Header("Anti-Spam Settings")]
-        [Tooltip("Maximum same-tag cards in one draft (1-3)")]
         [SerializeField] private int maxSameTagInDraft = 2;
 
         [Header("Debug")]
         [SerializeField] private bool logSelections = true;
 
-        // Cache for performance
+        // Cache
         private Dictionary<CardRarity, List<SabotageCardData>> cardsByRarity;
+        // ========== NOWE: Cache by name for RPC lookup ==========
+        private Dictionary<string, SabotageCardData> cardsByName;
+        // ========================================================
         private bool isInitialized = false;
-
-        // ==========================================
-        // INITIALIZATION
-        // ==========================================
 
         private void Awake()
         {
-            // Singleton setup
             if (Instance != null && Instance != this)
             {
                 Destroy(gameObject);
@@ -48,26 +39,21 @@ namespace ElementumDefense.Cards
             }
 
             Instance = this;
-            DontDestroyOnLoad(gameObject); // Optional - depends on your scene structure
+            DontDestroyOnLoad(gameObject);
 
             InitializePool();
         }
 
-        /// <summary>
-        /// Initializes card pool and caches by rarity
-        /// </summary>
         private void InitializePool()
         {
             if (isInitialized) return;
 
-            // Validate pool
             if (allSabotageCards == null || allSabotageCards.Count == 0)
             {
-                Debug.LogError("[SabotagePool] No sabotage cards assigned! Create some in Resources.");
+                Debug.LogError("[SabotagePool] No sabotage cards assigned!");
                 return;
             }
 
-            // Remove null entries
             allSabotageCards.RemoveAll(card => card == null);
 
             // Cache by rarity
@@ -78,30 +64,41 @@ namespace ElementumDefense.Cards
                 { CardRarity.Legendary, new List<SabotageCardData>() }
             };
 
+            // ========== NOWE: Cache by name ==========
+            cardsByName = new Dictionary<string, SabotageCardData>();
+            // =========================================
+
             foreach (var card in allSabotageCards)
             {
                 if (cardsByRarity.ContainsKey(card.rarity))
                 {
                     cardsByRarity[card.rarity].Add(card);
                 }
+
+                // ========== NOWE: Add to name cache ==========
+                if (!cardsByName.ContainsKey(card.name))
+                {
+                    cardsByName[card.name] = card;
+                }
+                else
+                {
+                    Debug.LogWarning($"[SabotagePool] Duplicate card name: {card.name}");
+                }
+                // =============================================
             }
 
             isInitialized = true;
 
-            Debug.Log($"[SabotagePool] Initialized with {allSabotageCards.Count} cards:");
+            Debug.Log($"[SabotagePool] ✅ Initialized with {allSabotageCards.Count} cards:");
             Debug.Log($"  - Common: {cardsByRarity[CardRarity.Common].Count}");
             Debug.Log($"  - Rare: {cardsByRarity[CardRarity.Rare].Count}");
             Debug.Log($"  - Legendary: {cardsByRarity[CardRarity.Legendary].Count}");
         }
 
         // ==========================================
-        // MAIN API - DRAFT SELECTION
+        // MAIN API
         // ==========================================
 
-        /// <summary>
-        /// Master Client: Generates rarity combination for all players
-        /// Returns array of 3 rarities (e.g., [Rare, Rare, Common])
-        /// </summary>
         public CardRarity[] GenerateRarityCombination()
         {
             if (!PhotonNetwork.IsMasterClient)
@@ -110,7 +107,6 @@ namespace ElementumDefense.Cards
                 return null;
             }
 
-            // Weighted random for 3 cards
             CardRarity[] combination = new CardRarity[3];
 
             for (int i = 0; i < 3; i++)
@@ -120,40 +116,58 @@ namespace ElementumDefense.Cards
 
             if (logSelections)
             {
-                Debug.Log($"[SabotagePool] Generated rarity combo: [{combination[0]}, {combination[1]}, {combination[2]}]");
+                Debug.Log($"[SabotagePool] Generated rarity combo: " +
+                          $"[{string.Join(", ", combination)}]");
             }
 
             return combination;
         }
 
-        /// <summary>
-        /// Draws 3 sabotage cards based on rarity combination
-        /// Ensures max 2 cards of same tag (anti-spam)
-        /// </summary>
-        /// <param name="rarityCombination">Array of 3 rarities from Master Client</param>
-        /// <returns>3 sabotage cards for draft UI</returns>
         public SabotageCardData[] DrawSabotageCards(CardRarity[] rarityCombination)
         {
-            if (rarityCombination == null || rarityCombination.Length != 3)
+            // ========== NOWE: Ensure initialized ==========
+            if (!isInitialized)
+            {
+                InitializePool();
+            }
+            // ==============================================
+
+            if (rarityCombination == null || rarityCombination.Length == 0)
             {
                 Debug.LogError("[SabotagePool] Invalid rarity combination!");
                 return null;
             }
 
-            SabotageCardData[] drawnCards = new SabotageCardData[3];
+            // ========== NOWE: Support variable length (not just 3) ==========
+            SabotageCardData[] drawnCards = new SabotageCardData[rarityCombination.Length];
+            // ================================================================
+
             Dictionary<SabotageTag, int> tagCounts = new Dictionary<SabotageTag, int>();
 
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < rarityCombination.Length; i++)
             {
                 CardRarity targetRarity = rarityCombination[i];
 
-                // Try draw card with tag filtering
                 SabotageCardData card = DrawCardWithTagLimit(targetRarity, tagCounts);
 
                 if (card == null)
                 {
-                    Debug.LogWarning($"[SabotagePool] Failed to draw {targetRarity} card (slot {i})");
-                    continue;
+                    Debug.LogWarning($"[SabotagePool] Failed to draw {targetRarity} card (slot {i}). " +
+                                     $"Trying fallback...");
+
+                    // ========== NOWE: Fallback - try any rarity ==========
+                    card = DrawCardWithTagLimit(CardRarity.Common, tagCounts);
+                    if (card == null)
+                        card = DrawCardWithTagLimit(CardRarity.Rare, tagCounts);
+                    if (card == null)
+                        card = DrawCardWithTagLimit(CardRarity.Legendary, tagCounts);
+                    // ====================================================
+
+                    if (card == null)
+                    {
+                        Debug.LogError($"[SabotagePool] No cards available at all for slot {i}!");
+                        continue;
+                    }
                 }
 
                 drawnCards[i] = card;
@@ -167,19 +181,81 @@ namespace ElementumDefense.Cards
 
             if (logSelections)
             {
-                Debug.Log($"[SabotagePool] Drew cards: {string.Join(", ", drawnCards.Select(c => c?.sabotageName ?? "NULL"))}");
+                Debug.Log($"[SabotagePool] Drew cards: " +
+                          $"{string.Join(", ", drawnCards.Select(c => c?.sabotageName ?? "NULL"))}");
             }
 
             return drawnCards;
         }
 
         // ==========================================
-        // WEIGHTED RANDOM SELECTION
+        // NOWE: FIND BY NAME (for RPC lookup)
         // ==========================================
 
         /// <summary>
-        /// Selects random rarity using weighted probabilities
+        /// Finds sabotage card by ScriptableObject name.
+        /// Used by SabotageDraftManager when receiving RPC.
         /// </summary>
+        public SabotageCardData FindByName(string cardName)
+        {
+            if (!isInitialized)
+            {
+                InitializePool();
+            }
+
+            if (string.IsNullOrEmpty(cardName))
+            {
+                Debug.LogError("[SabotagePool] FindByName called with null/empty name!");
+                return null;
+            }
+
+            // Fast lookup from cache
+            if (cardsByName != null && cardsByName.TryGetValue(cardName, out SabotageCardData cached))
+            {
+                return cached;
+            }
+
+            // Fallback: linear search (in case cache missed it)
+            foreach (var card in allSabotageCards)
+            {
+                if (card != null && card.name == cardName)
+                {
+                    // Add to cache for next time
+                    if (cardsByName != null)
+                    {
+                        cardsByName[cardName] = card;
+                    }
+                    return card;
+                }
+            }
+
+            // Last resort: try sabotageName field
+            foreach (var card in allSabotageCards)
+            {
+                if (card != null && card.sabotageName == cardName)
+                {
+                    Debug.LogWarning($"[SabotagePool] Found '{cardName}' by sabotageName, " +
+                                     $"not SO name. Consider using card.name for RPC.");
+                    return card;
+                }
+            }
+
+            Debug.LogWarning($"[SabotagePool] Card '{cardName}' not found in pool!");
+            return null;
+        }
+
+        /// <summary>
+        /// Gets all cards (for debugging or UI listing)
+        /// </summary>
+        public List<SabotageCardData> GetAllCards()
+        {
+            return new List<SabotageCardData>(allSabotageCards);
+        }
+
+        // ==========================================
+        // WEIGHTED RANDOM SELECTION
+        // ==========================================
+
         private CardRarity GetRandomRarity()
         {
             float totalWeight = legendaryBaseWeight + rareBaseWeight + commonBaseWeight;
@@ -194,20 +270,19 @@ namespace ElementumDefense.Cards
             return CardRarity.Common;
         }
 
-        /// <summary>
-        /// Draws random card of specific rarity with tag filtering
-        /// </summary>
-        private SabotageCardData DrawCardWithTagLimit(CardRarity rarity, Dictionary<SabotageTag, int> currentTagCounts)
+        private SabotageCardData DrawCardWithTagLimit(
+            CardRarity rarity,
+            Dictionary<SabotageTag, int> currentTagCounts)
         {
             if (!cardsByRarity.ContainsKey(rarity) || cardsByRarity[rarity].Count == 0)
             {
-                Debug.LogError($"[SabotagePool] No {rarity} cards available!");
+                Debug.LogWarning($"[SabotagePool] No {rarity} cards available!");
                 return null;
             }
 
             List<SabotageCardData> availableCards = cardsByRarity[rarity];
 
-            // Filter out cards that would exceed tag limit
+            // Filter by tag limit
             List<SabotageCardData> validCards = availableCards.Where(card =>
             {
                 int currentCount = currentTagCounts.ContainsKey(card.sabotageTag)
@@ -219,26 +294,29 @@ namespace ElementumDefense.Cards
 
             if (validCards.Count == 0)
             {
-                Debug.LogWarning($"[SabotagePool] No valid {rarity} cards after tag filtering! Allowing duplicate tag.");
-                validCards = availableCards; // Fallback - allow duplicate
+                Debug.LogWarning($"[SabotagePool] No valid {rarity} cards after tag filtering. " +
+                                 $"Allowing duplicate tag.");
+                validCards = availableCards;
             }
 
-            // Weighted random selection
             return GetWeightedRandomCard(validCards);
         }
 
-        /// <summary>
-        /// Selects random card using dropWeight
-        /// </summary>
         private SabotageCardData GetWeightedRandomCard(List<SabotageCardData> cards)
         {
             if (cards.Count == 0) return null;
             if (cards.Count == 1) return cards[0];
 
-            // Calculate total weight
             float totalWeight = cards.Sum(card => card.dropWeight);
 
-            // Random selection
+            // ========== NOWE: Safety check ==========
+            if (totalWeight <= 0f)
+            {
+                Debug.LogWarning("[SabotagePool] Total weight is 0! Using uniform random.");
+                return cards[Random.Range(0, cards.Count)];
+            }
+            // ========================================
+
             float randomValue = Random.Range(0f, totalWeight);
             float cumulativeWeight = 0f;
 
@@ -252,34 +330,22 @@ namespace ElementumDefense.Cards
                 }
             }
 
-            // Fallback (shouldn't happen)
             return cards[cards.Count - 1];
         }
 
         // ==========================================
-        // UTILITY METHODS
+        // UTILITY
         // ==========================================
 
-        /// <summary>
-        /// Gets total count of sabotage cards
-        /// </summary>
-        public int GetTotalCardCount()
-        {
-            return allSabotageCards.Count;
-        }
+        public int GetTotalCardCount() => allSabotageCards.Count;
 
-        /// <summary>
-        /// Gets count of cards by rarity
-        /// </summary>
         public int GetCardCount(CardRarity rarity)
         {
-            return cardsByRarity.ContainsKey(rarity) ? cardsByRarity[rarity].Count : 0;
+            return cardsByRarity != null && cardsByRarity.ContainsKey(rarity)
+                ? cardsByRarity[rarity].Count
+                : 0;
         }
 
-        /// <summary>
-        /// Auto-loads sabotage cards from Resources folder (optional)
-        /// Call this if you want to auto-populate pool
-        /// </summary>
         [ContextMenu("Auto-Load Sabotage Cards from Resources")]
         public void AutoLoadFromResources()
         {
@@ -287,16 +353,15 @@ namespace ElementumDefense.Cards
 
             if (loadedCards.Length == 0)
             {
-                Debug.LogWarning("[SabotagePool] No sabotage cards found in Resources/Cards/Sabotages/");
+                Debug.LogWarning("[SabotagePool] No cards found in Resources/Cards/Sabotages/");
                 return;
             }
 
             allSabotageCards.Clear();
             allSabotageCards.AddRange(loadedCards);
 
-            Debug.Log($"[SabotagePool] Auto-loaded {loadedCards.Length} sabotage cards from Resources");
+            Debug.Log($"[SabotagePool] Auto-loaded {loadedCards.Length} sabotage cards");
 
-            // Re-initialize
             isInitialized = false;
             InitializePool();
         }
@@ -324,8 +389,30 @@ namespace ElementumDefense.Cards
             {
                 if (cards[i] != null)
                 {
-                    Debug.Log($"  [{i}] {cards[i].sabotageName} ({cards[i].rarity}, {cards[i].sabotageTag})");
+                    Debug.Log($"  [{i}] {cards[i].sabotageName} " +
+                              $"({cards[i].rarity}, {cards[i].sabotageTag}) " +
+                              $"SO.name={cards[i].name}");
                 }
+            }
+        }
+
+        [ContextMenu("Debug Pool State")]
+        private void DebugPoolState()
+        {
+            Debug.Log($"[SabotagePool] isInitialized={isInitialized}");
+            Debug.Log($"[SabotagePool] Total cards: {allSabotageCards.Count}");
+
+            if (cardsByRarity != null)
+            {
+                foreach (var kvp in cardsByRarity)
+                {
+                    Debug.Log($"  {kvp.Key}: {kvp.Value.Count} cards");
+                }
+            }
+
+            if (cardsByName != null)
+            {
+                Debug.Log($"[SabotagePool] Name cache: {cardsByName.Count} entries");
             }
         }
 

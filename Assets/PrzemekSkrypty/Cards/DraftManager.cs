@@ -8,31 +8,20 @@ using TMPro;
 
 namespace ElementumDefense.Cards
 {
-    /// <summary>
-    /// Manages card drafting system for multiplayer matches
-    /// Handles starter draft (5 cards) and mid-game drafts (1 of 3)
-    /// </summary>
     public class DraftManager : MonoBehaviourPunCallbacks
     {
         public static DraftManager Instance { get; private set; }
 
-
         [Header("Deck Configuration")]
-        [SerializeField, Tooltip("Player's deck for this match (loaded from menu)")]
-        private DeckData playerDeck;
+        [SerializeField] private DeckData playerDeck;
 
         [Header("Draft Timing")]
-        [SerializeField, Tooltip("Time limit for starter draft (seconds)")]
-        private float starterDraftTime = 60f;
-
-        [SerializeField, Tooltip("Time limit for mid-game draft (seconds)")]
-        private float midGameDraftTime = 30f;
-
-        [SerializeField, Tooltip("Waves between mid-game drafts")]
-        private int wavesBetweenDrafts = 5;
+        [SerializeField] private float starterDraftTime = 60f;
+        [SerializeField] private float midGameDraftTime = 30f;
+        [SerializeField] private int wavesBetweenDrafts = 5;
 
         [Header("Starter Draft Configuration")]
-        [SerializeField, Tooltip("Starter draft rarity slots")]
+        [SerializeField]
         private CardRarity[] starterRaritySlots = new CardRarity[]
         {
             CardRarity.Legendary,
@@ -43,36 +32,44 @@ namespace ElementumDefense.Cards
         };
 
         [Header("Mid-Game Draft Configuration")]
-        [SerializeField, Tooltip("How many cards to choose from (default 3)")]
-        private int midGameChoices = 3;
+        [SerializeField] private int midGameChoices = 3;
+        
 
-        [Header("References")]
+        // References
         private PlayerCardManager playerCardManager;
 
         // Draft state
         private bool isDrafting = false;
         private bool isStarterDraftComplete = false;
-        private int nextDraftWave = 0;
+        private int nextDraftWave;
 
         // Starter draft state
         private List<CardData> starterDraftedCards = new List<CardData>();
-        private Dictionary<int, bool> starterSlotMulliganed = new Dictionary<int, bool>(); // Track which slots were rerolled
+        private Dictionary<int, bool> starterSlotMulliganed = new Dictionary<int, bool>();
 
         // Mid-game draft state
         private CardData[] currentDraftChoices;
+        private Dictionary<int, bool> midGameSlotMulliganed = new Dictionary<int, bool>();
+
+        private bool midGameCardSelected = false; // ← NOWE: flaga czy gracz wybrał kartę
+
+        // ========== NOWE: RPC rarity sharing ==========
+        private CardRarity[] receivedRarityCombination = null;
+        private bool rarityReceived = false;
+        // ===============================================
 
         // Events
-        public System.Action<CardData[]> OnStarterDraftOffered; // 5 cards
-        public System.Action<CardData[]> OnMidGameDraftOffered; // 3 cards
+        public System.Action<CardData[]> OnStarterDraftOffered;
+        public System.Action<CardData[]> OnMidGameDraftOffered;
         public System.Action<CardData> OnCardDrafted;
         public System.Action OnDraftTimeout;
-        public System.Action<float> OnDraftTimerUpdate; // Remaining time
+        public System.Action<float> OnDraftTimerUpdate;     
+        public System.Action<int, CardData> OnMidGameCardMulliganed;
 
         private bool waitingForConfirmation = false;
         public bool WaitingForConfirmation => waitingForConfirmation;
         private bool localDraftComplete = false;
         private const string IS_READY_KEY = "isReadyForWaves";
-        private int playersReadyCount = 0;
         private PhotonView photonView;
         private const string CARDS_CONFIRMED_KEY = "CardsConfirmed";
         private const string ALL_CARDS_READY_KEY = "AllCardsReady";
@@ -86,11 +83,12 @@ namespace ElementumDefense.Cards
             photonView = GetComponent<PhotonView>();
             if (photonView == null)
             {
-                Debug.LogError("[DraftManager] PhotonView not found on this object!");
+                Debug.LogError("[DraftManager] PhotonView not found!");
             }
+
             if (Instance != null && Instance != this)
             {
-                Destroy(this); //gameObject
+                Destroy(this);
                 return;
             }
 
@@ -98,44 +96,23 @@ namespace ElementumDefense.Cards
 
             playerCardManager = GetComponent<PlayerCardManager>();
 
-            // Initialize mulligan tracking
             for (int i = 0; i < starterRaritySlots.Length; i++)
             {
                 starterSlotMulliganed[i] = false;
             }
+
+            // ========== NOWE: Poprawna inicjalizacja nextDraftWave ==========
+            nextDraftWave = wavesBetweenDrafts;
+            Debug.Log($"[DraftManager] Next mid-game draft at wave {nextDraftWave}");
+            // ================================================================
         }
 
         // ==========================================
-        // PUBLIC API - START DRAFTS
+        // PUBLIC API
         // ==========================================
 
-        /// <summary>
-        /// Starts starter draft (5 cards with mulligan)
-        /// Called by GameStartCountdown or lobby
-        /// </summary>
         public void StartStarterDraft()
         {
-            //if (isStarterDraftComplete)
-            //{
-            //    Debug.LogWarning("[DraftManager] Starter draft already completed!");
-            //    return;
-            //}
-
-            //// ========== NOWE: Check if deck assigned ==========
-            //if (playerDeck == null)
-            //{
-            //    Debug.LogError("[DraftManager] No deck assigned! Trying to load test deck...");
-            //    TryLoadTestDeck();
-
-            //    if (playerDeck == null)
-            //    {
-            //        Debug.LogError("[DraftManager] Still no deck! Cannot start draft.");
-            //        return;
-            //    }
-            //}
-            //// ==================================================
-
-            //StartCoroutine(StarterDraftCoroutine());
             if (isStarterDraftComplete)
             {
                 Debug.LogWarning("[DraftManager] Starter draft already completed!");
@@ -144,13 +121,12 @@ namespace ElementumDefense.Cards
 
             if (playerDeck == null)
             {
-                Debug.LogWarning("[DraftManager] Gracz nie wybrał decku. Próbuję załadować domyślny/testowy deck.");
+                Debug.LogWarning("[DraftManager] No deck assigned. Trying default...");
                 TryLoadTestDeck();
 
                 if (playerDeck == null)
                 {
-                    Debug.LogError("[DraftManager] FATAL: Brak dostępnego decku! Nie można rozpocząć draftu.");
-                    // Awaryjnie zakończ fazę draftu, żeby gra mogła iść dalej bez kart
+                    Debug.LogError("[DraftManager] FATAL: No deck available!");
                     isDrafting = false;
                     isStarterDraftComplete = true;
                     return;
@@ -159,58 +135,59 @@ namespace ElementumDefense.Cards
 
             StartCoroutine(StarterDraftCoroutine());
         }
+
         public void TryLoadTestDeck()
         {
-            //// Try to load any deck from Resources/Decks/
-            //DeckData[] decks = Resources.LoadAll<DeckData>("Decks");
-
-            //if (decks.Length > 0)
-            //{
-            //    playerDeck = decks[0];
-            //    Debug.Log($"[DraftManager] Loaded test deck: {playerDeck.deckName}");
-            //}
-            //else
-            //{
-            //    Debug.LogError("[DraftManager] No decks found in Resources/Decks/!");
-            //}
-            if (playerDeck != null) return; // Już mamy deck
+            if (playerDeck != null) return;
 
             DeckData[] decks = Resources.LoadAll<DeckData>("Decks");
             if (decks.Length > 0)
             {
-                playerDeck = decks[0]; // Ładuje pierwszy znaleziony
-                Debug.Log($"[DraftManager] Załadowano domyślny deck: {playerDeck.deckName}");
+                playerDeck = decks[0];
+                Debug.Log($"[DraftManager] Loaded default deck: {playerDeck.deckName}");
             }
             else
             {
-                Debug.LogError("[DraftManager] Nie znaleziono żadnych decków w folderze Resources/Decks/!");
+                Debug.LogError("[DraftManager] No decks in Resources/Decks/!");
             }
         }
-        public DeckData GetPlayerDeck()
-        {
-            return playerDeck;
-        }
+
+        public DeckData GetPlayerDeck() => playerDeck;
+
         /// <summary>
-        /// Checks if mid-game draft should trigger (called by WaveManager)
+        /// Called by WaveManager after each wave to check if draft should trigger
         /// </summary>
         public void CheckMidGameDraft(int currentWave)
         {
+            Debug.Log($"[DraftManager] CheckMidGameDraft called. Wave={currentWave}, " +
+                      $"nextDraftWave={nextDraftWave}, " +
+                      $"isStarterComplete={isStarterDraftComplete}, " +
+                      $"isDrafting={isDrafting}");
+
             if (!isStarterDraftComplete)
             {
-                Debug.LogWarning("[DraftManager] Cannot start mid-game draft before starter draft!");
+                Debug.LogWarning("[DraftManager] Cannot mid-game draft before starter!");
+                return;
+            }
+
+            if (isDrafting)
+            {
+                Debug.LogWarning("[DraftManager] Already drafting!");
                 return;
             }
 
             if (currentWave >= nextDraftWave)
             {
                 nextDraftWave = currentWave + wavesBetweenDrafts;
+                Debug.Log($"[DraftManager] Triggering mid-game draft! Next at wave {nextDraftWave}");
                 StartMidGameDraft();
+            }
+            else
+            {
+                Debug.Log($"[DraftManager] No draft yet. Next at wave {nextDraftWave}");
             }
         }
 
-        /// <summary>
-        /// Manually trigger mid-game draft
-        /// </summary>
         public void StartMidGameDraft()
         {
             if (isDrafting)
@@ -223,15 +200,14 @@ namespace ElementumDefense.Cards
         }
 
         // ==========================================
-        // STARTER DRAFT (5 cards + mulligan)
+        // STARTER DRAFT
         // ==========================================
 
         private IEnumerator StarterDraftCoroutine()
         {
-
             isDrafting = true;
             waitingForConfirmation = true;
-            localDraftComplete = false; // ✅ RESET
+            localDraftComplete = false;
 
             Debug.Log("[DraftManager] === STARTER DRAFT START ===");
 
@@ -256,21 +232,19 @@ namespace ElementumDefense.Cards
                 yield return null;
             }
 
-            if (waitingForConfirmation) // Timeout
+            if (waitingForConfirmation)
             {
                 Debug.Log("[DraftManager] Starter draft TIMEOUT - auto-confirming");
                 OnDraftTimeout?.Invoke();
-                ConfirmStarterDraft(); // ✅ Wywołaj metodę zamiast tylko ustawiać flagę
+                ConfirmStarterDraft();
             }
 
-            // ✅ USUŃ STĄD - Activate cards dopiero po countdown
-            // Teraz tylko czekamy na innych graczy
-            Debug.Log("[DraftManager] Lokalny wybór kart zakończony. Czekam na innych...");
+            Debug.Log("[DraftManager] Local card selection done. Waiting for others...");
         }
-        // ✅ DODAJ NOWĄ METODĘ - AKTYWACJA KART (wywoływana po countdown)
+
         public void ActivateStarterCards()
         {
-            Debug.Log("[DraftManager] Aktywuję wybrane karty...");
+            Debug.Log("[DraftManager] Activating starter cards...");
 
             foreach (CardData card in starterDraftedCards)
             {
@@ -281,137 +255,14 @@ namespace ElementumDefense.Cards
             }
 
             isStarterDraftComplete = true;
-            isDrafting = false; // ✅ Dopiero teraz kończymy draft
-        }
-        private void Update()
-        {
-            // Master Client sprawdza gotowość po drafcie
-            if (PhotonNetwork.IsMasterClient && isStarterDraftComplete && isDrafting)
-            {
-                CheckIfAllPlayersAreReady();
-            }
+            isDrafting = false; // ← Teraz mid-game draft może się uruchomić
 
-            // ✅ NOWE - Master sprawdza potwierdzenia kart
-            if (PhotonNetwork.IsMasterClient && waitingForConfirmation == false && localDraftComplete)
-            {
-                CheckIfAllCardsConfirmed();
-            }
-        }
-        private void CheckIfAllCardsConfirmed()
-        {
-            int confirmedCount = 0;
-            foreach (var player in PhotonNetwork.PlayerList)
-            {
-                if (player.CustomProperties.ContainsKey(CARDS_CONFIRMED_KEY) &&
-                    (bool)player.CustomProperties[CARDS_CONFIRMED_KEY])
-                {
-                    confirmedCount++;
-                }
-            }
-
-            Debug.Log($"[DraftManager - Master] Potwierdzonych kart: {confirmedCount}/{PhotonNetwork.CurrentRoom.PlayerCount}");
-
-            if (confirmedCount >= PhotonNetwork.CurrentRoom.PlayerCount)
-            {
-                Debug.Log("[DraftManager - Master] Wszyscy potwierdzili karty! Wysyłam sygnał.");
-
-                var roomProps = new ExitGames.Client.Photon.Hashtable();
-                roomProps[ALL_CARDS_READY_KEY] = true;
-                PhotonNetwork.CurrentRoom.SetCustomProperties(roomProps);
-            }
-        }
-        private void CheckIfAllPlayersAreReady()
-        {
-            int readyCount = 0;
-            foreach (var player in PhotonNetwork.PlayerList)
-            {
-                if (player.CustomProperties.ContainsKey(IS_READY_KEY) &&
-                    (bool)player.CustomProperties[IS_READY_KEY])
-                {
-                    readyCount++;
-                }
-            }
-
-            if (readyCount >= PhotonNetwork.CurrentRoom.PlayerCount)
-            {
-                Debug.Log("[DraftManager - Master] Wszyscy gotowi! Ustawiam Room Property.");
-
-                // ✅ ZAMIEŃ RPC NA ROOM PROPERTY
-                var roomProps = new ExitGames.Client.Photon.Hashtable();
-                roomProps["AllPlayersReadyForWaves"] = true;
-                PhotonNetwork.CurrentRoom.SetCustomProperties(roomProps);
-            }
+            Debug.Log($"[DraftManager] Starter draft COMPLETE. " +
+                      $"isStarterDraftComplete={isStarterDraftComplete}, " +
+                      $"isDrafting={isDrafting}, " +
+                      $"nextDraftWave={nextDraftWave}");
         }
 
-        // ✅ OBSŁUGA ZMIANY ROOM PROPERTIES
-        public override void OnRoomPropertiesUpdate(ExitGames.Client.Photon.Hashtable propertiesThatChanged)
-        {
-            // Koniec draftu (stara logika)
-            if (propertiesThatChanged.ContainsKey("AllPlayersReadyForWaves") &&
-                (bool)propertiesThatChanged["AllPlayersReadyForWaves"])
-            {
-                EndDraft();
-            }
-
-            // ✅ NOWE - Wszyscy potwierdzili karty → START COUNTDOWN
-            if (propertiesThatChanged.ContainsKey(ALL_CARDS_READY_KEY) &&
-                (bool)propertiesThatChanged[ALL_CARDS_READY_KEY])
-            {
-                Debug.Log("[DraftManager] Wszyscy potwierdzili karty! Uruchamiam countdown.");
-                StartFinalCountdown();
-            }
-        }
-        private void StartFinalCountdown()
-        {
-            // Reset Custom Property
-            var playerProps = new ExitGames.Client.Photon.Hashtable();
-            playerProps[CARDS_CONFIRMED_KEY] = false;
-            PhotonNetwork.LocalPlayer.SetCustomProperties(playerProps);
-
-            // Znajdź GameStartCountdown
-            GameStartCountdown countdown = FindObjectOfType<GameStartCountdown>();
-            if (countdown != null)
-            {
-                countdown.StartCountdown();
-            }
-            else
-            {
-                Debug.LogError("[DraftManager] Nie znaleziono GameStartCountdown!");
-            }
-        }
-        private void EndDraft()
-        {
-            if (!isDrafting) return; // Zabezpieczenie przed wielokrotnym wywołaniem
-
-            Debug.Log($"[{PhotonNetwork.LocalPlayer.NickName}] Wszyscy gotowi - kończę fazę draftu.");
-            isDrafting = false;
-
-            // Zresetuj własną gotowość
-            var playerProps = new ExitGames.Client.Photon.Hashtable { { IS_READY_KEY, false } };
-            PhotonNetwork.LocalPlayer.SetCustomProperties(playerProps);
-
-            // Master resetuje Room Property
-            if (PhotonNetwork.IsMasterClient)
-            {
-                var roomProps = new ExitGames.Client.Photon.Hashtable();
-                roomProps["AllPlayersReadyForWaves"] = false;
-                PhotonNetwork.CurrentRoom.SetCustomProperties(roomProps);
-            }
-        }
-
-        private void ResetReadyStatusForAllPlayers()
-        {
-            ExitGames.Client.Photon.Hashtable playerProps = new ExitGames.Client.Photon.Hashtable();
-            playerProps[IS_READY_KEY] = false;
-
-            foreach (var player in PhotonNetwork.PlayerList)
-            {
-                player.SetCustomProperties(playerProps);
-            }
-        }
-        /// <summary>
-        /// Called by DraftUI when player confirms starter draft
-        /// </summary>
         public void ConfirmStarterDraft()
         {
             if (!waitingForConfirmation)
@@ -423,44 +274,19 @@ namespace ElementumDefense.Cards
             waitingForConfirmation = false;
             localDraftComplete = true;
 
-            Debug.Log("[DraftManager] ✅ Player confirmed starter draft!");
+            Debug.Log("[DraftManager] Player confirmed starter draft!");
 
-            // Oznacz w Custom Properties
             var playerProps = new ExitGames.Client.Photon.Hashtable();
             playerProps[CARDS_CONFIRMED_KEY] = true;
             PhotonNetwork.LocalPlayer.SetCustomProperties(playerProps);
 
-            // ✅ POKAŻ WIADOMOŚĆ "CZEKAM NA INNYCH"
             ShowWaitingMessage();
         }
 
-        // ✅ NOWA METODA
-        private void ShowWaitingMessage()
-        {
-            // Znajdź CountdownText (możesz przekazać referencję z GameStartCountdown)
-            GameStartCountdown countdown = FindObjectOfType<GameStartCountdown>();
-            if (countdown != null)
-            {
-                TextMeshProUGUI countdownText = countdown.GetComponent<TextMeshProUGUI>();
-                // LUB lepiej - dodaj publiczne pole w GameStartCountdown:
-                // public TextMeshProUGUI GetCountdownText() { return countdownText; }
-
-                // Wtedy:
-                TextMeshProUGUI text = countdown.GetCountdownText();
-                if (text != null)
-                {
-                    text.gameObject.SetActive(true);
-                    text.text = "Czekam na innych graczy...";
-                    Debug.Log("[DraftManager] Pokazano wiadomość oczekiwania.");
-                }
-            }
-        }
-        /// <summary>
-        /// Draws 5 cards based on starter rarity slots
-        /// </summary>
         private CardData[] DrawStarterCards()
         {
             CardData[] cards = new CardData[5];
+            starterDraftedCards.Clear(); // ← NOWE: Clear previous
 
             for (int i = 0; i < starterRaritySlots.Length; i++)
             {
@@ -469,7 +295,7 @@ namespace ElementumDefense.Cards
 
                 if (card == null)
                 {
-                    Debug.LogWarning($"[DraftManager] Failed to draw {targetRarity} card for slot {i}!");
+                    Debug.LogWarning($"[DraftManager] Failed to draw {targetRarity} for slot {i}!");
                 }
 
                 cards[i] = card;
@@ -479,10 +305,6 @@ namespace ElementumDefense.Cards
             return cards;
         }
 
-        /// <summary>
-        /// Mulligans (rerolls) a card slot
-        /// Can only be done ONCE per slot
-        /// </summary>
         public bool MulliganCard(int slotIndex)
         {
             if (slotIndex < 0 || slotIndex >= starterDraftedCards.Count)
@@ -497,10 +319,7 @@ namespace ElementumDefense.Cards
                 return false;
             }
 
-            // Get target rarity
             CardRarity targetRarity = starterRaritySlots[slotIndex];
-
-            // Draw new card
             CardData newCard = DrawRandomCardFromDeck(targetRarity);
 
             if (newCard == null)
@@ -509,57 +328,74 @@ namespace ElementumDefense.Cards
                 return false;
             }
 
-            // Replace card
             starterDraftedCards[slotIndex] = newCard;
             starterSlotMulliganed[slotIndex] = true;
 
             Debug.Log($"[DraftManager] Mulliganed slot {slotIndex}: {newCard.cardName}");
 
-            // Notify UI to update
             OnStarterDraftOffered?.Invoke(starterDraftedCards.ToArray());
 
             return true;
         }
 
         // ==========================================
-        // MID-GAME DRAFT (1 of 3 cards)
+        // MID-GAME DRAFT (Z MULLIGAN)
         // ==========================================
 
         private IEnumerator MidGameDraftCoroutine()
         {
             isDrafting = true;
+            midGameCardSelected = false;
+
+            // ========== NOWE: Reset mulligan tracking ==========
+            midGameSlotMulliganed.Clear();
+            for (int i = 0; i < midGameChoices; i++)
+            {
+                midGameSlotMulliganed[i] = false;
+            }
+            // ===================================================
 
             Debug.Log("[DraftManager] === MID-GAME DRAFT START ===");
 
-            // Master Client generates rarity combination
+            // PHASE 1: Rarity generation
             CardRarity[] rarityCombination = null;
 
             if (PhotonNetwork.IsMasterClient)
             {
                 rarityCombination = GenerateRandomRarityCombination(midGameChoices);
 
-                // Send to all players
-                photonView.RPC("RPC_ReceiveRarityCombination", RpcTarget.AllBuffered, rarityCombination);
+                int[] rarityInts = rarityCombination.Select(r => (int)r).ToArray();
+                photonView.RPC("RPC_ReceiveRarityCombination", RpcTarget.AllBuffered, rarityInts);
+
+                Debug.Log($"[DraftManager] Master generated rarities: " +
+                          $"[{string.Join(", ", rarityCombination)}]");
             }
             else
             {
-                // Wait for Master Client to send combo (with timeout)
+                rarityReceived = false;
                 float timeout = 5f;
-                while (rarityCombination == null && timeout > 0f)
+
+                while (!rarityReceived && timeout > 0f)
                 {
                     timeout -= Time.deltaTime;
                     yield return null;
                 }
 
-                if (rarityCombination == null)
+                if (!rarityReceived)
                 {
                     Debug.LogError("[DraftManager] Timeout waiting for rarity combination!");
                     isDrafting = false;
                     yield break;
                 }
+
+                rarityCombination = receivedRarityCombination;
             }
 
-            // Draw cards from deck based on combo
+            // PHASE 2: Draw cards (store rarities for mulligan)
+            // ========== NOWE: Save rarity combo for mulligan rerolls ==========
+            currentMidGameRarities = rarityCombination;
+            // =================================================================
+
             currentDraftChoices = DrawCardsFromDeck(rarityCombination);
 
             if (currentDraftChoices == null || currentDraftChoices.Length == 0)
@@ -569,38 +405,142 @@ namespace ElementumDefense.Cards
                 yield break;
             }
 
+            for (int i = 0; i < currentDraftChoices.Length; i++)
+            {
+                string name = currentDraftChoices[i] != null
+                    ? currentDraftChoices[i].cardName
+                    : "NULL";
+                Debug.Log($"[DraftManager] Mid-game choice {i}: {name} ({rarityCombination[i]})");
+            }
+
             // Show UI
             OnMidGameDraftOffered?.Invoke(currentDraftChoices);
 
-            // Wait for player to choose or timeout
+            // PHASE 3: Wait for selection or timeout
             float timeRemaining = midGameDraftTime;
-            CardData chosenCard = null;
 
-            while (timeRemaining > 0f && chosenCard == null)
+            while (timeRemaining > 0f && !midGameCardSelected)
             {
                 OnDraftTimerUpdate?.Invoke(timeRemaining);
-
-                // TODO: Check if player clicked a card
-                // chosenCard = CheckPlayerChoice();
-
                 timeRemaining -= Time.deltaTime;
                 yield return null;
             }
 
-            // Timeout - auto-select random card
-            if (chosenCard == null)
+            // Timeout - auto-select
+            if (!midGameCardSelected)
             {
-                chosenCard = currentDraftChoices[Random.Range(0, currentDraftChoices.Length)];
-                Debug.Log($"[DraftManager] TIMEOUT - auto-selected {chosenCard.cardName}");
+                CardData autoCard = currentDraftChoices.FirstOrDefault(c => c != null);
+                if (autoCard == null) autoCard = currentDraftChoices[0];
+
+                Debug.Log($"[DraftManager] TIMEOUT - auto-selected: " +
+                          $"{(autoCard != null ? autoCard.cardName : "NULL")}");
+
                 OnDraftTimeout?.Invoke();
+
+                if (autoCard != null)
+                {
+                    ActivateCard(autoCard);
+                }
             }
 
-            // Activate chosen card
-            ActivateCard(chosenCard);
-
+            // Cleanup
+            currentDraftChoices = null;
+            currentMidGameRarities = null;
             isDrafting = false;
 
-            Debug.Log($"[DraftManager] Mid-game draft complete! Chose: {chosenCard.cardName}");
+            Debug.Log("[DraftManager] Mid-game draft COMPLETE.");
+        }
+
+        // ==========================================
+        // NOWE: Mid-game rarity storage for mulligan
+        // ==========================================
+
+        private CardRarity[] currentMidGameRarities;
+
+        // ==========================================
+        // NOWE: Mid-game Mulligan (random rarity!)
+        // ==========================================
+
+        /// <summary>
+        /// Mulligans a mid-game draft card.
+        /// Unlike starter mulligan, the NEW card gets a RANDOM rarity
+        /// (can go from Legendary → Common or Common → Legendary!)
+        /// </summary>
+        public bool MulliganMidGameCard(int slotIndex)
+        {
+            if (!isDrafting)
+            {
+                Debug.LogWarning("[DraftManager] Not currently drafting!");
+                return false;
+            }
+
+            if (currentDraftChoices == null ||
+                slotIndex < 0 ||
+                slotIndex >= currentDraftChoices.Length)
+            {
+                Debug.LogError($"[DraftManager] Invalid mid-game slot index: {slotIndex}");
+                return false;
+            }
+
+            if (midGameSlotMulliganed.ContainsKey(slotIndex) && midGameSlotMulliganed[slotIndex])
+            {
+                Debug.LogWarning($"[DraftManager] Mid-game slot {slotIndex} already mulliganed!");
+                return false;
+            }
+
+            // ========== KLUCZOWE: Losowa nowa rzadkość! ==========
+            CardRarity oldRarity = currentDraftChoices[slotIndex] != null
+                ? currentDraftChoices[slotIndex].rarity
+                : CardRarity.Common;
+
+            CardRarity newRarity = GetRandomRarity(); // Totally random!
+                                                      // =====================================================
+
+            // Draw new card with random rarity
+            CardData newCard = DrawRandomCardFromDeck(newRarity);
+
+            if (newCard == null)
+            {
+                Debug.LogError($"[DraftManager] Failed to mulligan mid-game slot {slotIndex}!");
+                return false;
+            }
+
+            // Get old card name for logging
+            string oldCardName = currentDraftChoices[slotIndex]?.cardName ?? "NULL";
+
+            // Replace card
+            currentDraftChoices[slotIndex] = newCard;
+            midGameSlotMulliganed[slotIndex] = true;
+
+            // Update stored rarity (for display purposes)
+            if (currentMidGameRarities != null && slotIndex < currentMidGameRarities.Length)
+            {
+                currentMidGameRarities[slotIndex] = newRarity;
+            }
+
+            Debug.Log($"[DraftManager] 🔄 Mid-game mulligan slot {slotIndex}: " +
+                      $"{oldCardName} ({oldRarity}) → {newCard.cardName} ({newRarity})");
+
+            // Notify UI to update single slot
+            OnMidGameCardMulliganed?.Invoke(slotIndex, newCard);
+
+            // Also fire full refresh for UI that listens to it
+            OnMidGameDraftOffered?.Invoke(currentDraftChoices);
+
+            return true;
+        }
+
+        /// <summary>
+        /// Checks if mid-game slot can be mulliganed
+        /// </summary>
+        public bool CanMulliganMidGameSlot(int slotIndex)
+        {
+            if (!isDrafting) return false;
+            if (currentDraftChoices == null) return false;
+            if (slotIndex < 0 || slotIndex >= currentDraftChoices.Length) return false;
+
+            return !midGameSlotMulliganed.ContainsKey(slotIndex) ||
+                   !midGameSlotMulliganed[slotIndex];
         }
 
         /// <summary>
@@ -614,7 +554,15 @@ namespace ElementumDefense.Cards
                 return;
             }
 
-            if (currentDraftChoices == null || choiceIndex < 0 || choiceIndex >= currentDraftChoices.Length)
+            if (midGameCardSelected)
+            {
+                Debug.LogWarning("[DraftManager] Already selected a card!");
+                return;
+            }
+
+            if (currentDraftChoices == null ||
+                choiceIndex < 0 ||
+                choiceIndex >= currentDraftChoices.Length)
             {
                 Debug.LogError($"[DraftManager] Invalid choice index: {choiceIndex}");
                 return;
@@ -628,23 +576,16 @@ namespace ElementumDefense.Cards
                 return;
             }
 
-            // Activate immediately
             ActivateCard(chosenCard);
+            midGameCardSelected = true;
 
-            // End draft
-            isDrafting = false;
-            currentDraftChoices = null;
-
-            Debug.Log($"[DraftManager] Player selected: {chosenCard.cardName}");
+            Debug.Log($"[DraftManager] ✅ Selected mid-game card: {chosenCard.cardName}");
         }
 
         // ==========================================
-        // CARD DRAWING FROM DECK
+        // CARD DRAWING
         // ==========================================
 
-        /// <summary>
-        /// Draws random card of specific rarity from player's deck
-        /// </summary>
         private CardData DrawRandomCardFromDeck(CardRarity targetRarity)
         {
             if (playerDeck == null || playerDeck.cards.Count == 0)
@@ -653,24 +594,29 @@ namespace ElementumDefense.Cards
                 return null;
             }
 
-            // Get all cards of target rarity
             List<CardData> validCards = playerDeck.cards
                 .Where(card => card != null && card.rarity == targetRarity)
                 .ToList();
 
             if (validCards.Count == 0)
             {
-                Debug.LogWarning($"[DraftManager] No {targetRarity} cards in deck!");
-                return null;
+                Debug.LogWarning($"[DraftManager] No {targetRarity} cards in deck! " +
+                                 $"Falling back to any card.");
+
+                // ========== NOWE: Fallback - weź dowolną kartę ==========
+                validCards = playerDeck.cards.Where(c => c != null).ToList();
+
+                if (validCards.Count == 0)
+                {
+                    Debug.LogError("[DraftManager] Deck has no valid cards at all!");
+                    return null;
+                }
+                // ========================================================
             }
 
-            // Random selection
             return validCards[Random.Range(0, validCards.Count)];
         }
 
-        /// <summary>
-        /// Draws multiple cards based on rarity array
-        /// </summary>
         private CardData[] DrawCardsFromDeck(CardRarity[] rarities)
         {
             CardData[] cards = new CardData[rarities.Length];
@@ -683,9 +629,6 @@ namespace ElementumDefense.Cards
             return cards;
         }
 
-        /// <summary>
-        /// Generates random rarity combination for mid-game draft
-        /// </summary>
         private CardRarity[] GenerateRandomRarityCombination(int count)
         {
             CardRarity[] combo = new CardRarity[count];
@@ -702,18 +645,15 @@ namespace ElementumDefense.Cards
         {
             float rand = Random.value;
 
-            if (rand < 0.05f) return CardRarity.Legendary; // 5%
-            if (rand < 0.30f) return CardRarity.Rare;      // 25%
-            return CardRarity.Common;                       // 70%
+            if (rand < 0.05f) return CardRarity.Legendary;
+            if (rand < 0.30f) return CardRarity.Rare;
+            return CardRarity.Common;
         }
 
         // ==========================================
         // CARD ACTIVATION
         // ==========================================
 
-        /// <summary>
-        /// Activates drafted card (adds to PlayerCardManager)
-        /// </summary>
         private void ActivateCard(CardData card)
         {
             if (card == null) return;
@@ -725,23 +665,105 @@ namespace ElementumDefense.Cards
         }
 
         // ==========================================
-        // PHOTON RPC
+        // PHOTON RPC (NAPRAWIONE)
         // ==========================================
 
         [PunRPC]
-        private void RPC_ReceiveRarityCombination(CardRarity[] combination)
+        private void RPC_ReceiveRarityCombination(int[] rarityInts)
         {
-            Debug.Log($"[DraftManager] Received rarity combo: [{string.Join(", ", combination)}]");
-            // Combo is used in MidGameDraftCoroutine
+            receivedRarityCombination = rarityInts
+                .Select(i => (CardRarity)i)
+                .ToArray();
+
+            rarityReceived = true;
+
+            Debug.Log($"[DraftManager] RPC received rarities: " +
+                      $"[{string.Join(", ", receivedRarityCombination)}]");
+        }
+
+        // ==========================================
+        // UPDATE & PHOTON CALLBACKS
+        // ==========================================
+
+        private void Update()
+        {
+            if (PhotonNetwork.IsMasterClient && waitingForConfirmation == false && localDraftComplete)
+            {
+                CheckIfAllCardsConfirmed();
+            }
+        }
+
+        private void CheckIfAllCardsConfirmed()
+        {
+            int confirmedCount = 0;
+            foreach (var player in PhotonNetwork.PlayerList)
+            {
+                if (player.CustomProperties.ContainsKey(CARDS_CONFIRMED_KEY) &&
+                    (bool)player.CustomProperties[CARDS_CONFIRMED_KEY])
+                {
+                    confirmedCount++;
+                }
+            }
+
+            if (confirmedCount >= PhotonNetwork.CurrentRoom.PlayerCount)
+            {
+                Debug.Log("[DraftManager - Master] All confirmed! Sending signal.");
+
+                var roomProps = new ExitGames.Client.Photon.Hashtable();
+                roomProps[ALL_CARDS_READY_KEY] = true;
+                PhotonNetwork.CurrentRoom.SetCustomProperties(roomProps);
+
+                // ← Prevent re-checking
+                localDraftComplete = false;
+            }
+        }
+
+        public override void OnRoomPropertiesUpdate(
+            ExitGames.Client.Photon.Hashtable propertiesThatChanged)
+        {
+            if (propertiesThatChanged.ContainsKey(ALL_CARDS_READY_KEY) &&
+                (bool)propertiesThatChanged[ALL_CARDS_READY_KEY])
+            {
+                Debug.Log("[DraftManager] All cards confirmed! Starting countdown.");
+                StartFinalCountdown();
+            }
+        }
+
+        private void StartFinalCountdown()
+        {
+            var playerProps = new ExitGames.Client.Photon.Hashtable();
+            playerProps[CARDS_CONFIRMED_KEY] = false;
+            PhotonNetwork.LocalPlayer.SetCustomProperties(playerProps);
+
+            GameStartCountdown countdown = Object.FindFirstObjectByType<GameStartCountdown>(); 
+            if (countdown != null)
+            {
+                countdown.StartCountdown();
+            }
+            else
+            {
+                Debug.LogError("[DraftManager] GameStartCountdown not found!");
+            }
+        }
+
+        private void ShowWaitingMessage()
+        {
+            GameStartCountdown countdown = Object.FindFirstObjectByType<GameStartCountdown>();
+            if (countdown != null)
+            {
+                TextMeshProUGUI text = countdown.GetCountdownText();
+                if (text != null)
+                {
+                    text.gameObject.SetActive(true);
+                    text.text = "Waiting for other players...";
+                }
+            }   
         }
 
         // ==========================================
         // UTILITY
         // ==========================================
 
-        /// <summary>
-        /// Sets player's deck (called from lobby/menu)
-        /// </summary>
         public void SetDeck(DeckData deck)
         {
             playerDeck = deck;
@@ -751,20 +773,20 @@ namespace ElementumDefense.Cards
         public bool IsDrafting => isDrafting;
         public bool IsStarterDraftComplete => isStarterDraftComplete;
 
-        // ==========================================
-        // DEBUG
-        // ==========================================
-
         [ContextMenu("Test Starter Draft")]
-        private void TestStarterDraft()
-        {
-            StartStarterDraft();
-        }
+        private void TestStarterDraft() => StartStarterDraft();
 
         [ContextMenu("Test Mid-Game Draft")]
-        private void TestMidGameDraft()
+        private void TestMidGameDraft() => StartMidGameDraft();
+
+        [ContextMenu("Debug State")]
+        private void DebugState()
         {
-            StartMidGameDraft();
+            Debug.Log($"[DraftManager DEBUG] isDrafting={isDrafting}, " +
+                      $"isStarterDraftComplete={isStarterDraftComplete}, " +
+                      $"nextDraftWave={nextDraftWave}, " +
+                      $"waitingForConfirmation={waitingForConfirmation}, " +
+                      $"localDraftComplete={localDraftComplete}");
         }
     }
 }

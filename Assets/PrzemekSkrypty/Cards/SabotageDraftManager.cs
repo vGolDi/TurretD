@@ -1,114 +1,162 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Photon.Pun;
 using Photon.Realtime;
 
 namespace ElementumDefense.Cards
 {
-    /// <summary>
-    /// Manages sabotage card drafting system
-    /// Triggers every X waves, shows 1 of 3 cards, 5s reveal before activation
-    /// </summary>
     public class SabotageDraftManager : MonoBehaviourPunCallbacks
     {
         public static SabotageDraftManager Instance { get; private set; }
 
         [Header("Timing Configuration")]
-        [SerializeField, Tooltip("Waves between sabotage drafts")]
-        private int wavesBetweenSabotages = 5;
-
-        [SerializeField, Tooltip("Time limit to choose sabotage (seconds)")]
-        private float sabotageChoiceTime = 20f;
-
-        [SerializeField, Tooltip("Reveal duration after selection (seconds)")]
-        private float revealDuration = 5f;
+        [SerializeField] private int wavesBetweenSabotages = 5;
+        [SerializeField] private float sabotageChoiceTime = 20f;
+        [SerializeField] private float revealDuration = 5f;
 
         [Header("Draft Configuration")]
-        [SerializeField, Tooltip("How many sabotage cards to choose from")]
-        private int sabotageChoices = 3;
+        [SerializeField] private int sabotageChoices = 3;
 
-        [Header("References")]
-        private PlayerCardManager playerCardManager;
+        // References
+        private PlayerCardManager playerCardManager; // ← Będzie szukany dynamicznie
         private SabotagePool sabotagePool;
+        private PhotonView photonView;
 
         // State
         private bool isDrafting = false;
-        private int nextSabotageWave = 0;
+        private int nextSabotageWave;
         private SabotageCardData[] currentOfferedCards;
         private SabotageCardData selectedSabotage;
+        private bool sabotageSelected = false;
+
+        // RPC rarity sharing
+        private CardRarity[] receivedSabotageRarities = null;
+        private bool sabotageRaritiesReceived = false;
 
         // Multiplayer sync
-        private Dictionary<int, SabotageCardData> playerSelections = new Dictionary<int, SabotageCardData>(); // ActorNumber -> Selected card
+        private Dictionary<int, SabotageCardData> playerSelections =
+            new Dictionary<int, SabotageCardData>();
 
         // Events
         public System.Action<SabotageCardData[]> OnSabotageOffered;
         public System.Action<float> OnDraftTimerUpdate;
         public System.Action OnDraftTimeout;
-        public System.Action<Dictionary<int, SabotageCardData>> OnRevealPhaseStart; // Show what everyone picked
+        public System.Action<Dictionary<int, SabotageCardData>> OnRevealPhaseStart;
         public System.Action OnRevealPhaseEnd;
-        public System.Action<SabotageCardData, PhotonView> OnSabotageApplied; 
-
-        // ==========================================
-        // INITIALIZATION
-        // ==========================================
+        public System.Action<SabotageCardData, PhotonView> OnSabotageApplied;
+        public System.Action OnSabotageDraftComplete;
 
         private void Awake()
         {
             if (Instance != null && Instance != this)
             {
-                Destroy(this); //gameObject
+                Destroy(this);
                 return;
             }
 
             Instance = this;
 
-            playerCardManager = GetComponent<PlayerCardManager>();
+            photonView = GetComponent<PhotonView>();
+
+            if (photonView == null)
+            {
+                Debug.LogError("[SabotageDraftManager] PhotonView not found!");
+            }
+
+            // ========== NAPRAWIONE: NIE szukamy PlayerCardManager tutaj ==========
+            // Będzie znaleziony dynamicznie gdy potrzebny
+            // ====================================================================
+        }
+
+        private void Start()
+        {
             sabotagePool = SabotagePool.Instance;
+
+            if (sabotagePool == null)
+            {
+                sabotagePool = FindObjectOfType<SabotagePool>();
+            }
 
             if (sabotagePool == null)
             {
                 Debug.LogError("[SabotageDraftManager] SabotagePool not found!");
             }
-        }
 
-        private void Start()
-        {
-            // Set first sabotage wave
             nextSabotageWave = wavesBetweenSabotages;
+            Debug.Log($"[SabotageDraftManager] Next sabotage at wave {nextSabotageWave}");
         }
 
         // ==========================================
-        // PUBLIC API - TRIGGER SABOTAGE DRAFT
+        // NOWE: Find local PlayerCardManager
         // ==========================================
 
         /// <summary>
-        /// Checks if sabotage draft should trigger (called by WaveManager)
+        /// Finds the LOCAL player's PlayerCardManager.
+        /// Called lazily because player object may not exist at Awake time.
         /// </summary>
-        /// <param name="currentWave">Current wave number</param>
+        private PlayerCardManager FindLocalPlayerCardManager()
+        {
+            if (playerCardManager != null) return playerCardManager;
+
+            // Find all PlayerCardManagers and return the local one
+            PlayerCardManager[] managers =
+                FindObjectsByType<PlayerCardManager>(FindObjectsSortMode.None);
+
+            foreach (var mgr in managers)
+            {
+                PhotonView pv = mgr.GetComponent<PhotonView>();
+                if (pv != null && pv.IsMine)
+                {
+                    playerCardManager = mgr;
+                    Debug.Log("[SabotageDraftManager] ✅ Found local PlayerCardManager");
+                    return playerCardManager;
+                }
+            }
+
+            Debug.LogWarning("[SabotageDraftManager] Local PlayerCardManager not found!");
+            return null;
+        }
+
+        // ==========================================
+        // PUBLIC API
+        // ==========================================
+
         public void CheckSabotageDraft(int currentWave)
         {
+            Debug.Log($"[SabotageDraftManager] CheckSabotageDraft: " +
+                      $"Wave={currentWave}, next={nextSabotageWave}, " +
+                      $"isDrafting={isDrafting}");
+
+            if (isDrafting)
+            {
+                Debug.LogWarning("[SabotageDraftManager] Already drafting!");
+                return;
+            }
+
             if (currentWave >= nextSabotageWave)
             {
                 nextSabotageWave = currentWave + wavesBetweenSabotages;
+                Debug.Log($"[SabotageDraftManager] Triggering! Next at wave {nextSabotageWave}");
                 StartSabotageDraft();
             }
         }
 
-        /// <summary>
-        /// Manually start sabotage draft
-        /// </summary>
         public void StartSabotageDraft()
         {
-            if (isDrafting)
+            if (isDrafting) return;
+
+            if (sabotagePool == null)
             {
-                Debug.LogWarning("[SabotageDraftManager] Already drafting sabotage!");
-                return;
+                sabotagePool = SabotagePool.Instance;
+                if (sabotagePool == null)
+                    sabotagePool = FindObjectOfType<SabotagePool>();
             }
 
             if (sabotagePool == null)
             {
-                Debug.LogError("[SabotageDraftManager] SabotagePool is null!");
+                Debug.LogError("[SabotageDraftManager] SabotagePool null! Skipping.");
                 return;
             }
 
@@ -116,7 +164,7 @@ namespace ElementumDefense.Cards
         }
 
         // ==========================================
-        // SABOTAGE DRAFT FLOW
+        // DRAFT FLOW
         // ==========================================
 
         private IEnumerator SabotageDraftCoroutine()
@@ -124,10 +172,15 @@ namespace ElementumDefense.Cards
             isDrafting = true;
             playerSelections.Clear();
             selectedSabotage = null;
+            sabotageSelected = false;
+
+            // ========== Ensure we have PlayerCardManager ==========
+            FindLocalPlayerCardManager();
+            // =====================================================
 
             Debug.Log("[SabotageDraftManager] === SABOTAGE DRAFT START ===");
 
-            // ========== PHASE 1: Master Client generates rarity combo ==========
+            // PHASE 1: Rarity generation
             CardRarity[] rarityCombination = null;
 
             if (PhotonNetwork.IsMasterClient)
@@ -136,175 +189,177 @@ namespace ElementumDefense.Cards
 
                 if (rarityCombination == null)
                 {
-                    Debug.LogError("[SabotageDraftManager] Failed to generate rarity combo!");
+                    Debug.LogError("[SabotageDraftManager] Failed to generate rarities!");
                     isDrafting = false;
                     yield break;
                 }
 
-                // Send to all players
-                photonView.RPC("RPC_ReceiveSabotageRarities", RpcTarget.AllBuffered, (object)rarityCombination);
+                int[] rarityInts = rarityCombination.Select(r => (int)r).ToArray();
+                photonView.RPC("RPC_ReceiveSabotageRarities",
+                    RpcTarget.AllBuffered, rarityInts);
             }
             else
             {
-                // Wait for Master Client (with timeout)
+                sabotageRaritiesReceived = false;
                 float timeout = 5f;
-                while (rarityCombination == null && timeout > 0f)
+
+                while (!sabotageRaritiesReceived && timeout > 0f)
                 {
                     timeout -= Time.deltaTime;
                     yield return null;
                 }
 
-                if (rarityCombination == null)
+                if (!sabotageRaritiesReceived)
                 {
-                    Debug.LogError("[SabotageDraftManager] Timeout waiting for rarity combo!");
+                    Debug.LogError("[SabotageDraftManager] Timeout waiting for rarities!");
                     isDrafting = false;
                     yield break;
                 }
+
+                rarityCombination = receivedSabotageRarities;
             }
 
-            // ========== PHASE 2: Each player draws their own cards from pool ==========
+            // PHASE 2: Draw cards
             currentOfferedCards = sabotagePool.DrawSabotageCards(rarityCombination);
 
             if (currentOfferedCards == null || currentOfferedCards.Length == 0)
             {
-                Debug.LogError("[SabotageDraftManager] Failed to draw sabotage cards!");
+                Debug.LogError("[SabotageDraftManager] Failed to draw cards!");
                 isDrafting = false;
                 yield break;
             }
 
-            // Show UI
+            for (int i = 0; i < currentOfferedCards.Length; i++)
+            {
+                string name = currentOfferedCards[i]?.sabotageName ?? "NULL";
+                string effect = currentOfferedCards[i]?.sabotageEffect != null
+                    ? "✅" : "❌ NO EFFECT";
+                Debug.Log($"[SabotageDraftManager] Choice {i}: {name} {effect}");
+            }
+
             OnSabotageOffered?.Invoke(currentOfferedCards);
 
-            Debug.Log($"[SabotageDraftManager] Offered sabotages: {string.Join(", ", System.Array.ConvertAll(currentOfferedCards, c => c?.sabotageName ?? "NULL"))}");
-
-            // ========== PHASE 3: Wait for player to choose (or timeout) ==========
+            // PHASE 3: Wait for selection
             float timeRemaining = sabotageChoiceTime;
 
-            while (timeRemaining > 0f && selectedSabotage == null)
+            while (timeRemaining > 0f && !sabotageSelected)
             {
                 OnDraftTimerUpdate?.Invoke(timeRemaining);
-
-                // Player selection is handled by SelectSabotage() method
                 timeRemaining -= Time.deltaTime;
                 yield return null;
             }
 
-            // Timeout - auto-select random
-            if (selectedSabotage == null)
+            if (!sabotageSelected)
             {
-                selectedSabotage = currentOfferedCards[Random.Range(0, currentOfferedCards.Length)];
-                Debug.Log($"[SabotageDraftManager] TIMEOUT - auto-selected {selectedSabotage.sabotageName}");
+                SabotageCardData autoCard =
+                    currentOfferedCards.FirstOrDefault(c => c != null);
+                if (autoCard == null) autoCard = currentOfferedCards[0];
+
+                selectedSabotage = autoCard;
+                sabotageSelected = true;
+
+                Debug.Log($"[SabotageDraftManager] TIMEOUT → {selectedSabotage?.sabotageName}");
                 OnDraftTimeout?.Invoke();
             }
 
-            // ========== PHASE 4: Send selection to all players ==========
-            int myActorNumber = PhotonNetwork.LocalPlayer.ActorNumber;
-            photonView.RPC("RPC_PlayerSelectedSabotage", RpcTarget.AllBuffered, myActorNumber, selectedSabotage.name);
-
-            // Wait for all players to submit (or timeout)
-            yield return StartCoroutine(WaitForAllPlayersToSelect());
-
-            // ========== PHASE 5: REVEAL PHASE (5 seconds) ==========
-            Debug.Log("[SabotageDraftManager] === REVEAL PHASE START ===");
-
-            OnRevealPhaseStart?.Invoke(playerSelections);
-
-            // Display what each player chose
-            foreach (var kvp in playerSelections)
+            // PHASE 4: Send selection
+            if (selectedSabotage != null)
             {
-                int actorNumber = kvp.Key;
-                SabotageCardData card = kvp.Value;
-
-                Player player = PhotonNetwork.CurrentRoom.GetPlayer(actorNumber);
-                string playerName = player?.NickName ?? $"Player{actorNumber}";
-
-                Debug.Log($"[SabotageDraftManager] {playerName} chose: {card.sabotageName}");
+                int myActor = PhotonNetwork.LocalPlayer.ActorNumber;
+                photonView.RPC("RPC_PlayerSelectedSabotage",
+                    RpcTarget.AllBuffered,
+                    myActor,
+                    selectedSabotage.name);
             }
 
-            // Wait 5 seconds for reveal
+            yield return StartCoroutine(WaitForAllPlayersToSelect());
+
+            // PHASE 5: Reveal
+            Debug.Log("[SabotageDraftManager] === REVEAL PHASE ===");
+            OnRevealPhaseStart?.Invoke(playerSelections);
+
+            foreach (var kvp in playerSelections)
+            {
+                Player player = PhotonNetwork.CurrentRoom.GetPlayer(kvp.Key);
+                string pName = player?.NickName ?? $"Player{kvp.Key}";
+                string cName = kvp.Value?.sabotageName ?? "NULL";
+                Debug.Log($"[SabotageDraftManager] {pName} → {cName}");
+            }
+
             yield return new WaitForSeconds(revealDuration);
 
             OnRevealPhaseEnd?.Invoke();
 
-            Debug.Log("[SabotageDraftManager] === REVEAL PHASE END ===");
-
-            // ========== PHASE 6: Apply sabotages ==========
+            // PHASE 6: Apply
             ApplySabotages();
 
+            // Cleanup
             isDrafting = false;
             currentOfferedCards = null;
+            selectedSabotage = null;
+            sabotageSelected = false;
+
+            OnSabotageDraftComplete?.Invoke();
 
             Debug.Log("[SabotageDraftManager] === SABOTAGE DRAFT COMPLETE ===");
         }
 
-        /// <summary>
-        /// Waits for all players to submit their selection (with timeout)
-        /// </summary>
         private IEnumerator WaitForAllPlayersToSelect()
         {
-            float timeout = 10f; // Max wait time
-            int expectedPlayers = PhotonNetwork.CurrentRoom.PlayerCount;
+            float timeout = 10f;
+            int expected = PhotonNetwork.CurrentRoom.PlayerCount;
 
-            while (playerSelections.Count < expectedPlayers && timeout > 0f)
+            while (playerSelections.Count < expected && timeout > 0f)
             {
                 timeout -= Time.deltaTime;
                 yield return null;
             }
 
-            if (playerSelections.Count < expectedPlayers)
-            {
-                Debug.LogWarning($"[SabotageDraftManager] Timeout waiting for all players ({playerSelections.Count}/{expectedPlayers})");
-            }
-            else
-            {
-                Debug.Log($"[SabotageDraftManager] All players selected ({playerSelections.Count}/{expectedPlayers})");
-            }
+            Debug.Log($"[SabotageDraftManager] Selections: " +
+                      $"{playerSelections.Count}/{expected}" +
+                      (timeout <= 0 ? " (TIMEOUT)" : ""));
         }
 
         // ==========================================
-        // PLAYER SELECTION
+        // SELECTION
         // ==========================================
 
-        /// <summary>
-        /// Player selects a sabotage card
-        /// </summary>
-        /// <param name="choiceIndex">Index in currentOfferedCards (0-2)</param>
         public void SelectSabotage(int choiceIndex)
         {
-            if (!isDrafting)
-            {
-                Debug.LogWarning("[SabotageDraftManager] Not currently drafting!");
-                return;
-            }
+            if (!isDrafting || sabotageSelected) return;
 
-            if (selectedSabotage != null)
+            if (currentOfferedCards == null ||
+                choiceIndex < 0 ||
+                choiceIndex >= currentOfferedCards.Length)
             {
-                Debug.LogWarning("[SabotageDraftManager] Already selected a sabotage!");
-                return;
-            }
-
-            if (currentOfferedCards == null || choiceIndex < 0 || choiceIndex >= currentOfferedCards.Length)
-            {
-                Debug.LogError($"[SabotageDraftManager] Invalid choice index: {choiceIndex}");
+                Debug.LogError($"[SabotageDraftManager] Invalid choice: {choiceIndex}");
                 return;
             }
 
             selectedSabotage = currentOfferedCards[choiceIndex];
+            sabotageSelected = true;
 
-            Debug.Log($"[SabotageDraftManager] Selected sabotage: {selectedSabotage.sabotageName}");
+            Debug.Log($"[SabotageDraftManager] ✅ Selected: " +
+                      $"{selectedSabotage.sabotageName}");
         }
 
         // ==========================================
-        // SABOTAGE APPLICATION
+        // APPLICATION (NAPRAWIONE)
         // ==========================================
 
-        /// <summary>
-        /// Applies all player sabotages to their targets
-        /// In 1v1: sabotage targets opponent
-        /// In FFA: sabotage targets all other players
-        /// </summary>
         private void ApplySabotages()
         {
+            // ========== NAPRAWIONE: Ensure we have local PlayerCardManager ==========
+            PlayerCardManager localCardManager = FindLocalPlayerCardManager();
+
+            if (localCardManager == null)
+            {
+                Debug.LogError("[SabotageDraftManager] Cannot apply sabotages - " +
+                               "no local PlayerCardManager!");
+                return;
+            }
+            // ======================================================================
+
             int myActorNumber = PhotonNetwork.LocalPlayer.ActorNumber;
 
             foreach (var kvp in playerSelections)
@@ -312,64 +367,60 @@ namespace ElementumDefense.Cards
                 int casterActorNumber = kvp.Key;
                 SabotageCardData sabotage = kvp.Value;
 
-                // Skip if this is my own sabotage (I don't sabotage myself)
+                // Skip my own sabotage (I don't sabotage myself)
                 if (casterActorNumber == myActorNumber)
                     continue;
+
+                if (sabotage == null)
+                {
+                    Debug.LogWarning($"[SabotageDraftManager] Null sabotage " +
+                                     $"from player {casterActorNumber}");
+                    continue;
+                }
+
+                if (sabotage.sabotageEffect == null)
+                {
+                    Debug.LogError($"[SabotageDraftManager] Sabotage " +
+                                   $"'{sabotage.sabotageName}' has NO EFFECT assigned!");
+                    continue;
+                }
 
                 // Find caster's PhotonView
                 PhotonView casterView = FindPlayerPhotonView(casterActorNumber);
 
                 if (casterView == null)
                 {
-                    Debug.LogError($"[SabotageDraftManager] Could not find PhotonView for player {casterActorNumber}!");
+                    Debug.LogError($"[SabotageDraftManager] PhotonView not found " +
+                                   $"for player {casterActorNumber}!");
                     continue;
                 }
 
-                // Apply sabotage to ME (I'm being sabotaged by caster)
-                ApplySabotageToMe(sabotage, casterView);
+                // ========== NAPRAWIONE: Use local card manager ==========
+                localCardManager.ApplySabotage(sabotage, casterView);
+                OnSabotageApplied?.Invoke(sabotage, casterView);
+
+                string casterName = casterView.Owner?.NickName ?? "Unknown";
+                Debug.Log($"[SabotageDraftManager] ✅ Applied " +
+                          $"'{sabotage.sabotageName}' from {casterName}");
+                // =======================================================
             }
 
-            Debug.Log("[SabotageDraftManager] All sabotages applied");
+            Debug.Log($"[SabotageDraftManager] All sabotages applied. " +
+                      $"Active count: {localCardManager.GetActiveSabotages().Count}");
         }
 
-        /// <summary>
-        /// Applies sabotage card to local player
-        /// </summary>
-        private void ApplySabotageToMe(SabotageCardData sabotage, PhotonView casterView)
-        {
-            if (sabotage == null || playerCardManager == null)
-            {
-                Debug.LogError("[SabotageDraftManager] Cannot apply sabotage - null reference!");
-                return;
-            }
-
-            // Apply via PlayerCardManager
-            playerCardManager.ApplySabotage(sabotage, casterView);
-
-            // Trigger event
-            OnSabotageApplied?.Invoke(sabotage, casterView);
-
-            string casterName = casterView.Owner?.NickName ?? "Unknown";
-            Debug.Log($"[SabotageDraftManager] Applied sabotage '{sabotage.sabotageName}' from {casterName}");
-        }
-
-        /// <summary>
-        /// Finds PhotonView for player with given ActorNumber
-        /// </summary>
         private PhotonView FindPlayerPhotonView(int actorNumber)
         {
-            // Find all PhotonViews in scene
-            PhotonView[] allViews = FindObjectsByType<PhotonView>(FindObjectsSortMode.None);
+            PhotonView[] allViews =
+                FindObjectsByType<PhotonView>(FindObjectsSortMode.None);
 
             foreach (PhotonView pv in allViews)
             {
-                if (pv.Owner != null && pv.Owner.ActorNumber == actorNumber)
+                if (pv.Owner != null &&
+                    pv.Owner.ActorNumber == actorNumber &&
+                    pv.GetComponent<PlayerCardManager>() != null)
                 {
-                    // Check if this is the player's main PhotonView (has PlayerCardManager)
-                    if (pv.GetComponent<PlayerCardManager>() != null)
-                    {
-                        return pv;
-                    }
+                    return pv;
                 }
             }
 
@@ -377,58 +428,48 @@ namespace ElementumDefense.Cards
         }
 
         // ==========================================
-        // PHOTON RPC
+        // RPC
         // ==========================================
 
-        /// <summary>
-        /// Receives rarity combination from Master Client
-        /// </summary>
         [PunRPC]
-        private void RPC_ReceiveSabotageRarities(CardRarity[] rarities)
+        private void RPC_ReceiveSabotageRarities(int[] rarityInts)
         {
-            Debug.Log($"[SabotageDraftManager] Received sabotage rarities: [{string.Join(", ", rarities)}]");
-            // Rarities are used in SabotageDraftCoroutine
+            receivedSabotageRarities = rarityInts
+                .Select(i => (CardRarity)i).ToArray();
+            sabotageRaritiesReceived = true;
         }
 
-        /// <summary>
-        /// Receives player's sabotage selection
-        /// </summary>
-        /// <param name="actorNumber">Player who selected</param>
-        /// <param name="sabotageName">Name of ScriptableObject (e.g., "DisableUpgrades")</param>
         [PunRPC]
         private void RPC_PlayerSelectedSabotage(int actorNumber, string sabotageName)
         {
-            // Load sabotage from SabotagePool
             SabotageCardData sabotage = FindSabotageByName(sabotageName);
 
             if (sabotage == null)
             {
-                Debug.LogError($"[SabotageDraftManager] Could not find sabotage '{sabotageName}'!");
+                Debug.LogError($"[SabotageDraftManager] '{sabotageName}' not found!");
                 return;
             }
 
             playerSelections[actorNumber] = sabotage;
 
             Player player = PhotonNetwork.CurrentRoom.GetPlayer(actorNumber);
-            string playerName = player?.NickName ?? $"Player{actorNumber}";
-
-            Debug.Log($"[SabotageDraftManager] {playerName} selected: {sabotage.sabotageName}");
+            string pName = player?.NickName ?? $"Player{actorNumber}";
+            Debug.Log($"[SabotageDraftManager] RPC: {pName} → {sabotage.sabotageName}");
         }
 
-        /// <summary>
-        /// Finds sabotage card by ScriptableObject name
-        /// </summary>
         private SabotageCardData FindSabotageByName(string name)
         {
-            if (sabotagePool == null) return null;
+            if (sabotagePool != null)
+            {
+                SabotageCardData fromPool = sabotagePool.FindByName(name);
+                if (fromPool != null) return fromPool;
+            }
 
-            // Try to load from Resources
-            SabotageCardData sabotage = Resources.Load<SabotageCardData>($"Cards/Sabotages/{name}");
+            SabotageCardData sabotage =
+                Resources.Load<SabotageCardData>($"Cards/Sabotages/{name}");
 
             if (sabotage == null)
-            {
-                Debug.LogWarning($"[SabotageDraftManager] Sabotage '{name}' not found in Resources/Cards/Sabotages/");
-            }
+                Debug.LogWarning($"[SabotageDraftManager] '{name}' not found!");
 
             return sabotage;
         }
@@ -438,25 +479,23 @@ namespace ElementumDefense.Cards
         // ==========================================
 
         public bool IsDrafting => isDrafting;
-
         public int GetNextSabotageWave() => nextSabotageWave;
 
-        /// <summary>
-        /// Gets current revealed selections (for UI)
-        /// </summary>
         public Dictionary<int, SabotageCardData> GetPlayerSelections()
         {
             return new Dictionary<int, SabotageCardData>(playerSelections);
         }
 
-        // ==========================================
-        // DEBUG
-        // ==========================================
+        [ContextMenu("Debug State")]
+        private void DebugState()
+        {
+            Debug.Log($"[SabotageDraftManager] isDrafting={isDrafting}, " +
+                      $"next={nextSabotageWave}, selected={sabotageSelected}, " +
+                      $"pool={sabotagePool != null}, " +
+                      $"cardMgr={playerCardManager != null}");
+        }
 
         [ContextMenu("Test Sabotage Draft")]
-        private void TestSabotageDraft()
-        {
-            StartSabotageDraft();
-        }
+        private void TestSabotageDraft() => StartSabotageDraft();
     }
 }

@@ -17,7 +17,7 @@ MonoBehaviour:
   rarity: 2
   cardType: 1
   activationType: 1
-  cardIcon: {fileID: 0}
+  cardIcon: {fileID: 21300000, guid: 2558661ef48a53948b8b4f9559d2162c, type: 3}
   cardColor: {r: 0.98469853, g: 1, b: 0, a: 1}
   associatedElement: 0
   maxCopiesInDeck: 0

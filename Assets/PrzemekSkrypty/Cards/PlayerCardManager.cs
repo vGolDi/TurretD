@@ -1,41 +1,37 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 using Photon.Pun;
 
 namespace ElementumDefense.Cards
 {
-    /// <summary>
-    /// Manages active cards for a single player
-    /// Handles activation, deactivation, and modifier aggregation
-    /// Attach to Player prefab
-    /// </summary>
     public class PlayerCardManager : MonoBehaviour
     {
         [Header("Active Cards")]
-        [Tooltip("Cards currently active (drafted in this match)")]
         [SerializeField] private List<CardData> activeCards = new List<CardData>();
 
-        [Header("Modifiers (Read-Only)")]
-        [SerializeField, Tooltip("Current damage multiplier from cards")]
-        private float damageMultiplier = 1f;
+        [Header("Card Modifiers (Read-Only)")]
+        [SerializeField] private float damageMultiplier = 1f;
+        [SerializeField] private float fireRateMultiplier = 1f;
+        [SerializeField] private float rangeMultiplier = 1f;
+        [SerializeField] private float turretCostMultiplier = 1f;
+        [SerializeField] private int passiveGoldPerSecond = 0;
 
-        [SerializeField, Tooltip("Current fire rate multiplier from cards")]
-        private float fireRateMultiplier = 1f;
+        [Header("Sabotage Modifiers (Read-Only)")]
+        [SerializeField] private float sabotageDamageModifier = 1f;
+        [SerializeField] private float sabotageFireRateModifier = 1f;
+        [SerializeField] private float sabotageRangeModifier = 1f;
+        [SerializeField] private float sabotageCostModifier = 1f;
+        [SerializeField] private bool upgradesDisabled = false;
 
-        [SerializeField, Tooltip("Current range multiplier from cards")]
-        private float rangeMultiplier = 1f;
-
-        [SerializeField, Tooltip("Current turret cost multiplier from cards")]
-        private float turretCostMultiplier = 1f;
-
-        [SerializeField, Tooltip("Passive gold per second from cards")]
-        private int passiveGoldPerSecond = 0;
-
-        [Header("Active Sabotages (Received)")]
+        [Header("Active Sabotages")]
         [SerializeField] private List<ActiveSabotage> activeSabotages = new List<ActiveSabotage>();
 
-        [Header("References")]
+        // Per-element modifiers
+        private Dictionary<ElementumDefense.Elements.ElementType, TurretModifiers> elementModifiers
+            = new Dictionary<ElementumDefense.Elements.ElementType, TurretModifiers>();
+
+        // References
         private PhotonView photonView;
         private PlayerGold playerGold;
         private PlayerHealth playerHealth;
@@ -43,10 +39,13 @@ namespace ElementumDefense.Cards
 
         // Passive gold timer
         private float passiveGoldTimer = 0f;
-        private const float PASSIVE_GOLD_INTERVAL = 1f; // Give gold every 1 second
+        private const float PASSIVE_GOLD_INTERVAL = 1f;
+
+        // Event for turrets to listen to
+        public System.Action OnModifiersChanged;
 
         // ==========================================
-        // PROPERTIES (Public Read-Only)
+        // PROPERTIES
         // ==========================================
 
         public float DamageMultiplier => damageMultiplier;
@@ -54,9 +53,9 @@ namespace ElementumDefense.Cards
         public float RangeMultiplier => rangeMultiplier;
         public float TurretCostMultiplier => turretCostMultiplier;
         public int PassiveGoldPerSecond => passiveGoldPerSecond;
-
         public int ActiveCardCount => activeCards.Count;
         public List<CardData> ActiveCards => new List<CardData>(activeCards);
+        public bool AreUpgradesDisabled => upgradesDisabled;
 
         // ==========================================
         // INITIALIZATION
@@ -72,14 +71,12 @@ namespace ElementumDefense.Cards
 
         private void Update()
         {
-            // Only update for local player
             if (!photonView.IsMine) return;
 
             // Passive gold generation
             if (passiveGoldPerSecond > 0)
             {
                 passiveGoldTimer += Time.deltaTime;
-
                 if (passiveGoldTimer >= PASSIVE_GOLD_INTERVAL)
                 {
                     playerGold?.AddGold(passiveGoldPerSecond);
@@ -92,12 +89,9 @@ namespace ElementumDefense.Cards
         }
 
         // ==========================================
-        // CARD ACTIVATION (Called by Draft System)
+        // CARD ACTIVATION
         // ==========================================
 
-        /// <summary>
-        /// Activates drafted card
-        /// </summary>
         public void ActivateCard(CardData card)
         {
             if (card == null)
@@ -108,25 +102,19 @@ namespace ElementumDefense.Cards
 
             if (card.cardEffect == null)
             {
-                Debug.LogError($"[PlayerCardManager] Card '{card.cardName}' has no effect assigned!");
+                Debug.LogError($"[PlayerCardManager] Card '{card.cardName}' has no effect!");
                 return;
             }
 
-            // Add to active cards
             activeCards.Add(card);
-
-            // Execute effect
             card.cardEffect.Activate(photonView);
 
-            // Recalculate modifiers
             RecalculateModifiers();
+            OnModifiersChanged?.Invoke();
 
-            Debug.Log($"[PlayerCardManager] Activated card: {card.cardName} ({card.activationType})");
+            Debug.Log($"[PlayerCardManager] ✅ Activated: {card.cardName}");
         }
 
-        /// <summary>
-        /// Deactivates all cards (when game ends)
-        /// </summary>
         public void DeactivateAllCards()
         {
             foreach (CardData card in activeCards)
@@ -139,6 +127,7 @@ namespace ElementumDefense.Cards
 
             activeCards.Clear();
             RecalculateModifiers();
+            OnModifiersChanged?.Invoke();
 
             Debug.Log("[PlayerCardManager] Deactivated all cards");
         }
@@ -147,10 +136,6 @@ namespace ElementumDefense.Cards
         // MODIFIER AGGREGATION
         // ==========================================
 
-        /// <summary>
-        /// Recalculates all modifiers from active cards
-        /// Called after each card activation
-        /// </summary>
         private void RecalculateModifiers()
         {
             // Reset to base values
@@ -160,20 +145,41 @@ namespace ElementumDefense.Cards
             turretCostMultiplier = 1f;
             passiveGoldPerSecond = 0;
 
-            // Aggregate from active cards
+            // Clear per-element modifiers
+            elementModifiers.Clear();
+
             foreach (CardData card in activeCards)
             {
                 if (card?.cardEffect == null) continue;
 
-                // Check if effect is a turret modifier
+                // Turret modifiers
                 if (card.cardEffect is TurretCardEffect turretMod)
                 {
-                    damageMultiplier *= turretMod.damageMultiplier;
-                    fireRateMultiplier *= turretMod.fireRateMultiplier;
-                    rangeMultiplier *= turretMod.rangeMultiplier;
+                    if (turretMod.affectsAllTurrets)
+                    {
+                        damageMultiplier *= turretMod.damageMultiplier;
+                        fireRateMultiplier *= turretMod.fireRateMultiplier;
+                        rangeMultiplier *= turretMod.rangeMultiplier;
+                    }
+                    else
+                    {
+                        var elementType = turretMod.targetElement;
+
+                        if (!elementModifiers.ContainsKey(elementType))
+                        {
+                            elementModifiers[elementType] = new TurretModifiers();
+                        }
+
+                        elementModifiers[elementType].damageMultiplier *= turretMod.damageMultiplier;
+                        elementModifiers[elementType].fireRateMultiplier *= turretMod.fireRateMultiplier;
+                        elementModifiers[elementType].rangeMultiplier *= turretMod.rangeMultiplier;
+                        elementModifiers[elementType].addAOERadius += turretMod.addAOERadius;
+                        elementModifiers[elementType].addPierceCount += turretMod.addPierceCount;
+                        elementModifiers[elementType].addChainTargets += turretMod.addChainTargets;
+                    }
                 }
 
-                // Check if effect is economy
+                // Economy modifiers
                 if (card.cardEffect is EconomyCardEffect economy)
                 {
                     passiveGoldPerSecond += economy.goldPerSecond;
@@ -183,43 +189,147 @@ namespace ElementumDefense.Cards
                         turretCostMultiplier *= (1f - economy.turretCostDiscount / 100f);
                     }
                 }
-
-                // TODO: Add other effect types (UtilityCardEffect, etc.)
             }
 
-            Debug.Log($"[PlayerCardManager] Modifiers updated: DMG={damageMultiplier:F2}x, FR={fireRateMultiplier:F2}x, RNG={rangeMultiplier:F2}x, Cost={turretCostMultiplier:F2}x, Gold={passiveGoldPerSecond}/s");
+            Debug.Log($"[PlayerCardManager] Card Modifiers: " +
+                      $"DMG={damageMultiplier:F2}x, FR={fireRateMultiplier:F2}x, " +
+                      $"RNG={rangeMultiplier:F2}x, Cost={turretCostMultiplier:F2}x, " +
+                      $"Gold={passiveGoldPerSecond}/s");
+
+            if (sabotageDamageModifier != 1f || sabotageFireRateModifier != 1f ||
+                sabotageRangeModifier != 1f || sabotageCostModifier != 1f)
+            {
+                Debug.Log($"[PlayerCardManager] Sabotage Modifiers: " +
+                          $"DMG={sabotageDamageModifier:F2}x, " +
+                          $"FR={sabotageFireRateModifier:F2}x, " +
+                          $"RNG={sabotageRangeModifier:F2}x, " +
+                          $"Cost={sabotageCostModifier:F2}x, " +
+                          $"UpgradesDisabled={upgradesDisabled}");
+            }
+
+            foreach (var kvp in elementModifiers)
+            {
+                Debug.Log($"[PlayerCardManager] {kvp.Key} mods: " +
+                          $"DMG={kvp.Value.damageMultiplier:F2}x, " +
+                          $"FR={kvp.Value.fireRateMultiplier:F2}x, " +
+                          $"RNG={kvp.Value.rangeMultiplier:F2}x");
+            }
         }
 
+        // ==========================================
+        // MODIFIER QUERY (card + sabotage combined)
+        // ==========================================
+
         /// <summary>
-        /// Gets final turret damage after all modifiers
+        /// Gets FINAL damage: base * cardGlobal * cardElement * sabotage
         /// </summary>
-        public int GetModifiedTurretDamage(int baseDamage)
+        public float GetModifiedDamage(float baseDamage,
+            ElementumDefense.Elements.ElementType element)
         {
-            return Mathf.RoundToInt(baseDamage * damageMultiplier);
+            float globalMod = damageMultiplier;
+            float elementMod = 1f;
+
+            if (elementModifiers.TryGetValue(element, out TurretModifiers mods))
+            {
+                elementMod = mods.damageMultiplier;
+            }
+
+            return baseDamage * globalMod * elementMod * sabotageDamageModifier;
         }
 
         /// <summary>
-        /// Gets final turret fire rate after all modifiers
+        /// Gets FINAL fire rate: base * cardGlobal * cardElement * sabotage
         /// </summary>
-        public float GetModifiedFireRate(float baseFireRate)
+        public float GetModifiedFireRate(float baseFireRate,
+            ElementumDefense.Elements.ElementType element)
         {
-            return baseFireRate * fireRateMultiplier;
+            float globalMod = fireRateMultiplier;
+            float elementMod = 1f;
+
+            if (elementModifiers.TryGetValue(element, out TurretModifiers mods))
+            {
+                elementMod = mods.fireRateMultiplier;
+            }
+
+            return baseFireRate * globalMod * elementMod * sabotageFireRateModifier;
         }
 
         /// <summary>
-        /// Gets final turret range after all modifiers
+        /// Gets FINAL range: base * cardGlobal * cardElement * sabotage
         /// </summary>
-        public float GetModifiedRange(float baseRange)
+        public float GetModifiedRange(float baseRange,
+            ElementumDefense.Elements.ElementType element)
         {
-            return baseRange * rangeMultiplier;
+            float globalMod = rangeMultiplier;
+            float elementMod = 1f;
+
+            if (elementModifiers.TryGetValue(element, out TurretModifiers mods))
+            {
+                elementMod = mods.rangeMultiplier;
+            }
+
+            return baseRange * globalMod * elementMod * sabotageRangeModifier;
         }
 
         /// <summary>
-        /// Gets final turret cost after all modifiers
+        /// Gets FINAL turret cost: base * cardDiscount * sabotageInflation
         /// </summary>
         public int GetModifiedTurretCost(int baseCost)
         {
-            return Mathf.RoundToInt(baseCost * turretCostMultiplier);
+            return Mathf.RoundToInt(baseCost * turretCostMultiplier * sabotageCostModifier);
+        }
+
+        /// <summary>
+        /// Gets additional AOE radius for element
+        /// </summary>
+        public float GetAdditionalAOE(ElementumDefense.Elements.ElementType element)
+        {
+            if (elementModifiers.TryGetValue(element, out TurretModifiers mods))
+            {
+                return mods.addAOERadius;
+            }
+            return 0f;
+        }
+
+        /// <summary>
+        /// Gets additional pierce count for element
+        /// </summary>
+        public int GetAdditionalPierce(ElementumDefense.Elements.ElementType element)
+        {
+            if (elementModifiers.TryGetValue(element, out TurretModifiers mods))
+            {
+                return mods.addPierceCount;
+            }
+            return 0;
+        }
+
+        /// <summary>
+        /// Gets additional chain targets for element
+        /// </summary>
+        public int GetAdditionalChainTargets(ElementumDefense.Elements.ElementType element)
+        {
+            if (elementModifiers.TryGetValue(element, out TurretModifiers mods))
+            {
+                return mods.addChainTargets;
+            }
+            return 0;
+        }
+
+        // ========== Backward compatibility ==========
+
+        public int GetModifiedTurretDamage(int baseDamage)
+        {
+            return Mathf.RoundToInt(baseDamage * damageMultiplier * sabotageDamageModifier);
+        }
+
+        public float GetModifiedFireRate(float baseFireRate)
+        {
+            return baseFireRate * fireRateMultiplier * sabotageFireRateModifier;
+        }
+
+        public float GetModifiedRange(float baseRange)
+        {
+            return baseRange * rangeMultiplier * sabotageRangeModifier;
         }
 
         // ==========================================
@@ -227,40 +337,50 @@ namespace ElementumDefense.Cards
         // ==========================================
 
         /// <summary>
-        /// Applies sabotage card to this player
-        /// Called via RPC from opponent
+        /// Applies sabotage card to this player.
+        /// Called by SabotageDraftManager after reveal phase.
         /// </summary>
         public void ApplySabotage(SabotageCardData sabotage, PhotonView casterPhotonView)
         {
-            if (sabotage == null || sabotage.sabotageEffect == null)
+            if (sabotage == null)
             {
-                Debug.LogError("[PlayerCardManager] Invalid sabotage!");
+                Debug.LogError("[PlayerCardManager] Sabotage is null!");
                 return;
             }
 
-            // Create active sabotage instance
-            ActiveSabotage activeSabotage = new ActiveSabotage
+            if (sabotage.sabotageEffect == null)
             {
-                sabotageData = sabotage,
-                casterPhotonView = casterPhotonView,
-                remainingDuration = sabotage.duration,
-                remainingRounds = sabotage.durationRounds
-            };
+                Debug.LogError($"[PlayerCardManager] Sabotage '{sabotage.sabotageName}' " +
+                               $"has NO EFFECT assigned!");
+                return;
+            }
 
-            // Apply effect
+            // Apply the effect
             sabotage.sabotageEffect.Apply(photonView, casterPhotonView);
 
-            // Add to active list (if not instant)
+            // Track if not instant
             if (sabotage.durationType != SabotageDurationType.Instant)
             {
+                ActiveSabotage activeSabotage = new ActiveSabotage
+                {
+                    sabotageData = sabotage,
+                    casterPhotonView = casterPhotonView,
+                    remainingDuration = sabotage.duration,
+                    remainingRounds = sabotage.durationRounds
+                };
+
                 activeSabotages.Add(activeSabotage);
             }
 
-            Debug.Log($"[PlayerCardManager] Sabotage applied: {sabotage.sabotageName} ({sabotage.durationType})");
+            string casterName = casterPhotonView?.Owner?.NickName ?? "Unknown";
+            Debug.Log($"[PlayerCardManager] ✅ Sabotage applied: " +
+                      $"'{sabotage.sabotageName}' from {casterName} " +
+                      $"({sabotage.durationType}, " +
+                      $"{sabotage.GetDurationText()})");
         }
 
         /// <summary>
-        /// Updates active sabotages (duration countdown)
+        /// Updates active sabotages - countdown and DOT effects
         /// </summary>
         private void UpdateSabotages(float deltaTime)
         {
@@ -272,27 +392,36 @@ namespace ElementumDefense.Cards
                 if (sabotage.sabotageData.durationType == SabotageDurationType.Permanent)
                     continue;
 
-                // Countdown duration
+                // Countdown
                 sabotage.remainingDuration -= deltaTime;
 
-                // Call update on effect (for DOT sabotages, etc.)
-                sabotage.sabotageData.sabotageEffect.OnUpdate(photonView, deltaTime);
+                // Update effect (for DOT sabotages like GoldDrain)
+                if (sabotage.sabotageData.sabotageEffect != null)
+                {
+                    sabotage.sabotageData.sabotageEffect.OnUpdate(photonView, deltaTime);
+                }
 
                 // Check if expired
                 if (sabotage.remainingDuration <= 0f)
                 {
                     // Remove effect
-                    sabotage.sabotageData.sabotageEffect.Remove(photonView, sabotage.casterPhotonView);
+                    if (sabotage.sabotageData.sabotageEffect != null)
+                    {
+                        sabotage.sabotageData.sabotageEffect.Remove(
+                            photonView, sabotage.casterPhotonView);
+                    }
 
+                    string name = sabotage.sabotageData.sabotageName;
                     activeSabotages.RemoveAt(i);
 
-                    Debug.Log($"[PlayerCardManager] Sabotage expired: {sabotage.sabotageData.sabotageName}");
+                    Debug.Log($"[PlayerCardManager] ⏰ Sabotage expired: {name}");
                 }
             }
         }
 
         /// <summary>
-        /// Reduces sabotage round duration (called by WaveManager after each wave)
+        /// Called by WaveManager after each wave.
+        /// Reduces round-based sabotage durations.
         /// </summary>
         public void OnWaveCompleted()
         {
@@ -306,58 +435,178 @@ namespace ElementumDefense.Cards
 
                     if (sabotage.remainingRounds <= 0)
                     {
-                        // Remove effect
-                        sabotage.sabotageData.sabotageEffect.Remove(photonView, sabotage.casterPhotonView);
+                        if (sabotage.sabotageData.sabotageEffect != null)
+                        {
+                            sabotage.sabotageData.sabotageEffect.Remove(
+                                photonView, sabotage.casterPhotonView);
+                        }
 
+                        string name = sabotage.sabotageData.sabotageName;
                         activeSabotages.RemoveAt(i);
 
-                        Debug.Log($"[PlayerCardManager] Round-based sabotage expired: {sabotage.sabotageData.sabotageName}");
+                        Debug.Log($"[PlayerCardManager] ⏰ Round sabotage expired: {name}");
+                    }
+                    else
+                    {
+                        Debug.Log($"[PlayerCardManager] Sabotage " +
+                                  $"'{sabotage.sabotageData.sabotageName}' " +
+                                  $"has {sabotage.remainingRounds} rounds left");
                     }
                 }
             }
         }
 
-        /// <summary>
-        /// Gets list of active sabotages (for UI display)
-        /// </summary>
         public List<ActiveSabotage> GetActiveSabotages()
         {
             return new List<ActiveSabotage>(activeSabotages);
         }
 
         // ==========================================
+        // SABOTAGE MODIFIER METHODS
+        // ==========================================
+
+        // --- Upgrades Disabled ---
+
+        public void SetUpgradesDisabled(bool disabled)
+        {
+            upgradesDisabled = disabled;
+            Debug.Log($"[PlayerCardManager] Upgrades " +
+                      $"{(disabled ? "🚫 DISABLED" : "✅ ENABLED")}");
+        }
+
+        // --- Damage ---
+
+        public void ApplySabotageDamageModifier(float multiplier)
+        {
+            sabotageDamageModifier *= multiplier;
+            Debug.Log($"[PlayerCardManager] Sabotage DMG: {sabotageDamageModifier:F2}x");
+            OnModifiersChanged?.Invoke();
+        }
+
+        public void RemoveSabotageDamageModifier(float multiplier)
+        {
+            if (multiplier > 0f)
+                sabotageDamageModifier /= multiplier;
+            else
+                sabotageDamageModifier = 1f;
+
+            // Safety clamp - prevent floating point drift
+            if (Mathf.Abs(sabotageDamageModifier - 1f) < 0.001f)
+                sabotageDamageModifier = 1f;
+
+            Debug.Log($"[PlayerCardManager] Sabotage DMG restored: " +
+                      $"{sabotageDamageModifier:F2}x");
+            OnModifiersChanged?.Invoke();
+        }
+
+        // --- Fire Rate ---
+
+        public void ApplySabotageFireRateModifier(float multiplier)
+        {
+            sabotageFireRateModifier *= multiplier;
+            Debug.Log($"[PlayerCardManager] Sabotage FR: {sabotageFireRateModifier:F2}x");
+            OnModifiersChanged?.Invoke();
+        }
+
+        public void RemoveSabotageFireRateModifier(float multiplier)
+        {
+            if (multiplier > 0f)
+                sabotageFireRateModifier /= multiplier;
+            else
+                sabotageFireRateModifier = 1f;
+
+            if (Mathf.Abs(sabotageFireRateModifier - 1f) < 0.001f)
+                sabotageFireRateModifier = 1f;
+
+            Debug.Log($"[PlayerCardManager] Sabotage FR restored: " +
+                      $"{sabotageFireRateModifier:F2}x");
+            OnModifiersChanged?.Invoke();
+        }
+
+        // --- Range ---
+
+        public void ApplySabotageRangeModifier(float multiplier)
+        {
+            sabotageRangeModifier *= multiplier;
+            Debug.Log($"[PlayerCardManager] Sabotage RNG: {sabotageRangeModifier:F2}x");
+            OnModifiersChanged?.Invoke();
+        }
+
+        public void RemoveSabotageRangeModifier(float multiplier)
+        {
+            if (multiplier > 0f)
+                sabotageRangeModifier /= multiplier;
+            else
+                sabotageRangeModifier = 1f;
+
+            if (Mathf.Abs(sabotageRangeModifier - 1f) < 0.001f)
+                sabotageRangeModifier = 1f;
+
+            Debug.Log($"[PlayerCardManager] Sabotage RNG restored: " +
+                      $"{sabotageRangeModifier:F2}x");
+            OnModifiersChanged?.Invoke();
+        }
+
+        // --- Cost ---
+
+        public void ApplySabotageCostModifier(float multiplier)
+        {
+            sabotageCostModifier *= multiplier;
+            Debug.Log($"[PlayerCardManager] Sabotage COST: {sabotageCostModifier:F2}x");
+        }
+
+        public void RemoveSabotageCostModifier(float multiplier)
+        {
+            if (multiplier > 0f)
+                sabotageCostModifier /= multiplier;
+            else
+                sabotageCostModifier = 1f;
+
+            if (Mathf.Abs(sabotageCostModifier - 1f) < 0.001f)
+                sabotageCostModifier = 1f;
+
+            Debug.Log($"[PlayerCardManager] Sabotage COST restored: " +
+                      $"{sabotageCostModifier:F2}x");
+        }
+
+        // ==========================================
         // UTILITY
         // ==========================================
 
-        /// <summary>
-        /// Checks if specific card is active
-        /// </summary>
-        public bool HasCard(CardData card)
-        {
-            return activeCards.Contains(card);
-        }
+        public bool HasCard(CardData card) => activeCards.Contains(card);
 
-        /// <summary>
-        /// Gets count of specific card type
-        /// </summary>
         public int GetCardCountByType(CardType cardType)
         {
             return activeCards.Count(card => card.cardType == cardType);
         }
 
         /// <summary>
-        /// Clears all sabotages (e.g., special cleanse card)
+        /// Clears ALL sabotages and resets all sabotage modifiers.
+        /// Can be used by a "Cleanse" card or end-of-game cleanup.
         /// </summary>
         public void ClearAllSabotages()
         {
             foreach (var sabotage in activeSabotages)
             {
-                sabotage.sabotageData.sabotageEffect.Remove(photonView, sabotage.casterPhotonView);
+                if (sabotage.sabotageData?.sabotageEffect != null)
+                {
+                    sabotage.sabotageData.sabotageEffect.Remove(
+                        photonView, sabotage.casterPhotonView);
+                }
             }
 
             activeSabotages.Clear();
 
-            Debug.Log("[PlayerCardManager] Cleared all sabotages");
+            // Reset ALL sabotage modifiers
+            sabotageDamageModifier = 1f;
+            sabotageFireRateModifier = 1f;
+            sabotageRangeModifier = 1f;
+            sabotageCostModifier = 1f;
+            upgradesDisabled = false;
+
+            OnModifiersChanged?.Invoke();
+
+            Debug.Log("[PlayerCardManager] 🧹 Cleared all sabotages + modifiers");
         }
 
         // ==========================================
@@ -370,7 +619,42 @@ namespace ElementumDefense.Cards
             Debug.Log($"=== ACTIVE CARDS ({activeCards.Count}) ===");
             foreach (var card in activeCards)
             {
-                Debug.Log($"  - {card.cardName} ({card.cardType}, {card.activationType})");
+                Debug.Log($"  - {card.cardName} ({card.cardType})");
+            }
+        }
+
+        [ContextMenu("Print All Modifiers")]
+        private void PrintModifiers()
+        {
+            Debug.Log($"=== CARD MODIFIERS ===");
+            Debug.Log($"  DMG:  {damageMultiplier:F2}x");
+            Debug.Log($"  FR:   {fireRateMultiplier:F2}x");
+            Debug.Log($"  RNG:  {rangeMultiplier:F2}x");
+            Debug.Log($"  Cost: {turretCostMultiplier:F2}x");
+            Debug.Log($"  Gold: {passiveGoldPerSecond}/s");
+
+            Debug.Log($"=== SABOTAGE MODIFIERS ===");
+            Debug.Log($"  DMG:  {sabotageDamageModifier:F2}x");
+            Debug.Log($"  FR:   {sabotageFireRateModifier:F2}x");
+            Debug.Log($"  RNG:  {sabotageRangeModifier:F2}x");
+            Debug.Log($"  Cost: {sabotageCostModifier:F2}x");
+            Debug.Log($"  Upgrades Disabled: {upgradesDisabled}");
+
+            Debug.Log($"=== FINAL VALUES (example base=10) ===");
+            Debug.Log($"  DMG:  10 → {10 * damageMultiplier * sabotageDamageModifier:F1}");
+            Debug.Log($"  FR:   1 → {1 * fireRateMultiplier * sabotageFireRateModifier:F2}");
+            Debug.Log($"  RNG:  5 → {5 * rangeMultiplier * sabotageRangeModifier:F1}");
+            Debug.Log($"  Cost: 100 → {Mathf.RoundToInt(100 * turretCostMultiplier * sabotageCostModifier)}");
+
+            Debug.Log($"=== ELEMENT MODIFIERS ===");
+            foreach (var kvp in elementModifiers)
+            {
+                Debug.Log($"  {kvp.Key}: DMG={kvp.Value.damageMultiplier:F2}x, " +
+                          $"FR={kvp.Value.fireRateMultiplier:F2}x, " +
+                          $"RNG={kvp.Value.rangeMultiplier:F2}x, " +
+                          $"AOE=+{kvp.Value.addAOERadius}, " +
+                          $"Pierce=+{kvp.Value.addPierceCount}, " +
+                          $"Chain=+{kvp.Value.addChainTargets}");
             }
         }
 
@@ -378,21 +662,61 @@ namespace ElementumDefense.Cards
         private void PrintActiveSabotages()
         {
             Debug.Log($"=== ACTIVE SABOTAGES ({activeSabotages.Count}) ===");
+
+            if (activeSabotages.Count == 0)
+            {
+                Debug.Log("  (none)");
+                return;
+            }
+
             foreach (var sabotage in activeSabotages)
             {
-                Debug.Log($"  - {sabotage.sabotageData.sabotageName} ({sabotage.remainingDuration:F1}s remaining)");
+                string caster = sabotage.casterPhotonView?.Owner?.NickName ?? "Unknown";
+                string duration;
+
+                if (sabotage.sabotageData.durationType == SabotageDurationType.Permanent)
+                {
+                    duration = "PERMANENT";
+                }
+                else if (sabotage.sabotageData.durationRounds > 0)
+                {
+                    duration = $"{sabotage.remainingRounds} rounds left";
+                }
+                else
+                {
+                    duration = $"{sabotage.remainingDuration:F1}s left";
+                }
+
+                string hasEffect = sabotage.sabotageData.sabotageEffect != null
+                    ? "✅" : "❌ NO EFFECT";
+
+                Debug.Log($"  - {sabotage.sabotageData.sabotageName} " +
+                          $"from {caster} ({duration}) {hasEffect}");
             }
+        }
+
+        [ContextMenu("Force Clear All Sabotages")]
+        private void ForceClearSabotages()
+        {
+            ClearAllSabotages();
         }
     }
 
     // ==========================================
-    // HELPER CLASS - Active Sabotage Instance
+    // HELPER CLASSES
     // ==========================================
 
-    /// <summary>
-    /// Runtime instance of active sabotage
-    /// Tracks duration and caster
-    /// </summary>
+    [System.Serializable]
+    public class TurretModifiers
+    {
+        public float damageMultiplier = 1f;
+        public float fireRateMultiplier = 1f;
+        public float rangeMultiplier = 1f;
+        public float addAOERadius = 0f;
+        public int addPierceCount = 0;
+        public int addChainTargets = 0;
+    }
+
     [System.Serializable]
     public class ActiveSabotage
     {

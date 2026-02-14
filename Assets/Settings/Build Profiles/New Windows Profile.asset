@@ -28,6 +28,8 @@ MonoBehaviour:
     m_path: Assets/Scenes/LobbyScene.unity
   - m_enabled: 1
     m_path: Assets/Scenes/SampleScene.unity
+  - m_enabled: 0
+    m_path: Assets/PrzemekSkrypty/testscene.unity
   m_ScriptingDefines: []
   m_PlayerSettingsYaml:
     m_Settings: []

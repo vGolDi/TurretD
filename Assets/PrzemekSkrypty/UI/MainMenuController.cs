@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using TMPro;
+using ElementumDefense.UI;
 
 /// <summary>
 /// Controls main menu UI and scene transitions
@@ -15,6 +16,7 @@ public class MainMenuController : MonoBehaviour
     [SerializeField] private GameObject creditsPanel;
     [SerializeField] private GameObject loadingPanel;
     [SerializeField] private GameObject deckbuilderPanel;
+    [SerializeField] private GameObject lootboxPanel;
 
     [Header("Main Menu Buttons")]
     [SerializeField] private Button multiPlayerButton;
@@ -22,6 +24,7 @@ public class MainMenuController : MonoBehaviour
     [SerializeField] private Button deckbuilderButton;
     [SerializeField] private Button creditsButton;
     [SerializeField] private Button quitButton;
+    [SerializeField] private Button lootboxButton;
 
     [Header("Play Selection UI")]
     [SerializeField] private GameObject playSelectionPanel; // Przypisz nowy panel w Inspektorze
@@ -47,6 +50,12 @@ public class MainMenuController : MonoBehaviour
 
     [Header("Credits UI")]
     [SerializeField] private Button creditsBackButton; // NEW!
+
+    [Header("Deck UI")]
+    [SerializeField] private Button deckBackButton;
+
+    [Header("Lootbox UI")]
+    [SerializeField] private Button lootboxBackButton;
 
     [Header("Version Display")]
     [SerializeField] private TMP_Text versionText;
@@ -93,6 +102,9 @@ public class MainMenuController : MonoBehaviour
         if (quitButton != null)
             quitButton.onClick.AddListener(() => { PlayButtonSound(); QuitGame(); });
 
+        if (lootboxButton != null)
+            lootboxButton.onClick.AddListener(() => { PlayButtonSound(); OpenLootboxMenu(); });
+
         // Setup settings listeners
         if (volumeSlider != null)
             volumeSlider.onValueChanged.AddListener(OnVolumeChanged);
@@ -109,6 +121,15 @@ public class MainMenuController : MonoBehaviour
 
         if (creditsBackButton != null)
             creditsBackButton.onClick.AddListener(() => { PlayButtonSound(); BackToMainMenu(); });
+        
+        if (playBackButton != null) 
+            playBackButton.onClick.AddListener(BackToMainMenu);
+
+        if (deckBackButton != null)
+            deckBackButton.onClick.AddListener(() => { PlayButtonSound(); BackToMainMenu(); });
+
+        if (lootboxBackButton != null)
+            lootboxBackButton.onClick.AddListener(() => { PlayButtonSound(); BackToMainMenu(); });
 
         // Display version
         if (versionText != null)
@@ -118,7 +139,7 @@ public class MainMenuController : MonoBehaviour
         if (playRankedButton != null) playRankedButton.onClick.AddListener(() => SetModeAndPlay(ElementumDefense.Cards.GameMode.Ranked));
         // Custom na razie wy³¹czony lub placeholder
         if (playCustomButton != null) playCustomButton.interactable = false;
-        if (playBackButton != null) playBackButton.onClick.AddListener(BackToMainMenu);
+        
         // Setup audio
         audioSource = gameObject.AddComponent<AudioSource>();
 
@@ -260,6 +281,18 @@ public class MainMenuController : MonoBehaviour
         ShowPanel(creditsPanel);
         Debug.Log("[MainMenu] Opened credits");
     }
+    public void OpenLootboxMenu()
+    {
+        ShowPanel(lootboxPanel);
+
+        LootboxUI lootboxUI = lootboxPanel.GetComponent<LootboxUI>();
+        if (lootboxUI != null)
+        {
+            lootboxUI.OpenLootboxMenu();
+        }
+
+        Debug.Log("[MainMenu] Opened Lootbox Menu");
+    }
 
     /// <summary>
     /// Returns to main menu panel
@@ -281,6 +314,7 @@ public class MainMenuController : MonoBehaviour
         loadingPanel?.SetActive(panel == loadingPanel);
         deckbuilderPanel?.SetActive(panel == deckbuilderPanel);
         playSelectionPanel?.SetActive(panel == playSelectionPanel);
+        lootboxPanel?.SetActive(panel == lootboxPanel);
     }
 
     #endregion
@@ -346,7 +380,7 @@ public class MainMenuController : MonoBehaviour
     #endregion
 
     #region Audio
-
+        
     private void PlayMenuMusic()
     {
         if (menuMusic != null && audioSource != null)

@@ -285,10 +285,10 @@ MonoBehaviour:
   aoeDamageMultiplier: 0.7
   zoneRadius: 3
   zoneDuration: 5
-  tickInterval: 0.5
-  damagePerTick: 0
+  tickInterval: 0.1
+  damagePerTick: 1
   aoeZonePrefab: {fileID: 511727489520161055, guid: 71bea9a240aa24a4394e729865ee1921, type: 3}
-  slowEnemiesInZone: 1
+  slowEnemiesInZone: 0
   slowAmount: 0.5
   snapToGround: 1
   groundOffset: 0.5

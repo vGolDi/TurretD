@@ -1,3 +1,4 @@
+#if (UNITY_EDITOR)
 using UnityEngine;
 using Photon.Pun;
 
@@ -31,3 +32,4 @@ public class SceneLoadedDebug : MonoBehaviour
         Debug.Log(" Game scene ready!");
     }
 }
+#endif

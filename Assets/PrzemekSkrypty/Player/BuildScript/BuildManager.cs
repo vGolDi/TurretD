@@ -15,7 +15,8 @@ public class BuildManager : MonoBehaviour
 
     private TurretData selectedTurret;
     private PlayerBuilder playerBuilder;
-    private PlayerInputManager playerInputManager;
+    //private PlayerInputManager playerInputManager;
+    private SimpleInputManager inputManager; // zamiast PlayerInputManager
     private PhotonView photonView;
 
     private HotbarUI hotbarUI;
@@ -23,7 +24,8 @@ public class BuildManager : MonoBehaviour
     private void Awake()
     {
         playerBuilder = GetComponent<PlayerBuilder>();
-        playerInputManager = GetComponent<PlayerInputManager>();
+      //  playerInputManager = GetComponent<PlayerInputManager>();
+        inputManager = GetComponent<SimpleInputManager>();
         photonView = GetComponent<PhotonView>();
 
         hotbarUI = FindFirstObjectByType<HotbarUI>();
@@ -37,7 +39,7 @@ public class BuildManager : MonoBehaviour
         HandleHotbarInput();
 
         // Exit build mode with RMB or ESC
-        if (playerInputManager.IsInBuildMode)
+        if (inputManager.IsInBuildMode)
         {
             if (Input.GetMouseButtonDown(1) || Input.GetKeyDown(KeyCode.Escape))
             {
@@ -87,7 +89,7 @@ public class BuildManager : MonoBehaviour
         if (PlayerGold.LocalInstance.HasEnough(finalCost))
         {
             selectedTurret = turret;
-            playerInputManager.EnterBuildMode();
+            inputManager.EnterBuildMode();
             playerBuilder.ActivateBuildMode(turret);
         }
         else
@@ -101,9 +103,9 @@ public class BuildManager : MonoBehaviour
     /// </summary>
     public void ExitBuildMode()
     {
-        if (playerBuilder == null || playerInputManager == null) return;
+        if (playerBuilder == null || inputManager == null) return;
 
-        playerInputManager.ExitBuildMode();
+        inputManager.ExitBuildMode();
         playerBuilder.DeactivateBuildMode();
         selectedTurret = null;
     }
@@ -116,5 +118,5 @@ public class BuildManager : MonoBehaviour
         ExitBuildMode();
     }
 
-    public bool IsInBuildMode() => playerInputManager?.IsInBuildMode ?? false;
+    public bool IsInBuildMode() => inputManager?.IsInBuildMode ?? false;
 }

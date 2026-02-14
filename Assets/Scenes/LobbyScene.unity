@@ -916,7 +916,7 @@ MonoBehaviour:
   playerCountText: {fileID: 1450417447}
   waitingText: {fileID: 1991867375}
   cancelButton: {fileID: 900294925}
-  maxPlayersPerRoom: 2
+  maxPlayersPerRoom: 1
   gameVersion: 0.1
   gameSceneName: SampleScene
   availableArenaTypes:

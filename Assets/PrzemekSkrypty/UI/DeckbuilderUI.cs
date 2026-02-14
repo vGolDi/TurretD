@@ -494,13 +494,13 @@ private void RefreshCollectionDisplay()
                     if (rarityText != null)
                     {
                         rarityText.text = card.rarity.ToString();
-                        rarityText.color = card.GetRarityColor();
+                        //rarityText.color = card.GetRarityColor();
                     }
                     
                     // DODANE: Ustaw ramkę rzadkości
                     if (rarityBorder != null)
                     {
-                        rarityBorder.color = card.GetRarityColor();
+                        rarityBorder.color = card.GetRarityColor().WithAlpha(0.2f);
                     }
                     if (description != null)
                     {
@@ -580,13 +580,13 @@ private void RefreshDeckDisplay()
                 if (rarityText != null)
                 {
                     rarityText.text = card.rarity.ToString();
-                    rarityText.color = card.GetRarityColor();
+                   // rarityText.color = card.GetRarityColor();
                 }
                 
                 // Ustaw kolor ramki rzadkości
                 if (rarityBorder != null)
                 {
-                    rarityBorder.color = card.GetRarityColor();
+                    rarityBorder.color = card.GetRarityColor().WithAlpha(0.2f);
                 }
                 if (description != null)
                 {
@@ -781,7 +781,7 @@ private void UpdateCounters()
 
             if (rarityBorder != null)
             {
-                rarityBorder.color = card.GetRarityColor();
+                rarityBorder.color = card.GetRarityColor().WithAlpha(0.2f);
             }
             //test
             if (TopLine != null && BottomLine != null)

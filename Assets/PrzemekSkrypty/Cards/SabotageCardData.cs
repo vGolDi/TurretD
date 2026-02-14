@@ -110,7 +110,10 @@ namespace ElementumDefense.Cards
                 _ => Color.white
             };
         }
-
+        public Color WithAlpha(Color color, float alpha)
+        {
+            return new Color(color.r, color.g, color.b, alpha);
+        }
         private void OnValidate()
         {
             if (sabotageEffect == null)

@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ElementumDefense.Cards.TurretCardEffect
   effectDescription: Effect description...
   targetElement: 1
-  affectsAllTurrets: 0
+  affectsAllTurrets: 1
   damageMultiplier: 1.2
   fireRateMultiplier: 1.2
   rangeMultiplier: 1.2
