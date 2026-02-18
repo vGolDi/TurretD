@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements">
+    <Style src="ShopStyles.uss" />
+
+    <ui:VisualElement name="shop-root" class="panel-root">
+
+        <!-- Dekoracje boczne -->
+        <ui:VisualElement class="side-decoration-left" picking-mode="Ignore" />
+        <ui:VisualElement class="side-decoration-right" picking-mode="Ignore" />
+        <ui:VisualElement class="side-tick-left" style="top: 35%;" picking-mode="Ignore" />
+        <ui:VisualElement class="side-tick-left" style="top: 50%;" picking-mode="Ignore" />
+        <ui:VisualElement class="side-tick-left" style="top: 65%;" picking-mode="Ignore" />
+        <ui:VisualElement class="side-tick-right" style="top: 35%;" picking-mode="Ignore" />
+        <ui:VisualElement class="side-tick-right" style="top: 50%;" picking-mode="Ignore" />
+        <ui:VisualElement class="side-tick-right" style="top: 65%;" picking-mode="Ignore" />
+
+        <!-- Header -->
+        <ui:VisualElement class="panel-header">
+            <ui:Button name="btn-back" text="BACK" class="btn-back" />
+            <ui:VisualElement class="header-title-group">
+                <ui:Label text="THE MERCHANT" class="panel-title" />
+                <ui:Label text="ARCANE EMPORIUM" class="panel-subtitle" />
+            </ui:VisualElement>
+            <ui:VisualElement class="header-spacer" />
+            <ui:VisualElement class="header-currency">
+                <ui:VisualElement class="currency-chip currency-gold">
+                    <ui:VisualElement class="currency-dot currency-dot-gold" />
+                    <ui:Label name="header-gold" text="0" class="currency-amount currency-amount-gold" />
+                    <ui:Label text="GOLD" class="currency-label" />
+                </ui:VisualElement>
+                <ui:VisualElement class="currency-chip currency-crystal">
+                    <ui:VisualElement class="currency-dot currency-dot-crystal" />
+                    <ui:Label name="header-crystals" text="0" class="currency-amount currency-amount-crystal" />
+                    <ui:Label text="CRYSTALS" class="currency-label" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <!-- Tabs -->
+        <ui:VisualElement class="tabs-bar">
+            <ui:VisualElement class="tabs-inner">
+                <ui:Button name="tab-all" text="ALL" class="tab-button tab-active" />
+                <ui:VisualElement class="tab-separator" />
+                <ui:Button name="tab-lootboxes" text="LOOTBOXES" class="tab-button" />
+                <ui:VisualElement class="tab-separator" />
+                <ui:Button name="tab-skins" text="SKINS" class="tab-button" />
+                <ui:VisualElement class="tab-separator" />
+                <ui:Button name="tab-other" text="OTHER" class="tab-button" />
+            </ui:VisualElement>
+            <ui:VisualElement class="tabs-line" />
+        </ui:VisualElement>
+
+        <!-- Item Grid -->
+        <ui:ScrollView name="shop-scroll" class="shop-scroll">
+            <ui:VisualElement name="item-grid" class="item-grid" />
+        </ui:ScrollView>
+
+        <!-- Dolny pasek informacyjny -->
+        <ui:VisualElement class="bottom-info-bar" picking-mode="Ignore">
+            <ui:Label text="DAILY OFFERS RESET AT MIDNIGHT UTC" class="bottom-info-text" />
+            <ui:VisualElement class="bottom-info-separator" />
+            <ui:Label text="WEEKLY OFFERS RESET EVERY MONDAY" class="bottom-info-text" />
+        </ui:VisualElement>
+
+        <!-- Confirmation Popup -->
+        <ui:VisualElement name="confirm-popup" class="popup-overlay hidden">
+            <ui:VisualElement class="confirm-box">
+                <ui:Label text="CONFIRM PURCHASE" class="confirm-title" />
+                <ui:VisualElement class="confirm-divider" />
+                <ui:VisualElement class="confirm-item-row">
+                    <ui:VisualElement name="confirm-icon" class="confirm-icon" />
+                    <ui:VisualElement class="confirm-item-details">
+                        <ui:Label name="confirm-name" text="Item Name" class="confirm-name" />
+                        <ui:Label name="confirm-type" text="LOOTBOX" class="confirm-type" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+                <ui:Label name="confirm-description" text="Description" class="confirm-description" />
+                <ui:VisualElement class="confirm-section">
+                    <ui:Label text="REWARDS" class="confirm-section-label" />
+                    <ui:Label name="confirm-rewards" text="..." class="confirm-rewards" />
+                </ui:VisualElement>
+                <ui:VisualElement class="confirm-price-section">
+                    <ui:VisualElement class="confirm-price-row">
+                        <ui:Label name="confirm-old-price" text="" class="confirm-old-price" />
+                        <ui:Label name="confirm-price" text="500" class="confirm-price" />
+                        <ui:Label name="confirm-currency-label" text="GOLD" class="confirm-currency-type" />
+                    </ui:VisualElement>
+                    <ui:Label name="confirm-limit" text="" class="confirm-limit" />
+                </ui:VisualElement>
+                <ui:VisualElement class="confirm-buttons">
+                    <ui:Button name="btn-confirm-buy" text="PURCHASE" class="btn-action btn-confirm-buy" />
+                    <ui:Button name="btn-confirm-cancel" text="CANCEL" class="btn-action btn-secondary" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <!-- Feedback Popups -->
+        <ui:VisualElement name="success-popup" class="feedback-popup feedback-success hidden">
+            <ui:Label name="success-text" text="Purchase successful!" class="feedback-text" />
+        </ui:VisualElement>
+
+        <ui:VisualElement name="fail-popup" class="feedback-popup feedback-fail hidden">
+            <ui:Label name="fail-text" text="Purchase failed!" class="feedback-text" />
+        </ui:VisualElement>
+
+    </ui:VisualElement>
+</ui:UXML>

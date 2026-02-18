@@ -1,0 +1,133 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/PrzemekSkrypty/LoginStyles.uss?fileID=7433441132597879392&amp;guid=6e3de867c09137743835ce03d4879b16&amp;type=3#LoginStyles" />
+    <ui:VisualElement name="login-root" class="login-root">
+        <ui:VisualElement picking-mode="Ignore" class="bg-layer">
+            <ui:VisualElement picking-mode="Ignore" class="bg-radial-origin">
+                <ui:VisualElement picking-mode="Ignore" class="bg-radial-line" style="rotate: 0;" />
+                <ui:VisualElement picking-mode="Ignore" class="bg-radial-line" style="rotate: 30deg;" />
+                <ui:VisualElement picking-mode="Ignore" class="bg-radial-line" style="rotate: 60deg;" />
+                <ui:VisualElement picking-mode="Ignore" class="bg-radial-line" style="rotate: 90deg;" />
+                <ui:VisualElement picking-mode="Ignore" class="bg-radial-line" style="rotate: 120deg;" />
+                <ui:VisualElement picking-mode="Ignore" class="bg-radial-line" style="rotate: 150deg;" />
+            </ui:VisualElement>
+            <ui:VisualElement picking-mode="Ignore" class="bg-cross-v" />
+            <ui:VisualElement picking-mode="Ignore" class="bg-cross-h" />
+            <ui:VisualElement picking-mode="Ignore" class="login-corner login-corner-tl">
+                <ui:VisualElement class="corner-h" />
+                <ui:VisualElement class="corner-v" />
+                <ui:VisualElement class="corner-h-inner" />
+                <ui:VisualElement class="corner-v-inner" />
+                <ui:VisualElement class="corner-tick-h" />
+                <ui:VisualElement class="corner-tick-v" />
+            </ui:VisualElement>
+            <ui:VisualElement picking-mode="Ignore" class="login-corner login-corner-tr">
+                <ui:VisualElement class="corner-h" />
+                <ui:VisualElement class="corner-v" />
+                <ui:VisualElement class="corner-h-inner" />
+                <ui:VisualElement class="corner-v-inner" />
+                <ui:VisualElement class="corner-tick-h" />
+                <ui:VisualElement class="corner-tick-v" />
+            </ui:VisualElement>
+            <ui:VisualElement picking-mode="Ignore" class="login-corner login-corner-bl">
+                <ui:VisualElement class="corner-h" />
+                <ui:VisualElement class="corner-v" />
+                <ui:VisualElement class="corner-h-inner" />
+                <ui:VisualElement class="corner-v-inner" />
+                <ui:VisualElement class="corner-tick-h" />
+                <ui:VisualElement class="corner-tick-v" />
+            </ui:VisualElement>
+            <ui:VisualElement picking-mode="Ignore" class="login-corner login-corner-br">
+                <ui:VisualElement class="corner-h" />
+                <ui:VisualElement class="corner-v" />
+                <ui:VisualElement class="corner-h-inner" />
+                <ui:VisualElement class="corner-v-inner" />
+                <ui:VisualElement class="corner-tick-h" />
+                <ui:VisualElement class="corner-tick-v" />
+            </ui:VisualElement>
+            <ui:VisualElement picking-mode="Ignore" class="side-line-left" />
+            <ui:VisualElement picking-mode="Ignore" class="side-line-right" />
+            <ui:VisualElement picking-mode="Ignore" class="side-tick-left" style="top: 35%;" />
+            <ui:VisualElement picking-mode="Ignore" class="side-tick-left" style="top: 50%;" />
+            <ui:VisualElement picking-mode="Ignore" class="side-tick-left" style="top: 65%;" />
+            <ui:VisualElement picking-mode="Ignore" class="side-tick-right" style="top: 35%;" />
+            <ui:VisualElement picking-mode="Ignore" class="side-tick-right" style="top: 50%;" />
+            <ui:VisualElement picking-mode="Ignore" class="side-tick-right" style="top: 65%;" />
+        </ui:VisualElement>
+        <ui:VisualElement class="login-center">
+            <ui:VisualElement class="ornament-row">
+                <ui:VisualElement class="ornament-line-l" />
+                <ui:VisualElement class="ornament-diamond" />
+                <ui:VisualElement class="ornament-line-m" />
+                <ui:VisualElement class="ornament-diamond ornament-diamond-filled" style="background-color: rgba(245, 158, 11, 0.35);" />
+                <ui:VisualElement class="ornament-line-m" />
+                <ui:VisualElement class="ornament-diamond" style="border-left-color: rgba(245, 158, 11, 0.35); border-right-color: rgba(245, 158, 11, 0.35); border-top-color: rgba(245, 158, 11, 0.35); border-bottom-color: rgba(245, 158, 11, 0.35);" />
+                <ui:VisualElement class="ornament-line-r" />
+            </ui:VisualElement>
+            <ui:Label text="ELEMENTUM" class="login-title" />
+            <ui:Label text="DEFENCE" class="login-subtitle" />
+            <ui:VisualElement class="ornament-row ornament-row-small">
+                <ui:VisualElement class="ornament-line-short" />
+                <ui:VisualElement class="ornament-diamond ornament-diamond-tiny" />
+                <ui:VisualElement class="ornament-line-short" />
+            </ui:VisualElement>
+            <ui:Label text="ENTER THE SANCTUM" class="login-gate-text" />
+            <ui:VisualElement name="login-card" class="login-card">
+                <ui:VisualElement class="login-card-inner-border" />
+                <ui:VisualElement class="lc-corner lc-corner-tl" />
+                <ui:VisualElement class="lc-corner lc-corner-tr" />
+                <ui:VisualElement class="lc-corner lc-corner-bl" />
+                <ui:VisualElement class="lc-corner lc-corner-br" />
+                <ui:Label text="☉" class="login-card-sigil" />
+                <ui:VisualElement class="login-tabs">
+                    <ui:VisualElement name="tab-login" class="login-tab login-tab-active">
+                        <ui:Label text="SIGN IN" class="login-tab-text" />
+                        <ui:VisualElement class="login-tab-line" />
+                    </ui:VisualElement>
+                    <ui:VisualElement class="login-tab-separator" />
+                    <ui:VisualElement name="tab-register" class="login-tab">
+                        <ui:Label text="REGISTER" class="login-tab-text" />
+                        <ui:VisualElement class="login-tab-line" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+                <ui:VisualElement class="login-divider">
+                    <ui:VisualElement class="login-divider-line" />
+                    <ui:VisualElement class="login-divider-diamond" />
+                    <ui:VisualElement class="login-divider-line" />
+                </ui:VisualElement>
+                <ui:VisualElement class="login-fields">
+                    <ui:VisualElement class="login-field-group">
+                        <ui:Label text="USERNAME" class="login-field-label" />
+                        <ui:TextField name="input-username" class="login-input" />
+                    </ui:VisualElement>
+                    <ui:VisualElement class="login-field-group">
+                        <ui:Label text="PASSWORD" class="login-field-label" />
+                        <ui:TextField name="input-password" password="true" class="login-input" />
+                    </ui:VisualElement>
+                    <ui:VisualElement name="confirm-password-group" class="login-field-group hidden">
+                        <ui:Label text="CONFIRM PASSWORD" class="login-field-label" />
+                        <ui:TextField name="input-confirm-password" password="true" class="login-input" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+                <ui:VisualElement class="login-message-container">
+                    <ui:Label name="login-message" class="login-message" />
+                </ui:VisualElement>
+                <ui:VisualElement class="login-buttons">
+                    <ui:Button name="btn-submit" text="ENTER" class="login-btn-primary" />
+                </ui:VisualElement>
+                <ui:VisualElement class="login-card-bottom-accent" />
+            </ui:VisualElement>
+            <ui:VisualElement class="ornament-row ornament-row-bottom">
+                <ui:VisualElement class="ornament-line-l" />
+                <ui:VisualElement class="ornament-diamond" />
+                <ui:VisualElement class="ornament-line-m" />
+                <ui:VisualElement class="ornament-diamond ornament-diamond-filled" />
+                <ui:VisualElement class="ornament-line-m" />
+                <ui:VisualElement class="ornament-diamond" />
+                <ui:VisualElement class="ornament-line-r" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:VisualElement class="login-version-container">
+            <ui:Label name="login-version" text="v0.1.0 Alpha" class="login-version" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

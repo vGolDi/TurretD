@@ -1,79 +1,145 @@
 using UnityEngine;
-using TMPro;
+using UnityEngine.UIElements;
 using Photon.Pun;
 
 public class PlayerGold : MonoBehaviour
 {
     [Header("Starting Settings")]
-    [SerializeField, Tooltip("Gold amount at game start")]
+    [SerializeField]
     private int startingGold = 100;
-
-    [Header("UI")]
-    [SerializeField, Tooltip("UI text displaying current gold")]
-    private TextMeshProUGUI goldText;
 
     private int currentGold;
     private PhotonView photonView;
 
-    // Reference to LOCAL player's gold (for easy access)
-    public static PlayerGold LocalInstance { get; private set; }
+    public static PlayerGold LocalInstance
+    { get; private set; }
 
+    // UI Toolkit — na TYM SAMYM PREFABIE
+    private UIDocument uiDocument;
+    private Label goldValueLabel;
 
     private void Awake()
     {
         photonView = GetComponent<PhotonView>();
 
-        // Only set LocalInstance if this is OUR player
         if (photonView != null && photonView.IsMine)
-        {
             LocalInstance = this;
-        }
     }
 
     private void Start()
     {
         currentGold = startingGold;
+
+        if (photonView != null && !photonView.IsMine)
+        {
+            // Nie nasz gracz — ukryj gold UI
+            uiDocument = GetComponent<UIDocument>();
+            if (uiDocument != null)
+                uiDocument.enabled = false;
+            return;
+        }
+
+        FindGoldLabel();
         UpdateUI();
     }
 
+    private void FindGoldLabel()
+    {
+        // Szukaj UIDocument na W£ASNYM GameObject
+        uiDocument = GetComponent<UIDocument>();
+
+        if (uiDocument != null &&
+            uiDocument.rootVisualElement != null)
+        {
+            goldValueLabel =
+                uiDocument.rootVisualElement
+                    .Q<Label>("gold-value");
+
+            if (goldValueLabel != null)
+            {
+                Debug.Log(
+                    "[PlayerGold] Gold label found " +
+                    "on own prefab");
+            }
+        }
+
+        // Fallback: szukaj w scenie
+        if (goldValueLabel == null)
+        {
+            var docs = FindObjectsByType<UIDocument>(
+                FindObjectsSortMode.None);
+
+            foreach (var doc in docs)
+            {
+                if (doc == uiDocument) continue;
+                if (doc.rootVisualElement == null)
+                    continue;
+
+                var label =
+                    doc.rootVisualElement
+                        .Q<Label>("gold-value");
+
+                if (label != null)
+                {
+                    goldValueLabel = label;
+                    Debug.Log(
+                        "[PlayerGold] Gold label " +
+                        "found in scene");
+                    break;
+                }
+            }
+        }
+    }
+
     public int GetGold() => currentGold;
-    public bool HasEnough(int amount) => currentGold >= amount;
+
+    public bool HasEnough(int amount) =>
+        currentGold >= amount;
 
     public void AddGold(int amount)
     {
         currentGold += amount;
         UpdateUI();
-        Debug.Log($"[PlayerGold] +{amount} gold. Total: {currentGold}");
+        Debug.Log(
+            $"[PlayerGold] +{amount}. " +
+            $"Total: {currentGold}");
     }
 
     public bool SpendGold(int amount)
     {
         if (!HasEnough(amount))
         {
-            Debug.Log($"[PlayerGold] Not enough gold! Need {amount}, have {currentGold}");
+            Debug.Log(
+                $"[PlayerGold] Not enough! " +
+                $"Need {amount}, " +
+                $"have {currentGold}");
             return false;
         }
 
         currentGold -= amount;
         UpdateUI();
-        Debug.Log($"[PlayerGold] -{amount} gold. Remaining: {currentGold}");
+        Debug.Log(
+            $"[PlayerGold] -{amount}. " +
+            $"Remaining: {currentGold}");
         return true;
     }
 
     private void UpdateUI()
     {
-        // Only update UI for local player
-        if (photonView != null && photonView.IsMine && goldText != null)
-        {
-            goldText.text = $"Gold: {currentGold}";
-        }
+        if (photonView != null && !photonView.IsMine)
+            return;
+
+        if (goldValueLabel == null)
+            FindGoldLabel();
+
+        if (goldValueLabel != null)
+            goldValueLabel.text =
+                currentGold.ToString();
     }
 
     private void OnDestroy()
     {
         if (LocalInstance == this)
-        {
             LocalInstance = null;
-        }
     }
 }

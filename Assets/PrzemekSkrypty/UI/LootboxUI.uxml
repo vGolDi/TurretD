@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
+    <Style src="LootboxStyles.uss" />
+
+    <ui:VisualElement name="lootbox-root" class="panel-root">
+
+        <ui:VisualElement class="side-decoration-left" picking-mode="Ignore" />
+        <ui:VisualElement class="side-decoration-right" picking-mode="Ignore" />
+        <ui:VisualElement class="side-tick-left" style="top: 30%;" picking-mode="Ignore" />
+        <ui:VisualElement class="side-tick-left" style="top: 45%;" picking-mode="Ignore" />
+        <ui:VisualElement class="side-tick-left" style="top: 60%;" picking-mode="Ignore" />
+        <ui:VisualElement class="side-tick-left" style="top: 75%;" picking-mode="Ignore" />
+        <ui:VisualElement class="side-tick-right" style="top: 30%;" picking-mode="Ignore" />
+        <ui:VisualElement class="side-tick-right" style="top: 45%;" picking-mode="Ignore" />
+        <ui:VisualElement class="side-tick-right" style="top: 60%;" picking-mode="Ignore" />
+        <ui:VisualElement class="side-tick-right" style="top: 75%;" picking-mode="Ignore" />
+
+        <ui:VisualElement name="bg-radial" class="bg-radial" picking-mode="Ignore">
+            <ui:VisualElement class="bg-radial-line" style="rotate: 0deg;" picking-mode="Ignore" />
+            <ui:VisualElement class="bg-radial-line" style="rotate: 45deg;" picking-mode="Ignore" />
+            <ui:VisualElement class="bg-radial-line" style="rotate: 90deg;" picking-mode="Ignore" />
+            <ui:VisualElement class="bg-radial-line" style="rotate: 135deg;" picking-mode="Ignore" />
+        </ui:VisualElement>
+
+        <ui:VisualElement class="panel-header">
+            <ui:Button name="btn-back" text="BACK" class="btn-back" />
+            <ui:VisualElement class="header-title-group">
+                <ui:Label text="THE FORTUNE" class="panel-title" />
+                <ui:Label text="ARCANE LOOTBOXES" class="panel-subtitle" />
+            </ui:VisualElement>
+            <ui:VisualElement class="header-spacer" />
+            <ui:VisualElement class="header-currency">
+                <ui:VisualElement class="currency-chip currency-gold">
+                    <ui:VisualElement class="currency-dot currency-dot-gold" />
+                    <ui:Label name="header-gold" text="0" class="currency-amount currency-amount-gold" />
+                    <ui:Label text="GOLD" class="currency-label" />
+                </ui:VisualElement>
+                <ui:VisualElement class="currency-chip currency-crystal">
+                    <ui:VisualElement class="currency-dot currency-dot-crystal" />
+                    <ui:Label name="header-crystals" text="0" class="currency-amount currency-amount-crystal" />
+                    <ui:Label text="CRYSTALS" class="currency-label" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <ui:VisualElement name="inventory-view" class="view-container">
+
+            <ui:VisualElement class="inventory-info-bar">
+                <ui:VisualElement class="info-ornament-left" />
+                <ui:Label name="inventory-count-label" text="YOUR COLLECTION" class="inventory-count-text" />
+                <ui:VisualElement class="info-ornament-right" />
+            </ui:VisualElement>
+
+            <ui:ScrollView name="inventory-scroll" class="inventory-scroll">
+                <ui:VisualElement name="inventory-grid" class="inventory-grid" />
+            </ui:ScrollView>
+
+            <ui:VisualElement name="empty-state" class="empty-state hidden">
+                <ui:Label text="NO LOOTBOXES IN YOUR COLLECTION" class="empty-state-text" />
+                <ui:Label text="EARN THEM FROM QUESTS OR THE SHOP" class="empty-state-subtext" />
+            </ui:VisualElement>
+
+        </ui:VisualElement>
+
+        <ui:VisualElement name="opening-view" class="view-container hidden">
+
+            <ui:VisualElement name="opening-glow-ring" class="opening-glow-ring" />
+
+            <ui:VisualElement class="opening-center">
+                <ui:VisualElement name="opening-glow" class="opening-glow" />
+                <ui:VisualElement name="opening-icon" class="opening-icon" />
+                <ui:Label name="opening-name" text="STANDARD CRATE" class="opening-name" />
+                <ui:Label name="opening-rarity" text="COMMON" class="opening-rarity" />
+            </ui:VisualElement>
+
+            <ui:VisualElement name="opening-sparks" class="opening-sparks" picking-mode="Ignore" />
+
+            <ui:Label name="opening-hint" text="OPENING..." class="opening-hint" />
+
+        </ui:VisualElement>
+
+        <ui:VisualElement name="results-view" class="view-container hidden">
+
+            <ui:VisualElement class="results-header">
+                <ui:VisualElement class="results-ornament-line" />
+                <ui:Label text="CARDS REVEALED" class="results-title" />
+                <ui:VisualElement class="results-ornament-line" />
+            </ui:VisualElement>
+
+            <ui:VisualElement name="results-cards-container" class="results-cards-container" />
+
+            <ui:VisualElement name="results-summary" class="results-summary">
+                <ui:VisualElement class="summary-row">
+                    <ui:Label text="NEW CARDS:" class="summary-label" />
+                    <ui:Label name="summary-new-count" text="0" class="summary-value summary-value-new" />
+                </ui:VisualElement>
+                <ui:VisualElement name="summary-duplicates-row" class="summary-row hidden">
+                    <ui:Label text="DUPLICATES:" class="summary-label" />
+                    <ui:Label name="summary-dupe-count" text="0" class="summary-value summary-value-dupe" />
+                    <ui:Label name="summary-currency" text="+0 GOLD" class="summary-currency" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+
+            <ui:VisualElement class="results-buttons">
+                <ui:Button name="btn-open-another" text="OPEN ANOTHER" class="btn-action btn-open-another hidden" />
+                <ui:Button name="btn-continue" text="CONTINUE" class="btn-action btn-continue" />
+            </ui:VisualElement>
+
+        </ui:VisualElement>
+
+        <ui:VisualElement class="bottom-info-bar" picking-mode="Ignore">
+            <ui:Label text="DUPLICATES ARE CONVERTED TO CURRENCY" class="bottom-info-text" />
+            <ui:VisualElement class="bottom-info-separator" />
+            <ui:Label text="HIGHER RARITY = BETTER REWARDS" class="bottom-info-text" />
+        </ui:VisualElement>
+
+        <ui:VisualElement name="success-popup" class="feedback-popup feedback-success hidden">
+            <ui:Label name="success-text" text="Lootbox opened!" class="feedback-text" />
+        </ui:VisualElement>
+
+        <ui:VisualElement name="fail-popup" class="feedback-popup feedback-fail hidden">
+            <ui:Label name="fail-text" text="Cannot open!" class="feedback-text" />
+        </ui:VisualElement>
+
+    </ui:VisualElement>
+</ui:UXML>  

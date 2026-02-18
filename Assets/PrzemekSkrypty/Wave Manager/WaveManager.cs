@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
-using TMPro;
 using ElementumDefense.Cards;
+using ElementumDefense.UI;
 
 public class WaveManager : MonoBehaviour
 {
@@ -15,14 +15,14 @@ public class WaveManager : MonoBehaviour
     [SerializeField] private Paths[] paths;
 
     [Header("UI")]
-    [SerializeField] private TMP_Text waveInfoText;
-    [SerializeField] private float waveInfoDisplayTime = 2f;
-    [SerializeField] private TMP_Text waveProgressText;
+    [SerializeField]
+    private float waveAnnounceDuration = 2f;
 
     // Runtime state
     private int currentWaveIndex = 0;
     private bool isSpawning = false;
     private int enemiesAlive = 0;
+    private int enemiesSpawned = 0;
     private int totalEnemiesInCurrentWave = 0;
 
     private DraftManager draftManager;
@@ -31,75 +31,81 @@ public class WaveManager : MonoBehaviour
 
     private void Start()
     {
-        Debug.Log($"[WaveManager] Started on {gameObject.name}");
+        Debug.Log(
+            $"[WaveManager] Started on " +
+            $"{gameObject.name}");
 
-        arenaOwner = GetComponentInParent<ArenaOwner>();
+        arenaOwner =
+            GetComponentInParent<ArenaOwner>();
 
-        // ========== NAPRAWIONE: Znajdź DraftManager przez Singleton ==========
         draftManager = DraftManager.Instance;
+        sabotageDraftManager =
+            SabotageDraftManager.Instance;
 
-        if (draftManager != null)
-        {
-            Debug.Log($"[WaveManager] ✅ Found DraftManager via Singleton");
-        }
-        else
-        {
-            Debug.LogWarning("[WaveManager] ⚠️ DraftManager.Instance is null at Start. Will retry.");
-        }
-
-        // SabotageDraftManager - też przez singleton lub FindObjectOfType
-        sabotageDraftManager = SabotageDraftManager.Instance; // jeśli ma singleton
-                                                              // LUB:
-                                                              // sabotageDraftManager = FindObjectOfType<SabotageDraftManager>();
-
-        Debug.Log($"[WaveManager] Found DraftManager: {(draftManager != null ? "YES" : "NO")}");
-        Debug.Log($"[WaveManager] Found SabotageDraftManager: {(sabotageDraftManager != null ? "YES" : "NO")}");
-        // =====================================================================
+        Debug.Log(
+            $"[WaveManager] DraftManager: " +
+            $"{(draftManager != null)}");
+        Debug.Log(
+            $"[WaveManager] SabotageDraftManager: " +
+            $"{(sabotageDraftManager != null)}");
 
         if (waves == null || waves.Length == 0)
         {
-            Debug.LogError("[WaveManager] No waves assigned!");
+            Debug.LogError(
+                "[WaveManager] No waves assigned!");
             return;
         }
 
-        if (spawnPoints == null || spawnPoints.Length == 0)
+        if (spawnPoints == null ||
+            spawnPoints.Length == 0)
         {
-            Debug.LogError("[WaveManager] No spawn points assigned!");
+            Debug.LogError(
+                "[WaveManager] No spawn points!");
             return;
         }
 
         if (paths == null || paths.Length == 0)
         {
-            Debug.LogError("[WaveManager] No paths assigned!");
+            Debug.LogError(
+                "[WaveManager] No paths!");
             return;
         }
+
+        // Initialize wave badge with total
+        UpdateWaveBadge();
     }
 
     public void StartWaves()
     {
-        ArenaOwner arenaOwner = GetComponentInParent<ArenaOwner>();
-        if (arenaOwner != null && arenaOwner.ownerPhotonView != null && !arenaOwner.ownerPhotonView.IsMine)
+        ArenaOwner ao =
+            GetComponentInParent<ArenaOwner>();
+        if (ao != null &&
+            ao.ownerPhotonView != null &&
+            !ao.ownerPhotonView.IsMine)
         {
-            Debug.Log("[WaveManager] Not starting waves - not my arena!");
+            Debug.Log(
+                "[WaveManager] Not my arena!");
             return;
         }
 
         if (isSpawning)
         {
-            Debug.LogWarning("[WaveManager] Waves already running!");
+            Debug.LogWarning(
+                "[WaveManager] Already running!");
             return;
         }
 
-        // ========== NOWE: Retry finding DraftManager before starting ==========
         if (draftManager == null)
         {
             draftManager = DraftManager.Instance;
-            Debug.Log($"[WaveManager] Retry find DraftManager: {(draftManager != null ? "YES" : "NO")}");
         }
-        // ======================================================================
 
         StartCoroutine(RunGameWaves());
     }
+
+    // ==========================================
+    // MAIN WAVE LOOP
+    // ==========================================
 
     private IEnumerator RunGameWaves()
     {
@@ -110,148 +116,214 @@ public class WaveManager : MonoBehaviour
             currentWaveIndex = i;
             WaveData currentWave = waves[i];
 
+            // Count total enemies in wave
             totalEnemiesInCurrentWave = 0;
-            foreach (var part in currentWave.waveParts)
+            foreach (var part in
+                currentWave.waveParts)
             {
-                totalEnemiesInCurrentWave += part.enemyCount;
+                totalEnemiesInCurrentWave +=
+                    part.enemyCount;
             }
 
-            // ========== MID-GAME DRAFT CHECK ==========
+            enemiesSpawned = 0;
+
+            // ===== MID-GAME DRAFT =====
             if (currentWaveIndex > 0)
             {
-                // ========== NOWE: Lazy retry ==========
-                if (draftManager == null)
-                {
-                    draftManager = DraftManager.Instance;
-                }
-                // ======================================
-
-                if (draftManager != null)
-                {
-                    Debug.Log($"[WaveManager] Wave {currentWaveIndex}: Checking mid-game draft. " +
-                              $"isDrafting={draftManager.IsDrafting}, " +
-                              $"isStarterComplete={draftManager.IsStarterDraftComplete}");
-
-                    draftManager.CheckMidGameDraft(currentWaveIndex);
-
-                    // Wait for draft to finish (with safety timeout)
-                    float draftTimeout = 120f;
-                    while (draftManager.IsDrafting && draftTimeout > 0f)
-                    {
-                        draftTimeout -= Time.deltaTime;
-                        yield return null;
-                    }
-
-                    if (draftTimeout <= 0f)
-                    {
-                        Debug.LogError("[WaveManager] Draft timeout! Forcing continue.");
-                    }
-                    else if (draftManager.IsDrafting == false)
-                    {
-                        Debug.Log("[WaveManager] Draft finished. Continuing waves.");
-                    }
-                }
-                else
-                {
-                    Debug.LogError("[WaveManager] ❌ DraftManager STILL null! Cannot draft.");
-                }
-
-                // Sabotage draft
-                if (sabotageDraftManager == null)
-                {
-                    sabotageDraftManager = FindObjectOfType<SabotageDraftManager>();
-                }
-
-                if (sabotageDraftManager != null)
-                {
-                    sabotageDraftManager.CheckSabotageDraft(currentWaveIndex);
-
-                    float sabotageTimeout = 120f;
-                    while (sabotageDraftManager.IsDrafting && sabotageTimeout > 0f)
-                    {
-                        sabotageTimeout -= Time.deltaTime;
-                        yield return null;
-                    }
-                }
+                yield return HandleDrafts();
             }
-            // ==========================================
 
-            StartCoroutine(ShowWaveInfo($"Wave {currentWaveIndex + 1}/{waves.Length}"));
+            // Update wave badge
+            UpdateWaveBadge();
 
-            yield return StartCoroutine(SpawnWave(currentWave));
+            // Show wave announcement
+            var hud = WaveHUD.Instance;
+            if (hud != null)
+            {
+                yield return
+                    hud.ShowWaveAnnouncement(
+                        currentWaveIndex + 1,
+                        waves.Length,
+                        waveAnnounceDuration);
+            }
 
-            yield return new WaitUntil(() => enemiesAlive <= 0);
+            // Update spawn progress (0/total)
+            UpdateSpawnProgress();
 
-            ArenaOwner ao = GetComponentInParent<ArenaOwner>();
+            // Spawn wave
+            yield return StartCoroutine(
+                SpawnWave(currentWave));
+
+            // Wait for all enemies to die
+            yield return new WaitUntil(
+                () => enemiesAlive <= 0);
+
+            // Hide spawn progress between waves
+            hud?.HideSpawnProgress();
+
+            // Notify card manager
+            ArenaOwner ao =
+                GetComponentInParent<ArenaOwner>();
             if (ao?.ownerPhotonView != null)
             {
-                PlayerCardManager cardManager = ao.ownerPhotonView.GetComponent<PlayerCardManager>();
+                PlayerCardManager cardManager =
+                    ao.ownerPhotonView
+                        .GetComponent<
+                            PlayerCardManager>();
                 cardManager?.OnWaveCompleted();
             }
 
-            yield return new WaitForSeconds(currentWave.delayAfterWave);
+            yield return new WaitForSeconds(
+                currentWave.delayAfterWave);
         }
 
         isSpawning = false;
-        Debug.Log("[WaveManager] All waves completed!");
-        StartCoroutine(ShowWaveInfo("ALL WAVES COMPLETED!"));
+        Debug.Log(
+            "[WaveManager] All waves completed!");
+
+        // Show completion banner
+        WaveHUD.Instance?.ShowAllWavesComplete();
     }
+
+    // ==========================================
+    // DRAFT HANDLING
+    // ==========================================
+
+    private IEnumerator HandleDrafts()
+    {
+        if (draftManager == null)
+            draftManager = DraftManager.Instance;
+
+        if (draftManager != null)
+        {
+            Debug.Log(
+                $"[WaveManager] Wave " +
+                $"{currentWaveIndex}: " +
+                $"Checking mid-game draft.");
+
+            draftManager.CheckMidGameDraft(
+                currentWaveIndex);
+
+            float draftTimeout = 120f;
+            while (draftManager.IsDrafting &&
+                   draftTimeout > 0f)
+            {
+                draftTimeout -= Time.deltaTime;
+                yield return null;
+            }
+
+            if (draftTimeout <= 0f)
+            {
+                Debug.LogError(
+                    "[WaveManager] Draft timeout!");
+            }
+        }
+
+        // Sabotage draft
+        if (sabotageDraftManager == null)
+        {
+            sabotageDraftManager =
+                FindFirstObjectByType<
+                    SabotageDraftManager>();
+        }
+
+        if (sabotageDraftManager != null)
+        {
+            sabotageDraftManager
+                .CheckSabotageDraft(
+                    currentWaveIndex);
+
+            float sabotageTimeout = 120f;
+            while (sabotageDraftManager.IsDrafting &&
+                   sabotageTimeout > 0f)
+            {
+                sabotageTimeout -= Time.deltaTime;
+                yield return null;
+            }
+        }
+    }
+
+    // ==========================================
+    // SPAWNING
+    // ==========================================
 
     private IEnumerator SpawnWave(WaveData wave)
     {
         enemiesAlive = 0;
-        UpdateWaveProgressUI();
 
         foreach (WavePart part in wave.waveParts)
         {
-            if (part.pathIndex < 0 || part.pathIndex >= paths.Length)
+            if (part.pathIndex < 0 ||
+                part.pathIndex >= paths.Length)
             {
-                Debug.LogError($"[WaveManager] Invalid path index {part.pathIndex}!");
+                Debug.LogError(
+                    $"[WaveManager] Invalid path " +
+                    $"index {part.pathIndex}!");
                 continue;
             }
 
-            if (part.pathIndex >= spawnPoints.Length)
+            if (part.pathIndex >=
+                spawnPoints.Length)
             {
-                Debug.LogError($"[WaveManager] No spawn point for path {part.pathIndex}!");
+                Debug.LogError(
+                    $"[WaveManager] No spawn for " +
+                    $"path {part.pathIndex}!");
                 continue;
             }
 
-            for (int j = 0; j < part.enemyCount; j++)
+            for (int j = 0;
+                 j < part.enemyCount; j++)
             {
-                SpawnEnemy(part.enemyPrefab, spawnPoints[part.pathIndex], paths[part.pathIndex]);
-                yield return new WaitForSeconds(part.spawnInterval);
+                SpawnEnemy(
+                    part.enemyPrefab,
+                    spawnPoints[part.pathIndex],
+                    paths[part.pathIndex]);
+
+                yield return new WaitForSeconds(
+                    part.spawnInterval);
             }
         }
     }
 
-    private void SpawnEnemy(GameObject enemyPrefab, Transform spawnPoint, Paths path)
+    private void SpawnEnemy(
+        GameObject enemyPrefab,
+        Transform spawnPoint,
+        Paths path)
     {
         if (enemyPrefab == null)
         {
-            Debug.LogError("[WaveManager] Enemy prefab is null!");
+            Debug.LogError(
+                "[WaveManager] Enemy prefab null!");
             return;
         }
 
-        GameObject enemyObj = Instantiate(enemyPrefab, spawnPoint.position, Quaternion.identity);
-        enemyObj.transform.SetParent(transform.root);
+        GameObject enemyObj = Instantiate(
+            enemyPrefab,
+            spawnPoint.position,
+            Quaternion.identity);
+        enemyObj.transform.SetParent(
+            transform.root);
 
-        EnemyMovement movement = enemyObj.GetComponent<EnemyMovement>();
+        EnemyMovement movement =
+            enemyObj.GetComponent<EnemyMovement>();
         if (movement != null && path != null)
-        {
             movement.SetPath(path);
-        }
 
         enemiesAlive++;
-        UpdateWaveProgressUI();
+        enemiesSpawned++;
+        UpdateSpawnProgress();
 
-        EnemyHealth health = enemyObj.GetComponent<EnemyHealth>();
+        EnemyHealth health =
+            enemyObj.GetComponent<EnemyHealth>();
         if (health != null)
         {
-            StartCoroutine(TrackEnemyLifetime(enemyObj));
+            StartCoroutine(
+                TrackEnemyLifetime(enemyObj));
         }
     }
 
-    private IEnumerator TrackEnemyLifetime(GameObject enemy)
+    private IEnumerator TrackEnemyLifetime(
+        GameObject enemy)
     {
         while (enemy != null)
         {
@@ -259,50 +331,55 @@ public class WaveManager : MonoBehaviour
         }
 
         enemiesAlive--;
-        UpdateWaveProgressUI();
     }
 
-    private IEnumerator ShowWaveInfo(string message)
+    // ==========================================
+    // UI UPDATES
+    // ==========================================
+
+    private void UpdateWaveBadge()
     {
-        if (waveInfoText != null)
-        {
-            waveInfoText.text = message;
-            waveInfoText.gameObject.SetActive(true);
-        }
+        var hud = WaveHUD.Instance;
+        if (hud == null) return;
 
-        yield return new WaitForSeconds(waveInfoDisplayTime);
-
-        if (waveInfoText != null)
-        {
-            waveInfoText.gameObject.SetActive(false);
-        }
+        hud.SetWave(
+            currentWaveIndex + 1,
+            waves != null ? waves.Length : 0);
     }
 
-    private void UpdateWaveProgressUI()
+    private void UpdateSpawnProgress()
     {
-        if (waveProgressText != null)
-        {
-            if (currentWaveIndex < waves.Length)
-            {
-                waveProgressText.text = $"Wave {currentWaveIndex + 1}/{waves.Length}" +
-                                        $"\nEnemies: {enemiesAlive}/{totalEnemiesInCurrentWave}";
-            }
-            else
-            {
-                waveProgressText.text = "All waves completed!";
-            }
-        }
+        var hud = WaveHUD.Instance;
+        if (hud == null) return;
+
+        hud.SetSpawnProgress(
+            enemiesSpawned,
+            totalEnemiesInCurrentWave);
     }
+
+    // ==========================================
+    // PUBLIC API
+    // ==========================================
 
     [ContextMenu("Clear All Enemies")]
     public void ClearAllEnemies()
     {
-        GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
+        GameObject[] enemies =
+            GameObject.FindGameObjectsWithTag(
+                "Enemy");
         foreach (GameObject enemy in enemies)
-        {
             Destroy(enemy);
-        }
+
         enemiesAlive = 0;
-        UpdateWaveProgressUI();
+        enemiesSpawned = 0;
+        UpdateSpawnProgress();
     }
+
+    public int GetCurrentWaveIndex()
+        => currentWaveIndex;
+
+    public int GetTotalWaves()
+        => waves != null ? waves.Length : 0;
+
+    public bool IsSpawning => isSpawning;
 }

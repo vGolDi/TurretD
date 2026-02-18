@@ -1,0 +1,461 @@
+/* ============================================
+   SETTINGS — ART DECO STYLE
+   ============================================ */
+
+.panel-root {
+    flex-grow: 1;
+    width: 100%;
+    height: 100%;
+    background-color: rgb(10, 15, 25);
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* ============================================
+   SIDE DECORATIONS
+   ============================================ */
+
+.side-decoration-left {
+    position: absolute;
+    left: 12px;
+    top: 25%;
+    bottom: 25%;
+    width: 1px;
+    background-color: rgba(245, 158, 11, 0.06);
+}
+
+.side-decoration-right {
+    position: absolute;
+    right: 12px;
+    top: 25%;
+    bottom: 25%;
+    width: 1px;
+    background-color: rgba(245, 158, 11, 0.06);
+}
+
+.side-tick-left {
+    position: absolute;
+    left: 12px;
+    width: 16px;
+    height: 1px;
+    background-color: rgba(245, 158, 11, 0.08);
+}
+
+.side-tick-right {
+    position: absolute;
+    right: 12px;
+    width: 16px;
+    height: 1px;
+    background-color: rgba(245, 158, 11, 0.08);
+}
+
+/* ============================================
+   RADIAL BG
+   ============================================ */
+
+.settings-bg-radial {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 0;
+    height: 0;
+    overflow: visible;
+}
+
+.settings-bg-radial-line {
+    position: absolute;
+    width: 1400px;
+    height: 1px;
+    left: -700px;
+    top: 0;
+    background-color: rgba(245, 158, 11, 0.025);
+    transform-origin: center center;
+}
+
+/* ============================================
+   HEADER
+   ============================================ */
+
+.panel-header {
+    flex-direction: row;
+    align-items: center;
+    padding: 20px 40px;
+    border-bottom-width: 1px;
+    border-bottom-color: rgba(245, 158, 11, 0.12);
+    flex-shrink: 0;
+    background-color: rgba(8, 12, 20, 0.5);
+}
+
+.btn-back {
+    background-color: rgba(0, 0, 0, 0);
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.3);
+    color: rgba(245, 158, 11, 0.6);
+    font-size: 12px;
+    letter-spacing: 3px;
+    padding: 10px 20px;
+    margin-right: 24px;
+    transition-property: color, border-color, background-color;
+    transition-duration: 0.2s;
+    border-radius: 0;
+}
+
+.btn-back:hover {
+    color: rgb(252, 211, 77);
+    border-color: rgb(245, 158, 11);
+    background-color: rgba(245, 158, 11, 0.05);
+}
+
+.header-title-group {
+    flex-direction: column;
+}
+
+.panel-title {
+    font-size: 26px;
+    color: rgb(254, 243, 199);
+    letter-spacing: 10px;
+}
+
+.panel-subtitle {
+    font-size: 11px;
+    color: rgba(245, 158, 11, 0.35);
+    letter-spacing: 6px;
+    margin-top: 2px;
+}
+
+.header-spacer {
+    flex-grow: 1;
+}
+
+/* ============================================
+   SCROLL
+   ============================================ */
+
+.settings-scroll {
+    flex-grow: 1;
+}
+
+.settings-scroll .unity-scroller--vertical {
+    width: 8px;
+}
+
+.settings-scroll .unity-scroller--vertical .unity-base-slider__tracker {
+    background-color: rgba(245, 158, 11, 0.06);
+    border-width: 0;
+}
+
+.settings-scroll .unity-scroller--vertical .unity-base-slider__dragger {
+    background-color: rgba(245, 158, 11, 0.2);
+    border-radius: 4px;
+    border-width: 0;
+    min-height: 30px;
+    transition-property: background-color;
+    transition-duration: 0.2s;
+}
+
+.settings-scroll .unity-scroller--vertical .unity-base-slider__dragger:hover {
+    background-color: rgba(245, 158, 11, 0.4);
+}
+
+.settings-scroll .unity-scroller--vertical .unity-repeat-button {
+    display: none;
+}
+
+/* ============================================
+   CONTENT
+   ============================================ */
+
+.settings-content {
+    max-width: 700px;
+    align-self: center;
+    width: 100%;
+    padding: 40px 60px;
+}
+
+/* ============================================
+   SECTION
+   ============================================ */
+
+.settings-section {
+    margin-bottom: 40px;
+}
+
+.section-header {
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.section-diamond {
+    width: 12px;
+    height: 12px;
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.4);
+    rotate: 45deg;
+    scale: 0.7 0.7;
+    margin-right: 16px;
+    flex-shrink: 0;
+}
+
+.section-title {
+    font-size: 14px;
+    color: rgba(245, 158, 11, 0.6);
+    letter-spacing: 8px;
+    margin-right: 16px;
+    flex-shrink: 0;
+}
+
+.section-line {
+    flex-grow: 1;
+    height: 1px;
+    background-color: rgba(245, 158, 11, 0.1);
+}
+
+/* ============================================
+   SETTING ROW
+   ============================================ */
+
+.setting-row {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 20px;
+    margin-bottom: 4px;
+    background-color: rgba(12, 18, 30, 0.5);
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.04);
+    transition-property: border-color, background-color;
+    transition-duration: 0.2s;
+}
+
+.setting-row:hover {
+    border-color: rgba(245, 158, 11, 0.12);
+    background-color: rgba(15, 23, 42, 0.5);
+}
+
+.setting-label {
+    font-size: 12px;
+    color: rgb(254, 243, 199);
+    letter-spacing: 3px;
+    flex-shrink: 0;
+    min-width: 200px;
+}
+
+.setting-control {
+    flex-direction: row;
+    align-items: center;
+    flex-grow: 1;
+    justify-content: flex-end;
+}
+
+/* ============================================
+   SLIDER
+   ============================================ */
+
+.setting-slider {
+    flex-grow: 1;
+    max-width: 280px;
+    min-width: 180px;
+    margin-right: 16px;
+}
+
+.setting-slider .unity-base-slider__tracker {
+    background-color: rgba(245, 158, 11, 0.12);
+    border-width: 0;
+    height: 4px;
+    border-radius: 2px;
+}
+
+.setting-slider .unity-base-slider__dragger {
+    width: 16px;
+    height: 16px;
+    border-radius: 0;
+    background-color: rgb(12, 18, 30);
+    border-width: 2px;
+    border-color: rgba(245, 158, 11, 0.5);
+    rotate: 45deg;
+    scale: 0.7 0.7;
+    margin-top: -8px;
+    transition-property: border-color, background-color;
+    transition-duration: 0.2s;
+}
+
+.setting-slider .unity-base-slider__dragger:hover {
+    border-color: rgb(245, 158, 11);
+    background-color: rgba(245, 158, 11, 0.15);
+}
+
+.setting-slider .unity-base-slider__drag-container {
+    padding: 0;
+}
+
+.setting-slider .unity-label {
+    display: none;
+}
+
+/* Fill (progress) */
+.setting-slider .unity-base-slider__fill {
+    background-color: rgba(245, 158, 11, 0.35);
+    border-radius: 2px;
+}
+
+.setting-value {
+    font-size: 12px;
+    color: rgba(245, 158, 11, 0.5);
+    letter-spacing: 2px;
+    min-width: 50px;
+    -unity-text-align: middle-right;
+}
+
+/* ============================================
+   DROPDOWN
+   ============================================ */
+
+.setting-dropdown {
+    min-width: 220px;
+}
+
+.setting-dropdown .unity-label {
+    display: none;
+}
+
+.setting-dropdown .unity-base-popup-field__input {
+    background-color: rgba(15, 23, 42, 0.8);
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.2);
+    border-radius: 0;
+    color: rgb(254, 243, 199);
+    font-size: 12px;
+    letter-spacing: 2px;
+    padding: 8px 14px;
+    transition-property: border-color;
+    transition-duration: 0.2s;
+}
+
+.setting-dropdown .unity-base-popup-field__input:hover {
+    border-color: rgba(245, 158, 11, 0.5);
+}
+
+.setting-dropdown .unity-base-popup-field__input:focus {
+    border-color: rgb(245, 158, 11);
+}
+
+.setting-dropdown .unity-base-popup-field__arrow {
+    -unity-background-image-tint-color: rgba(245, 158, 11, 0.5);
+}
+
+/* ============================================
+   TOGGLE
+   ============================================ */
+
+.setting-toggle .unity-label {
+    display: none;
+}
+
+.setting-toggle .unity-toggle__input {
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.setting-toggle .unity-toggle__checkmark {
+    width: 44px;
+    height: 22px;
+    border-radius: 0;
+    background-color: rgba(15, 23, 42, 0.8);
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.2);
+    -unity-background-image-tint-color: rgba(245, 158, 11, 0.3);
+    transition-property: background-color, border-color;
+    transition-duration: 0.2s;
+}
+
+.setting-toggle:checked .unity-toggle__checkmark {
+    background-color: rgba(245, 158, 11, 0.15);
+    border-color: rgb(245, 158, 11);
+    -unity-background-image-tint-color: rgb(245, 158, 11);
+}
+
+.setting-toggle .unity-toggle__checkmark:hover {
+    border-color: rgba(245, 158, 11, 0.5);
+}
+
+/* ============================================
+   ACTIONS
+   ============================================ */
+
+.settings-actions {
+    flex-direction: row;
+    justify-content: center;
+    margin-top: 20px;
+    padding-top: 24px;
+    border-top-width: 1px;
+    border-top-color: rgba(245, 158, 11, 0.06);
+}
+
+.btn-action {
+    background-color: rgba(0, 0, 0, 0);
+    border-width: 1px;
+    padding: 12px 32px;
+    font-size: 11px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin: 0 8px;
+    transition-property: color, border-color, background-color;
+    transition-duration: 0.2s;
+    border-radius: 0;
+}
+
+.btn-save {
+    border-color: rgba(74, 222, 128, 0.4);
+    color: rgb(74, 222, 128);
+}
+
+.btn-save:hover {
+    border-color: rgb(74, 222, 128);
+    background-color: rgba(74, 222, 128, 0.08);
+    color: rgb(74, 222, 128);
+}
+
+.btn-danger {
+    border-color: rgba(248, 113, 113, 0.25);
+    color: rgba(248, 113, 113, 0.5);
+}
+
+.btn-danger:hover {
+    border-color: rgb(248, 113, 113);
+    background-color: rgba(248, 113, 113, 0.06);
+    color: rgb(248, 113, 113);
+}
+
+/* ============================================
+   BOTTOM BAR
+   ============================================ */
+
+.bottom-info-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 40px;
+    background-color: rgba(8, 12, 20, 0.7);
+    border-top-width: 1px;
+    border-top-color: rgba(245, 158, 11, 0.06);
+}
+
+.bottom-info-text {
+    font-size: 10px;
+    color: rgba(245, 158, 11, 0.25);
+    letter-spacing: 3px;
+}
+
+/* ============================================
+   HIDDEN
+   ============================================ */
+
+.hidden {
+    display: none;
+}

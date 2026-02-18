@@ -748,16 +748,14 @@ namespace ElementumDefense.Cards
 
         private void ShowWaitingMessage()
         {
-            GameStartCountdown countdown = Object.FindFirstObjectByType<GameStartCountdown>();
-            if (countdown != null)
+            // Show waiting message via WaveHUD
+            var hud = ElementumDefense.UI.WaveHUD.Instance;
+            if (hud != null)
             {
-                TextMeshProUGUI text = countdown.GetCountdownText();
-                if (text != null)
-                {
-                    text.gameObject.SetActive(true);
-                    text.text = "Waiting for other players...";
-                }
-            }   
+                // Use countdown overlay to show waiting
+                hud.ShowWaitingMessage(
+                    "WAITING FOR OTHER PLAYERS");
+            }
         }
 
         // ==========================================

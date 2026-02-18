@@ -1,215 +1,200 @@
 ﻿using UnityEngine;
-using TMPro;
+using UnityEngine.UIElements;
 using Photon.Pun;
 
-public class HealthUI : MonoBehaviour
+namespace ElementumDefense.UI
 {
-    [Header("UI References")]
-    [SerializeField] private TextMeshProUGUI myHealthText;
-    [SerializeField] private TextMeshProUGUI enemyHealthText;
-
-    [Header("Optional: Health Bars")]
-    [SerializeField] private UnityEngine.UI.Slider myHealthBar;
-    [SerializeField] private UnityEngine.UI.Slider enemyHealthBar;
-
-    private PlayerHealth myHealth;
-    private PlayerHealth enemyHealth;
-
-    private bool isInitialized = false;
-    private float retryTimer = 0f;
-    private const float RETRY_INTERVAL = 1f;
-
-    private void Start()
+    [RequireComponent(typeof(UIDocument))]
+    public class HealthUI : MonoBehaviour
     {
-        Debug.Log("[HealthUI] Starting...");
-    }
+        private VisualElement root;
 
-    private void Update()
-    {
-        if (!isInitialized)
+        private Label myHealthName;
+        private Label myHealthText;
+        private VisualElement myHealthFill;
+        private Label enemyHealthName;
+        private Label enemyHealthText;
+        private VisualElement enemyHealthFill;
+        private VisualElement enemyHealthPanel;
+
+        private PlayerHealth myHealth;
+        private PlayerHealth enemyHealth;
+
+        private bool isInitialized;
+        private float retryTimer;
+        private const float RETRY_INTERVAL = 1f;
+
+        private void Start()
         {
-            retryTimer += Time.deltaTime;
+            var uiDoc = GetComponent<UIDocument>();
+            if (uiDoc == null) return;
 
-            if (retryTimer >= RETRY_INTERVAL)
-            {
-                retryTimer = 0f;
-                TryFindPlayers();
-            }
-        }
-    }
-
-    private void TryFindPlayers()
-    {
-        // ========== KLUCZOWA ZMIANA: FindObjectsByType zamiast czekania na event ==========
-        PlayerHealth[] allPlayers = FindObjectsByType<PlayerHealth>(FindObjectsSortMode.None);
-
-        Debug.Log($"[HealthUI] ========== SEARCHING FOR PLAYERS ==========");
-        Debug.Log($"[HealthUI] Total PlayerHealth found: {allPlayers.Length}");
-        Debug.Log($"[HealthUI] PhotonNetwork.InRoom: {PhotonNetwork.InRoom}");
-        Debug.Log($"[HealthUI] Room PlayerCount: {(PhotonNetwork.CurrentRoom != null ? PhotonNetwork.CurrentRoom.PlayerCount : 0)}");
-
-        int foundMy = 0;
-        int foundEnemy = 0;
-
-        // Debug: Pokaż WSZYSTKIE znalezione PlayerHealth
-        for (int i = 0; i < allPlayers.Length; i++)
-        {
-            PlayerHealth p = allPlayers[i];
-            PhotonView pv = p.GetPhotonView();
-
-            Debug.Log($"[HealthUI] Player[{i}]: {p.gameObject.name}");
-            Debug.Log($"  - Scene: {p.gameObject.scene.name}");
-            Debug.Log($"  - Scene path: {p.gameObject.scene.path}");
-            Debug.Log($"  - PhotonView: {(pv != null ? "YES" : "NO")}");
-
-            if (pv != null)
-            {
-                Debug.Log($"  - ViewID: {pv.ViewID}");
-                Debug.Log($"  - IsMine: {pv.IsMine}");
-                Debug.Log($"  - Owner: {(pv.Owner != null ? pv.Owner.NickName : "NULL")}");
-                Debug.Log($"  - OwnerActorNr: {pv.OwnerActorNr}");
-            }
+            root = uiDoc.rootVisualElement;
+            QueryElements();
         }
 
-        // Przypisz graczy
-        foreach (PlayerHealth player in allPlayers)
+        private void Update()
         {
-            PhotonView pv = player.GetPhotonView();
-
-            if (pv == null)
+            if (!isInitialized)
             {
-                Debug.LogWarning($"[HealthUI] {player.gameObject.name} has no PhotonView - skipping");
-                continue;
-            }
-
-            if (pv.ViewID == 0)
-            {
-                Debug.LogWarning($"[HealthUI] {player.gameObject.name} has ViewID=0 - skipping");
-                continue;
-            }
-
-            if (pv.IsMine)
-            {
-                if (myHealth != player)
+                retryTimer += Time.deltaTime;
+                if (retryTimer >= RETRY_INTERVAL)
                 {
-                    // Unsubscribe from old
-                    if (myHealth != null)
-                    {
-                        myHealth.OnHealthChanged -= UpdateMyHealth;
-                    }
+                    retryTimer = 0f;
+                    TryFindPlayers();
+                }
+            }
+        }
 
+        private void QueryElements()
+        {
+            myHealthName =
+                root.Q<Label>("my-health-name");
+            myHealthText =
+                root.Q<Label>("my-health-text");
+            myHealthFill =
+                root.Q<VisualElement>(
+                    "my-health-fill");
+
+            enemyHealthName =
+                root.Q<Label>("enemy-health-name");
+            enemyHealthText =
+                root.Q<Label>("enemy-health-text");
+            enemyHealthFill =
+                root.Q<VisualElement>(
+                    "enemy-health-fill");
+            enemyHealthPanel =
+                root.Q<VisualElement>(
+                    "enemy-health-panel");
+
+            if (myHealthName != null)
+            {
+                string name =
+                    PhotonNetwork.NickName ?? "YOU";
+                myHealthName.text = name.ToUpper();
+            }
+        }
+
+        private void TryFindPlayers()
+        {
+            PlayerHealth[] allPlayers =
+                FindObjectsByType<PlayerHealth>(
+                    FindObjectsSortMode.None);
+
+            foreach (PlayerHealth player in allPlayers)
+            {
+                PhotonView pv =
+                    player.GetPhotonView();
+                if (pv == null || pv.ViewID == 0)
+                    continue;
+
+                if (pv.IsMine && myHealth == null)
+                {
                     myHealth = player;
-                    myHealth.OnHealthChanged += UpdateMyHealth;
-                    UpdateMyHealth(myHealth.CurrentHealth, myHealth.MaxHealth);
-                    foundMy++;
-                    Debug.Log($"[HealthUI] ✅ MY player: {player.gameObject.name} (ViewID: {pv.ViewID})");
+                    myHealth.OnHealthChanged +=
+                        UpdateMyHealth;
+                    UpdateMyHealth(
+                        myHealth.CurrentHealth,
+                        myHealth.MaxHealth);
                 }
-            }
-            else
-            {
-                if (enemyHealth != player)
+                else if (!pv.IsMine &&
+                         enemyHealth == null)
                 {
-                    // Unsubscribe from old
-                    if (enemyHealth != null)
-                    {
-                        enemyHealth.OnHealthChanged -= UpdateEnemyHealth;
-                    }
-
                     enemyHealth = player;
-                    enemyHealth.OnHealthChanged += UpdateEnemyHealth;
-                    UpdateEnemyHealth(enemyHealth.CurrentHealth, enemyHealth.MaxHealth);
-                    foundEnemy++;
-                    Debug.Log($"[HealthUI] ✅ ENEMY player: {player.gameObject.name} (ViewID: {pv.ViewID})");
+                    enemyHealth.OnHealthChanged +=
+                        UpdateEnemyHealth;
+
+                    string enemyName =
+                        pv.Owner?.NickName ?? "ENEMY";
+                    if (enemyHealthName != null)
+                        enemyHealthName.text =
+                            enemyName.ToUpper();
+
+                    UpdateEnemyHealth(
+                        enemyHealth.CurrentHealth,
+                        enemyHealth.MaxHealth);
+                }
+            }
+
+            if (myHealth != null &&
+                enemyHealth != null)
+            {
+                isInitialized = true;
+            }
+            else if (myHealth != null)
+            {
+                int total =
+                    PhotonNetwork.CurrentRoom
+                        ?.PlayerCount ?? 1;
+                if (total == 1)
+                {
+                    isInitialized = true;
+                    enemyHealthPanel
+                        ?.AddToClassList("hidden");
                 }
             }
         }
 
-        // Sprawdź czy zakończono inicjalizację
-        if (myHealth != null && enemyHealth != null)
+        private void UpdateMyHealth(
+            int current, int max)
         {
-            isInitialized = true;
-            Debug.Log("[HealthUI] ✅✅✅ Both players found and initialized!");
-        }
-        else if (myHealth != null)
-        {
-            int totalPlayers = PhotonNetwork.CurrentRoom != null
-                ? PhotonNetwork.CurrentRoom.PlayerCount
-                : 1;
+            if (myHealthText != null)
+                myHealthText.text =
+                    $"{current} / {max}";
 
-            if (totalPlayers == 1)
+            if (myHealthFill != null)
             {
-                // Single player
-                isInitialized = true;
-                Debug.Log("[HealthUI] ✅ Single player mode");
+                float pct = max > 0
+                    ? (float)current / max * 100f
+                    : 0f;
 
-                if (enemyHealthText != null) enemyHealthText.gameObject.SetActive(false);
-                if (enemyHealthBar != null) enemyHealthBar.gameObject.SetActive(false);
+                myHealthFill.style.width =
+                    new StyleLength(
+                        new Length(pct,
+                            LengthUnit.Percent));
+
+                myHealthFill.RemoveFromClassList(
+                    "health-fill-warning");
+                myHealthFill.RemoveFromClassList(
+                    "health-fill-critical");
+
+                if (current <= max * 0.25f)
+                    myHealthFill.AddToClassList(
+                        "health-fill-critical");
+                else if (current <= max * 0.5f)
+                    myHealthFill.AddToClassList(
+                        "health-fill-warning");
             }
-            else if (allPlayers.Length >= totalPlayers)
+        }
+
+        private void UpdateEnemyHealth(
+            int current, int max)
+        {
+            if (enemyHealthText != null)
+                enemyHealthText.text =
+                    $"{current} / {max}";
+
+            if (enemyHealthFill != null)
             {
-                // Wszyscy gracze są, ale enemy nie znaleziony
-                Debug.LogError("[HealthUI] ❌ All players in room but enemy not found!");
-                Debug.LogError($"[HealthUI] My player PhotonView.IsMine might be broken!");
+                float pct = max > 0
+                    ? (float)current / max * 100f
+                    : 0f;
+
+                enemyHealthFill.style.width =
+                    new StyleLength(
+                        new Length(pct,
+                            LengthUnit.Percent));
             }
-            else
-            {
-                Debug.LogWarning($"[HealthUI] Waiting... Found {allPlayers.Length}/{totalPlayers} players");
-            }
-        }
-        else
-        {
-            Debug.LogWarning($"[HealthUI] Still searching... (My: {myHealth != null}, Enemy: {enemyHealth != null})");
-        }
-    }
-
-    private void UpdateMyHealth(int current, int max)
-    {
-        if (myHealthText != null)
-        {
-            myHealthText.text = $"HP: {current}/{max}";
-
-            if (current <= max * 0.25f)
-                myHealthText.color = Color.red;
-            else if (current <= max * 0.5f)
-                myHealthText.color = Color.yellow;
-            else
-                myHealthText.color = Color.green;
         }
 
-        if (myHealthBar != null)
+        private void OnDestroy()
         {
-            myHealthBar.maxValue = max;
-            myHealthBar.value = current;
-        }
-    }
-
-    private void UpdateEnemyHealth(int current, int max)
-    {
-        if (enemyHealthText != null)
-        {
-            PhotonView pv = enemyHealth?.GetPhotonView();
-            string enemyName = pv != null && pv.Owner != null ? pv.Owner.NickName : "Enemy";
-
-            enemyHealthText.text = $"{enemyName}: {current}/{max}";
-        }
-
-        if (enemyHealthBar != null)
-        {
-            enemyHealthBar.maxValue = max;
-            enemyHealthBar.value = current;
-        }
-    }
-
-    private void OnDestroy()
-    {
-        if (myHealth != null)
-        {
-            myHealth.OnHealthChanged -= UpdateMyHealth;
-        }
-
-        if (enemyHealth != null)
-        {
-            enemyHealth.OnHealthChanged -= UpdateEnemyHealth;
+            if (myHealth != null)
+                myHealth.OnHealthChanged -=
+                    UpdateMyHealth;
+            if (enemyHealth != null)
+                enemyHealth.OnHealthChanged -=
+                    UpdateEnemyHealth;
         }
     }
 }

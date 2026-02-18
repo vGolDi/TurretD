@@ -1,0 +1,650 @@
+/* ============================================
+   SABOTAGE — ART DECO CRIMSON
+   ============================================ */
+
+.sabotage-root {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgb(8, 8, 16);
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+/* ============================================
+   BACKGROUND
+   ============================================ */
+
+.sab-bg {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.sab-bg-cross-v {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    width: 1px;
+    height: 100%;
+    background-color: rgba(220, 38, 38, 0.04);
+    translate: -50% 0;
+}
+
+.sab-bg-cross-h {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background-color: rgba(220, 38, 38, 0.04);
+}
+
+.sab-bg-radial {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 0;
+    height: 0;
+    overflow: visible;
+}
+
+.sab-bg-radial-line {
+    position: absolute;
+    width: 1600px;
+    height: 1px;
+    left: -800px;
+    top: 0;
+    background-color: rgba(220, 38, 38, 0.025);
+    transform-origin: center center;
+}
+
+/* Corners */
+.sab-corner {
+    position: absolute;
+    width: 60px;
+    height: 60px;
+}
+
+.sab-corner-tl {
+    left: 14px;
+    top: 14px;
+    border-left-width: 1px;
+    border-top-width: 1px;
+    border-left-color: rgba(220, 38, 38, 0.12);
+    border-top-color: rgba(220, 38, 38, 0.12);
+}
+
+.sab-corner-tr {
+    right: 14px;
+    top: 14px;
+    border-right-width: 1px;
+    border-top-width: 1px;
+    border-right-color: rgba(220, 38, 38, 0.12);
+    border-top-color: rgba(220, 38, 38, 0.12);
+}
+
+.sab-corner-bl {
+    left: 14px;
+    bottom: 14px;
+    border-left-width: 1px;
+    border-bottom-width: 1px;
+    border-left-color: rgba(220, 38, 38, 0.12);
+    border-bottom-color: rgba(220, 38, 38, 0.12);
+}
+
+.sab-corner-br {
+    right: 14px;
+    bottom: 14px;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    border-right-color: rgba(220, 38, 38, 0.12);
+    border-bottom-color: rgba(220, 38, 38, 0.12);
+}
+
+/* Side lines */
+.sab-side-left {
+    position: absolute;
+    left: 14px;
+    top: 28%;
+    bottom: 28%;
+    width: 1px;
+    background-color: rgba(220, 38, 38, 0.04);
+}
+
+.sab-side-right {
+    position: absolute;
+    right: 14px;
+    top: 28%;
+    bottom: 28%;
+    width: 1px;
+    background-color: rgba(220, 38, 38, 0.04);
+}
+
+.sab-side-tick-l {
+    position: absolute;
+    left: 14px;
+    width: 16px;
+    height: 1px;
+    background-color: rgba(220, 38, 38, 0.06);
+}
+
+.sab-side-tick-r {
+    position: absolute;
+    right: 14px;
+    width: 16px;
+    height: 1px;
+    background-color: rgba(220, 38, 38, 0.06);
+}
+
+/* ============================================
+   DRAFT PANEL
+   ============================================ */
+
+.sab-center {
+    align-items: center;
+    flex-direction: column;
+    padding: 40px;
+}
+
+/* Header */
+.sab-header {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 8px;
+}
+
+.sab-header-line {
+    width: 80px;
+    height: 1px;
+    background-color: rgba(220, 38, 38, 0.2);
+    margin-left: 12px;
+    margin-right: 12px;
+}
+
+.sab-header-diamond {
+    width: 10px;
+    height: 10px;
+    border-width: 1px;
+    border-color: rgba(220, 38, 38, 0.4);
+    rotate: 45deg;
+    scale: 0.7 0.7;
+    margin-left: 4px;
+    margin-right: 4px;
+    background-color: rgba(220, 38, 38, 0.08);
+}
+
+.sab-reveal-diamond {
+    width: 10px;
+    height: 10px;
+    border-width: 1px;
+    border-color: rgba(248, 113, 113, 0.5);
+    rotate: 45deg;
+    scale: 0.7 0.7;
+    margin-left: 4px;
+    margin-right: 4px;
+    background-color: rgba(248, 113, 113, 0.12);
+}
+
+.sab-title {
+    font-size: 24px;
+    color: rgb(254, 200, 200);
+    letter-spacing: 10px;
+}
+
+.sab-title-reveal {
+    color: rgb(248, 113, 113);
+}
+
+.sab-subtitle {
+    font-size: 10px;
+    color: rgba(220, 38, 38, 0.35);
+    letter-spacing: 6px;
+    margin-bottom: 20px;
+}
+
+/* Timer */
+.sab-timer-section {
+    margin-bottom: 24px;
+}
+
+.sab-timer {
+    font-size: 36px;
+    color: rgb(254, 200, 200);
+    letter-spacing: 6px;
+    transition-property: color;
+    transition-duration: 0.3s;
+}
+
+.sab-timer-critical {
+    color: rgb(248, 113, 113);
+}
+
+/* ============================================
+   SABOTAGE CARDS
+   ============================================ */
+
+.sab-cards {
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: center;
+    margin-bottom: 24px;
+}
+
+.sab-card {
+    width: 220px;
+    height: 340px;
+    background-color: rgb(12, 10, 18);
+    border-width: 1px;
+    border-color: rgba(220, 38, 38, 0.3);
+    margin-left: 12px;
+    margin-right: 12px;
+    flex-direction: column;
+    align-items: center;
+    padding: 18px 14px;
+    overflow: hidden;
+    transition-property: border-color, scale, translate;
+    transition-duration: 0.3s;
+    cursor: link;
+}
+
+.sab-card:hover {
+    scale: 1.05 1.05;
+    translate: 0 -10px;
+    border-color: rgb(248, 113, 113);
+}
+
+/* Rarity borders */
+.sab-card-legendary {
+    border-color: rgba(255, 100, 50, 0.45);
+}
+
+.sab-card-rare {
+    border-color: rgba(220, 38, 38, 0.4);
+}
+
+.sab-card-common {
+    border-color: rgba(160, 80, 80, 0.2);
+}
+
+.sab-card-legendary:hover {
+    border-color: rgb(255, 120, 60);
+}
+
+.sab-card-rare:hover {
+    border-color: rgb(248, 113, 113);
+}
+
+.sab-card-common:hover {
+    border-color: rgba(200, 120, 120, 0.5);
+}
+
+/* Inner border */
+.sab-card-inner {
+    position: absolute;
+    left: 6px;
+    top: 6px;
+    right: 6px;
+    bottom: 6px;
+    border-width: 1px;
+    border-color: rgba(220, 38, 38, 0.06);
+    transition-property: border-color;
+    transition-duration: 0.3s;
+}
+
+.sab-card:hover .sab-card-inner {
+    border-color: rgba(248, 113, 113, 0.15);
+}
+
+/* Corners */
+.sc-corner {
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    transition-property: border-color;
+    transition-duration: 0.3s;
+}
+
+.sab-card:hover .sc-corner {
+    border-color: rgba(248, 113, 113, 0.6);
+}
+
+.sc-corner-tl {
+    left: 10px;
+    top: 10px;
+    border-left-width: 1px;
+    border-top-width: 1px;
+    border-left-color: rgba(220, 38, 38, 0.25);
+    border-top-color: rgba(220, 38, 38, 0.25);
+}
+
+.sc-corner-tr {
+    right: 10px;
+    top: 10px;
+    border-right-width: 1px;
+    border-top-width: 1px;
+    border-right-color: rgba(220, 38, 38, 0.25);
+    border-top-color: rgba(220, 38, 38, 0.25);
+}
+
+.sc-corner-bl {
+    left: 10px;
+    bottom: 10px;
+    border-left-width: 1px;
+    border-bottom-width: 1px;
+    border-left-color: rgba(220, 38, 38, 0.25);
+    border-bottom-color: rgba(220, 38, 38, 0.25);
+}
+
+.sc-corner-br {
+    right: 10px;
+    bottom: 10px;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    border-right-color: rgba(220, 38, 38, 0.25);
+    border-bottom-color: rgba(220, 38, 38, 0.25);
+}
+
+/* Icon */
+.sab-card-icon {
+    width: 72px;
+    height: 72px;
+    margin-top: 8px;
+    margin-bottom: 10px;
+    flex-shrink: 0;
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+/* Rarity line */
+.sab-rarity-line {
+    width: 50%;
+    height: 1px;
+    margin-bottom: 8px;
+}
+
+.sab-rarity-line-legendary {
+    background-color: rgba(255, 100, 50, 0.6);
+}
+
+.sab-rarity-line-rare {
+    background-color: rgba(220, 38, 38, 0.5);
+}
+
+.sab-rarity-line-common {
+    background-color: rgba(160, 80, 80, 0.3);
+}
+
+/* Name */
+.sab-card-name {
+    font-size: 13px;
+    color: rgb(254, 200, 200);
+    letter-spacing: 1px;
+    -unity-text-align: upper-center;
+    -unity-font-style: bold;
+    margin-bottom: 4px;
+}
+
+/* Rarity text */
+.sab-card-rarity-text {
+    font-size: 9px;
+    letter-spacing: 3px;
+    -unity-text-align: upper-center;
+    margin-bottom: 4px;
+}
+
+.sab-rarity-text-legendary {
+    color: rgb(255, 140, 80);
+}
+
+.sab-rarity-text-rare {
+    color: rgb(248, 113, 113);
+}
+
+.sab-rarity-text-common {
+    color: rgb(160, 100, 100);
+}
+
+/* Description */
+.sab-card-desc {
+    font-size: 9px;
+    color: rgba(220, 180, 180, 0.4);
+    -unity-text-align: upper-center;
+    white-space: normal;
+    padding-left: 4px;
+    padding-right: 4px;
+    margin-bottom: 4px;
+    flex-grow: 1;
+}
+
+/* Duration */
+.sab-card-duration {
+    font-size: 8px;
+    color: rgba(248, 113, 113, 0.5);
+    letter-spacing: 2px;
+    -unity-text-align: upper-center;
+    margin-bottom: 4px;
+}
+
+/* Buttons container */
+.sab-card-buttons {
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    margin-top: auto;
+    padding-top: 6px;
+    flex-shrink: 0;
+}
+
+/* Select button */
+.sab-select-btn {
+    width: 100%;
+    background-color: rgba(220, 38, 38, 0.06);
+    border-width: 1px;
+    border-color: rgba(220, 38, 38, 0.3);
+    border-radius: 0;
+    color: rgb(248, 113, 113);
+    font-size: 9px;
+    letter-spacing: 3px;
+    padding: 6px 12px;
+    transition-property: color, border-color, background-color;
+    transition-duration: 0.2s;
+}
+
+.sab-select-btn:hover {
+    border-color: rgb(248, 113, 113);
+    background-color: rgba(220, 38, 38, 0.12);
+    color: rgb(254, 200, 200);
+}
+
+.sab-select-btn:disabled {
+    opacity: 0.25;
+}
+
+/* Hover accent */
+.sab-card-hover-accent {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    translate: -50% 0;
+    width: 0;
+    height: 2px;
+    transition-property: width;
+    transition-duration: 0.3s;
+}
+
+.sab-card:hover .sab-card-hover-accent {
+    width: 60%;
+}
+
+.sab-hover-legendary {
+    background-color: rgb(255, 120, 60);
+}
+
+.sab-hover-rare {
+    background-color: rgb(248, 113, 113);
+}
+
+.sab-hover-common {
+    background-color: rgba(200, 120, 120, 0.5);
+}
+
+/* Selected */
+.sab-card-selected {
+    border-color: rgb(248, 113, 113);
+    border-width: 2px;
+}
+
+/* Dimmed */
+.sab-card-dimmed {
+    opacity: 0.3;
+}
+
+.sab-card-dimmed:hover {
+    scale: 1 1;
+    translate: 0 0;
+}
+
+/* Waiting */
+.sab-waiting {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 24px;
+}
+
+.sab-waiting-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 4px;
+    background-color: rgb(220, 38, 38);
+    margin-right: 12px;
+}
+
+.sab-waiting-text {
+    font-size: 11px;
+    color: rgba(248, 113, 113, 0.5);
+    letter-spacing: 4px;
+}
+
+/* ============================================
+   REVEAL PANEL
+   ============================================ */
+
+.sab-reveal-panel {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.sab-reveal-cards {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 24px;
+    margin-top: 24px;
+}
+
+.sab-reveal-card {
+    width: 280px;
+    background-color: rgb(12, 10, 18);
+    border-width: 1px;
+    border-color: rgba(220, 38, 38, 0.2);
+    margin-left: 12px;
+    margin-right: 12px;
+    padding: 24px;
+    align-items: center;
+    flex-direction: column;
+}
+
+.sab-reveal-card-enemy {
+    border-color: rgba(248, 113, 113, 0.4);
+}
+
+.sab-reveal-card-self {
+    border-color: rgba(34, 211, 238, 0.3);
+}
+
+.sab-reveal-player {
+    font-size: 10px;
+    letter-spacing: 4px;
+    margin-bottom: 12px;
+}
+
+.sab-reveal-player-enemy {
+    color: rgb(248, 113, 113);
+}
+
+.sab-reveal-player-self {
+    color: rgb(34, 211, 238);
+}
+
+.sab-reveal-icon {
+    width: 48px;
+    height: 48px;
+    margin-bottom: 8px;
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.sab-reveal-sab-name {
+    font-size: 14px;
+    color: rgb(254, 200, 200);
+    letter-spacing: 2px;
+    -unity-font-style: bold;
+    margin-bottom: 4px;
+}
+
+.sab-reveal-target {
+    font-size: 9px;
+    letter-spacing: 3px;
+    margin-top: 4px;
+}
+
+.sab-reveal-target-enemy {
+    color: rgba(248, 113, 113, 0.7);
+}
+
+.sab-reveal-target-self {
+    color: rgba(34, 211, 238, 0.5);
+}
+
+.sab-reveal-timer {
+    font-size: 12px;
+    color: rgba(248, 113, 113, 0.4);
+    letter-spacing: 4px;
+}
+
+/* Bottom bar */
+.sab-bottom-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 40px;
+    background-color: rgba(8, 8, 16, 0.7);
+    border-top-width: 1px;
+    border-top-color: rgba(220, 38, 38, 0.06);
+}
+
+.sab-bottom-text {
+    font-size: 10px;
+    color: rgba(220, 38, 38, 0.2);
+    letter-spacing: 3px;
+}
+
+.hidden {
+    display: none;
+}

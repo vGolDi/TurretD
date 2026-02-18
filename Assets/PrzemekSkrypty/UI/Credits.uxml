@@ -1,0 +1,170 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
+    <Style src="CreditsStyles.uss" />
+
+    <ui:VisualElement name="credits-root" class="panel-root">
+
+        <!-- DEKORACJE -->
+        <ui:VisualElement picking-mode="Ignore" class="side-decoration-left" />
+        <ui:VisualElement picking-mode="Ignore" class="side-decoration-right" />
+        <ui:VisualElement picking-mode="Ignore" class="side-tick-left" style="top: 30%;" />
+        <ui:VisualElement picking-mode="Ignore" class="side-tick-left" style="top: 50%;" />
+        <ui:VisualElement picking-mode="Ignore" class="side-tick-left" style="top: 70%;" />
+        <ui:VisualElement picking-mode="Ignore" class="side-tick-right" style="top: 30%;" />
+        <ui:VisualElement picking-mode="Ignore" class="side-tick-right" style="top: 50%;" />
+        <ui:VisualElement picking-mode="Ignore" class="side-tick-right" style="top: 70%;" />
+
+        <!-- RADIAL BG -->
+        <ui:VisualElement picking-mode="Ignore" class="credits-bg-radial">
+            <ui:VisualElement picking-mode="Ignore" class="credits-bg-radial-line" style="rotate: 0;" />
+            <ui:VisualElement picking-mode="Ignore" class="credits-bg-radial-line" style="rotate: 60deg;" />
+            <ui:VisualElement picking-mode="Ignore" class="credits-bg-radial-line" style="rotate: 120deg;" />
+        </ui:VisualElement>
+
+        <!-- HEADER -->
+        <ui:VisualElement class="panel-header">
+            <ui:Button name="btn-back" text="BACK" class="btn-back" />
+            <ui:VisualElement class="header-title-group">
+                <ui:Label text="THE CHRONICLE" class="panel-title" />
+                <ui:Label text="CREDITS" class="panel-subtitle" />
+            </ui:VisualElement>
+            <ui:VisualElement class="header-spacer" />
+        </ui:VisualElement>
+
+        <!-- CONTENT -->
+        <ui:ScrollView name="credits-scroll" class="credits-scroll">
+            <ui:VisualElement class="credits-content">
+
+                <!-- ORNAMENT TOP -->
+                <ui:VisualElement class="credits-ornament-top">
+                    <ui:VisualElement class="ornament-line-left" />
+                    <ui:VisualElement class="ornament-diamond-outer" />
+                    <ui:VisualElement class="ornament-diamond-inner" />
+                    <ui:VisualElement class="ornament-diamond-outer" />
+                    <ui:VisualElement class="ornament-line-right" />
+                </ui:VisualElement>
+
+                <!-- GAME TITLE -->
+                <ui:Label text="ELEMENTUM DEFENCE" class="credits-game-title" />
+                <ui:Label text="A TOWER DEFENSE CARD GAME" class="credits-game-subtitle" />
+
+                <!-- ====== DESIGN & DEVELOPMENT ====== -->
+                <ui:VisualElement class="credits-section">
+                    <ui:VisualElement class="credits-section-header">
+                        <ui:VisualElement class="credits-section-diamond" />
+                        <ui:Label text="DESIGN &amp; DEVELOPMENT" class="credits-section-title" />
+                        <ui:VisualElement class="credits-section-diamond" />
+                    </ui:VisualElement>
+
+                    <ui:VisualElement class="credits-entry">
+                        <ui:Label text="GAME DIRECTOR" class="credits-role" />
+                        <ui:Label text="Your Name" class="credits-name" />
+                    </ui:VisualElement>
+
+                    <ui:VisualElement class="credits-entry">
+                        <ui:Label text="LEAD PROGRAMMER" class="credits-role" />
+                        <ui:Label text="Your Name" class="credits-name" />
+                    </ui:VisualElement>
+
+                    <ui:VisualElement class="credits-entry">
+                        <ui:Label text="UI / UX DESIGN" class="credits-role" />
+                        <ui:Label text="Your Name" class="credits-name" />
+                    </ui:VisualElement>
+
+                    <ui:VisualElement class="credits-entry">
+                        <ui:Label text="GAME DESIGN" class="credits-role" />
+                        <ui:Label text="Your Name" class="credits-name" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+
+                <!-- ====== ART & AUDIO ====== -->
+                <ui:VisualElement class="credits-section">
+                    <ui:VisualElement class="credits-section-header">
+                        <ui:VisualElement class="credits-section-diamond" />
+                        <ui:Label text="ART &amp; AUDIO" class="credits-section-title" />
+                        <ui:VisualElement class="credits-section-diamond" />
+                    </ui:VisualElement>
+
+                    <ui:VisualElement class="credits-entry">
+                        <ui:Label text="ART DIRECTION" class="credits-role" />
+                        <ui:Label text="Your Name" class="credits-name" />
+                    </ui:VisualElement>
+
+                    <ui:VisualElement class="credits-entry">
+                        <ui:Label text="CARD ILLUSTRATIONS" class="credits-role" />
+                        <ui:Label text="TBD" class="credits-name credits-name-tbd" />
+                    </ui:VisualElement>
+
+                    <ui:VisualElement class="credits-entry">
+                        <ui:Label text="MUSIC &amp; SOUND" class="credits-role" />
+                        <ui:Label text="TBD" class="credits-name credits-name-tbd" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+
+                <!-- ====== TECHNOLOGY ====== -->
+                <ui:VisualElement class="credits-section">
+                    <ui:VisualElement class="credits-section-header">
+                        <ui:VisualElement class="credits-section-diamond" />
+                        <ui:Label text="TECHNOLOGY" class="credits-section-title" />
+                        <ui:VisualElement class="credits-section-diamond" />
+                    </ui:VisualElement>
+
+                    <ui:VisualElement class="credits-entry">
+                        <ui:Label text="GAME ENGINE" class="credits-role" />
+                        <ui:Label text="Unity 6.2" class="credits-name" />
+                    </ui:VisualElement>
+
+                    <ui:VisualElement class="credits-entry">
+                        <ui:Label text="NETWORKING" class="credits-role" />
+                        <ui:Label text="Unity Netcode for GameObjects" class="credits-name" />
+                    </ui:VisualElement>
+
+                    <ui:VisualElement class="credits-entry">
+                        <ui:Label text="UI FRAMEWORK" class="credits-role" />
+                        <ui:Label text="UI Toolkit" class="credits-name" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+
+                <!-- ====== SPECIAL THANKS ====== -->
+                <ui:VisualElement class="credits-section">
+                    <ui:VisualElement class="credits-section-header">
+                        <ui:VisualElement class="credits-section-diamond" />
+                        <ui:Label text="SPECIAL THANKS" class="credits-section-title" />
+                        <ui:VisualElement class="credits-section-diamond" />
+                    </ui:VisualElement>
+
+                    <ui:VisualElement class="credits-entry">
+                        <ui:Label text="To all playtesters and early supporters" class="credits-thanks-text" />
+                    </ui:VisualElement>
+
+                    <ui:VisualElement class="credits-entry">
+                        <ui:Label text="The Unity community" class="credits-thanks-text" />
+                    </ui:VisualElement>
+
+                    <ui:VisualElement class="credits-entry">
+                        <ui:Label text="Coffee — the real MVP" class="credits-thanks-text credits-thanks-highlight" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+
+                <!-- ORNAMENT BOTTOM -->
+                <ui:VisualElement class="credits-ornament-bottom">
+                    <ui:VisualElement class="ornament-line-left" />
+                    <ui:VisualElement class="ornament-diamond-outer" />
+                    <ui:VisualElement class="ornament-diamond-inner" />
+                    <ui:VisualElement class="ornament-diamond-outer" />
+                    <ui:VisualElement class="ornament-line-right" />
+                </ui:VisualElement>
+
+                <!-- VERSION -->
+                <ui:Label name="credits-version" text="v0.1.0 Alpha" class="credits-version" />
+                <ui:Label text="© 2025 — ALL RIGHTS RESERVED" class="credits-copyright" />
+
+            </ui:VisualElement>
+        </ui:ScrollView>
+
+        <!-- BOTTOM -->
+        <ui:VisualElement picking-mode="Ignore" class="bottom-info-bar">
+            <ui:Label text="THANK YOU FOR PLAYING" class="bottom-info-text" />
+        </ui:VisualElement>
+
+    </ui:VisualElement>
+</ui:UXML>

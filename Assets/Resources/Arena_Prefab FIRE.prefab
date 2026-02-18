@@ -96,6 +96,8 @@ GameObject:
   - component: {fileID: 5166877138538090617}
   - component: {fileID: 4173860100026563600}
   - component: {fileID: 5312636075003632268}
+  - component: {fileID: 3796247225221232190}
+  - component: {fileID: 8358331042964792718}
   m_Layer: 0
   m_Name: WaveManger
   m_TagString: Untagged
@@ -137,9 +139,7 @@ MonoBehaviour:
   - {fileID: 4363546881726186569}
   paths:
   - {fileID: 3545526393426983319}
-  waveInfoText: {fileID: 2465484704324787338}
-  waveInfoDisplayTime: 2
-  waveProgressText: {fileID: 7095642611468746479}
+  waveAnnounceDuration: 2
 --- !u!114 &4173860100026563600
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -177,6 +177,44 @@ MonoBehaviour:
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
+--- !u!114 &3796247225221232190
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 874609366632434372}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.dll::UnityEngine.UIElements.UIDocument
+  m_PanelSettings: {fileID: 11400000, guid: aa1aab9bc2311f44ca2956b66344b624, type: 2}
+  m_ParentUI: {fileID: 0}
+  sourceAsset: {fileID: 9197481963319205126, guid: b5cfc8a7c52de6347bc514c8073076ef, type: 3}
+  m_SortingOrder: 2
+  m_Position: 0
+  m_WorldSpaceSizeMode: 1
+  m_WorldSpaceWidth: 1920
+  m_WorldSpaceHeight: 1080
+  m_PivotReferenceSize: 0
+  m_Pivot: 0
+  m_WorldSpaceCollider: {fileID: 0}
+--- !u!114 &8358331042964792718
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 874609366632434372}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6927537c21a3a274e8d81ed35eb2a32d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ElementumDefense.UI.WaveHUD
+  countdownTickSound: {fileID: 0}
+  countdownGoSound: {fileID: 0}
+  waveStartSound: {fileID: 0}
 --- !u!1 &1359546279482503718
 GameObject:
   m_ObjectHideFlags: 0
@@ -906,7 +944,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &2828887903580832162
 RectTransform:
   m_ObjectHideFlags: 0

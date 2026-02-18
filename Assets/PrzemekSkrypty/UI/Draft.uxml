@@ -1,0 +1,89 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
+    <Style src="DraftStyles.uss" />
+
+    <ui:VisualElement name="draft-root" class="draft-root ">
+
+        <!-- DRAFT WINDOW — ograniczone rozmiary -->
+        <ui:VisualElement name="draft-window" class="draft-window">
+
+            <!-- Inner border okna -->
+            <ui:VisualElement picking-mode="Ignore" class="draft-window-inner-border" />
+
+            <!-- BACKGROUND wewnątrz okna -->
+            <ui:VisualElement picking-mode="Ignore" class="draft-bg">
+                <ui:VisualElement picking-mode="Ignore" class="bg-cross-v" />
+                <ui:VisualElement picking-mode="Ignore" class="bg-cross-h" />
+
+                <!-- Radialne linie -->
+                <ui:VisualElement picking-mode="Ignore" class="draft-bg-radial">
+                    <ui:VisualElement picking-mode="Ignore" class="draft-bg-radial-line" style="rotate: 0;" />
+                    <ui:VisualElement picking-mode="Ignore" class="draft-bg-radial-line" style="rotate: 30deg;" />
+                    <ui:VisualElement picking-mode="Ignore" class="draft-bg-radial-line" style="rotate: 60deg;" />
+                    <ui:VisualElement picking-mode="Ignore" class="draft-bg-radial-line" style="rotate: 90deg;" />
+                    <ui:VisualElement picking-mode="Ignore" class="draft-bg-radial-line" style="rotate: 120deg;" />
+                    <ui:VisualElement picking-mode="Ignore" class="draft-bg-radial-line" style="rotate: 150deg;" />
+                </ui:VisualElement>
+
+                <!-- Narożniki -->
+                <ui:VisualElement picking-mode="Ignore" class="draft-corner draft-corner-tl" />
+                <ui:VisualElement picking-mode="Ignore" class="draft-corner draft-corner-tr" />
+                <ui:VisualElement picking-mode="Ignore" class="draft-corner draft-corner-bl" />
+                <ui:VisualElement picking-mode="Ignore" class="draft-corner draft-corner-br" />
+
+                <!-- Boczne linie -->
+                <ui:VisualElement picking-mode="Ignore" class="draft-side-left" />
+                <ui:VisualElement picking-mode="Ignore" class="draft-side-right" />
+                <ui:VisualElement picking-mode="Ignore" class="draft-side-tick-l" style="top: 35%;" />
+                <ui:VisualElement picking-mode="Ignore" class="draft-side-tick-l" style="top: 50%;" />
+                <ui:VisualElement picking-mode="Ignore" class="draft-side-tick-l" style="top: 65%;" />
+                <ui:VisualElement picking-mode="Ignore" class="draft-side-tick-r" style="top: 35%;" />
+                <ui:VisualElement picking-mode="Ignore" class="draft-side-tick-r" style="top: 50%;" />
+                <ui:VisualElement picking-mode="Ignore" class="draft-side-tick-r" style="top: 65%;" />
+            </ui:VisualElement>
+
+            <!-- CENTER CONTENT -->
+            <ui:VisualElement class="draft-center">
+
+                <!-- HEADER -->
+                <ui:VisualElement class="draft-header">
+                    <ui:VisualElement class="draft-header-line" />
+                    <ui:VisualElement class="draft-header-diamond" />
+                    <ui:Label name="draft-title" text="THE OFFERING" class="draft-title" />
+                    <ui:VisualElement class="draft-header-diamond" />
+                    <ui:VisualElement class="draft-header-line" />
+                </ui:VisualElement>
+
+                <ui:Label name="draft-subtitle" text="CHOOSE YOUR STARTING HAND" class="draft-subtitle" />
+
+                <!-- REROLL INFO — globalny tekst -->
+                <ui:VisualElement name="draft-reroll-info" class="draft-reroll-info">
+                    <ui:Label text="⚄" class="draft-reroll-info-icon" />
+                    <ui:Label text="ONE REROLL PER CARD" class="draft-reroll-info-text" />
+                    <ui:VisualElement class="draft-reroll-info-diamond" />
+                    <ui:Label text="CHOOSE WISELY" class="draft-reroll-info-text" />
+                </ui:VisualElement>
+
+                <!-- TIMER -->
+                <ui:VisualElement class="draft-timer-section">
+                    <ui:Label name="draft-timer" text="30" class="draft-timer" />
+                </ui:VisualElement>
+
+                <!-- CARDS -->
+                <ui:VisualElement name="draft-cards" class="draft-cards" />
+
+                <!-- CONFIRM (starter only) -->
+                <ui:VisualElement name="draft-confirm-section" class="draft-confirm-section">
+                    <ui:Button name="btn-confirm-draft" text="CONFIRM HAND" class="btn-confirm-draft" />
+                </ui:VisualElement>
+
+            </ui:VisualElement>
+
+            <!-- BOTTOM BAR — wewnątrz okna -->
+            <ui:VisualElement picking-mode="Ignore" class="draft-bottom-bar">
+                <ui:Label name="draft-bottom-text" text="CARD DRAFT IN PROGRESS" class="draft-bottom-text" />
+            </ui:VisualElement>
+
+        </ui:VisualElement>
+
+    </ui:VisualElement>
+</ui:UXML>

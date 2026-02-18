@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
+    <Style src="LootboxRewardPopupStyles.uss" />
+
+    <ui:VisualElement name="reward-popup-root" class="reward-popup-root hidden">
+
+        <ui:VisualElement name="reward-popup-backdrop" class="reward-popup-backdrop" />
+
+        <ui:VisualElement name="reward-popup-box" class="reward-popup-box">
+
+            <ui:VisualElement class="reward-popup-inner-border" />
+
+            <ui:VisualElement class="reward-popup-header">
+                <ui:VisualElement class="reward-header-line" />
+                <ui:Label text="LOOTBOX RECEIVED" class="reward-popup-title" />
+                <ui:VisualElement class="reward-header-line" />
+            </ui:VisualElement>
+
+            <ui:VisualElement class="reward-popup-content">
+                <ui:VisualElement name="reward-glow" class="reward-glow" />
+                <ui:VisualElement name="reward-icon" class="reward-icon" />
+            </ui:VisualElement>
+
+            <ui:Label name="reward-lootbox-name" text="Standard Crate" class="reward-lootbox-name" />
+            <ui:Label name="reward-reason" text="Quest Completed!" class="reward-reason" />
+
+            <ui:VisualElement class="reward-popup-divider" />
+
+            <ui:VisualElement class="reward-popup-buttons">
+                <ui:Button name="btn-reward-open" text="OPEN NOW" class="reward-btn reward-btn-open" />
+                <ui:Button name="btn-reward-ok" text="OK" class="reward-btn reward-btn-ok" />
+            </ui:VisualElement>
+
+        </ui:VisualElement>
+
+    </ui:VisualElement>
+</ui:UXML>

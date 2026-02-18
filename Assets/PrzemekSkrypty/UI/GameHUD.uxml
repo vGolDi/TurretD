@@ -1,0 +1,81 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/PrzemekSkrypty/GameHUDStyles.uss?fileID=7433441132597879392&amp;guid=98b692978e7164941b1193046bddc536&amp;type=3#GameHUDStyles" />
+
+    <ui:VisualElement name="hud-root" picking-mode="Ignore" class="hud-root">
+
+        <!-- Corner decorations -->
+        <ui:VisualElement picking-mode="Ignore" class="hud-corner hud-corner-tl" />
+        <ui:VisualElement picking-mode="Ignore" class="hud-corner hud-corner-tr" />
+        <ui:VisualElement picking-mode="Ignore" class="hud-corner hud-corner-bl" />
+        <ui:VisualElement picking-mode="Ignore" class="hud-corner hud-corner-br" />
+        <ui:VisualElement picking-mode="Ignore" class="hud-edge-top" />
+        <ui:VisualElement picking-mode="Ignore" class="hud-edge-bottom" />
+
+        <!-- TOP BAR: Health panels only (wave removed) -->
+        <ui:VisualElement picking-mode="Ignore" class="top-bar">
+            <!-- My Health -->
+            <ui:VisualElement class="health-panel health-panel-my">
+                <ui:VisualElement class="health-inner-border" />
+                <ui:VisualElement class="health-accent health-accent-my" />
+                <ui:VisualElement class="health-info">
+                    <ui:Label name="my-health-name" text="YOU" class="health-name" />
+                    <ui:VisualElement class="health-bar-container">
+                        <ui:VisualElement class="health-bar-bg">
+                            <ui:VisualElement name="my-health-fill" class="health-bar-fill health-fill-my" />
+                        </ui:VisualElement>
+                        <ui:Label name="my-health-text" text="100 / 100" class="health-text" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+                <ui:VisualElement class="health-icon-section">
+                    <ui:VisualElement class="health-hex">
+                        <ui:VisualElement class="health-hex-bg health-hex-bg-my" />
+                        <ui:VisualElement class="health-hex-border health-hex-border-my" />
+                        <ui:Label text="♥" class="health-hex-icon" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+            </ui:VisualElement>
+
+            <!-- Spacer pushes enemy panel to the right -->
+            <ui:VisualElement class="top-bar-spacer" />
+
+            <!-- Enemy Health -->
+            <ui:VisualElement name="enemy-health-panel" class="health-panel health-panel-enemy">
+                <ui:VisualElement class="health-inner-border" />
+                <ui:VisualElement class="health-accent health-accent-enemy" />
+                <ui:VisualElement class="health-icon-section">
+                    <ui:VisualElement class="health-hex">
+                        <ui:VisualElement class="health-hex-bg health-hex-bg-enemy" />
+                        <ui:VisualElement class="health-hex-border health-hex-border-enemy" />
+                        <ui:Label text="☠" class="health-hex-icon" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+                <ui:VisualElement class="health-info health-info-enemy">
+                    <ui:Label name="enemy-health-name" text="ENEMY" class="health-name health-name-enemy" />
+                    <ui:VisualElement class="health-bar-container">
+                        <ui:Label name="enemy-health-text" text="100 / 100" class="health-text health-text-enemy" />
+                        <ui:VisualElement class="health-bar-bg">
+                            <ui:VisualElement name="enemy-health-fill" class="health-bar-fill health-fill-enemy" />
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <!-- BOTTOM: Hotbar -->
+        <ui:VisualElement picking-mode="Ignore" class="hotbar-section">
+            <ui:VisualElement class="hotbar-container">
+                <ui:VisualElement class="hotbar-inner-border" />
+                <ui:VisualElement class="hotbar-accent-left" />
+                <ui:VisualElement class="hotbar-accent-right" />
+                <ui:VisualElement class="hotbar-label-left">
+                    <ui:VisualElement class="hotbar-label-diamond" />
+                    <ui:Label text="TURRETS" class="hotbar-label-text" />
+                </ui:VisualElement>
+                <ui:VisualElement name="hotbar-slots" class="hotbar-slots" />
+                <ui:VisualElement class="hotbar-label-right">
+                    <ui:Label text="1-5" class="hotbar-keys-hint" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

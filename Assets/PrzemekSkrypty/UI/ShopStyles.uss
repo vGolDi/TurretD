@@ -1,0 +1,863 @@
+/* ============================================
+   SHOP — ART DECO STYLE
+   ============================================ */
+
+.panel-root {
+    flex-grow: 1;
+    width: 100%;
+    height: 100%;
+    background-color: rgb(10, 15, 25);
+    flex-direction: column;
+}
+
+/* ============================================
+   HEADER
+   ============================================ */
+
+.panel-header {
+    flex-direction: row;
+    align-items: center;
+    padding: 20px 40px;
+    border-bottom-width: 1px;
+    border-bottom-color: rgba(245, 158, 11, 0.12);
+    flex-shrink: 0;
+    background-color: rgba(8, 12, 20, 0.5);
+}
+
+.btn-back {
+    background-color: rgba(0, 0, 0, 0);
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.3);
+    color: rgba(245, 158, 11, 0.6);
+    font-size: 12px;
+    letter-spacing: 3px;
+    padding: 10px 20px;
+    margin-right: 24px;
+    cursor: link;
+    transition-property: color, border-color, background-color;
+    transition-duration: 0.2s;
+    border-radius: 0;
+}
+
+.btn-back:hover {
+    color: rgb(252, 211, 77);
+    border-color: rgb(245, 158, 11);
+    background-color: rgba(245, 158, 11, 0.05);
+}
+
+.header-title-group {
+    flex-direction: column;
+}
+
+.panel-title {
+    font-size: 26px;
+    color: rgb(254, 243, 199);
+    letter-spacing: 10px;
+}
+
+.panel-subtitle {
+    font-size: 11px;
+    color: rgba(245, 158, 11, 0.35);
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    margin-top: 2px;
+}
+
+.header-spacer {
+    flex-grow: 1;
+}
+
+/* Waluta w headerze — bez zmian */
+.header-currency {
+    flex-direction: row;
+    align-items: center;
+}
+
+.currency-chip {
+    flex-direction: row;
+    align-items: center;
+    padding: 10px 20px;
+    margin-left: 12px;
+    background-color: rgba(15, 23, 42, 0.6);
+    border-width: 1px;
+    border-radius: 0;
+    transition-property: background-color;
+    transition-duration: 0.2s;
+}
+
+.currency-chip:hover {
+    background-color: rgba(15, 23, 42, 0.9);
+}
+
+.currency-gold {
+    border-color: rgba(245, 158, 11, 0.25);
+}
+
+.currency-crystal {
+    border-color: rgba(6, 182, 212, 0.25);
+}
+
+.currency-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 5px;
+    margin-right: 12px;
+}
+
+.currency-dot-gold {
+    background-color: rgb(245, 158, 11);
+}
+
+.currency-dot-crystal {
+    background-color: rgb(34, 211, 238);
+}
+
+.currency-amount {
+    font-size: 18px;
+    -unity-font-style: bold;
+    letter-spacing: 2px;
+    margin-right: 10px;
+}
+
+.currency-amount-gold {
+    color: rgb(251, 191, 36);
+}
+
+.currency-amount-crystal {
+    color: rgb(34, 211, 238);
+}
+
+.currency-label {
+    font-size: 10px;
+    color: rgba(200, 200, 200, 0.4);
+    letter-spacing: 3px;
+}
+
+/* ============================================
+   TABS
+   ============================================ */
+
+.tabs-bar {
+    flex-shrink: 0;
+    padding: 0 40px;
+    background-color: rgba(8, 12, 20, 0.3);
+}
+
+.tabs-inner {
+    flex-direction: row;
+    align-items: center;
+    padding-top: 4px;
+}
+
+.tab-button {
+    background-color: rgba(0, 0, 0, 0);
+    border-width: 0;
+    border-bottom-width: 2px;
+    border-bottom-color: rgba(0, 0, 0, 0);
+    color: rgba(245, 158, 11, 0.35);
+    font-size: 12px;
+    letter-spacing: 4px;
+    padding: 14px 24px;
+    cursor: link;
+    transition-property: color, border-bottom-color;
+    transition-duration: 0.2s;
+    border-radius: 0;
+}
+
+.tab-button:hover {
+    color: rgba(245, 158, 11, 0.7);
+    background-color: rgba(0, 0, 0, 0);
+}
+
+.tab-active {
+    color: rgb(252, 211, 77);
+    border-bottom-color: rgb(245, 158, 11);
+}
+
+.tab-active:hover {
+    color: rgb(252, 211, 77);
+}
+
+.tab-separator {
+    width: 1px;
+    height: 16px;
+    background-color: rgba(245, 158, 11, 0.08);
+    margin-left: 4px;
+    margin-right: 4px;
+}
+
+.tabs-line {
+    height: 1px;
+    background-color: rgba(245, 158, 11, 0.06);
+}
+
+/* ============================================
+   SCROLLVIEW
+   ============================================ */
+
+.shop-scroll {
+    flex-grow: 1;
+    padding: 24px 40px;
+    padding-bottom: 80px;
+}
+
+.shop-scroll .unity-scroller--vertical {
+    width: 8px;
+}
+
+.shop-scroll .unity-scroller--vertical .unity-base-slider__tracker {
+    background-color: rgba(245, 158, 11, 0.06);
+    border-width: 0;
+}
+
+.shop-scroll .unity-scroller--vertical .unity-base-slider__dragger {
+    background-color: rgba(245, 158, 11, 0.2);
+    border-radius: 4px;
+    border-width: 0;
+    min-height: 30px;
+    transition-property: background-color;
+    transition-duration: 0.2s;
+}
+
+.shop-scroll .unity-scroller--vertical .unity-base-slider__dragger:hover {
+    background-color: rgba(245, 158, 11, 0.4);
+}
+
+.shop-scroll .unity-scroller--vertical .unity-repeat-button {
+    display: none;
+}
+
+/* ============================================
+   ITEM GRID
+   ============================================ */
+
+.item-grid {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+}
+
+/* ============================================
+   SHOP ITEM CARD
+   ============================================ */
+
+.shop-item-card {
+    width: 18%;
+    min-width: 220px;
+    height: 340px;
+    margin: 8px;
+    background-color: rgb(12, 18, 30);
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.12);
+    flex-direction: column;
+    overflow: hidden;
+    cursor: link;
+    transition-property: border-color, scale;
+    transition-duration: 0.25s;
+    transition-timing-function: ease-out;
+}
+
+.shop-item-card:hover {
+    scale: 1.03 1.03;
+    border-color: rgba(245, 158, 11, 0.5);
+}
+
+.shop-item-card.cant-afford {
+    opacity: 0.55;
+}
+
+.shop-item-card.limit-reached {
+    opacity: 0.35;
+}
+
+.shop-item-card.level-locked {
+    opacity: 0.3;
+}
+
+/* Wewnêtrzna ramka */
+.item-inner-frame {
+    position: absolute;
+    left: 5px;
+    top: 5px;
+    right: 5px;
+    bottom: 5px;
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.04);
+    transition-property: border-color;
+    transition-duration: 0.25s;
+}
+
+.shop-item-card:hover .item-inner-frame {
+    border-color: rgba(245, 158, 11, 0.1);
+}
+
+/* Badge */
+.item-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 4px 12px;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: rgb(254, 243, 199);
+    -unity-font-style: bold;
+}
+
+.item-badge-sale {
+    background-color: rgba(220, 38, 38, 0.85);
+}
+
+.item-badge-new {
+    background-color: rgba(34, 197, 94, 0.85);
+}
+
+.item-badge-hot {
+    background-color: rgba(249, 115, 22, 0.85);
+}
+
+.item-badge-limited {
+    background-color: rgba(168, 85, 247, 0.85);
+}
+
+/* Discount badge */
+.item-discount-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    padding: 4px 10px;
+    background-color: rgba(220, 38, 38, 0.9);
+    font-size: 12px;
+    color: rgb(254, 243, 199);
+    -unity-font-style: bold;
+    letter-spacing: 1px;
+}
+
+/* Ikona itemu */
+.item-icon-section {
+    align-items: center;
+    justify-content: center;
+    height: 140px;
+    flex-shrink: 0;
+    padding-top: 20px;
+}
+
+.item-icon {
+    width: 88px;
+    height: 88px;
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+/* Typ itemu */
+.item-type-label {
+    font-size: 9px;
+    color: rgba(245, 158, 11, 0.3);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    -unity-text-align: upper-center;
+    margin-top: 8px;
+}
+
+/* Nazwa */
+.item-name-section {
+    padding: 0 16px;
+    align-items: center;
+    flex-grow: 1;
+}
+
+.item-name {
+    font-size: 15px;
+    color: rgb(254, 243, 199);
+    letter-spacing: 2px;
+    -unity-text-align: upper-center;
+    -unity-font-style: bold;
+    margin-bottom: 4px;
+}
+
+.item-description {
+    font-size: 10px;
+    color: rgba(200, 210, 220, 0.4);
+    -unity-text-align: upper-center;
+    white-space: normal;
+}
+
+/* Separator */
+.item-separator {
+    height: 1px;
+    margin-left: 20px;
+    margin-right: 20px;
+    background-color: rgba(245, 158, 11, 0.06);
+}
+
+/* Limit text */
+.item-limit-text {
+    font-size: 9px;
+    color: rgba(248, 113, 113, 0.6);
+    letter-spacing: 2px;
+    -unity-text-align: upper-center;
+    padding-top: 4px;
+    padding-bottom: 4px;
+}
+
+/* ============================================
+   SEKCJA CENY W KARCIE — WIÊKSZA
+   ============================================ */
+
+.item-price-section {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    flex-shrink: 0;
+}
+
+.item-price-left {
+    flex-direction: row;
+    align-items: center;
+}
+
+/* Ikonka waluty w przedmiocie — WIÊKSZA */
+.item-price-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 5px;
+    margin-right: 10px;
+}
+
+.item-price-dot-gold {
+    background-color: rgb(245, 158, 11);
+}
+
+.item-price-dot-crystal {
+    background-color: rgb(34, 211, 238);
+}
+
+/* Cena — WIÊKSZA */
+.item-price {
+    font-size: 22px;
+    -unity-font-style: bold;
+    letter-spacing: 2px;
+}
+
+.item-price-gold {
+    color: rgb(251, 191, 36);
+}
+
+.item-price-crystal {
+    color: rgb(34, 211, 238);
+}
+
+/* Stara cena — kontener z przekreœleniem */
+.item-old-price-container {
+    flex-direction: row;
+    align-items: center;
+    margin-right: 10px;
+    position: relative;
+}
+
+.item-old-price {
+    font-size: 13px;
+    color: rgba(200, 200, 200, 0.4);
+}
+
+/* Linia przekreœlenia — dopasowana do tekstu */
+.item-old-price-line {
+    position: absolute;
+    left: -1px;
+    right: -1px;
+    top: 50%;
+    height: 1px;
+    background-color: rgba(248, 113, 113, 0.6);
+}
+
+/* Napis BUY on hover */
+.item-buy-hint {
+    font-size: 10px;
+    color: rgba(245, 158, 11, 0.0);
+    letter-spacing: 3px;
+    transition-property: color;
+    transition-duration: 0.2s;
+}
+
+.shop-item-card:hover .item-buy-hint {
+    color: rgba(245, 158, 11, 0.5);
+}
+
+/* Lock overlay */
+.item-lock-overlay {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    align-items: center;
+    justify-content: center;
+}
+
+.item-lock-text {
+    font-size: 13px;
+    color: rgba(248, 113, 113, 0.7);
+    letter-spacing: 3px;
+}
+
+/* Hover accent */
+.item-hover-accent {
+    position: absolute;
+    bottom: 0;
+    left: 20%;
+    right: 20%;
+    height: 2px;
+    background-color: rgb(245, 158, 11);
+    opacity: 0;
+    transition-property: opacity;
+    transition-duration: 0.3s;
+}
+
+.shop-item-card:hover .item-hover-accent {
+    opacity: 1;
+}
+
+/* ============================================
+   BOCZNE DEKORACJE
+   ============================================ */
+
+.side-decoration-left {
+    position: absolute;
+    left: 12px;
+    top: 30%;
+    bottom: 30%;
+    width: 1px;
+    background-color: rgba(245, 158, 11, 0.06);
+}
+
+.side-decoration-right {
+    position: absolute;
+    right: 12px;
+    top: 30%;
+    bottom: 30%;
+    width: 1px;
+    background-color: rgba(245, 158, 11, 0.06);
+}
+
+.side-tick-left {
+    position: absolute;
+    left: 12px;
+    width: 16px;
+    height: 1px;
+    background-color: rgba(245, 158, 11, 0.08);
+}
+
+.side-tick-right {
+    position: absolute;
+    right: 12px;
+    width: 16px;
+    height: 1px;
+    background-color: rgba(245, 158, 11, 0.08);
+}
+
+/* ============================================
+   DOLNY PASEK INFORMACYJNY
+   ============================================ */
+
+.bottom-info-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 40px;
+    background-color: rgba(8, 12, 20, 0.7);
+    border-top-width: 1px;
+    border-top-color: rgba(245, 158, 11, 0.06);
+}
+
+.bottom-info-text {
+    font-size: 10px;
+    color: rgba(245, 158, 11, 0.25);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+}
+
+.bottom-info-separator {
+    width: 1px;
+    height: 12px;
+    background-color: rgba(245, 158, 11, 0.1);
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+.bottom-info-ornament {
+    font-size: 10px;
+    color: rgba(245, 158, 11, 0.15);
+    margin-left: 8px;
+    margin-right: 8px;
+}
+
+/* ============================================
+   CONFIRMATION POPUP
+   ============================================ */
+
+.popup-overlay {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.75);
+    align-items: center;
+    justify-content: center;
+}
+
+.confirm-box {
+    width: 460px;
+    background-color: rgb(12, 18, 30);
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.25);
+    padding: 32px;
+    flex-direction: column;
+}
+
+.confirm-title {
+    font-size: 18px;
+    color: rgb(254, 243, 199);
+    letter-spacing: 8px;
+    -unity-text-align: upper-center;
+    margin-bottom: 16px;
+}
+
+.confirm-divider {
+    height: 1px;
+    background-color: rgba(245, 158, 11, 0.1);
+    margin-bottom: 20px;
+}
+
+.confirm-item-row {
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.confirm-icon {
+    width: 64px;
+    height: 64px;
+    margin-right: 16px;
+    flex-shrink: 0;
+    -unity-background-scale-mode: scale-to-fit;
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.1);
+}
+
+.confirm-item-details {
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.confirm-name {
+    font-size: 18px;
+    color: rgb(254, 243, 199);
+    letter-spacing: 3px;
+    -unity-font-style: bold;
+}
+
+.confirm-type {
+    font-size: 9px;
+    color: rgba(245, 158, 11, 0.4);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-top: 4px;
+}
+
+.confirm-description {
+    font-size: 11px;
+    color: rgba(200, 210, 220, 0.5);
+    white-space: normal;
+    margin-bottom: 16px;
+    padding: 10px 12px;
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.05);
+    background-color: rgba(8, 12, 20, 0.4);
+}
+
+.confirm-section {
+    margin-bottom: 16px;
+}
+
+.confirm-section-label {
+    font-size: 10px;
+    color: rgba(245, 158, 11, 0.4);
+    letter-spacing: 4px;
+    margin-bottom: 6px;
+}
+
+.confirm-rewards {
+    font-size: 11px;
+    color: rgb(200, 210, 220);
+    white-space: normal;
+    padding: 8px 12px;
+    background-color: rgba(8, 12, 20, 0.4);
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.05);
+}
+
+.confirm-price-section {
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 12px;
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.08);
+    background-color: rgba(8, 12, 20, 0.3);
+}
+
+.confirm-price-row {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.confirm-old-price {
+    font-size: 14px;
+    color: rgba(200, 200, 200, 0.35);
+    margin-right: 12px;
+}
+
+.confirm-price {
+    font-size: 24px;
+    color: rgb(251, 191, 36);
+    -unity-font-style: bold;
+    letter-spacing: 3px;
+}
+
+.confirm-currency-type {
+    font-size: 10px;
+    color: rgba(245, 158, 11, 0.5);
+    letter-spacing: 3px;
+    margin-left: 10px;
+}
+
+.confirm-limit {
+    font-size: 9px;
+    color: rgba(248, 113, 113, 0.6);
+    letter-spacing: 2px;
+    margin-top: 8px;
+    -unity-text-align: upper-center;
+}
+
+.confirm-buttons {
+    flex-direction: row;
+}
+
+.btn-action {
+    background-color: rgba(0, 0, 0, 0);
+    border-width: 1px;
+    padding: 12px 20px;
+    font-size: 11px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    cursor: link;
+    margin: 4px;
+    flex-grow: 1;
+    -unity-text-align: middle-center;
+    transition-property: color, border-color, background-color;
+    transition-duration: 0.2s;
+    border-radius: 0;
+}
+
+.btn-confirm-buy {
+    border-color: rgba(74, 222, 128, 0.5);
+    color: rgb(74, 222, 128);
+}
+
+.btn-confirm-buy:hover {
+    border-color: rgb(74, 222, 128);
+    background-color: rgba(74, 222, 128, 0.08);
+    color: rgb(74, 222, 128);
+}
+
+.btn-confirm-buy:disabled {
+    opacity: 0.25;
+    border-color: rgba(100, 100, 100, 0.3);
+    color: rgb(100, 100, 100);
+}
+
+.btn-secondary {
+    border-color: rgba(245, 158, 11, 0.25);
+    color: rgba(245, 158, 11, 0.5);
+}
+
+.btn-secondary:hover {
+    border-color: rgb(245, 158, 11);
+    background-color: rgba(245, 158, 11, 0.06);
+    color: rgb(252, 211, 77);
+}
+
+/* ============================================
+   FEEDBACK POPUPS
+   ============================================ */
+
+.feedback-popup {
+    position: absolute;
+    top: 80px;
+    left: 30%;
+    right: 30%;
+    padding: 14px 32px;
+    border-width: 1px;
+    align-items: center;
+}
+
+.feedback-success {
+    background-color: rgba(12, 30, 18, 0.9);
+    border-color: rgba(74, 222, 128, 0.4);
+}
+
+.feedback-fail {
+    background-color: rgba(30, 12, 12, 0.9);
+    border-color: rgba(248, 113, 113, 0.4);
+}
+
+.feedback-text {
+    font-size: 13px;
+    letter-spacing: 3px;
+}
+
+.feedback-success .feedback-text {
+    color: rgb(74, 222, 128);
+}
+
+.feedback-fail .feedback-text {
+    color: rgb(248, 113, 113);
+}
+
+/* ============================================
+   EMPTY STATE
+   ============================================ */
+
+.empty-state {
+    flex-grow: 1;
+    align-items: center;
+    justify-content: center;
+    padding: 60px;
+    width: 100%;
+}
+
+.empty-state-icon {
+    font-size: 36px;
+    color: rgba(245, 158, 11, 0.12);
+    margin-bottom: 12px;
+}
+
+.empty-state-text {
+    font-size: 13px;
+    color: rgba(245, 158, 11, 0.2);
+    letter-spacing: 5px;
+    text-transform: uppercase;
+}
+
+/* ============================================
+   HIDDEN
+   ============================================ */
+
+.hidden {
+    display: none;
+}

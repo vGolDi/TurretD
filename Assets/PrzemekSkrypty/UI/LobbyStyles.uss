@@ -1,0 +1,628 @@
+/* ============================================
+   LOBBY / MATCHMAKING — ART DECO
+   ============================================ */
+
+.lobby-root {
+    flex-grow: 1;
+    width: 100%;
+    height: 100%;
+    background-color: rgb(8, 12, 22);
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+/* ============================================
+   BACKGROUND
+   ============================================ */
+
+.bg-layer {
+    position: absolute;
+    left: 0; top: 0; right: 0; bottom: 0;
+    overflow: hidden;
+}
+
+.bg-cross-v {
+    position: absolute;
+    left: 50%; top: 0;
+    width: 1px; height: 100%;
+    background-color: rgba(245, 158, 11, 0.05);
+    translate: -50% 0;
+}
+
+.bg-cross-h {
+    position: absolute;
+    top: 50%; left: 0;
+    width: 100%; height: 1px;
+    background-color: rgba(245, 158, 11, 0.05);
+    translate: 0 -50%;
+}
+
+.bg-radial-origin {
+    position: absolute;
+    left: 50%; top: 50%;
+    width: 0; height: 0;
+    overflow: visible;
+}
+
+.bg-radial-line {
+    position: absolute;
+    width: 1800px; height: 1px;
+    left: -900px; top: 0;
+    background-color: rgba(245, 158, 11, 0.03);
+    transform-origin: center center;
+}
+
+/* ============================================
+   CORNERS
+   ============================================ */
+
+.lobby-corner {
+    position: absolute;
+    width: 70px; height: 70px;
+    overflow: visible;
+}
+
+.lobby-corner-tl { left: 14px; top: 14px; }
+.lobby-corner-tr { right: 14px; top: 14px; }
+.lobby-corner-bl { left: 14px; bottom: 14px; }
+.lobby-corner-br { right: 14px; bottom: 14px; }
+
+/* TL */
+.lobby-corner-tl .lc-h { position: absolute; top: 0; left: 0; width: 100%; height: 1px; background-color: rgba(245, 158, 11, 0.15); }
+.lobby-corner-tl .lc-v { position: absolute; top: 0; left: 0; width: 1px; height: 100%; background-color: rgba(245, 158, 11, 0.15); }
+.lobby-corner-tl .lc-h-inner { position: absolute; top: 8px; left: 8px; width: 55%; height: 1px; background-color: rgba(245, 158, 11, 0.08); }
+.lobby-corner-tl .lc-v-inner { position: absolute; top: 8px; left: 8px; width: 1px; height: 55%; background-color: rgba(245, 158, 11, 0.08); }
+
+/* TR */
+.lobby-corner-tr .lc-h { position: absolute; top: 0; right: 0; width: 100%; height: 1px; background-color: rgba(245, 158, 11, 0.15); }
+.lobby-corner-tr .lc-v { position: absolute; top: 0; right: 0; width: 1px; height: 100%; background-color: rgba(245, 158, 11, 0.15); }
+.lobby-corner-tr .lc-h-inner { position: absolute; top: 8px; right: 8px; width: 55%; height: 1px; background-color: rgba(245, 158, 11, 0.08); }
+.lobby-corner-tr .lc-v-inner { position: absolute; top: 8px; right: 8px; width: 1px; height: 55%; background-color: rgba(245, 158, 11, 0.08); }
+
+/* BL */
+.lobby-corner-bl .lc-h { position: absolute; bottom: 0; left: 0; width: 100%; height: 1px; background-color: rgba(245, 158, 11, 0.15); }
+.lobby-corner-bl .lc-v { position: absolute; bottom: 0; left: 0; width: 1px; height: 100%; background-color: rgba(245, 158, 11, 0.15); }
+.lobby-corner-bl .lc-h-inner { position: absolute; bottom: 8px; left: 8px; width: 55%; height: 1px; background-color: rgba(245, 158, 11, 0.08); }
+.lobby-corner-bl .lc-v-inner { position: absolute; bottom: 8px; left: 8px; width: 1px; height: 55%; background-color: rgba(245, 158, 11, 0.08); }
+
+/* BR */
+.lobby-corner-br .lc-h { position: absolute; bottom: 0; right: 0; width: 100%; height: 1px; background-color: rgba(245, 158, 11, 0.15); }
+.lobby-corner-br .lc-v { position: absolute; bottom: 0; right: 0; width: 1px; height: 100%; background-color: rgba(245, 158, 11, 0.15); }
+.lobby-corner-br .lc-h-inner { position: absolute; bottom: 8px; right: 8px; width: 55%; height: 1px; background-color: rgba(245, 158, 11, 0.08); }
+.lobby-corner-br .lc-v-inner { position: absolute; bottom: 8px; right: 8px; width: 1px; height: 55%; background-color: rgba(245, 158, 11, 0.08); }
+
+/* Side lines */
+.side-line-left {
+    position: absolute; left: 14px;
+    top: 26%; bottom: 26%;
+    width: 1px;
+    background-color: rgba(245, 158, 11, 0.04);
+}
+
+.side-line-right {
+    position: absolute; right: 14px;
+    top: 26%; bottom: 26%;
+    width: 1px;
+    background-color: rgba(245, 158, 11, 0.04);
+}
+
+.side-tick-l {
+    position: absolute; left: 14px;
+    width: 18px; height: 1px;
+    background-color: rgba(245, 158, 11, 0.06);
+}
+
+.side-tick-r {
+    position: absolute; right: 14px;
+    width: 18px; height: 1px;
+    background-color: rgba(245, 158, 11, 0.06);
+}
+
+/* ============================================
+   CENTER LAYOUT
+   ============================================ */
+
+.lobby-center {
+    align-items: center;
+    flex-direction: column;
+    padding: 40px;
+}
+
+/* ============================================
+   ORNAMENTS
+   ============================================ */
+
+.ornament-row {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    width: 500px;
+    margin-bottom: 24px;
+}
+
+.ornament-row-bottom {
+    margin-bottom: 0;
+    margin-top: 24px;
+}
+
+.ornament-line-l {
+    flex-grow: 1; height: 1px;
+    background-color: rgba(245, 158, 11, 0.18);
+    margin-right: 8px;
+}
+
+.ornament-line-r {
+    flex-grow: 1; height: 1px;
+    background-color: rgba(245, 158, 11, 0.18);
+    margin-left: 8px;
+}
+
+.ornament-line-m {
+    width: 40px; height: 1px;
+    background-color: rgba(245, 158, 11, 0.12);
+    margin: 0 4px;
+}
+
+.ornament-diamond {
+    width: 12px; height: 12px;
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.3);
+    rotate: 45deg;
+    scale: 0.7 0.7;
+}
+
+.ornament-diamond-filled {
+    background-color: rgba(245, 158, 11, 0.1);
+    border-color: rgba(245, 158, 11, 0.45);
+    width: 16px; height: 16px;
+}
+
+/* ============================================
+   TITLE
+   ============================================ */
+
+.lobby-title {
+    font-size: 32px;
+    color: rgb(254, 243, 199);
+    letter-spacing: 14px;
+    -unity-text-align: middle-center;
+    margin-bottom: 12px;
+}
+
+/* ============================================
+   MODE BADGE
+   ============================================ */
+
+.mode-badge {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 24px;
+    margin-bottom: 32px;
+    background-color: rgba(245, 158, 11, 0.04);
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.12);
+}
+
+.mode-badge-diamond {
+    width: 8px; height: 8px;
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.3);
+    rotate: 45deg;
+    scale: 0.6 0.6;
+    margin: 0 12px;
+}
+
+.mode-badge-text {
+    font-size: 11px;
+    color: rgba(245, 158, 11, 0.6);
+    letter-spacing: 6px;
+}
+
+/* Mode-specific colors */
+.mode-badge-ranked {
+    border-color: rgba(220, 38, 38, 0.2);
+    background-color: rgba(220, 38, 38, 0.04);
+}
+
+.mode-badge-ranked .mode-badge-text {
+    color: rgba(248, 113, 113, 0.6);
+}
+
+.mode-badge-ranked .mode-badge-diamond {
+    border-color: rgba(220, 38, 38, 0.3);
+}
+
+/* ============================================
+   VERSUS CARD
+   ============================================ */
+
+.versus-card {
+    width: 560px;
+    background-color: rgb(10, 15, 26);
+    border-width: 1px;
+    border-color: rgba(146, 64, 14, 0.35);
+    padding: 32px 40px;
+    align-items: center;
+    overflow: hidden;
+    margin-bottom: 24px;
+}
+
+.versus-card-inner-border {
+    position: absolute;
+    left: 10px; top: 10px; right: 10px; bottom: 10px;
+    border-width: 1px;
+    border-color: rgba(120, 53, 15, 0.12);
+}
+
+.vc-corner {
+    position: absolute;
+    width: 16px; height: 16px;
+    border-color: rgba(146, 64, 14, 0.35);
+}
+
+.vc-corner-tl { left: 14px; top: 14px; border-left-width: 1px; border-top-width: 1px; }
+.vc-corner-tr { right: 14px; top: 14px; border-right-width: 1px; border-top-width: 1px; }
+.vc-corner-bl { left: 14px; bottom: 14px; border-left-width: 1px; border-bottom-width: 1px; }
+.vc-corner-br { right: 14px; bottom: 14px; border-right-width: 1px; border-bottom-width: 1px; }
+
+/* ============================================
+   PLAYER SLOTS
+   ============================================ */
+
+.versus-players {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.player-slot {
+    align-items: center;
+    width: 180px;
+    padding: 16px;
+}
+
+/* Hexagon */
+.player-slot-hex {
+    width: 56px; height: 56px;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 12px;
+}
+
+.player-hex-bg {
+    position: absolute;
+    width: 56px; height: 56px;
+    background-color: rgba(245, 158, 11, 0.06);
+    border-radius: 6px;
+    rotate: 45deg;
+    scale: 0.75 0.75;
+}
+
+.player-hex-bg-gold {
+    background-color: rgba(245, 158, 11, 0.12);
+}
+
+.player-hex-border {
+    position: absolute;
+    width: 56px; height: 56px;
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.2);
+    border-radius: 6px;
+    rotate: 45deg;
+    scale: 0.75 0.75;
+}
+
+.player-hex-border-gold {
+    border-color: rgba(245, 158, 11, 0.5);
+}
+
+.player-hex-icon {
+    font-size: 22px;
+    color: rgb(254, 243, 199);
+    -unity-text-align: middle-center;
+}
+
+.player-hex-icon-waiting {
+    color: rgba(245, 158, 11, 0.25);
+    font-size: 24px;
+}
+
+/* Name */
+.player-slot-name {
+    font-size: 14px;
+    color: rgb(254, 243, 199);
+    letter-spacing: 3px;
+    -unity-text-align: middle-center;
+    margin-bottom: 4px;
+}
+
+.player-name-waiting {
+    color: rgba(245, 158, 11, 0.3);
+    font-size: 11px;
+    letter-spacing: 2px;
+}
+
+/* Rank */
+.player-slot-rank {
+    font-size: 9px;
+    color: rgba(245, 158, 11, 0.35);
+    letter-spacing: 4px;
+    -unity-text-align: middle-center;
+}
+
+/* Ready dot */
+.player-slot-ready-dot {
+    width: 6px; height: 6px;
+    border-radius: 3px;
+    background-color: rgba(100, 116, 139, 0.3);
+    margin-top: 10px;
+    transition-property: background-color;
+    transition-duration: 0.3s;
+}
+
+.player-ready-dot-active {
+    background-color: rgb(74, 222, 128);
+}
+
+/* ============================================
+   VS DIVIDER
+   ============================================ */
+
+.versus-divider {
+    align-items: center;
+    justify-content: center;
+    margin: 0 24px;
+    height: 140px;
+}
+
+.versus-divider-line-top,
+.versus-divider-line-bottom {
+    width: 1px;
+    flex-grow: 1;
+    background-color: rgba(245, 158, 11, 0.1);
+}
+
+.versus-diamond-container {
+    align-items: center;
+    justify-content: center;
+    margin: 12px 0;
+}
+
+.versus-diamond-outer {
+    position: absolute;
+    width: 40px; height: 40px;
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.2);
+    rotate: 45deg;
+    background-color: rgba(245, 158, 11, 0.03);
+}
+
+.versus-text {
+    font-size: 14px;
+    color: rgba(245, 158, 11, 0.5);
+    letter-spacing: 4px;
+    -unity-font-style: bold;
+}
+
+/* ============================================
+   PLAYER COUNT
+   ============================================ */
+
+.player-count-section {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+.player-count-line {
+    flex-grow: 1;
+    height: 1px;
+    background-color: rgba(245, 158, 11, 0.06);
+}
+
+.player-count-text {
+    font-size: 14px;
+    color: rgba(245, 158, 11, 0.45);
+    letter-spacing: 6px;
+    margin: 0 20px;
+    -unity-font-style: bold;
+}
+
+.player-count-full {
+    color: rgb(74, 222, 128);
+}
+
+/* ============================================
+   STATUS
+   ============================================ */
+
+.status-section {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 8px;
+}
+
+.status-indicator {
+    width: 10px; height: 10px;
+    align-items: center;
+    justify-content: center;
+    margin-right: 12px;
+}
+
+.status-dot {
+    width: 6px; height: 6px;
+    border-radius: 3px;
+    background-color: rgb(245, 158, 11);
+}
+
+.status-pulse {
+    position: absolute;
+    width: 10px; height: 10px;
+    border-radius: 5px;
+    background-color: rgba(245, 158, 11, 0.3);
+    transition-property: scale, opacity;
+    transition-duration: 1s;
+}
+
+.status-dot-connected {
+    background-color: rgb(74, 222, 128);
+}
+
+.status-dot-error {
+    background-color: rgb(248, 113, 113);
+}
+
+.status-text {
+    font-size: 11px;
+    color: rgba(200, 210, 220, 0.5);
+    letter-spacing: 3px;
+}
+
+/* ============================================
+   TIMER
+   ============================================ */
+
+.search-timer {
+    font-size: 24px;
+    color: rgba(245, 158, 11, 0.25);
+    letter-spacing: 6px;
+    -unity-text-align: middle-center;
+    margin-bottom: 20px;
+}
+
+/* ============================================
+   CANCEL BUTTON
+   ============================================ */
+
+.lobby-actions {
+    align-items: center;
+}
+
+.btn-cancel {
+    background-color: rgba(0, 0, 0, 0);
+    border-width: 1px;
+    border-color: rgba(248, 113, 113, 0.25);
+    border-radius: 0;
+    color: rgba(248, 113, 113, 0.5);
+    font-size: 11px;
+    letter-spacing: 5px;
+    padding: 12px 40px;
+    transition-property: color, border-color, background-color, scale;
+    transition-duration: 0.2s;
+}
+
+.btn-cancel:hover {
+    border-color: rgb(248, 113, 113);
+    background-color: rgba(248, 113, 113, 0.06);
+    color: rgb(248, 113, 113);
+    scale: 1.03 1.03;
+}
+
+.btn-cancel:active {
+    background-color: rgba(248, 113, 113, 0.12);
+    scale: 0.97 0.97;
+}
+
+/* ============================================
+   MATCH FOUND OVERLAY
+   ============================================ */
+
+.match-found-overlay {
+    position: absolute;
+    left: 0; top: 0; right: 0; bottom: 0;
+    background-color: rgba(0, 0, 0, 0.88);
+    align-items: center;
+    justify-content: center;
+}
+
+.match-found-box {
+    width: 440px;
+    align-items: center;
+    padding: 48px 40px;
+    background-color: rgb(10, 15, 26);
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.35);
+    overflow: hidden;
+}
+
+.match-found-inner-border {
+    position: absolute;
+    left: 8px; top: 8px; right: 8px; bottom: 8px;
+    border-width: 1px;
+    border-color: rgba(120, 53, 15, 0.12);
+}
+
+.match-found-icon {
+    font-size: 48px;
+    color: rgb(245, 158, 11);
+    -unity-text-align: middle-center;
+    margin-bottom: 16px;
+}
+
+.match-found-title {
+    font-size: 24px;
+    color: rgb(254, 243, 199);
+    letter-spacing: 10px;
+    -unity-text-align: middle-center;
+    margin-bottom: 32px;
+}
+
+.match-found-bar-bg {
+    width: 100%;
+    height: 4px;
+    background-color: rgba(245, 158, 11, 0.1);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-bottom: 16px;
+}
+
+.match-found-bar-fill {
+    height: 100%;
+    width: 0%;
+    background-color: rgb(245, 158, 11);
+    border-radius: 2px;
+    transition-property: width;
+    transition-duration: 0.3s;
+}
+
+.match-found-text {
+    font-size: 11px;
+    color: rgba(245, 158, 11, 0.4);
+    letter-spacing: 3px;
+}
+
+/* ============================================
+   BOTTOM BAR
+   ============================================ */
+
+.bottom-info-bar {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 40px;
+    background-color: rgba(8, 12, 20, 0.7);
+    border-top-width: 1px;
+    border-top-color: rgba(245, 158, 11, 0.06);
+}
+
+.bottom-info-text {
+    font-size: 10px;
+    color: rgba(245, 158, 11, 0.2);
+    letter-spacing: 3px;
+}
+
+/* ============================================
+   HIDDEN
+   ============================================ */
+
+.hidden {
+    display: none;
+}

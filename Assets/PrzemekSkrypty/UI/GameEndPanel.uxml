@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
+    <Style src="GameEndPanelStyles.uss" />
+
+    <ui:VisualElement name="endgame-root" class="endgame-root hidden" picking-mode="Ignore">
+
+        <!-- Vignette border -->
+        <ui:VisualElement name="endgame-vignette" class="endgame-vignette" picking-mode="Ignore" />
+
+        <!-- Scar lines (defeat only) -->
+        <ui:VisualElement name="endgame-scars" class="endgame-scar-container hidden" picking-mode="Ignore">
+            <ui:VisualElement class="endgame-scar endgame-scar-1" />
+            <ui:VisualElement class="endgame-scar endgame-scar-2" />
+            <ui:VisualElement class="endgame-scar endgame-scar-3" />
+            <ui:VisualElement class="endgame-scar endgame-scar-4" />
+        </ui:VisualElement>
+
+        <!-- Radial lines -->
+        <ui:VisualElement name="endgame-radial" class="endgame-radial-origin" picking-mode="Ignore">
+            <ui:VisualElement class="endgame-radial-line" style="rotate: 0deg;" />
+            <ui:VisualElement class="endgame-radial-line" style="rotate: 30deg;" />
+            <ui:VisualElement class="endgame-radial-line" style="rotate: 60deg;" />
+            <ui:VisualElement class="endgame-radial-line" style="rotate: 90deg;" />
+            <ui:VisualElement class="endgame-radial-line" style="rotate: 120deg;" />
+            <ui:VisualElement class="endgame-radial-line" style="rotate: 150deg;" />
+        </ui:VisualElement>
+
+        <!-- Outer corners -->
+        <ui:VisualElement name="corner-tl" class="endgame-corner endgame-corner-tl" picking-mode="Ignore" />
+        <ui:VisualElement name="corner-tr" class="endgame-corner endgame-corner-tr" picking-mode="Ignore" />
+        <ui:VisualElement name="corner-bl" class="endgame-corner endgame-corner-bl" picking-mode="Ignore" />
+        <ui:VisualElement name="corner-br" class="endgame-corner endgame-corner-br" picking-mode="Ignore" />
+
+        <!-- Inner corners -->
+        <ui:VisualElement name="corner-inner-tl" class="endgame-corner-inner endgame-corner-inner-tl" picking-mode="Ignore" />
+        <ui:VisualElement name="corner-inner-tr" class="endgame-corner-inner endgame-corner-inner-tr" picking-mode="Ignore" />
+        <ui:VisualElement name="corner-inner-bl" class="endgame-corner-inner endgame-corner-inner-bl" picking-mode="Ignore" />
+        <ui:VisualElement name="corner-inner-br" class="endgame-corner-inner endgame-corner-inner-br" picking-mode="Ignore" />
+
+        <!-- Main content -->
+        <ui:VisualElement class="endgame-content">
+
+            <!-- Top ornament -->
+            <ui:VisualElement class="endgame-ornament-top">
+                <ui:VisualElement name="orn-line-l" class="endgame-ornament-line" />
+                <ui:VisualElement name="orn-dia-l" class="endgame-ornament-diamond" />
+                <ui:VisualElement name="orn-dia-c" class="endgame-ornament-diamond-center" />
+                <ui:VisualElement name="orn-dia-r" class="endgame-ornament-diamond" />
+                <ui:VisualElement name="orn-line-r" class="endgame-ornament-line" />
+            </ui:VisualElement>
+
+            <!-- Title area -->
+            <ui:VisualElement style="align-items: center; justify-content: center;">
+                <ui:VisualElement name="endgame-title-glow" class="endgame-title-glow" picking-mode="Ignore" />
+                <ui:Label name="endgame-title" text="VICTORY" class="endgame-title" />
+            </ui:VisualElement>
+
+            <!-- Subtitle -->
+            <ui:Label name="endgame-subtitle" text="THE REALM IS DEFENDED" class="endgame-subtitle" />
+
+            <!-- Divider -->
+            <ui:VisualElement class="endgame-divider">
+                <ui:VisualElement name="div-line-l" class="endgame-divider-line" />
+                <ui:VisualElement name="div-dot" class="endgame-divider-dot" />
+                <ui:VisualElement name="div-line-r" class="endgame-divider-line" />
+            </ui:VisualElement>
+
+            <!-- Stats Section (always visible) -->
+            <ui:VisualElement name="endgame-stats" class="endgame-stats-section">
+                <ui:VisualElement class="endgame-stats-panel">
+                    <ui:VisualElement class="endgame-stats-inner-border" />
+                    <ui:VisualElement class="endgame-level-row">
+                        <ui:VisualElement style="flex-direction: row; align-items: center;">
+                            <ui:VisualElement class="endgame-level-hexagon">
+                                <ui:VisualElement class="endgame-level-hex-bg" />
+                                <ui:VisualElement class="endgame-level-hex-border" />
+                                <ui:Label name="endgame-level-number" text="1" class="endgame-level-number" />
+                            </ui:VisualElement>
+                            <ui:Label name="endgame-level-label" text="LEVEL" class="endgame-level-label" />
+                        </ui:VisualElement>
+                        <ui:Label name="endgame-xp-gain" text="+500 XP" class="endgame-xp-gain" />
+                    </ui:VisualElement>
+                    <ui:VisualElement class="endgame-xp-bar-container">
+                        <ui:VisualElement class="endgame-xp-bar-bg">
+                            <ui:VisualElement name="endgame-xp-fill" class="endgame-xp-bar-fill" />
+                        </ui:VisualElement>
+                        <ui:Label name="endgame-xp-text" text="0 / 1000 XP" class="endgame-xp-text" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+            </ui:VisualElement>
+
+            <!-- Ranked Section (conditional) -->
+            <ui:VisualElement name="endgame-ranked" class="endgame-ranked-section hidden">
+                <ui:VisualElement class="endgame-ranked-panel">
+                    <ui:VisualElement class="endgame-ranked-inner-border" />
+                    <ui:VisualElement class="endgame-ranked-header">
+                        <ui:VisualElement class="endgame-ranked-header-line" />
+                        <ui:Label text="RANKED" class="endgame-ranked-header-label" />
+                        <ui:VisualElement class="endgame-ranked-header-line" />
+                    </ui:VisualElement>
+                    <ui:VisualElement class="endgame-rank-display">
+                        <ui:VisualElement class="endgame-rank-info">
+                            <ui:VisualElement class="endgame-rank-icon-container">
+                                <ui:VisualElement name="endgame-rank-icon-bg" class="endgame-rank-icon-bg" />
+                                <ui:VisualElement name="endgame-rank-icon-border" class="endgame-rank-icon-border" />
+                                <ui:Label name="endgame-rank-icon-text" text="⚔" class="endgame-rank-icon-text" />
+                            </ui:VisualElement>
+                            <ui:Label name="endgame-rank-name" text="SILVER" class="endgame-rank-name" />
+                        </ui:VisualElement>
+                        <ui:Label name="endgame-elo-change" text="+25" class="endgame-elo-change" />
+                    </ui:VisualElement>
+                    <ui:VisualElement class="endgame-elo-bar-container">
+                        <ui:VisualElement class="endgame-elo-bar-bg">
+                            <ui:VisualElement name="endgame-elo-fill" class="endgame-elo-bar-fill" />
+                        </ui:VisualElement>
+                        <ui:VisualElement class="endgame-elo-bar-labels">
+                            <ui:Label name="endgame-elo-min" text="1200" class="endgame-elo-rank-min" />
+                            <ui:Label name="endgame-elo-max" text="1500" class="endgame-elo-rank-max" />
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+            </ui:VisualElement>
+
+            <!-- Quests Section -->
+            <ui:VisualElement name="endgame-quests" class="endgame-quests-section">
+                <ui:VisualElement class="endgame-quests-panel">
+                    <ui:VisualElement class="endgame-quests-header">
+                        <ui:VisualElement class="endgame-quests-header-line" />
+                        <ui:Label text="QUEST PROGRESS" class="endgame-quests-header-label" />
+                        <ui:VisualElement class="endgame-quests-header-line" />
+                    </ui:VisualElement>
+                    <ui:VisualElement name="endgame-quest-list" class="endgame-quest-list" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+
+            <!-- Return Button -->
+            <ui:VisualElement class="endgame-button-section">
+                <ui:Button name="endgame-return-btn" text="RETURN TO MENU" class="endgame-return-button" />
+                <ui:VisualElement class="endgame-button-accent-row">
+                    <ui:VisualElement class="endgame-button-accent-line" />
+                    <ui:VisualElement class="endgame-button-accent-diamond" />
+                    <ui:VisualElement class="endgame-button-accent-line" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+
+        </ui:VisualElement>
+
+    </ui:VisualElement>
+</ui:UXML>

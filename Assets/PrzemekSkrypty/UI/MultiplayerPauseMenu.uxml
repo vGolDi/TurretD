@@ -1,0 +1,61 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/PrzemekSkrypty/MultiplayerPauseMenu.uss?fileID=7433441132597879392&amp;guid=438691863d06221459c0f96d3b3464cb&amp;type=3#MultiplayerPauseMenu" />
+    <ui:VisualElement name="pause-root" class="pause-overlay ">
+        <ui:VisualElement name="pause-window" class="pause-window">
+            <ui:VisualElement picking-mode="Ignore" class="pause-window-inner-border" />
+            <ui:VisualElement picking-mode="Ignore" class="pause-corner pause-corner-tl" />
+            <ui:VisualElement picking-mode="Ignore" class="pause-corner pause-corner-tr" />
+            <ui:VisualElement picking-mode="Ignore" class="pause-corner pause-corner-bl" />
+            <ui:VisualElement picking-mode="Ignore" class="pause-corner pause-corner-br" />
+            <ui:VisualElement class="pause-header">
+                <ui:VisualElement class="pause-header-ornament">
+                    <ui:VisualElement class="pause-header-line" />
+                    <ui:VisualElement class="pause-header-diamond" />
+                    <ui:VisualElement class="pause-header-line" />
+                </ui:VisualElement>
+                <ui:Label name="pause-title" text="PAUSED" class="pause-title" />
+                <ui:Label text="GAME IN PROGRESS" class="pause-subtitle" />
+                <ui:VisualElement class="pause-header-separator" />
+            </ui:VisualElement>
+            <ui:VisualElement name="pause-content" class="pause-content">
+                <ui:VisualElement name="pause-menu-view" class="pause-menu-buttons">
+                    <ui:Button name="btn-resume" text="RESUME" class="pause-btn pause-btn-resume" />
+                    <ui:Button name="btn-settings" text="SETTINGS" class="pause-btn" />
+                    <ui:VisualElement class="pause-btn-divider" />
+                    <ui:Button name="btn-quit" text="LEAVE MATCH" class="pause-btn pause-btn-quit" />
+                </ui:VisualElement>
+                <ui:VisualElement name="pause-settings-view" class="settings-content hidden">
+                    <ui:VisualElement class="setting-row">
+                        <ui:Label text="VOLUME" class="setting-label" />
+                        <ui:Slider name="volume-slider" low-value="0" high-value="1" value="1" class="setting-slider" />
+                        <ui:Label name="volume-value" text="100%" class="setting-value" />
+                    </ui:VisualElement>
+                    <ui:VisualElement class="setting-row">
+                        <ui:Label text="QUALITY" class="setting-label" />
+                        <ui:DropdownField name="quality-dropdown" class="setting-dropdown" />
+                    </ui:VisualElement>
+                    <ui:VisualElement class="setting-row">
+                        <ui:Label text="FULLSCREEN" class="setting-label" />
+                        <ui:Toggle name="fullscreen-toggle" class="setting-toggle" />
+                    </ui:VisualElement>
+                    <ui:Button name="btn-back-settings" text="BACK" class="pause-btn settings-back-btn" />
+                </ui:VisualElement>
+                <ui:VisualElement name="pause-quit-view" class="quit-confirm-content hidden">
+                    <ui:Label text="LEAVE THIS MATCH?" class="quit-confirm-text" />
+                    <ui:Label text="YOU WILL BE DISCONNECTED" class="quit-confirm-warning" />
+                    <ui:VisualElement class="quit-confirm-buttons">
+                        <ui:Button name="btn-cancel-quit" text="CANCEL" class="pause-btn quit-confirm-btn" />
+                        <ui:Button name="btn-confirm-quit" text="LEAVE" class="pause-btn pause-btn-quit quit-confirm-btn" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+            </ui:VisualElement>
+            <ui:VisualElement picking-mode="Ignore" class="pause-bottom-accent">
+                <ui:VisualElement class="pause-bottom-line" />
+                <ui:VisualElement class="pause-bottom-diamond" />
+                <ui:Label text="ESC" class="pause-esc-hint" />
+                <ui:VisualElement class="pause-bottom-diamond" />
+                <ui:VisualElement class="pause-bottom-line" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

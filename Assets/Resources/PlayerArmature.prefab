@@ -24,6 +24,7 @@ GameObject:
   - component: {fileID: 7998198607994484587}
   - component: {fileID: 1878839749677311197}
   - component: {fileID: 8899134111234962081}
+  - component: {fileID: 9191803843147774557}
   m_Layer: 0
   m_Name: PlayerArmature
   m_TagString: Player
@@ -151,7 +152,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   startingGold: 500
-  goldText: {fileID: 2501975838729526684}
 --- !u!114 &2583234062932078183
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -329,6 +329,29 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9923db73d6f5de148a99f05f162933db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SimpleInputManager
+--- !u!114 &9191803843147774557
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 746025431052519908}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.dll::UnityEngine.UIElements.UIDocument
+  m_PanelSettings: {fileID: 11400000, guid: aa1aab9bc2311f44ca2956b66344b624, type: 2}
+  m_ParentUI: {fileID: 0}
+  sourceAsset: {fileID: 9197481963319205126, guid: 4fb3fb53f5f06b44388b8d64dfb19b87, type: 3}
+  m_SortingOrder: 1
+  m_Position: 0
+  m_WorldSpaceSizeMode: 1
+  m_WorldSpaceWidth: 1920
+  m_WorldSpaceHeight: 1080
+  m_PivotReferenceSize: 0
+  m_Pivot: 0
+  m_WorldSpaceCollider: {fileID: 0}
 --- !u!1 &2945295305449548627
 GameObject:
   m_ObjectHideFlags: 0
@@ -520,9 +543,9 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 4881906464822541567}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 162, y: -137}
+  m_AnchorMin: {x: 0.5, y: 1}
+  m_AnchorMax: {x: 0.5, y: 1}
+  m_AnchoredPosition: {x: -798, y: -137}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3824752781152057533

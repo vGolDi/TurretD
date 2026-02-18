@@ -1,0 +1,924 @@
+/* ============================================
+   DECKBUILDER — ART DECO STYLE
+   ============================================ */
+
+/* ============================================
+   PANEL ROOT
+   ============================================ */
+
+.panel-root {
+    flex-grow: 1;
+    width: 100%;
+    height: 100%;
+    background-color: rgb(10, 15, 25);
+    flex-direction: column;
+}
+
+/* ============================================
+   HEADER
+   ============================================ */
+
+.panel-header {
+    flex-direction: row;
+    align-items: center;
+    padding: 20px 40px;
+    border-bottom-width: 1px;
+    border-bottom-color: rgba(245, 158, 11, 0.15);
+    flex-shrink: 0;
+    background-color: rgba(8, 12, 20, 0.5);
+}
+
+.btn-back {
+    background-color: rgba(0, 0, 0, 0);
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.3);
+    color: rgba(245, 158, 11, 0.6);
+    font-size: 12px;
+    letter-spacing: 3px;
+    padding: 10px 20px;
+    margin-right: 24px;
+    cursor: default;
+    transition-property: color, border-color;
+    transition-duration: 0.2s;
+}
+
+.btn-back:hover {
+    color: rgb(252, 211, 77);
+    border-color: rgb(245, 158, 11);
+    background-color: rgba(245, 158, 11, 0.05);
+}
+
+.panel-title {
+    font-size: 26px;
+    color: rgb(254, 243, 199);
+    letter-spacing: 10px;
+    margin-right: 20px;
+}
+
+.panel-subtitle {
+    font-size: 12px;
+    color: rgba(245, 158, 11, 0.4);
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    padding-top: 6px;
+}
+
+/* Dekoracyjna linia pod headerem */
+.header-ornament {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    height: 1px;
+    flex-shrink: 0;
+}
+
+/* ============================================
+   BODY — 2 KOLUMNY
+   ============================================ */
+
+.deckbuilder-body {
+    flex-grow: 1;
+    flex-direction: row;
+    padding: 20px;
+}
+
+/* ============================================
+   LEWA KOLUMNA: KOLEKCJA
+   ============================================ */
+
+.collection-panel {
+    flex-grow: 3;
+    flex-direction: column;
+    margin-right: 20px;
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.08);
+    background-color: rgba(12, 18, 30, 0.4);
+    padding: 20px;
+}
+
+/* ============================================
+   FILTRY
+   ============================================ */
+
+.filters-bar {
+    flex-shrink: 0;
+    margin-bottom: 16px;
+}
+
+.section-label {
+    font-size: 14px;
+    color: rgba(245, 158, 11, 0.5);
+    letter-spacing: 6px;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+}
+
+.filters-row {
+    flex-direction: row;
+    margin-bottom: 8px;
+}
+
+/* --- Dropdown styling --- */
+
+.filter-dropdown {
+    flex-grow: 1;
+    margin-right: 12px;
+    height: 36px;
+}
+
+/* Kontener dropdowna */
+.filter-dropdown .unity-base-field {
+    flex-direction: row;
+    align-items: center;
+}
+
+/* Label dropdowna */
+.filter-dropdown .unity-label {
+    color: rgba(245, 158, 11, 0.45);
+    font-size: 11px;
+    letter-spacing: 3px;
+    min-width: 60px;
+    text-transform: uppercase;
+}
+
+/* Input dropdowna (pole z wartoœci¹) */
+.filter-dropdown .unity-base-popup-field__input {
+    background-color: rgba(15, 23, 42, 0.8);
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.2);
+    border-radius: 0;
+    color: rgb(254, 243, 199);
+    font-size: 12px;
+    letter-spacing: 2px;
+    padding: 6px 12px;
+    transition-property: border-color;
+    transition-duration: 0.2s;
+}
+
+.filter-dropdown .unity-base-popup-field__input:hover {
+    border-color: rgba(245, 158, 11, 0.5);
+}
+
+.filter-dropdown .unity-base-popup-field__input:focus {
+    border-color: rgb(245, 158, 11);
+}
+
+/* Strza³ka dropdowna */
+.filter-dropdown .unity-base-popup-field__arrow {
+    -unity-background-image-tint-color: rgba(245, 158, 11, 0.5);
+}
+
+/* Separator miêdzy filtrami */
+.filter-separator {
+    width: 1px;
+    height: 24px;
+    background-color: rgba(245, 158, 11, 0.1);
+    margin-left: 4px;
+    margin-right: 16px;
+    align-self: center;
+}
+
+/* ============================================
+   SCROLLVIEW — CUSTOM COLORS
+   ============================================ */
+
+/* T³o scrollbara */
+.collection-scroll .unity-scroller--vertical {
+    width: 8px;
+}
+
+.collection-scroll .unity-scroller--vertical .unity-base-slider__tracker {
+    background-color: rgba(245, 158, 11, 0.06);
+    border-width: 0;
+}
+
+/* Uchwyt scrollbara */
+.collection-scroll .unity-scroller--vertical .unity-base-slider__dragger {
+    background-color: rgba(245, 158, 11, 0.2);
+    border-radius: 4px;
+    border-width: 0;
+    min-height: 30px;
+    transition-property: background-color;
+    transition-duration: 0.2s;
+}
+
+.collection-scroll .unity-scroller--vertical .unity-base-slider__dragger:hover {
+    background-color: rgba(245, 158, 11, 0.4);
+}
+
+/* Przyciski góra/dó³ scrollbara — ukryj */
+.collection-scroll .unity-scroller--vertical .unity-repeat-button {
+    display: none;
+}
+
+/* Ten sam styl dla deck scroll */
+.deck-scroll .unity-scroller--vertical {
+    width: 8px;
+}
+
+.deck-scroll .unity-scroller--vertical .unity-base-slider__tracker {
+    background-color: rgba(245, 158, 11, 0.06);
+    border-width: 0;
+}
+
+.deck-scroll .unity-scroller--vertical .unity-base-slider__dragger {
+    background-color: rgba(245, 158, 11, 0.2);
+    border-radius: 4px;
+    border-width: 0;
+    min-height: 30px;
+    transition-property: background-color;
+    transition-duration: 0.2s;
+}
+
+.deck-scroll .unity-scroller--vertical .unity-base-slider__dragger:hover {
+    background-color: rgba(245, 158, 11, 0.4);
+}
+
+.deck-scroll .unity-scroller--vertical .unity-repeat-button {
+    display: none;
+}
+
+/* Popup scroll */
+.popup-scroll .unity-scroller--vertical {
+    width: 6px;
+}
+
+.popup-scroll .unity-scroller--vertical .unity-base-slider__tracker {
+    background-color: rgba(245, 158, 11, 0.06);
+    border-width: 0;
+}
+
+.popup-scroll .unity-scroller--vertical .unity-base-slider__dragger {
+    background-color: rgba(245, 158, 11, 0.2);
+    border-radius: 4px;
+    border-width: 0;
+}
+
+.popup-scroll .unity-scroller--vertical .unity-repeat-button {
+    display: none;
+}
+
+/* ============================================
+   SCROLL CONTAINERS
+   ============================================ */
+
+.collection-scroll {
+    flex-grow: 1;
+}
+
+.card-grid {
+    flex-direction: row;
+    flex-wrap: wrap;
+    padding: 4px;
+    justify-content: flex-start;
+}
+
+/* ============================================
+   KARTA W KOLEKCJI — WIÊKSZA (5 w rzêdzie)
+   
+   Szerokoœæ: ~18% parent (5 kart + marginesy)
+   Wysokoœæ: proporcjonalna
+   ============================================ */
+
+.collection-card {
+    width: 18%;
+    min-width: 160px;
+    height: 240px;
+    margin: 6px;
+    background-color: rgb(12, 18, 30);
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.15);
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 12px;
+    cursor: default;
+    transition-property: border-color, translate, scale;
+    transition-duration: 0.25s;
+    transition-timing-function: ease-out;
+    overflow: hidden;
+}
+
+.collection-card:hover {
+    translate: 0 -6px;
+    scale: 1.03 1.03;
+}
+
+.collection-card.locked {
+    opacity: 0.35;
+    cursor: default;
+}
+
+.collection-card.locked:hover {
+    translate: 0 0;
+    scale: 1 1;
+}
+
+/* --- Rarity borders --- */
+
+.collection-card.rarity-legendary {
+    border-color: rgba(255, 200, 0, 0.3);
+}
+
+.collection-card.rarity-rare {
+    border-color: rgba(80, 150, 255, 0.3);
+}
+
+.collection-card.rarity-common {
+    border-color: rgba(160, 160, 160, 0.15);
+}
+
+.collection-card:hover.rarity-legendary {
+    border-color: rgba(255, 200, 0, 0.8);
+}
+
+.collection-card:hover.rarity-rare {
+    border-color: rgba(80, 150, 255, 0.8);
+}
+
+.collection-card:hover.rarity-common {
+    border-color: rgba(200, 200, 200, 0.4);
+}
+
+/* --- Wewnêtrzna ramka dekoracyjna --- */
+
+.card-inner-frame {
+    position: absolute;
+    left: 6px;
+    top: 6px;
+    right: 6px;
+    bottom: 6px;
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.06);
+    transition-property: border-color;
+    transition-duration: 0.25s;
+}
+
+.collection-card:hover .card-inner-frame {
+    border-color: rgba(245, 158, 11, 0.15);
+}
+
+/* --- Ikona karty --- */
+
+.card-icon-image {
+    width: 80px;
+    height: 80px;
+    margin-top: 12px;
+    margin-bottom: 8px;
+    flex-shrink: 0;
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+/* --- Górna linia rarity --- */
+
+.card-rarity-line-top {
+    width: 50%;
+    height: 1px;
+    margin-bottom: 8px;
+}
+
+/* --- Dolna linia rarity --- */
+
+.card-rarity-line-bottom {
+    width: 30%;
+    height: 1px;
+    margin-top: 4px;
+}
+
+.card-rarity-line-legendary {
+    background-color: rgba(255, 200, 0, 0.5);
+}
+
+.card-rarity-line-rare {
+    background-color: rgba(80, 150, 255, 0.5);
+}
+
+.card-rarity-line-common {
+    background-color: rgba(160, 160, 160, 0.2);
+}
+
+/* --- Nazwa karty --- */
+
+.card-slot-name {
+    font-size: 13px;
+    color: rgb(254, 243, 199);
+    letter-spacing: 1px;
+    -unity-text-align: upper-center;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+    -unity-font-style: bold;
+}
+
+/* --- Rarity text --- */
+
+.card-slot-rarity {
+    font-size: 9px;
+    letter-spacing: 3px;
+    -unity-text-align: upper-center;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+}
+
+.card-slot-rarity-legendary {
+    color: rgb(255, 200, 0);
+}
+
+.card-slot-rarity-rare {
+    color: rgb(100, 160, 255);
+}
+
+.card-slot-rarity-common {
+    color: rgb(160, 160, 160);
+}
+
+/* --- Description --- */
+
+.card-slot-description {
+    font-size: 9px;
+    color: rgba(200, 210, 220, 0.45);
+    -unity-text-align: upper-center;
+    white-space: normal;
+    margin-top: 2px;
+    padding-left: 4px;
+    padding-right: 4px;
+    flex-grow: 1;
+}
+
+/* --- Hover glow na dole karty --- */
+
+.card-hover-accent {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    translate: -50% 0;
+    width: 0;
+    height: 2px;
+    transition-property: width;
+    transition-duration: 0.3s;
+}
+
+.collection-card:hover .card-hover-accent {
+    width: 60%;
+}
+
+.card-hover-accent-legendary {
+    background-color: rgb(255, 200, 0);
+}
+
+.card-hover-accent-rare {
+    background-color: rgb(80, 150, 255);
+}
+
+.card-hover-accent-common {
+    background-color: rgba(200, 200, 200, 0.4);
+}
+
+/* ============================================
+   PRAWA KOLUMNA: DECK PANEL
+   ============================================ */
+
+.deck-panel {
+    width: 340px;
+    flex-shrink: 0;
+    flex-direction: column;
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.08);
+    background-color: rgba(12, 18, 30, 0.4);
+    padding: 20px;
+}
+
+/* ============================================
+   DECK INFO
+   ============================================ */
+
+.deck-info-section {
+    flex-shrink: 0;
+    margin-bottom: 16px;
+}
+
+/* --- Deck name input --- */
+
+.deck-name-input {
+    margin-bottom: 16px;
+}
+
+.deck-name-input .unity-base-field__input {
+    background-color: rgba(15, 23, 42, 0.8);
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.25);
+    border-radius: 0;
+    color: rgb(254, 243, 199);
+    font-size: 18px;
+    letter-spacing: 4px;
+    padding: 10px 14px;
+    -unity-font-style: bold;
+    transition-property: border-color;
+    transition-duration: 0.2s;
+}
+
+.deck-name-input .unity-base-field__input:focus {
+    border-color: rgb(245, 158, 11);
+}
+
+.deck-name-input .unity-label {
+    display: none;
+}
+
+/* --- Counters --- */
+
+.counters-row {
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+    border-bottom-width: 1px;
+    border-bottom-color: rgba(245, 158, 11, 0.08);
+}
+
+.counter-text {
+    font-size: 14px;
+    color: rgba(245, 158, 11, 0.7);
+    letter-spacing: 4px;
+    -unity-text-align: upper-center;
+    -unity-font-style: bold;
+}
+
+.rarity-counters {
+    flex-direction: column;
+    margin-bottom: 12px;
+    padding: 12px;
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.06);
+    background-color: rgba(8, 12, 20, 0.3);
+}
+
+.counter-legendary {
+    font-size: 11px;
+    color: rgb(255, 200, 0);
+    letter-spacing: 3px;
+    margin-bottom: 6px;
+}
+
+.counter-rare {
+    font-size: 11px;
+    color: rgb(100, 160, 255);
+    letter-spacing: 3px;
+    margin-bottom: 6px;
+}
+
+.counter-common {
+    font-size: 11px;
+    color: rgb(170, 170, 170);
+    letter-spacing: 3px;
+}
+
+/* --- Rarity counter decorative dots --- */
+
+.rarity-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 3px;
+    margin-right: 8px;
+    flex-shrink: 0;
+}
+
+.rarity-dot-legendary {
+    background-color: rgb(255, 200, 0);
+}
+
+.rarity-dot-rare {
+    background-color: rgb(100, 160, 255);
+}
+
+.rarity-dot-common {
+    background-color: rgb(170, 170, 170);
+}
+
+/* --- Validation --- */
+
+.validation-bar {
+    padding: 8px 12px;
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.08);
+    margin-bottom: 12px;
+    background-color: rgba(8, 12, 20, 0.3);
+}
+
+.validation-text {
+    font-size: 12px;
+    letter-spacing: 2px;
+    -unity-text-align: upper-center;
+}
+
+.validation-valid {
+    color: rgb(74, 222, 128);
+}
+
+.validation-invalid {
+    color: rgb(248, 113, 113);
+}
+
+/* --- Dekoracyjna linia sekcji --- */
+
+.section-divider {
+    height: 1px;
+    background-color: rgba(245, 158, 11, 0.08);
+    margin-top: 8px;
+    margin-bottom: 8px;
+}
+
+/* ============================================
+   DECK LIST
+   ============================================ */
+
+.deck-scroll {
+    flex-grow: 1;
+    margin-bottom: 16px;
+}
+
+.deck-list {
+    flex-direction: column;
+}
+
+/* Deck label nad list¹ */
+.deck-list-label {
+    font-size: 11px;
+    color: rgba(245, 158, 11, 0.35);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    -unity-text-align: upper-center;
+}
+
+/* Slot karty w decku */
+.deck-card-slot {
+    flex-direction: row;
+    align-items: center;
+    padding: 8px 12px;
+    margin-bottom: 4px;
+    background-color: rgba(12, 18, 30, 0.8);
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.08);
+    cursor: default;
+    transition-property: border-color, background-color;
+    transition-duration: 0.2s;
+}
+
+.deck-card-slot:hover {
+    border-color: rgba(248, 113, 113, 0.5);
+    background-color: rgba(248, 113, 113, 0.04);
+}
+
+/* Rarity accent na lewej krawêdzi */
+.deck-card-rarity-accent {
+    width: 3px;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+}
+
+.deck-card-rarity-accent-legendary {
+    background-color: rgba(255, 200, 0, 0.6);
+}
+
+.deck-card-rarity-accent-rare {
+    background-color: rgba(100, 160, 255, 0.6);
+}
+
+.deck-card-rarity-accent-common {
+    background-color: rgba(160, 160, 160, 0.3);
+}
+
+.deck-card-icon {
+    width: 32px;
+    height: 32px;
+    margin-right: 12px;
+    flex-shrink: 0;
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.deck-card-info {
+    flex-grow: 1;
+    flex-direction: column;
+}
+
+.deck-card-name {
+    font-size: 12px;
+    color: rgb(254, 243, 199);
+    letter-spacing: 1px;
+}
+
+.deck-card-rarity {
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+.deck-card-count {
+    font-size: 14px;
+    color: rgba(245, 158, 11, 0.5);
+    margin-left: 8px;
+    flex-shrink: 0;
+    -unity-font-style: bold;
+}
+
+.deck-card-remove-hint {
+    font-size: 10px;
+    color: rgba(248, 113, 113, 0.0);
+    margin-left: 6px;
+    transition-property: color;
+    transition-duration: 0.2s;
+}
+
+.deck-card-slot:hover .deck-card-remove-hint {
+    color: rgba(248, 113, 113, 0.7);
+}
+
+/* ============================================
+   PRZYCISKI AKCJI
+   ============================================ */
+
+.deck-actions {
+    flex-direction: row;
+    flex-wrap: wrap;
+    flex-shrink: 0;
+    border-top-width: 1px;
+    border-top-color: rgba(245, 158, 11, 0.06);
+    padding-top: 12px;
+}
+
+.btn-action {
+    background-color: rgba(0, 0, 0, 0);
+    border-width: 1px;
+    padding: 10px 14px;
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    cursor: default;
+    margin: 3px;
+    flex-grow: 1;
+    -unity-text-align: middle-center;
+    transition-property: color, border-color, background-color;
+    transition-duration: 0.2s;
+    border-radius: 0;
+}
+
+.btn-save {
+    border-color: rgba(74, 222, 128, 0.4);
+    color: rgb(74, 222, 128);
+}
+
+.btn-save:hover {
+    border-color: rgb(74, 222, 128);
+    background-color: rgba(74, 222, 128, 0.08);
+    color: rgb(74, 222, 128);
+}
+
+.btn-save:disabled {
+    opacity: 0.25;
+    border-color: rgba(100, 100, 100, 0.3);
+    color: rgb(100, 100, 100);
+}
+
+.btn-secondary {
+    border-color: rgba(245, 158, 11, 0.25);
+    color: rgba(245, 158, 11, 0.5);
+}
+
+.btn-secondary:hover {
+    border-color: rgb(245, 158, 11);
+    background-color: rgba(245, 158, 11, 0.06);
+    color: rgb(252, 211, 77);
+}
+
+.btn-danger {
+    border-color: rgba(248, 113, 113, 0.25);
+    color: rgba(248, 113, 113, 0.5);
+}
+
+.btn-danger:hover {
+    border-color: rgb(248, 113, 113);
+    background-color: rgba(248, 113, 113, 0.06);
+    color: rgb(248, 113, 113);
+}
+
+/* ============================================
+   POPUP (Load Deck)
+   ============================================ */
+
+.popup-overlay {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.75);
+    align-items: center;
+    justify-content: center;
+}
+
+.popup-box {
+    width: 420px;
+    max-height: 520px;
+    background-color: rgb(12, 18, 30);
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.25);
+    padding: 28px;
+    flex-direction: column;
+}
+
+/* Wewnêtrzna ramka popupa */
+.popup-inner-border {
+    position: absolute;
+    left: 8px;
+    top: 8px;
+    right: 8px;
+    bottom: 8px;
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.08);
+}
+
+.popup-title {
+    font-size: 20px;
+    color: rgb(254, 243, 199);
+    letter-spacing: 8px;
+    -unity-text-align: upper-center;
+    margin-bottom: 20px;
+}
+
+.popup-scroll {
+    flex-grow: 1;
+    margin-bottom: 16px;
+}
+
+.popup-list {
+    flex-direction: column;
+}
+
+.popup-deck-item {
+    padding: 12px 18px;
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.1);
+    margin-bottom: 6px;
+    cursor: default;
+    transition-property: border-color, background-color;
+    transition-duration: 0.2s;
+    flex-direction: row;
+    align-items: center;
+}
+
+.popup-deck-item:hover {
+    border-color: rgb(245, 158, 11);
+    background-color: rgba(245, 158, 11, 0.06);
+}
+
+.popup-deck-icon {
+    font-size: 14px;
+    color: rgba(245, 158, 11, 0.4);
+    margin-right: 12px;
+}
+
+.popup-deck-name {
+    font-size: 15px;
+    color: rgb(254, 243, 199);
+    letter-spacing: 3px;
+    flex-grow: 1;
+}
+
+.popup-deck-count {
+    font-size: 11px;
+    color: rgba(245, 158, 11, 0.4);
+    letter-spacing: 2px;
+}
+
+/* ============================================
+   EMPTY STATE
+   ============================================ */
+
+.empty-state {
+    flex-grow: 1;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+}
+
+.empty-state-icon {
+    font-size: 36px;
+    color: rgba(245, 158, 11, 0.15);
+    margin-bottom: 12px;
+}
+
+.empty-state-text {
+    font-size: 12px;
+    color: rgba(245, 158, 11, 0.25);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+}
+
+/* ============================================
+   HIDDEN
+   ============================================ */
+
+.hidden {
+    display: none;
+}

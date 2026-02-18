@@ -1,0 +1,81 @@
+/* ============================================
+   PLAYER GOLD HUD — ART DECO
+   Positioned top-center, overlays GameHUD
+   ============================================ */
+
+.gold-hud-root {
+    position: absolute;
+    top: 12px;
+    left: 50%;
+    translate: -50% 0;
+}
+
+.gold-panel {
+    flex-direction: row;
+    align-items: center;
+    padding: 8px 20px;
+    background-color: rgba(10, 15, 26, 0.88);
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.2);
+    overflow: hidden;
+}
+
+.gold-inner-border {
+    position: absolute;
+    left: 4px;
+    top: 4px;
+    right: 4px;
+    bottom: 4px;
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.06);
+}
+
+.gold-diamond-left {
+    width: 8px;
+    height: 8px;
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.3);
+    rotate: 45deg;
+    scale: 0.6 0.6;
+    margin-right: 12px;
+    background-color: rgba(245, 158, 11, 0.08);
+}
+
+.gold-diamond-right {
+    width: 8px;
+    height: 8px;
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.3);
+    rotate: 45deg;
+    scale: 0.6 0.6;
+    margin-left: 12px;
+    background-color: rgba(245, 158, 11, 0.08);
+}
+
+.gold-content {
+    flex-direction: row;
+    align-items: center;
+}
+
+.gold-value {
+    font-size: 18px;
+    color: rgb(251, 191, 36);
+    letter-spacing: 4px;
+    -unity-font-style: bold;
+    margin-right: 10px;
+    transition-property: color;
+    transition-duration: 0.3s;
+}
+
+.gold-divider {
+    width: 1px;
+    height: 16px;
+    background-color: rgba(245, 158, 11, 0.2);
+    margin-right: 10px;
+}
+
+.gold-label {
+    font-size: 9px;
+    color: rgba(251, 191, 36, 0.5);
+    letter-spacing: 4px;
+}

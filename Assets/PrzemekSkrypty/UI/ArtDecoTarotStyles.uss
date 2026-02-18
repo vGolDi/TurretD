@@ -1,0 +1,887 @@
+﻿/* ============================================
+   ROOT
+   ============================================ */
+
+.root-container {
+    flex-grow: 1;
+    width: 100%;
+    height: 100%;
+    background-color: rgb(10, 15, 25);
+    flex-direction: column;
+    align-items: stretch;
+    overflow: hidden;
+}
+
+/* ============================================
+   BACKGROUND
+   ============================================ */
+
+.background-layer {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    overflow: hidden;
+}
+
+.center-line-vertical {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    width: 1px;
+    height: 100%;
+    background-color: rgba(245, 158, 11, 0.08);
+    translate: -50% 0;
+}
+
+.center-line-horizontal {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background-color: rgba(245, 158, 11, 0.08);
+    translate: 0 -50%;
+}
+
+.radial-origin {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 0;
+    height: 0;
+    overflow: visible;
+}
+
+.radial-line {
+    position: absolute;
+    width: 1600px;
+    height: 1px;
+    left: -800px;
+    top: 0;
+    background-color: rgba(245, 158, 11, 0.06);
+    transform-origin: center center;
+}
+
+/* ============================================
+   NAROŻNIKI — PODWÓJNA RAMKA ART DECO
+   ============================================ */
+
+/* ============================================
+   NAROŻNIKI — SYMETRYCZNE LUSTRZANE ODBICIA
+   
+   Każdy narożnik ma:
+   1. Zewnętrzną ramkę L (pełna długość)
+   2. Wewnętrzną ramkę L (krótsza, przesunięta)
+   3. Dwa ticki (krótkie kreski dekoracyjne)
+   
+   Schemat (lewy górny):
+   
+   ╴──────────────
+   │ ┌──────────
+   │ │
+   │ │
+   │
+   │
+   ╷
+   
+   ============================================ */
+
+/* === GRUPA NAROŻNIKA === */
+
+.corner-group {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    overflow: visible;
+}
+
+.corner-group-tl { left: 12px;  top: 12px; }
+.corner-group-tr { right: 12px; top: 12px; }
+.corner-group-bl { left: 12px;  bottom: 12px; }
+.corner-group-br { right: 12px; bottom: 12px; }
+
+/* === LINIE POZIOME (wspólna baza) === */
+
+.corner-line-h {
+    position: absolute;
+    height: 1px;
+    background-color: rgba(245, 158, 11, 0.2);
+}
+
+/* Pełna szerokość — zewnętrzna */
+.corner-line-h-full {
+    width: 100%;
+}
+
+/* Pozycja: góra */
+.corner-line-h-top {
+    top: 0;
+    left: 0;
+}
+
+/* Pozycja: dół */
+.corner-line-h-bottom {
+    bottom: 0;
+    left: 0;
+}
+
+/* Wewnętrzna (krótsza) */
+.corner-line-h-inner {
+    width: 70%;
+    background-color: rgba(245, 158, 11, 0.15);
+}
+
+/* Wewnętrzna górna — zaczyna od lewej */
+.corner-line-h-inner-top {
+    top: 12px;
+    left: 12px;
+}
+
+/* Wewnętrzna dolna — zaczyna od lewej */
+.corner-line-h-inner-bottom {
+    bottom: 12px;
+    left: 12px;
+}
+
+/* Wewnętrzna od PRAWEJ strony (nadpisanie left) */
+.corner-line-h-inner-from-right {
+    left: auto;
+    right: 12px;
+}
+
+/* === LINIE PIONOWE (wspólna baza) === */
+
+.corner-line-v {
+    position: absolute;
+    width: 1px;
+    background-color: rgba(245, 158, 11, 0.2);
+}
+
+/* Pełna wysokość — zewnętrzna */
+.corner-line-v-full {
+    height: 100%;
+}
+
+/* Pozycja: lewa */
+.corner-line-v-left {
+    left: 0;
+    top: 0;
+}
+
+/* Pozycja: prawa */
+.corner-line-v-right {
+    right: 0;
+    top: 0;
+}
+
+/* Wewnętrzna (krótsza) */
+.corner-line-v-inner {
+    height: 70%;
+    background-color: rgba(245, 158, 11, 0.15);
+}
+
+/* Wewnętrzna lewa — zaczyna od góry */
+.corner-line-v-inner-left {
+    left: 12px;
+    top: 12px;
+}
+
+/* Wewnętrzna prawa — zaczyna od góry */
+.corner-line-v-inner-right {
+    right: 12px;
+    top: 12px;
+}
+
+/* Wewnętrzna lewa — zaczyna od DOŁU */
+.corner-line-v-inner-left-bottom {
+    left: 12px;
+    top: auto;
+    bottom: 12px;
+}
+
+/* Wewnętrzna prawa — zaczyna od DOŁU */
+.corner-line-v-inner-right-bottom {
+    right: 12px;
+    top: auto;
+    bottom: 12px;
+}
+
+/* ============================================
+   TICKI (krótkie kreski dekoracyjne)
+   
+   Każdy narożnik ma 2 ticki:
+   - Jeden na "otwartym" końcu poziomej krawędzi
+   - Jeden na "otwartym" końcu pionowej krawędzi
+   
+   Pozycje lustrzane dla każdego rogu:
+   
+   TL: tick-h na lewej ścianie (niżej), 
+       tick-v na górnej ścianie (w prawo)
+   TR: tick-h na prawej ścianie (niżej), 
+       tick-v na górnej ścianie (w lewo)
+   BL: tick-h na lewej ścianie (wyżej), 
+       tick-v na dolnej ścianie (w prawo)
+   BR: tick-h na prawej ścianie (wyżej), 
+       tick-v na dolnej ścianie (w lewo)
+   ============================================ */
+
+.corner-tick {
+    position: absolute;
+    background-color: rgba(245, 158, 11, 0.12);
+}
+
+/* === LEWY GÓRNY === */
+
+/* Tick poziomy: na lewej ścianie, przesunięty w dół */
+.corner-tick-h-left-lower {
+    left: 0;
+    top: 24px;
+    width: 18px;
+    height: 1px;
+}
+
+/* Tick pionowy: na górnej ścianie, przesunięty w prawo */
+.corner-tick-v-top-right {
+    left: 24px;
+    top: 0;
+    width: 1px;
+    height: 18px;
+}
+
+/* === PRAWY GÓRNY (lustrzany do TL) === */
+
+/* Tick poziomy: na prawej ścianie, przesunięty w dół */
+.corner-tick-h-right-lower {
+    right: 0;
+    top: 24px;
+    width: 18px;
+    height: 1px;
+}
+
+/* Tick pionowy: na górnej ścianie, przesunięty w lewo od prawej */
+.corner-tick-v-top-left {
+    right: 24px;
+    top: 0;
+    width: 1px;
+    height: 18px;
+}
+
+/* === LEWY DOLNY (lustrzany do TL pionowo) === */
+
+/* Tick poziomy: na lewej ścianie, przesunięty w GÓRĘ od dołu */
+.corner-tick-h-left-upper {
+    left: 0;
+    bottom: 24px;
+    width: 18px;
+    height: 1px;
+}
+
+/* Tick pionowy: na dolnej ścianie, przesunięty w prawo */
+.corner-tick-v-bottom-right {
+    left: 24px;
+    bottom: 0;
+    width: 1px;
+    height: 18px;
+}
+
+/* === PRAWY DOLNY (lustrzany do TL po obu osiach) === */
+
+/* Tick poziomy: na prawej ścianie, przesunięty w GÓRĘ od dołu */
+.corner-tick-h-right-upper {
+    right: 0;
+    bottom: 24px;
+    width: 18px;
+    height: 1px;
+}
+
+/* Tick pionowy: na dolnej ścianie, przesunięty w lewo od prawej */
+.corner-tick-v-bottom-left {
+    right: 24px;
+    bottom: 0;
+    width: 1px;
+    height: 18px;
+}
+/* ============================================
+   HEADER
+   ============================================ */
+
+.header {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 32px;
+    /* Odsuwamy od krawędzi żeby nie przysłaniać narożników */
+    padding-left: 35px;
+    padding-right: 35px;
+    padding-top: 35px;
+    flex-shrink: 0;
+}
+
+.player-info {
+    flex-direction: row;
+    align-items: center;
+}
+
+.level-hexagon {
+    width: 48px;
+    height: 48px;
+    align-items: center;
+    justify-content: center;
+    margin-right: 12px;
+}
+
+.hexagon-bg {
+    position: absolute;
+    width: 48px;
+    height: 48px;
+    background-color: rgba(245, 158, 11, 0.12);
+    border-radius: 6px;
+    rotate: 45deg;
+    scale: 0.75 0.75;
+}
+
+.hexagon-border {
+    position: absolute;
+    width: 48px;
+    height: 48px;
+    border-width: 1px;
+    border-color: rgb(245, 158, 11);
+    border-radius: 6px;
+    rotate: 45deg;
+    scale: 0.75 0.75;
+}
+
+.level-number {
+    color: rgb(254, 243, 199);
+    font-size: 14px;
+    -unity-font-style: bold;
+    letter-spacing: 1px;
+}
+
+.player-details {
+    flex-direction: column;
+}
+
+.player-name {
+    color: rgb(254, 243, 199);
+    font-size: 18px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+}
+
+.player-name-divider {
+    height: 1px;
+    width: 100%;
+    background-color: rgba(245, 158, 11, 0.3);
+    margin-top: 2px;
+    margin-bottom: 2px;
+}
+
+
+/* Resources */
+.resources {
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.resource-item {
+    flex-direction: row;
+    align-items: center;
+    padding: 8px 16px;
+    background-color: rgba(15, 23, 42, 0.5);
+    margin-bottom: 8px;
+    border-radius: 2px;
+    transition-property: background-color;
+    transition-duration: 0.2s;
+}
+
+.resource-item:hover {
+    background-color: rgba(30, 41, 59, 0.5);
+}
+
+.resource-gold {
+    border-right-width: 2px;
+    border-right-color: rgba(245, 158, 11, 0.5);
+}
+
+.resource-crystal {
+    border-right-width: 2px;
+    border-right-color: rgba(6, 182, 212, 0.5);
+}
+
+.resource-value {
+    font-size: 14px;
+    letter-spacing: 3px;
+}
+
+.gold-value {
+    color: rgb(251, 191, 36);
+}
+
+.crystal-value {
+    color: rgb(34, 211, 238);
+}
+
+.resource-divider {
+    width: 1px;
+    height: 16px;
+    margin-left: 12px;
+    margin-right: 12px;
+}
+
+.resource-divider-gold {
+    background-color: rgba(245, 158, 11, 0.3);
+}
+
+.resource-divider-crystal {
+    background-color: rgba(6, 182, 212, 0.3);
+}
+
+.resource-label {
+    font-size: 10px;
+    letter-spacing: 3px;
+    -unity-font-style: bold;
+    text-transform: uppercase;
+}
+
+.gold-label {
+    color: rgb(252, 211, 77);
+}
+
+.crystal-label {
+    color: rgb(103, 232, 249);
+}
+
+/* ============================================
+   MAIN CONTENT
+   ============================================ */
+
+.main-content {
+    flex-grow: 1;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: -250px;
+}
+
+/* Title */
+.title-section {
+    align-items: center;
+    margin-bottom: 80px;
+}
+
+.title-ornament-top {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 24px;
+}
+
+.ornament-line-left {
+    width: 64px;
+    height: 1px;
+    background-color: rgb(180, 83, 9);
+    margin-right: 8px;
+}
+
+.ornament-line-right {
+    width: 64px;
+    height: 1px;
+    background-color: rgb(180, 83, 9);
+    margin-left: 8px;
+}
+
+.ornament-symbol {
+    color: rgb(180, 83, 9);
+    font-size: 14px;
+    margin-left: 4px;
+    margin-right: 4px;
+}
+
+.ornament-star {
+    color: rgb(217, 119, 6);
+}
+
+.ornament-diamond {
+    width: 16px;
+    height: 16px;
+    border-width: 1px;
+    border-color: rgb(180, 83, 9);
+    rotate: 45deg;
+    margin-left: 4px;
+    margin-right: 4px;
+    scale: 0.7 0.7;
+}
+
+.game-title {
+    font-size: 48px;
+    color: rgb(254, 243, 199);
+    letter-spacing: 16px;
+    -unity-text-align: middle-center;
+}
+
+.game-subtitle {
+    font-size: 16px;
+    color: rgb(217, 119, 6);
+    letter-spacing: 12px;
+    -unity-text-align: middle-center;
+    margin-top: 8px;
+    text-transform: uppercase;
+}
+
+.title-ornament-bottom {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    margin-top: 24px;
+}
+
+.ornament-line-short {
+    width: 48px;
+    height: 1px;
+    background-color: rgb(120, 53, 15);
+}
+
+.ornament-bottom-symbols {
+    color: rgb(180, 83, 9);
+    font-size: 10px;
+    letter-spacing: 4px;
+    margin-left: 12px;
+    margin-right: 12px;
+}
+
+/* ============================================
+   TAROT CARDS
+   ============================================ */
+
+.cards-container {
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: center;
+    padding-left: 16px;
+    padding-right: 16px;
+}
+
+.tarot-card-wrapper {
+    margin-left: 8px;
+    margin-right: 8px;
+    transition-property: translate, scale;
+    transition-duration: 0.4s;
+    transition-timing-function: ease-out;
+    cursor: link;
+}
+
+/* Offset łukowy — stan normalny */
+.card-offset-0 { translate: 0 24px; }
+.card-offset-1 { translate: 0 12px; }
+.card-offset-2 { translate: 0 0; }
+.card-offset-3 { translate: 0 12px; }
+.card-offset-4 { translate: 0 24px; }
+
+/* Hover — karta unosi się */
+.card-offset-0:hover { translate: 0 -8px; scale: 1.03 1.03; }
+.card-offset-1:hover { translate: 0 -20px; scale: 1.03 1.03; }
+.card-offset-2:hover { translate: 0 -32px; scale: 1.03 1.03; }
+.card-offset-3:hover { translate: 0 -20px; scale: 1.03 1.03; }
+.card-offset-4:hover { translate: 0 -8px; scale: 1.03 1.03; }
+
+.tarot-card {
+    width: 160px;
+    height: 256px;
+    background-color: rgb(12, 18, 30);
+    border-width: 1px;
+    border-color: rgba(146, 64, 14, 0.5);
+    overflow: hidden;
+    transition-property: border-color;
+    transition-duration: 0.3s;
+    align-items: stretch;
+    justify-content: space-between;
+}
+
+.tarot-card-wrapper:hover .tarot-card {
+    border-color: rgb(245, 158, 11);
+}
+
+/* Wybrana karta */
+.card-selected .tarot-card {
+    border-color: rgb(252, 211, 77);
+    border-width: 2px;
+}
+
+.card-inner-border {
+    position: absolute;
+    left: 8px;
+    top: 8px;
+    right: 8px;
+    bottom: 8px;
+    border-width: 1px;
+    border-color: rgba(120, 53, 15, 0.3);
+    transition-property: border-color;
+    transition-duration: 0.3s;
+}
+
+.tarot-card-wrapper:hover .card-inner-border {
+    border-color: rgba(217, 119, 6, 0.5);
+}
+
+/* Narożniki karty */
+.card-corner {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border-color: rgb(146, 64, 14);
+    transition-property: border-color;
+    transition-duration: 0.3s;
+}
+
+.tarot-card-wrapper:hover .card-corner {
+    border-color: rgb(245, 158, 11);
+}
+
+.card-corner-tl { left: 12px; top: 12px; border-left-width: 1px; border-top-width: 1px; }
+.card-corner-tr { right: 12px; top: 12px; border-right-width: 1px; border-top-width: 1px; }
+.card-corner-bl { left: 12px; bottom: 12px; border-left-width: 1px; border-bottom-width: 1px; }
+.card-corner-br { right: 12px; bottom: 12px; border-right-width: 1px; border-bottom-width: 1px; }
+
+/* Numer rzymski */
+.card-numeral {
+    -unity-text-align: upper-center;
+    color: rgb(180, 83, 9);
+    font-size: 12px;
+    letter-spacing: 5px;
+    margin-top: 16px;
+    transition-property: color;
+    transition-duration: 0.3s;
+}
+
+.tarot-card-wrapper:hover .card-numeral {
+    color: rgb(245, 158, 11);
+}
+
+/* Ikona */
+.card-icon-container {
+    align-items: center;
+    justify-content: center;
+    flex-grow: 1;
+}
+
+.card-icon-glow {
+    position: absolute;
+    width: 80px;
+    height: 80px;
+    border-radius: 40px;
+    background-color: rgba(245, 158, 11, 0.0);
+    transition-property: background-color;
+    transition-duration: 0.4s;
+}
+
+.tarot-card-wrapper:hover .card-icon-glow {
+    background-color: rgba(245, 158, 11, 0.15);
+}
+
+.card-icon {
+    font-size: 48px;
+    color: rgb(180, 83, 9);
+    -unity-text-align: middle-center;
+    transition-property: color;
+    transition-duration: 0.3s;
+}
+
+.tarot-card-wrapper:hover .card-icon {
+    color: rgb(251, 191, 36);
+}
+
+/* Etykiety */
+.card-label-container {
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.card-title-text {
+    color: rgb(217, 119, 6);
+    font-size: 10px;
+    letter-spacing: 2px;
+    -unity-text-align: upper-center;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+    transition-property: color;
+    transition-duration: 0.3s;
+}
+
+.tarot-card-wrapper:hover .card-title-text {
+    color: rgb(252, 211, 77);
+}
+
+.card-name-text {
+    color: rgb(100, 116, 139);
+    font-size: 8px;
+    letter-spacing: 3px;
+    -unity-text-align: upper-center;
+    text-transform: uppercase;
+    transition-property: color;
+    transition-duration: 0.3s;
+}
+
+.tarot-card-wrapper:hover .card-name-text {
+    color: rgba(253, 230, 138, 0.6);
+}
+
+/* Hover line */
+.card-hover-line {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background-color: rgb(245, 158, 11);
+    translate: -50% 0;
+    transition-property: width;
+    transition-duration: 0.3s;
+}
+
+.tarot-card-wrapper:hover .card-hover-line {
+    width: 50%;
+}
+
+/* ============================================
+   BOTTOM MENU
+   ============================================ */
+
+.bottom-menu {
+    position: absolute;
+    bottom: 32px;
+    left: 0;
+    right: 0;
+    align-items: center;
+    justify-content: center;
+}
+
+.bottom-menu-inner {
+    flex-direction: row;
+    align-items: center;
+    padding: 16px 48px;
+    background-color: rgba(15, 23, 42, 0.7);
+    border-top-width: 1px;
+    border-bottom-width: 1px;
+    border-color: rgba(245, 158, 11, 0.1);
+}
+
+.bottom-menu-button {
+    background-color: rgba(0, 0, 0, 0);
+    border-width: 0;
+    color: rgba(245, 158, 11, 0.4);
+    font-size: 11px;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    margin-left: 32px;
+    margin-right: 32px;
+    padding: 8px 4px;
+    cursor: link;
+    transition-property: color, scale;
+    transition-duration: 0.2s;
+}
+
+.bottom-menu-button:hover {
+    color: rgb(252, 211, 77);
+    scale: 1.1 1.1;
+    background-color: rgba(0, 0, 0, 0);
+}
+
+.bottom-menu-button:active {
+    color: rgb(254, 243, 199);
+    background-color: rgba(0, 0, 0, 0);
+}
+
+/* ============================================
+   VERSION
+   ============================================ */
+
+.version-container {
+    position: absolute;
+    bottom: 8px;
+    right: 16px;
+}
+
+.version-text {
+    color: rgba(100, 116, 139, 0.4);
+    font-size: 10px;
+    letter-spacing: 2px;
+}
+
+/* ============================================
+   VISIBILITY TOGGLE (używane przez C#)
+   ============================================ */
+
+.hidden {
+    display: none;
+}
+.xp-bar-section {
+    flex-direction: row;
+    align-items: center;
+    margin-top: 8px;
+    margin-left: 60px;
+}
+
+.xp-bar-bg {
+    width: 120px;
+    height: 4px;
+    background-color: rgba(245, 158, 11, 0.15);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-right: 8px;
+}
+
+.xp-bar-fill {
+    height: 100%;
+    width: 0%;
+    background-color: rgb(245, 158, 11);
+    border-radius: 2px;
+    transition-property: width;
+    transition-duration: 0.5s;
+    transition-timing-function: ease-out;
+}
+
+.xp-text {
+    color: rgba(245, 158, 11, 0.5);
+    font-size: 9px;
+    letter-spacing: 2px;
+}
+
+/* ============================================
+   PLAYER RANK / ELO w headerze
+   ============================================ */
+
+.player-rank {
+    font-size: 10px;
+    letter-spacing: 4px;
+    color: rgba(180, 130, 80, 0.6);
+    text-transform: uppercase;
+}
+
+.player-rank-row {
+    flex-direction: row;
+    align-items: center;
+    margin-top: 2px;
+}
+
+.player-elo-rank {
+    font-size: 9px;
+    letter-spacing: 3px;
+    color: rgba(200, 200, 200, 0.5);
+}
+
+.rank-separator {
+    width: 1px;
+    height: 10px;
+    background-color: rgba(245, 158, 11, 0.15);
+    margin-left: 8px;
+    margin-right: 8px;
+}
+
+.player-elo-value {
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: rgba(200, 200, 200, 0.35);
+}

@@ -1,0 +1,704 @@
+/* ============================================
+   LOGIN SCREEN — ART DECO CEREMONIAL GATE
+   ============================================ */
+
+/* ============================================
+   ROOT
+   ============================================ */
+
+.login-root {
+    flex-grow: 1;
+    width: 100%;
+    height: 100%;
+    background-color: rgb(8, 12, 22);
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+/* ============================================
+   BACKGROUND LAYER
+   ============================================ */
+
+.bg-layer {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    overflow: hidden;
+}
+
+/* Radial lines */
+.bg-radial-origin {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 0;
+    height: 0;
+    overflow: visible;
+}
+
+.bg-radial-line {
+    position: absolute;
+    width: 2000px;
+    height: 1px;
+    left: -1000px;
+    top: 0;
+    background-color: rgba(245, 158, 11, 0.04);
+    transform-origin: center center;
+}
+
+/* Central cross */
+.bg-cross-v {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    width: 1px;
+    height: 100%;
+    background-color: rgba(245, 158, 11, 0.06);
+    translate: -50% 0;
+}
+
+.bg-cross-h {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background-color: rgba(245, 158, 11, 0.06);
+    translate: 0 -50%;
+}
+
+/* ============================================
+   CORNERS
+   ============================================ */
+
+.login-corner {
+    position: absolute;
+    width: 80px;
+    height: 80px;
+    overflow: visible;
+}
+
+.login-corner-tl { left: 16px; top: 16px; }
+.login-corner-tr { right: 16px; top: 16px; }
+.login-corner-bl { left: 16px; bottom: 16px; }
+.login-corner-br { right: 16px; bottom: 16px; }
+
+/* TL corner lines */
+.login-corner-tl .corner-h {
+    position: absolute; top: 0; left: 0;
+    width: 100%; height: 1px;
+    background-color: rgba(245, 158, 11, 0.18);
+}
+.login-corner-tl .corner-v {
+    position: absolute; top: 0; left: 0;
+    width: 1px; height: 100%;
+    background-color: rgba(245, 158, 11, 0.18);
+}
+.login-corner-tl .corner-h-inner {
+    position: absolute; top: 10px; left: 10px;
+    width: 60%; height: 1px;
+    background-color: rgba(245, 158, 11, 0.1);
+}
+.login-corner-tl .corner-v-inner {
+    position: absolute; top: 10px; left: 10px;
+    width: 1px; height: 60%;
+    background-color: rgba(245, 158, 11, 0.1);
+}
+.login-corner-tl .corner-tick-h {
+    position: absolute; top: 20px; left: 0;
+    width: 14px; height: 1px;
+    background-color: rgba(245, 158, 11, 0.08);
+}
+.login-corner-tl .corner-tick-v {
+    position: absolute; top: 0; left: 20px;
+    width: 1px; height: 14px;
+    background-color: rgba(245, 158, 11, 0.08);
+}
+
+/* TR corner lines */
+.login-corner-tr .corner-h {
+    position: absolute; top: 0; right: 0;
+    width: 100%; height: 1px;
+    background-color: rgba(245, 158, 11, 0.18);
+}
+.login-corner-tr .corner-v {
+    position: absolute; top: 0; right: 0;
+    width: 1px; height: 100%;
+    background-color: rgba(245, 158, 11, 0.18);
+}
+.login-corner-tr .corner-h-inner {
+    position: absolute; top: 10px; right: 10px;
+    width: 60%; height: 1px;
+    background-color: rgba(245, 158, 11, 0.1);
+}
+.login-corner-tr .corner-v-inner {
+    position: absolute; top: 10px; right: 10px;
+    width: 1px; height: 60%;
+    background-color: rgba(245, 158, 11, 0.1);
+}
+.login-corner-tr .corner-tick-h {
+    position: absolute; top: 20px; right: 0;
+    width: 14px; height: 1px;
+    background-color: rgba(245, 158, 11, 0.08);
+}
+.login-corner-tr .corner-tick-v {
+    position: absolute; top: 0; right: 20px;
+    width: 1px; height: 14px;
+    background-color: rgba(245, 158, 11, 0.08);
+}
+
+/* BL corner lines */
+.login-corner-bl .corner-h {
+    position: absolute; bottom: 0; left: 0;
+    width: 100%; height: 1px;
+    background-color: rgba(245, 158, 11, 0.18);
+}
+.login-corner-bl .corner-v {
+    position: absolute; bottom: 0; left: 0;
+    width: 1px; height: 100%;
+    background-color: rgba(245, 158, 11, 0.18);
+}
+.login-corner-bl .corner-h-inner {
+    position: absolute; bottom: 10px; left: 10px;
+    width: 60%; height: 1px;
+    background-color: rgba(245, 158, 11, 0.1);
+}
+.login-corner-bl .corner-v-inner {
+    position: absolute; bottom: 10px; left: 10px;
+    width: 1px; height: 60%;
+    background-color: rgba(245, 158, 11, 0.1);
+}
+.login-corner-bl .corner-tick-h {
+    position: absolute; bottom: 20px; left: 0;
+    width: 14px; height: 1px;
+    background-color: rgba(245, 158, 11, 0.08);
+}
+.login-corner-bl .corner-tick-v {
+    position: absolute; bottom: 0; left: 20px;
+    width: 1px; height: 14px;
+    background-color: rgba(245, 158, 11, 0.08);
+}
+
+/* BR corner lines */
+.login-corner-br .corner-h {
+    position: absolute; bottom: 0; right: 0;
+    width: 100%; height: 1px;
+    background-color: rgba(245, 158, 11, 0.18);
+}
+.login-corner-br .corner-v {
+    position: absolute; bottom: 0; right: 0;
+    width: 1px; height: 100%;
+    background-color: rgba(245, 158, 11, 0.18);
+}
+.login-corner-br .corner-h-inner {
+    position: absolute; bottom: 10px; right: 10px;
+    width: 60%; height: 1px;
+    background-color: rgba(245, 158, 11, 0.1);
+}
+.login-corner-br .corner-v-inner {
+    position: absolute; bottom: 10px; right: 10px;
+    width: 1px; height: 60%;
+    background-color: rgba(245, 158, 11, 0.1);
+}
+.login-corner-br .corner-tick-h {
+    position: absolute; bottom: 20px; right: 0;
+    width: 14px; height: 1px;
+    background-color: rgba(245, 158, 11, 0.08);
+}
+.login-corner-br .corner-tick-v {
+    position: absolute; bottom: 0; right: 20px;
+    width: 1px; height: 14px;
+    background-color: rgba(245, 158, 11, 0.08);
+}
+
+/* Side lines */
+.side-line-left {
+    position: absolute;
+    left: 16px;
+    top: 28%;
+    bottom: 28%;
+    width: 1px;
+    background-color: rgba(245, 158, 11, 0.04);
+}
+
+.side-line-right {
+    position: absolute;
+    right: 16px;
+    top: 28%;
+    bottom: 28%;
+    width: 1px;
+    background-color: rgba(245, 158, 11, 0.04);
+}
+
+.side-tick-left {
+    position: absolute;
+    left: 16px;
+    width: 20px;
+    height: 1px;
+    background-color: rgba(245, 158, 11, 0.06);
+}
+
+.side-tick-right {
+    position: absolute;
+    right: 16px;
+    width: 20px;
+    height: 1px;
+    background-color: rgba(245, 158, 11, 0.06);
+}
+
+/* ============================================
+   CENTER LAYOUT
+   ============================================ */
+
+.login-center {
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: 40px;
+}
+
+/* ============================================
+   ORNAMENTS
+   ============================================ */
+
+.ornament-row {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    width: 480px;
+    margin-bottom: 32px;
+}
+
+.ornament-row-small {
+    width: 200px;
+    margin-bottom: 16px;
+    margin-top: 12px;
+}
+
+.ornament-row-bottom {
+    margin-bottom: 0;
+    margin-top: 32px;
+}
+
+.ornament-line-l {
+    flex-grow: 1;
+    height: 1px;
+    background-color: rgba(245, 158, 11, 0.2);
+    margin-right: 8px;
+}
+
+.ornament-line-r {
+    flex-grow: 1;
+    height: 1px;
+    background-color: rgba(245, 158, 11, 0.2);
+    margin-left: 8px;
+}
+
+.ornament-line-m {
+    width: 40px;
+    height: 1px;
+    background-color: rgba(245, 158, 11, 0.15);
+    margin-left: 4px;
+    margin-right: 4px;
+}
+
+.ornament-line-short {
+    width: 50px;
+    height: 1px;
+    background-color: rgba(245, 158, 11, 0.12);
+    margin-left: 6px;
+    margin-right: 6px;
+}
+
+.ornament-diamond {
+    width: 12px;
+    height: 12px;
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.35);
+    rotate: 45deg;
+    scale: 0.7 0.7;
+}
+
+.ornament-diamond-filled {
+    background-color: rgba(245, 158, 11, 0.12);
+    border-color: rgba(245, 158, 11, 0.5);
+    width: 16px;
+    height: 16px;
+}
+
+.ornament-diamond-tiny {
+    width: 10px;
+    height: 10px;
+    background-color: rgba(180, 83, 9, 0.2);
+    border-color: rgba(180, 83, 9, 0.5);
+}
+
+/* ============================================
+   TITLE
+   ============================================ */
+
+.login-title {
+    font-size: 56px;
+    color: rgb(254, 243, 199);
+    letter-spacing: 20px;
+    -unity-text-align: middle-center;
+    margin-bottom: 4px;
+}
+
+.login-subtitle {
+    font-size: 18px;
+    color: rgb(217, 119, 6);
+    letter-spacing: 16px;
+    -unity-text-align: middle-center;
+}
+
+.login-gate-text {
+    font-size: 10px;
+    color: rgba(245, 158, 11, 0.3);
+    letter-spacing: 8px;
+    -unity-text-align: middle-center;
+    margin-bottom: 28px;
+}
+
+/* ============================================
+   LOGIN CARD
+   ============================================ */
+
+.login-card {
+    width: 420px;
+    background-color: rgb(10, 15, 26);
+    border-width: 1px;
+    border-color: rgba(146, 64, 14, 0.45);
+    padding: 36px 40px;
+    align-items: center;
+    overflow: hidden;
+    transition-property: border-color;
+    transition-duration: 0.4s;
+}
+
+.login-card:hover {
+    border-color: rgba(245, 158, 11, 0.5);
+}
+
+/* Inner border */
+.login-card-inner-border {
+    position: absolute;
+    left: 10px;
+    top: 10px;
+    right: 10px;
+    bottom: 10px;
+    border-width: 1px;
+    border-color: rgba(120, 53, 15, 0.15);
+    transition-property: border-color;
+    transition-duration: 0.4s;
+}
+
+.login-card:hover .login-card-inner-border {
+    border-color: rgba(217, 119, 6, 0.2);
+}
+
+/* Card corners */
+.lc-corner {
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    border-color: rgba(146, 64, 14, 0.4);
+    transition-property: border-color;
+    transition-duration: 0.3s;
+}
+
+.login-card:hover .lc-corner {
+    border-color: rgb(245, 158, 11);
+}
+
+.lc-corner-tl { left: 14px; top: 14px; border-left-width: 1px; border-top-width: 1px; }
+.lc-corner-tr { right: 14px; top: 14px; border-right-width: 1px; border-top-width: 1px; }
+.lc-corner-bl { left: 14px; bottom: 14px; border-left-width: 1px; border-bottom-width: 1px; }
+.lc-corner-br { right: 14px; bottom: 14px; border-right-width: 1px; border-bottom-width: 1px; }
+
+/* Sigil */
+.login-card-sigil {
+    font-size: 28px;
+    color: rgba(180, 83, 9, 0.4);
+    -unity-text-align: middle-center;
+    margin-bottom: 20px;
+    transition-property: color;
+    transition-duration: 0.3s;
+}
+
+.login-card:hover .login-card-sigil {
+    color: rgba(245, 158, 11, 0.6);
+}
+
+/* ============================================
+   TABS
+   ============================================ */
+
+.login-tabs {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.login-tab {
+    padding: 8px 24px;
+    align-items: center;
+    cursor: link;
+    transition-property: opacity;
+    transition-duration: 0.2s;
+}
+
+.login-tab-text {
+    font-size: 11px;
+    color: rgba(245, 158, 11, 0.35);
+    letter-spacing: 5px;
+    transition-property: color;
+    transition-duration: 0.2s;
+}
+
+.login-tab:hover .login-tab-text {
+    color: rgba(245, 158, 11, 0.7);
+}
+
+.login-tab-active .login-tab-text {
+    color: rgb(254, 243, 199);
+}
+
+.login-tab-line {
+    width: 0;
+    height: 2px;
+    background-color: rgb(245, 158, 11);
+    margin-top: 6px;
+    transition-property: width;
+    transition-duration: 0.3s;
+}
+
+.login-tab-active .login-tab-line {
+    width: 100%;
+}
+
+.login-tab:hover .login-tab-line {
+    width: 60%;
+}
+
+.login-tab-separator {
+    width: 1px;
+    height: 20px;
+    background-color: rgba(245, 158, 11, 0.1);
+    margin-left: 8px;
+    margin-right: 8px;
+}
+
+/* ============================================
+   DIVIDER
+   ============================================ */
+
+.login-divider {
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 24px;
+}
+
+.login-divider-line {
+    flex-grow: 1;
+    height: 1px;
+    background-color: rgba(245, 158, 11, 0.08);
+}
+
+.login-divider-diamond {
+    width: 8px;
+    height: 8px;
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.2);
+    rotate: 45deg;
+    scale: 0.7 0.7;
+    margin: 0 8px;
+}
+
+/* ============================================
+   INPUT FIELDS
+   ============================================ */
+
+.login-fields {
+    width: 100%;
+    margin-bottom: 8px;
+}
+
+.login-field-group {
+    margin-bottom: 16px;
+}
+
+.login-field-label {
+    font-size: 9px;
+    color: rgba(245, 158, 11, 0.4);
+    letter-spacing: 5px;
+    margin-bottom: 8px;
+    margin-left: 2px;
+}
+
+.login-input {
+    width: 100%;
+}
+
+.login-input .unity-label {
+    display: none;
+}
+
+.login-input .unity-base-text-field__input {
+    background-color: rgba(12, 18, 32, 0.9);
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.15);
+    border-radius: 0;
+    color: rgb(254, 243, 199);
+    font-size: 15px;
+    letter-spacing: 2px;
+    padding: 12px 16px;
+    transition-property: border-color, background-color;
+    transition-duration: 0.25s;
+    -unity-font-style: normal;
+}
+
+.login-input .unity-base-text-field__input:hover {
+    border-color: rgba(245, 158, 11, 0.35);
+    background-color: rgba(15, 22, 38, 0.9);
+}
+
+.login-input .unity-base-text-field__input:focus {
+    border-color: rgb(245, 158, 11);
+    background-color: rgba(18, 26, 42, 0.95);
+}
+
+/* Focus accent — bottom glow line */
+.login-input-focus-line {
+    width: 0;
+    height: 2px;
+    background-color: rgb(245, 158, 11);
+    align-self: center;
+    transition-property: width;
+    transition-duration: 0.3s;
+}
+
+/* ============================================
+   MESSAGE
+   ============================================ */
+
+.login-message-container {
+    width: 100%;
+    min-height: 28px;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 12px;
+}
+
+.login-message {
+    font-size: 11px;
+    letter-spacing: 2px;
+    -unity-text-align: middle-center;
+    color: rgba(200, 210, 220, 0.5);
+    transition-property: color;
+    transition-duration: 0.3s;
+}
+
+.login-message-success {
+    color: rgb(74, 222, 128);
+}
+
+.login-message-error {
+    color: rgb(248, 113, 113);
+}
+
+.login-message-loading {
+    color: rgba(245, 158, 11, 0.6);
+}
+
+/* ============================================
+   BUTTON
+   ============================================ */
+
+.login-buttons {
+    width: 100%;
+    align-items: center;
+}
+
+.login-btn-primary {
+    width: 100%;
+    background-color: rgba(245, 158, 11, 0.08);
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.4);
+    border-radius: 0;
+    color: rgb(254, 243, 199);
+    font-size: 14px;
+    letter-spacing: 8px;
+    padding: 14px 24px;
+    transition-property: background-color, border-color, color, scale;
+    transition-duration: 0.25s;
+    cursor: link;
+}
+
+.login-btn-primary:hover {
+    background-color: rgba(245, 158, 11, 0.15);
+    border-color: rgb(245, 158, 11);
+    color: rgb(252, 211, 77);
+    scale: 1.02 1.02;
+}
+
+.login-btn-primary:active {
+    background-color: rgba(245, 158, 11, 0.25);
+    scale: 0.98 0.98;
+}
+
+.login-btn-primary:disabled {
+    opacity: 0.3;
+    background-color: rgba(0, 0, 0, 0);
+    border-color: rgba(100, 100, 100, 0.3);
+    color: rgb(100, 100, 100);
+}
+
+/* ============================================
+   BOTTOM ACCENT
+   ============================================ */
+
+.login-card-bottom-accent {
+    position: absolute;
+    bottom: 0;
+    left: 25%;
+    right: 25%;
+    height: 2px;
+    background-color: rgba(245, 158, 11, 0);
+    transition-property: background-color;
+    transition-duration: 0.4s;
+}
+
+.login-card:hover .login-card-bottom-accent {
+    background-color: rgba(245, 158, 11, 0.4);
+}
+
+/* ============================================
+   VERSION
+   ============================================ */
+
+.login-version-container {
+    position: absolute;
+    bottom: 10px;
+    right: 20px;
+}
+
+.login-version {
+    font-size: 10px;
+    color: rgba(100, 116, 139, 0.35);
+    letter-spacing: 2px;
+}
+
+/* ============================================
+   HIDDEN
+   ============================================ */
+
+.hidden {
+    display: none;
+}

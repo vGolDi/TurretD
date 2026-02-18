@@ -1,0 +1,73 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
+    <Style src="PreGameStyles.uss" />
+
+    <ui:VisualElement name="pregame-root" class="pregame-root">
+
+        <!-- BACKGROUND -->
+        <ui:VisualElement picking-mode="Ignore" class="bg-layer">
+            <ui:VisualElement picking-mode="Ignore" class="bg-cross-v" />
+            <ui:VisualElement picking-mode="Ignore" class="bg-cross-h" />
+            <ui:VisualElement picking-mode="Ignore" class="bg-radial-origin">
+                <ui:VisualElement picking-mode="Ignore" class="bg-radial-line" style="rotate: 0;" />
+                <ui:VisualElement picking-mode="Ignore" class="bg-radial-line" style="rotate: 45deg;" />
+                <ui:VisualElement picking-mode="Ignore" class="bg-radial-line" style="rotate: 90deg;" />
+                <ui:VisualElement picking-mode="Ignore" class="bg-radial-line" style="rotate: 135deg;" />
+            </ui:VisualElement>
+            <ui:VisualElement picking-mode="Ignore" class="pg-corner pg-corner-tl" />
+            <ui:VisualElement picking-mode="Ignore" class="pg-corner pg-corner-tr" />
+            <ui:VisualElement picking-mode="Ignore" class="pg-corner pg-corner-bl" />
+            <ui:VisualElement picking-mode="Ignore" class="pg-corner pg-corner-br" />
+        </ui:VisualElement>
+
+        <!-- CENTER -->
+        <ui:VisualElement class="pregame-center">
+
+            <ui:VisualElement class="ornament-row">
+                <ui:VisualElement class="ornament-line-l" />
+                <ui:VisualElement class="ornament-diamond ornament-diamond-filled" />
+                <ui:VisualElement class="ornament-line-r" />
+            </ui:VisualElement>
+
+            <ui:Label text="PREPARE FOR BATTLE" class="pregame-title" />
+
+            <!-- ARENA INFO -->
+            <ui:VisualElement class="arena-badge">
+                <ui:VisualElement class="arena-badge-diamond" />
+                <ui:Label name="arena-type" text="FIRE ARENA" class="arena-badge-text" />
+                <ui:VisualElement class="arena-badge-diamond" />
+            </ui:VisualElement>
+
+            <!-- TIMER -->
+            <ui:VisualElement class="timer-section">
+                <ui:Label text="SELECT YOUR DECK" class="timer-label" />
+                <ui:Label name="pregame-timer" text="10" class="timer-value" />
+            </ui:VisualElement>
+
+            <!-- DECK SELECTION -->
+            <ui:VisualElement class="deck-selection-card">
+                <ui:VisualElement class="deck-sel-inner-border" />
+                <ui:VisualElement class="ds-corner ds-corner-tl" />
+                <ui:VisualElement class="ds-corner ds-corner-tr" />
+                <ui:VisualElement class="ds-corner ds-corner-bl" />
+                <ui:VisualElement class="ds-corner ds-corner-br" />
+
+                <ui:ScrollView class="deck-sel-scroll">
+                    <ui:VisualElement name="deck-selection-list" class="deck-sel-list" />
+                </ui:ScrollView>
+            </ui:VisualElement>
+
+            <!-- WAITING MESSAGE -->
+            <ui:VisualElement name="waiting-section" class="waiting-section hidden">
+                <ui:VisualElement class="waiting-dot" />
+                <ui:Label name="waiting-text" text="WAITING FOR OPPONENT..." class="waiting-text" />
+            </ui:VisualElement>
+
+            <ui:VisualElement class="ornament-row ornament-row-bottom">
+                <ui:VisualElement class="ornament-line-l" />
+                <ui:VisualElement class="ornament-diamond ornament-diamond-filled" />
+                <ui:VisualElement class="ornament-line-r" />
+            </ui:VisualElement>
+
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

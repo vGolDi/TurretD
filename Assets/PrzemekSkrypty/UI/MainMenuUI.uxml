@@ -1,0 +1,218 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/PrzemekSkrypty/ArtDecoTarotStyles.uss?fileID=7433441132597879392&amp;guid=17c73670a0fc85b459529b40aa4fd665&amp;type=3#ArtDecoTarotStyles" />
+    <ui:VisualElement name="root-container" class="root-container">
+        <ui:VisualElement name="background-layer" picking-mode="Ignore" class="background-layer">
+            <ui:VisualElement picking-mode="Ignore" class="center-line-vertical" />
+            <ui:VisualElement picking-mode="Ignore" class="center-line-horizontal" />
+            <ui:VisualElement name="radial-origin" picking-mode="Ignore" class="radial-origin">
+                <ui:VisualElement picking-mode="Ignore" class="radial-line" style="rotate: 0;" />
+                <ui:VisualElement picking-mode="Ignore" class="radial-line" style="rotate: 30deg;" />
+                <ui:VisualElement picking-mode="Ignore" class="radial-line" style="rotate: 60deg;" />
+                <ui:VisualElement picking-mode="Ignore" class="radial-line" style="rotate: 90deg;" />
+                <ui:VisualElement picking-mode="Ignore" class="radial-line" style="rotate: 120deg;" />
+                <ui:VisualElement picking-mode="Ignore" class="radial-line" style="rotate: 150deg;" />
+                <ui:VisualElement picking-mode="Ignore" class="radial-line" style="rotate: 180deg;" />
+                <ui:VisualElement picking-mode="Ignore" class="radial-line" style="rotate: 210deg;" />
+                <ui:VisualElement picking-mode="Ignore" class="radial-line" style="rotate: 240deg;" />
+                <ui:VisualElement picking-mode="Ignore" class="radial-line" style="rotate: 270deg;" />
+                <ui:VisualElement picking-mode="Ignore" class="radial-line" style="rotate: 300deg;" />
+                <ui:VisualElement picking-mode="Ignore" class="radial-line" style="rotate: 330deg;" />
+            </ui:VisualElement>
+            <ui:VisualElement picking-mode="Ignore" class="corner-group corner-group-tl">
+                <ui:VisualElement class="corner-line-h corner-line-h-top corner-line-h-full" />
+                <ui:VisualElement class="corner-line-v corner-line-v-left corner-line-v-full" />
+                <ui:VisualElement class="corner-line-h corner-line-h-inner-top corner-line-h-inner" />
+                <ui:VisualElement class="corner-line-v corner-line-v-inner-left corner-line-v-inner" />
+                <ui:VisualElement class="corner-tick corner-tick-h-left-lower" />
+                <ui:VisualElement class="corner-tick corner-tick-v-top-right" />
+            </ui:VisualElement>
+            <ui:VisualElement picking-mode="Ignore" class="corner-group corner-group-tr">
+                <ui:VisualElement class="corner-line-h corner-line-h-top corner-line-h-full" />
+                <ui:VisualElement class="corner-line-v corner-line-v-right corner-line-v-full" />
+                <ui:VisualElement class="corner-line-h corner-line-h-inner-top corner-line-h-inner corner-line-h-inner-from-right" />
+                <ui:VisualElement class="corner-line-v corner-line-v-inner-right corner-line-v-inner" />
+                <ui:VisualElement class="corner-tick corner-tick-h-right-lower" />
+                <ui:VisualElement class="corner-tick corner-tick-v-top-left" />
+            </ui:VisualElement>
+            <ui:VisualElement picking-mode="Ignore" class="corner-group corner-group-bl">
+                <ui:VisualElement class="corner-line-h corner-line-h-bottom corner-line-h-full" />
+                <ui:VisualElement class="corner-line-v corner-line-v-left corner-line-v-full" />
+                <ui:VisualElement class="corner-line-h corner-line-h-inner-bottom corner-line-h-inner" />
+                <ui:VisualElement class="corner-line-v corner-line-v-inner-left-bottom corner-line-v-inner" />
+                <ui:VisualElement class="corner-tick corner-tick-h-left-upper" />
+                <ui:VisualElement class="corner-tick corner-tick-v-bottom-right" />
+            </ui:VisualElement>
+            <ui:VisualElement picking-mode="Ignore" class="corner-group corner-group-br">
+                <ui:VisualElement class="corner-line-h corner-line-h-bottom corner-line-h-full" />
+                <ui:VisualElement class="corner-line-v corner-line-v-right corner-line-v-full" />
+                <ui:VisualElement class="corner-line-h corner-line-h-inner-bottom corner-line-h-inner corner-line-h-inner-from-right" />
+                <ui:VisualElement class="corner-line-v corner-line-v-inner-right-bottom corner-line-v-inner" />
+                <ui:VisualElement class="corner-tick corner-tick-h-right-upper" />
+                <ui:VisualElement class="corner-tick corner-tick-v-bottom-left" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:VisualElement name="header" class="header">
+            <ui:VisualElement class="player-info">
+                <ui:VisualElement name="level-hexagon" class="level-hexagon">
+                    <ui:VisualElement name="hexagon-bg" class="hexagon-bg" />
+                    <ui:VisualElement name="hexagon-border" class="hexagon-border" />
+                    <ui:Label name="level-number" text="1" class="level-number" style="padding-right: 1px; margin-right: 2px;" />
+                </ui:VisualElement>
+                <ui:VisualElement class="player-details">
+                    <ui:Label name="player-name" text="Traveler" class="player-name" />
+                    <ui:VisualElement name="player-name-divider" class="player-name-divider" />
+                    <ui:Label name="player-rank" text="BRONZE" class="player-rank" />
+                    <ui:VisualElement class="player-rank-row">
+                        <ui:Label name="player-elo-rank" text="BRONZE" class="player-elo-rank" />
+                        <ui:VisualElement class="rank-separator" />
+                        <ui:Label name="player-elo-value" text="1000 ELO" class="player-elo-value" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+                <ui:VisualElement class="xp-bar-section">
+                    <ui:VisualElement class="xp-bar-bg">
+                        <ui:VisualElement name="xp-bar-fill" class="xp-bar-fill" />
+                    </ui:VisualElement>
+                    <ui:Label name="xp-text" text="0/1000 XP" class="xp-text" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+            <ui:VisualElement class="resources">
+                <ui:VisualElement class="resource-item resource-gold">
+                    <ui:Label name="gold-value" text="0" class="resource-value gold-value" />
+                    <ui:VisualElement class="resource-divider resource-divider-gold" />
+                    <ui:Label text="GOLD" class="resource-label gold-label" />
+                </ui:VisualElement>
+                <ui:VisualElement class="resource-item resource-crystal">
+                    <ui:Label name="crystal-value" text="0" class="resource-value crystal-value" />
+                    <ui:VisualElement class="resource-divider resource-divider-crystal" />
+                    <ui:Label text="CRYSTALS" class="resource-label crystal-label" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:VisualElement name="main-content" class="main-content">
+            <ui:VisualElement class="title-section">
+                <ui:VisualElement class="title-ornament-top" style="width: 500px;">
+                    <ui:VisualElement class="ornament-line-left" style="width: 100px; height: 2px;" />
+                    <ui:VisualElement class="ornament-diamond" style="width: 24px; height: 24px;" />
+                    <ui:VisualElement class="ornament-line-left" style="width: 50px; height: 2px; margin-right: 0;" />
+                    <ui:VisualElement class="ornament-diamond" style="width: 24px; height: 24px; background-color: rgb(180, 83, 9);" />
+                    <ui:VisualElement class="ornament-line-left" style="width: 50px; height: 2px; margin-right: 0;" />
+                    <ui:VisualElement class="ornament-diamond" style="width: 24px; height: 24px;" />
+                    <ui:VisualElement class="ornament-line-right" style="width: 100px; height: 2px;" />
+                </ui:VisualElement>
+                <ui:Label name="game-title" text="ELEMENTUM" class="game-title" />
+                <ui:Label name="game-subtitle" text="DEFENCE" class="game-subtitle" />
+                <ui:VisualElement class="title-ornament-bottom">
+                    <ui:VisualElement class="ornament-line-short" />
+                    <ui:VisualElement class="ornament-diamond" style="width: 16px; height: 16px; background-color: rgb(180, 83, 9);" />
+                    <ui:VisualElement class="ornament-line-short" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+            <ui:VisualElement name="cards-container" class="cards-container">
+                <ui:VisualElement name="card-multiplayer" class="tarot-card-wrapper card-offset-0">
+                    <ui:VisualElement class="tarot-card">
+                        <ui:VisualElement class="card-inner-border" />
+                        <ui:VisualElement class="card-corner card-corner-tl" />
+                        <ui:VisualElement class="card-corner card-corner-tr" />
+                        <ui:VisualElement class="card-corner card-corner-bl" />
+                        <ui:VisualElement class="card-corner card-corner-br" />
+                        <ui:Label text="I" class="card-numeral" />
+                        <ui:VisualElement class="card-icon-container">
+                            <ui:VisualElement class="card-icon-glow" />
+                            <ui:Label text="⚔" class="card-icon" />
+                        </ui:VisualElement>
+                        <ui:VisualElement class="card-label-container">
+                            <ui:Label text="The Battle" class="card-title-text" />
+                            <ui:Label text="MULTIPLAYER" class="card-name-text" />
+                        </ui:VisualElement>
+                        <ui:VisualElement class="card-hover-line" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+                <ui:VisualElement name="card-deckbuilder" class="tarot-card-wrapper card-offset-1">
+                    <ui:VisualElement class="tarot-card">
+                        <ui:VisualElement class="card-inner-border" />
+                        <ui:VisualElement class="card-corner card-corner-tl" />
+                        <ui:VisualElement class="card-corner card-corner-tr" />
+                        <ui:VisualElement class="card-corner card-corner-bl" />
+                        <ui:VisualElement class="card-corner card-corner-br" />
+                        <ui:Label text="II" class="card-numeral" />
+                        <ui:VisualElement class="card-icon-container">
+                            <ui:VisualElement class="card-icon-glow" />
+                            <ui:Label text="✦" class="card-icon" />
+                        </ui:VisualElement>
+                        <ui:VisualElement class="card-label-container">
+                            <ui:Label text="The Architect" class="card-title-text" />
+                            <ui:Label text="DECKBUILDER" class="card-name-text" />
+                        </ui:VisualElement>
+                        <ui:VisualElement class="card-hover-line" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+                <ui:VisualElement name="card-shop" class="tarot-card-wrapper card-offset-2">
+                    <ui:VisualElement class="tarot-card">
+                        <ui:VisualElement class="card-inner-border" />
+                        <ui:VisualElement class="card-corner card-corner-tl" />
+                        <ui:VisualElement class="card-corner card-corner-tr" />
+                        <ui:VisualElement class="card-corner card-corner-bl" />
+                        <ui:VisualElement class="card-corner card-corner-br" />
+                        <ui:Label text="III" class="card-numeral" />
+                        <ui:VisualElement class="card-icon-container">
+                            <ui:VisualElement class="card-icon-glow" />
+                            <ui:Label text="⚖" class="card-icon" />
+                        </ui:VisualElement>
+                        <ui:VisualElement class="card-label-container">
+                            <ui:Label text="The Merchant" class="card-title-text" />
+                            <ui:Label text="SHOP" class="card-name-text" />
+                        </ui:VisualElement>
+                        <ui:VisualElement class="card-hover-line" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+                <ui:VisualElement name="card-lootbox" class="tarot-card-wrapper card-offset-3">
+                    <ui:VisualElement class="tarot-card">
+                        <ui:VisualElement class="card-inner-border" />
+                        <ui:VisualElement class="card-corner card-corner-tl" />
+                        <ui:VisualElement class="card-corner card-corner-tr" />
+                        <ui:VisualElement class="card-corner card-corner-bl" />
+                        <ui:VisualElement class="card-corner card-corner-br" />
+                        <ui:Label text="IV" class="card-numeral" />
+                        <ui:VisualElement class="card-icon-container">
+                            <ui:VisualElement class="card-icon-glow" />
+                            <ui:Label text="✧" class="card-icon" />
+                        </ui:VisualElement>
+                        <ui:VisualElement class="card-label-container">
+                            <ui:Label text="The Fortune" class="card-title-text" />
+                            <ui:Label text="LOOTBOX" class="card-name-text" />
+                        </ui:VisualElement>
+                        <ui:VisualElement class="card-hover-line" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+                <ui:VisualElement name="card-settings" class="tarot-card-wrapper card-offset-4">
+                    <ui:VisualElement class="tarot-card">
+                        <ui:VisualElement class="card-inner-border" />
+                        <ui:VisualElement class="card-corner card-corner-tl" />
+                        <ui:VisualElement class="card-corner card-corner-tr" />
+                        <ui:VisualElement class="card-corner card-corner-bl" />
+                        <ui:VisualElement class="card-corner card-corner-br" />
+                        <ui:Label text="V" class="card-numeral" />
+                        <ui:VisualElement class="card-icon-container">
+                            <ui:VisualElement class="card-icon-glow" />
+                            <ui:Label text="☉" class="card-icon" />
+                        </ui:VisualElement>
+                        <ui:VisualElement class="card-label-container">
+                            <ui:Label text="The Wheel" class="card-title-text" />
+                            <ui:Label text="SETTINGS" class="card-name-text" />
+                        </ui:VisualElement>
+                        <ui:VisualElement class="card-hover-line" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:VisualElement name="bottom-menu" class="bottom-menu">
+            <ui:VisualElement class="bottom-menu-inner">
+                <ui:Button name="btn-credits" text="CREDITS" class="bottom-menu-button" />
+                <ui:Button name="btn-quit" text="QUIT" class="bottom-menu-button" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:VisualElement class="version-container">
+            <ui:Label name="version-text" text="v0.1.0 Alpha" class="version-text" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

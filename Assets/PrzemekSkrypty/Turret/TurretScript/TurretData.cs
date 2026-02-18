@@ -9,6 +9,10 @@ public class TurretData : ScriptableObject
     [Tooltip("Display name of this turret")]
     public string turretName;
 
+    [Header("Visual")]
+    [Tooltip("Icon displayed in hotbar UI")]
+    public Sprite turretIcon;
+
     [TextArea(3, 5)]
     [Tooltip("Description of turret's functionality")]
     public string description;

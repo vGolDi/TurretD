@@ -1,0 +1,479 @@
+/* ============================================
+   DRAFT — ART DECO GOLDEN — WINDOWED
+   ============================================ */
+
+.draft-root {
+    position: absolute;
+    left: 0; top: 0; right: 0; bottom: 0;
+    background-color: rgba(4, 6, 12, 0.92);
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+/* ============================================
+   DRAFT WINDOW
+   ============================================ */
+
+.draft-window {
+    width: 1280px;
+    height: 720px;
+    max-width: 95%;
+    max-height: 90%;
+    background-color: rgb(8, 12, 22);
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.15);
+    flex-direction: column;
+    align-items: stretch;
+    overflow: hidden;
+}
+
+.draft-window-inner-border {
+    position: absolute;
+    left: 4px; top: 4px; right: 4px; bottom: 4px;
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.06);
+}
+
+/* ============================================
+   BACKGROUND
+   ============================================ */
+
+.draft-bg {
+    position: absolute;
+    left: 0; top: 0; right: 0; bottom: 0;
+}
+
+.bg-cross-v {
+    position: absolute; left: 50%; top: 0;
+    width: 1px; height: 100%;
+    background-color: rgba(245, 158, 11, 0.04);
+    translate: -50% 0;
+}
+
+.bg-cross-h {
+    position: absolute; top: 50%; left: 0;
+    width: 100%; height: 1px;
+    background-color: rgba(245, 158, 11, 0.04);
+}
+
+.draft-bg-radial {
+    position: absolute; left: 50%; top: 50%;
+    width: 0; height: 0; overflow: visible;
+}
+
+.draft-bg-radial-line {
+    position: absolute;
+    width: 1800px; height: 1px;
+    left: -900px; top: 0;
+    background-color: rgba(245, 158, 11, 0.025);
+    transform-origin: center center;
+}
+
+.draft-corner {
+    position: absolute;
+    width: 60px; height: 60px;
+    border-color: rgba(245, 158, 11, 0.12);
+}
+
+.draft-corner-tl { left: 14px; top: 14px; border-left-width: 1px; border-top-width: 1px; }
+.draft-corner-tr { right: 14px; top: 14px; border-right-width: 1px; border-top-width: 1px; }
+.draft-corner-bl { left: 14px; bottom: 14px; border-left-width: 1px; border-bottom-width: 1px; }
+.draft-corner-br { right: 14px; bottom: 14px; border-right-width: 1px; border-bottom-width: 1px; }
+
+.draft-side-left {
+    position: absolute; left: 14px;
+    top: 28%; bottom: 28%;
+    width: 1px;
+    background-color: rgba(245, 158, 11, 0.04);
+}
+
+.draft-side-right {
+    position: absolute; right: 14px;
+    top: 28%; bottom: 28%;
+    width: 1px;
+    background-color: rgba(245, 158, 11, 0.04);
+}
+
+.draft-side-tick-l {
+    position: absolute; left: 14px;
+    width: 16px; height: 1px;
+    background-color: rgba(245, 158, 11, 0.06);
+}
+
+.draft-side-tick-r {
+    position: absolute; right: 14px;
+    width: 16px; height: 1px;
+    background-color: rgba(245, 158, 11, 0.06);
+}
+
+/* ============================================
+   CENTER — flex-grow, z paddingiem na dó³
+   ============================================ */
+
+.draft-center {
+    align-items: center;
+    flex-direction: column;
+    padding: 32px 40px;
+    flex-grow: 1;
+    justify-content: center;
+    padding-bottom: 52px;
+}
+
+/* Header */
+.draft-header {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 8px;
+}
+
+.draft-header-line {
+    width: 80px; height: 1px;
+    background-color: rgba(245, 158, 11, 0.2);
+    margin: 0 12px;
+}
+
+.draft-header-diamond {
+    width: 10px; height: 10px;
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.35);
+    rotate: 45deg; scale: 0.7 0.7;
+    margin: 0 4px;
+}
+
+.draft-title {
+    font-size: 24px;
+    color: rgb(254, 243, 199);
+    letter-spacing: 10px;
+}
+
+.draft-subtitle {
+    font-size: 10px;
+    color: rgba(245, 158, 11, 0.35);
+    letter-spacing: 6px;
+    margin-bottom: 12px;
+}
+
+/* ============================================
+   REROLL INFO
+   ============================================ */
+
+.draft-reroll-info {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+    padding: 6px 20px;
+    background-color: rgba(245, 158, 11, 0.03);
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.08);
+}
+
+.draft-reroll-info-diamond {
+    width: 6px; height: 6px;
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.25);
+    rotate: 45deg; scale: 0.6 0.6;
+    margin: 0 10px;
+}
+
+.draft-reroll-info-text {
+    font-size: 9px;
+    color: rgba(252, 211, 77, 0.4);
+    letter-spacing: 3px;
+}
+
+/* Timer */
+.draft-timer-section { margin-bottom: 20px; }
+
+.draft-timer {
+    font-size: 36px;
+    color: rgb(254, 243, 199);
+    letter-spacing: 6px;
+    transition-property: color;
+    transition-duration: 0.3s;
+}
+
+.draft-timer-critical { color: rgb(248, 113, 113); }
+
+/* ============================================
+   CARDS CONTAINER
+   ============================================ */
+
+.draft-cards {
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+/* ============================================
+   DRAFT CARD
+   ============================================ */
+
+.draft-card {
+    width: 200px;
+    height: 320px;
+    background-color: rgb(10, 15, 26);
+    border-width: 1px;
+    border-color: rgba(146, 64, 14, 0.35);
+    margin: 0 10px;
+    flex-direction: column;
+    align-items: center;
+    padding: 14px 12px;
+    overflow: hidden;
+    transition-property: border-color, scale, translate;
+    transition-duration: 0.3s;
+    transition-timing-function: ease-out;
+    cursor: link;
+}
+
+.draft-card:hover {
+    scale: 1.05 1.05;
+    translate: 0 -10px;
+}
+
+.draft-card-legendary { border-color: rgba(255, 200, 0, 0.35); }
+.draft-card-rare { border-color: rgba(80, 150, 255, 0.35); }
+.draft-card-common { border-color: rgba(160, 160, 160, 0.15); }
+
+.draft-card:hover.draft-card-legendary { border-color: rgba(255, 200, 0, 0.8); }
+.draft-card:hover.draft-card-rare { border-color: rgba(80, 150, 255, 0.8); }
+.draft-card:hover.draft-card-common { border-color: rgba(200, 200, 200, 0.4); }
+
+.draft-card-inner {
+    position: absolute;
+    left: 6px; top: 6px; right: 6px; bottom: 6px;
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.05);
+    transition-property: border-color;
+    transition-duration: 0.3s;
+}
+
+.draft-card:hover .draft-card-inner {
+    border-color: rgba(245, 158, 11, 0.12);
+}
+
+.dc-corner {
+    position: absolute;
+    width: 14px; height: 14px;
+    border-color: rgba(146, 64, 14, 0.3);
+    transition-property: border-color;
+    transition-duration: 0.3s;
+}
+
+.draft-card:hover .dc-corner {
+    border-color: rgba(245, 158, 11, 0.6);
+}
+
+.dc-corner-tl { left: 10px; top: 10px; border-left-width: 1px; border-top-width: 1px; }
+.dc-corner-tr { right: 10px; top: 10px; border-right-width: 1px; border-top-width: 1px; }
+.dc-corner-bl { left: 10px; bottom: 10px; border-left-width: 1px; border-bottom-width: 1px; }
+.dc-corner-br { right: 10px; bottom: 10px; border-right-width: 1px; border-bottom-width: 1px; }
+
+.draft-card-icon {
+    width: 72px; height: 72px;
+    margin-top: 6px; margin-bottom: 8px;
+    flex-shrink: 0;
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.draft-card-rarity-line {
+    width: 50%; height: 1px;
+    margin-bottom: 6px;
+}
+
+.rarity-line-legendary { background-color: rgba(255, 200, 0, 0.5); }
+.rarity-line-rare { background-color: rgba(80, 150, 255, 0.5); }
+.rarity-line-common { background-color: rgba(160, 160, 160, 0.2); }
+
+.draft-card-name {
+    font-size: 12px;
+    color: rgb(254, 243, 199);
+    letter-spacing: 1px;
+    -unity-text-align: upper-center;
+    -unity-font-style: bold;
+    margin-bottom: 3px;
+}
+
+.draft-card-rarity-text {
+    font-size: 9px;
+    letter-spacing: 3px;
+    -unity-text-align: upper-center;
+    margin-bottom: 4px;
+}
+
+.rarity-text-legendary { color: rgb(255, 200, 0); }
+.rarity-text-rare { color: rgb(100, 160, 255); }
+.rarity-text-common { color: rgb(160, 160, 160); }
+
+.draft-card-desc {
+    font-size: 9px;
+    color: rgba(200, 210, 220, 0.4);
+    -unity-text-align: upper-center;
+    white-space: normal;
+    flex-grow: 1;
+    padding: 0 4px;
+}
+
+.draft-card-hover-accent {
+    position: absolute;
+    bottom: 0; left: 50%;
+    translate: -50% 0;
+    width: 0; height: 2px;
+    transition-property: width;
+    transition-duration: 0.3s;
+}
+
+.draft-card:hover .draft-card-hover-accent {
+    width: 60%;
+}
+
+.hover-accent-legendary { background-color: rgb(255, 200, 0); }
+.hover-accent-rare { background-color: rgb(80, 150, 255); }
+.hover-accent-common { background-color: rgba(200, 200, 200, 0.4); }
+
+/* ============================================
+   BUTTONS CONTAINER
+   ============================================ */
+
+.draft-card-buttons {
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    margin-top: auto;
+    padding-top: 6px;
+    flex-shrink: 0;
+}
+
+/* ============================================
+   SELECT BUTTON
+   ============================================ */
+
+.draft-select-btn {
+    width: 100%;
+    background-color: rgba(74, 222, 128, 0.06);
+    border-width: 1px;
+    border-color: rgba(74, 222, 128, 0.3);
+    border-radius: 0;
+    color: rgb(74, 222, 128);
+    font-size: 9px;
+    letter-spacing: 3px;
+    padding: 5px 12px;
+    margin-bottom: 4px;
+    transition-property: color, border-color, background-color;
+    transition-duration: 0.2s;
+}
+
+.draft-select-btn:hover {
+    border-color: rgb(74, 222, 128);
+    background-color: rgba(74, 222, 128, 0.12);
+}
+
+/* ============================================
+   MULLIGAN / REROLL BUTTON
+   ============================================ */
+
+.draft-mulligan-btn {
+    width: 100%;
+    background-color: rgba(245, 158, 11, 0.04);
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.15);
+    border-radius: 0;
+    color: rgba(245, 158, 11, 0.45);
+    font-size: 8px;
+    letter-spacing: 2px;
+    padding: 4px 8px;
+    transition-property: color, border-color, background-color, scale;
+    transition-duration: 0.2s;
+}
+
+.draft-mulligan-btn:hover {
+    border-color: rgb(245, 158, 11);
+    background-color: rgba(245, 158, 11, 0.08);
+    color: rgb(252, 211, 77);
+    scale: 1.02 1.02;
+}
+
+.draft-mulligan-btn:active {
+    background-color: rgba(245, 158, 11, 0.15);
+    scale: 0.98 0.98;
+}
+
+.draft-mulligan-warning {
+    font-size: 7px;
+    color: rgba(252, 211, 77, 0.45);
+    letter-spacing: 1px;
+    -unity-text-align: upper-center;
+    margin-top: 2px;
+}
+
+/* ============================================
+   MULLIGAN USED — WYSZARZONY LABEL
+   ============================================ */
+
+.draft-mulligan-used {
+    width: 100%;
+    font-size: 8px;
+    color: rgba(100, 116, 139, 0.4);
+    letter-spacing: 2px;
+    -unity-text-align: upper-center;
+    padding: 4px 8px;
+    border-width: 1px;
+    border-color: rgba(100, 116, 139, 0.1);
+    background-color: rgba(15, 23, 42, 0.3);
+}
+
+/* ============================================
+   CONFIRM BUTTON
+   ============================================ */
+
+.draft-confirm-section {
+    align-items: center;
+}
+
+.btn-confirm-draft {
+    background-color: rgba(74, 222, 128, 0.06);
+    border-width: 1px;
+    border-color: rgba(74, 222, 128, 0.35);
+    border-radius: 0;
+    color: rgb(74, 222, 128);
+    font-size: 12px;
+    letter-spacing: 6px;
+    padding: 14px 48px;
+    transition-property: color, border-color, background-color, scale;
+    transition-duration: 0.2s;
+}
+
+.btn-confirm-draft:hover {
+    border-color: rgb(74, 222, 128);
+    background-color: rgba(74, 222, 128, 0.12);
+    scale: 1.03 1.03;
+}
+
+/* ============================================
+   BOTTOM BAR — WEWN¥TRZ FLOW, NIE ABSOLUTE
+   ============================================ */
+
+.draft-bottom-bar {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 40px;
+    background-color: rgba(6, 9, 16, 0.8);
+    border-top-width: 1px;
+    border-top-color: rgba(245, 158, 11, 0.06);
+    flex-shrink: 0;
+}
+
+.draft-bottom-text {
+    font-size: 10px;
+    color: rgba(245, 158, 11, 0.2);
+    letter-spacing: 3px;
+}
+
+.draft-card-dimmed { opacity: 0.3; }
+.draft-card-dimmed:hover { scale: 1 1; translate: 0 0; }
+
+.hidden { display: none; }

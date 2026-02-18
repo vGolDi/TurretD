@@ -1,0 +1,928 @@
+/* ============================================
+   LOOTBOX — ART DECO STYLE
+   ============================================ */
+
+/* ============================================
+   ROOT
+   ============================================ */
+
+.panel-root {
+    flex-grow: 1;
+    width: 100%;
+    height: 100%;
+    background-color: rgb(10, 15, 25);
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* ============================================
+   BOCZNE DEKORACJE
+   ============================================ */
+
+.side-decoration-left {
+    position: absolute;
+    left: 12px;
+    top: 25%;
+    bottom: 25%;
+    width: 1px;
+    background-color: rgba(245, 158, 11, 0.06);
+}
+
+.side-decoration-right {
+    position: absolute;
+    right: 12px;
+    top: 25%;
+    bottom: 25%;
+    width: 1px;
+    background-color: rgba(245, 158, 11, 0.06);
+}
+
+.side-tick-left {
+    position: absolute;
+    left: 12px;
+    width: 16px;
+    height: 1px;
+    background-color: rgba(245, 158, 11, 0.08);
+}
+
+.side-tick-right {
+    position: absolute;
+    right: 12px;
+    width: 16px;
+    height: 1px;
+    background-color: rgba(245, 158, 11, 0.08);
+}
+
+/* ============================================
+   PROMIENIOWE LINIE W TLE
+   ============================================ */
+
+.bg-radial {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 0;
+    height: 0;
+    overflow: visible;
+}
+
+.bg-radial-line {
+    position: absolute;
+    width: 1200px;
+    height: 1px;
+    left: -600px;
+    top: 0;
+    background-color: rgba(245, 158, 11, 0.03);
+    transform-origin: center center;
+}
+
+/* ============================================
+   HEADER
+   ============================================ */
+
+.panel-header {
+    flex-direction: row;
+    align-items: center;
+    padding: 20px 40px;
+    border-bottom-width: 1px;
+    border-bottom-color: rgba(245, 158, 11, 0.12);
+    flex-shrink: 0;
+    background-color: rgba(8, 12, 20, 0.5);
+}
+
+.btn-back {
+    background-color: rgba(0, 0, 0, 0);
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.3);
+    color: rgba(245, 158, 11, 0.6);
+    font-size: 12px;
+    letter-spacing: 3px;
+    padding: 10px 20px;
+    margin-right: 24px;
+    cursor: link;
+    transition-property: color, border-color, background-color;
+    transition-duration: 0.2s;
+    border-radius: 0;
+}
+
+.btn-back:hover {
+    color: rgb(252, 211, 77);
+    border-color: rgb(245, 158, 11);
+    background-color: rgba(245, 158, 11, 0.05);
+}
+
+.header-title-group {
+    flex-direction: column;
+}
+
+.panel-title {
+    font-size: 26px;
+    color: rgb(254, 243, 199);
+    letter-spacing: 10px;
+}
+
+.panel-subtitle {
+    font-size: 11px;
+    color: rgba(245, 158, 11, 0.35);
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    margin-top: 2px;
+}
+
+.header-spacer {
+    flex-grow: 1;
+}
+
+/* ============================================
+   HEADER CURRENCY
+   ============================================ */
+
+.header-currency {
+    flex-direction: row;
+    align-items: center;
+}
+
+.currency-chip {
+    flex-direction: row;
+    align-items: center;
+    padding: 10px 20px;
+    margin-left: 12px;
+    background-color: rgba(15, 23, 42, 0.6);
+    border-width: 1px;
+    border-radius: 0;
+    transition-property: background-color;
+    transition-duration: 0.2s;
+}
+
+.currency-chip:hover {
+    background-color: rgba(15, 23, 42, 0.9);
+}
+
+.currency-gold {
+    border-color: rgba(245, 158, 11, 0.25);
+}
+
+.currency-crystal {
+    border-color: rgba(6, 182, 212, 0.25);
+}
+
+.currency-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 5px;
+    margin-right: 12px;
+}
+
+.currency-dot-gold {
+    background-color: rgb(245, 158, 11);
+}
+
+.currency-dot-crystal {
+    background-color: rgb(34, 211, 238);
+}
+
+.currency-amount {
+    font-size: 18px;
+    -unity-font-style: bold;
+    letter-spacing: 2px;
+    margin-right: 10px;
+}
+
+.currency-amount-gold {
+    color: rgb(251, 191, 36);
+}
+
+.currency-amount-crystal {
+    color: rgb(34, 211, 238);
+}
+
+.currency-label {
+    font-size: 10px;
+    color: rgba(200, 200, 200, 0.4);
+    letter-spacing: 3px;
+}
+
+/* ============================================
+   VIEW CONTAINER (wspólne)
+   ============================================ */
+
+.view-container {
+    flex-grow: 1;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 0 40px;
+}
+
+/* ============================================
+   INVENTORY VIEW
+   ============================================ */
+
+.inventory-info-bar {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    padding: 16px 0;
+    margin-top: 8px;
+    margin-bottom: 4px;
+    width: 100%;
+    flex-shrink: 0;
+}
+
+.info-ornament-left {
+    width: 60px;
+    height: 1px;
+    background-color: rgba(245, 158, 11, 0.15);
+    margin-right: 16px;
+}
+
+.info-ornament-right {
+    width: 60px;
+    height: 1px;
+    background-color: rgba(245, 158, 11, 0.15);
+    margin-left: 16px;
+}
+
+.inventory-count-text {
+    font-size: 11px;
+    color: rgba(245, 158, 11, 0.4);
+    letter-spacing: 5px;
+    text-transform: uppercase;
+}
+
+/* ScrollView */
+.inventory-scroll {
+    flex-grow: 1;
+    width: 100%;
+    padding-bottom: 60px;
+}
+
+.inventory-scroll .unity-scroller--vertical {
+    width: 8px;
+}
+
+.inventory-scroll .unity-scroller--vertical .unity-base-slider__tracker {
+    background-color: rgba(245, 158, 11, 0.06);
+    border-width: 0;
+}
+
+.inventory-scroll .unity-scroller--vertical .unity-base-slider__dragger {
+    background-color: rgba(245, 158, 11, 0.2);
+    border-radius: 4px;
+    border-width: 0;
+    min-height: 30px;
+    transition-property: background-color;
+    transition-duration: 0.2s;
+}
+
+.inventory-scroll .unity-scroller--vertical .unity-base-slider__dragger:hover {
+    background-color: rgba(245, 158, 11, 0.4);
+}
+
+.inventory-scroll .unity-scroller--vertical .unity-repeat-button {
+    display: none;
+}
+
+/* Grid — wycentrowany */
+.inventory-grid {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    align-self: center;
+    padding: 8px 0;
+}
+
+/* ============================================
+   LOOTBOX CARD — POWIÊKSZONE O 25%
+   By³o: 220x320, teraz: 275x400
+   ============================================ */
+
+.lootbox-card {
+    width: 275px;
+    height: 400px;
+    margin: 14px;
+    background-color: rgb(12, 18, 30);
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.12);
+    flex-direction: column;
+    align-items: center;
+    overflow: hidden;
+    cursor: link;
+    transition-property: border-color, scale;
+    transition-duration: 0.3s;
+    transition-timing-function: ease-out;
+}
+
+.lootbox-card:hover {
+    scale: 1.04 1.04;
+    border-color: rgba(245, 158, 11, 0.5);
+}
+
+/* Wewnêtrzna ramka */
+.lootbox-card-inner-frame {
+    position: absolute;
+    left: 6px;
+    top: 6px;
+    right: 6px;
+    bottom: 6px;
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.04);
+    transition-property: border-color;
+    transition-duration: 0.3s;
+}
+
+.lootbox-card:hover .lootbox-card-inner-frame {
+    border-color: rgba(245, 158, 11, 0.1);
+}
+
+/* Rarity stripe */
+.lootbox-rarity-stripe {
+    width: 100%;
+    height: 3px;
+    flex-shrink: 0;
+}
+
+.rarity-common .lootbox-rarity-stripe { background-color: rgba(180, 180, 180, 0.5); }
+.rarity-rare .lootbox-rarity-stripe { background-color: rgba(77, 128, 255, 0.7); }
+.rarity-epic .lootbox-rarity-stripe { background-color: rgba(180, 77, 255, 0.7); }
+.rarity-legendary .lootbox-rarity-stripe { background-color: rgba(255, 204, 0, 0.8); }
+.rarity-event .lootbox-rarity-stripe { background-color: rgba(255, 100, 100, 0.7); }
+
+/* Ikona — powiêkszona */
+.lootbox-icon-section {
+    align-items: center;
+    justify-content: center;
+    height: 175px;
+    flex-shrink: 0;
+    padding-top: 20px;
+}
+
+.lootbox-icon-glow {
+    position: absolute;
+    width: 125px;
+    height: 125px;
+    border-radius: 63px;
+    background-color: rgba(245, 158, 11, 0);
+    transition-property: background-color;
+    transition-duration: 0.4s;
+}
+
+.lootbox-card:hover .lootbox-icon-glow {
+    background-color: rgba(245, 158, 11, 0.08);
+}
+
+.rarity-legendary .lootbox-icon-glow {
+    background-color: rgba(255, 204, 0, 0.05);
+}
+
+.rarity-legendary:hover .lootbox-icon-glow {
+    background-color: rgba(255, 204, 0, 0.15);
+}
+
+.lootbox-icon {
+    width: 110px;
+    height: 110px;
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+/* Rarity label */
+.lootbox-rarity-label {
+    font-size: 10px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-top: 10px;
+}
+
+.rarity-common .lootbox-rarity-label { color: rgba(180, 180, 180, 0.5); }
+.rarity-rare .lootbox-rarity-label { color: rgba(77, 128, 255, 0.6); }
+.rarity-epic .lootbox-rarity-label { color: rgba(180, 77, 255, 0.6); }
+.rarity-legendary .lootbox-rarity-label { color: rgba(255, 204, 0, 0.7); }
+.rarity-event .lootbox-rarity-label { color: rgba(255, 100, 100, 0.6); }
+
+/* Nazwa i info */
+.lootbox-info-section {
+    flex-grow: 1;
+    align-items: center;
+    justify-content: center;
+    padding: 0 20px;
+}
+
+.lootbox-name {
+    font-size: 18px;
+    color: rgb(254, 243, 199);
+    letter-spacing: 3px;
+    -unity-text-align: upper-center;
+    -unity-font-style: bold;
+    margin-bottom: 8px;
+}
+
+.lootbox-card-count {
+    font-size: 11px;
+    color: rgba(200, 210, 220, 0.4);
+    letter-spacing: 3px;
+}
+
+/* Separator */
+.lootbox-separator {
+    height: 1px;
+    width: 80%;
+    background-color: rgba(245, 158, 11, 0.06);
+    align-self: center;
+}
+
+/* Sekcja dolna — powiêkszona */
+.lootbox-bottom-section {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    width: 100%;
+    flex-shrink: 0;
+}
+
+.lootbox-quantity {
+    font-size: 24px;
+    color: rgb(254, 243, 199);
+    -unity-font-style: bold;
+    letter-spacing: 2px;
+}
+
+.lootbox-quantity-label {
+    font-size: 10px;
+    color: rgba(245, 158, 11, 0.35);
+    letter-spacing: 2px;
+    margin-top: 2px;
+}
+
+.btn-open {
+    background-color: rgba(0, 0, 0, 0);
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.4);
+    color: rgba(245, 158, 11, 0.7);
+    font-size: 12px;
+    letter-spacing: 3px;
+    padding: 12px 24px;
+    cursor: link;
+    transition-property: color, border-color, background-color;
+    transition-duration: 0.2s;
+    border-radius: 0;
+}
+
+.btn-open:hover {
+    color: rgb(252, 211, 77);
+    border-color: rgb(245, 158, 11);
+    background-color: rgba(245, 158, 11, 0.08);
+}
+
+/* Hover accent */
+.lootbox-hover-accent {
+    position: absolute;
+    bottom: 0;
+    left: 20%;
+    right: 20%;
+    height: 2px;
+    background-color: rgb(245, 158, 11);
+    opacity: 0;
+    transition-property: opacity;
+    transition-duration: 0.3s;
+}
+
+.lootbox-card:hover .lootbox-hover-accent {
+    opacity: 1;
+}
+
+/* ============================================
+   EMPTY STATE
+   ============================================ */
+
+.empty-state {
+    flex-grow: 1;
+    align-items: center;
+    justify-content: center;
+    padding: 60px;
+    width: 100%;
+}
+
+.empty-state-text {
+    font-size: 14px;
+    color: rgba(245, 158, 11, 0.2);
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+}
+
+.empty-state-subtext {
+    font-size: 10px;
+    color: rgba(245, 158, 11, 0.12);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+}
+
+/* ============================================
+   OPENING VIEW
+   ============================================ */
+
+.opening-center {
+    flex-grow: 1;
+    align-items: center;
+    justify-content: center;
+}
+
+.opening-glow-ring {
+    position: absolute;
+    left: 50%;
+    top: 45%;
+    width: 300px;
+    height: 300px;
+    translate: -50% -50%;
+    border-radius: 150px;
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.08);
+    background-color: rgba(245, 158, 11, 0);
+    transition-property: background-color, border-color, scale;
+    transition-duration: 1s;
+}
+
+.opening-glow-ring.glow-active {
+    background-color: rgba(245, 158, 11, 0.05);
+    border-color: rgba(245, 158, 11, 0.25);
+    scale: 1.2 1.2;
+}
+
+.opening-glow {
+    position: absolute;
+    width: 180px;
+    height: 180px;
+    border-radius: 90px;
+    background-color: rgba(245, 158, 11, 0);
+    transition-property: background-color;
+    transition-duration: 0.5s;
+}
+
+.opening-glow.glow-active {
+    background-color: rgba(245, 158, 11, 0.2);
+}
+
+.opening-icon {
+    width: 160px;
+    height: 160px;
+    -unity-background-scale-mode: scale-to-fit;
+    transition-property: scale;
+    transition-duration: 0.3s;
+}
+
+.opening-name {
+    font-size: 22px;
+    color: rgb(254, 243, 199);
+    letter-spacing: 8px;
+    margin-top: 24px;
+}
+
+.opening-rarity {
+    font-size: 11px;
+    letter-spacing: 5px;
+    margin-top: 4px;
+    color: rgba(245, 158, 11, 0.5);
+}
+
+.opening-sparks {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.opening-hint {
+    font-size: 12px;
+    color: rgba(245, 158, 11, 0.3);
+    letter-spacing: 6px;
+    margin-bottom: 60px;
+    -unity-text-align: upper-center;
+}
+
+/* ============================================
+   RESULTS VIEW — WYCENTROWANE
+   ============================================ */
+
+.results-header {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 0;
+    width: 100%;
+    flex-shrink: 0;
+}
+
+.results-ornament-line {
+    width: 80px;
+    height: 1px;
+    background-color: rgba(245, 158, 11, 0.2);
+}
+
+.results-title {
+    font-size: 18px;
+    color: rgb(254, 243, 199);
+    letter-spacing: 10px;
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+/* Kontener na karty — wycentrowany */
+.results-cards-container {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    align-self: center;
+    padding: 16px 0;
+}
+
+/* ============================================
+   RESULT CARD — POWIEKSZONE 2x
+   By³o: 150x220, teraz: 300x440
+   ============================================ */
+
+.result-card {
+    width: 300px;
+    height: 440px;
+    margin: 12px;
+    background-color: rgb(12, 18, 30);
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.15);
+    flex-direction: column;
+    align-items: center;
+    overflow: hidden;
+    scale: 0 0;
+    transition-property: scale, border-color;
+    transition-duration: 0.35s;
+    transition-timing-function: ease-out;
+}
+
+.result-card.revealed {
+    scale: 1 1;
+}
+
+.result-card:hover {
+    border-color: rgba(245, 158, 11, 0.4);
+}
+
+/* Rarity border color */
+.result-card.result-common { border-color: rgba(180, 180, 180, 0.3); }
+.result-card.result-rare { border-color: rgba(77, 128, 255, 0.4); }
+.result-card.result-legendary { border-color: rgba(255, 204, 0, 0.5); }
+.result-card.result-duplicate { border-color: rgba(120, 120, 120, 0.3); }
+
+/* Rarity stripe */
+.result-rarity-stripe {
+    width: 100%;
+    height: 4px;
+    flex-shrink: 0;
+}
+
+.result-common .result-rarity-stripe { background-color: rgba(180, 180, 180, 0.4); }
+.result-rare .result-rarity-stripe { background-color: rgba(77, 128, 255, 0.6); }
+.result-legendary .result-rarity-stripe { background-color: rgba(255, 204, 0, 0.7); }
+.result-duplicate .result-rarity-stripe { background-color: rgba(120, 120, 120, 0.3); }
+
+/* Badge — powiêkszony */
+.result-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    padding: 5px 12px;
+    font-size: 12px;
+    letter-spacing: 2px;
+    -unity-font-style: bold;
+}
+
+.result-badge-new {
+    background-color: rgba(34, 197, 94, 0.85);
+    color: rgb(254, 243, 199);
+}
+
+.result-badge-duplicate {
+    background-color: rgba(120, 120, 120, 0.7);
+    color: rgb(200, 200, 200);
+}
+
+/* Ikona karty — powiêkszona */
+.result-card-icon-section {
+    align-items: center;
+    justify-content: center;
+    height: 200px;
+    flex-shrink: 0;
+    padding-top: 24px;
+}
+
+.result-card-icon {
+    width: 128px;
+    height: 128px;
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+/* Nazwa karty — powiêkszona */
+.result-card-name {
+    font-size: 18px;
+    color: rgb(254, 243, 199);
+    letter-spacing: 2px;
+    -unity-text-align: upper-center;
+    -unity-font-style: bold;
+    padding: 0 16px;
+    margin-top: 8px;
+}
+
+/* Rarity text — powiêkszony */
+.result-card-rarity {
+    font-size: 12px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-top: 6px;
+}
+
+/* Duplicate currency — powiêkszony */
+.result-currency-earned {
+    font-size: 18px;
+    color: rgb(251, 191, 36);
+    letter-spacing: 3px;
+    margin-top: 12px;
+    -unity-font-style: bold;
+}
+
+/* ============================================
+   RESULTS SUMMARY
+   ============================================ */
+
+.results-summary {
+    padding: 16px 32px;
+    background-color: rgba(8, 12, 20, 0.4);
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.06);
+    margin-top: 8px;
+    margin-bottom: 8px;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.summary-row {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    margin: 4px 0;
+}
+
+.summary-label {
+    font-size: 11px;
+    color: rgba(245, 158, 11, 0.4);
+    letter-spacing: 4px;
+    margin-right: 12px;
+}
+
+.summary-value {
+    font-size: 18px;
+    -unity-font-style: bold;
+    letter-spacing: 2px;
+}
+
+.summary-value-new {
+    color: rgb(74, 222, 128);
+}
+
+.summary-value-dupe {
+    color: rgba(200, 200, 200, 0.5);
+}
+
+.summary-currency {
+    font-size: 13px;
+    color: rgb(251, 191, 36);
+    letter-spacing: 2px;
+    margin-left: 12px;
+}
+
+/* ============================================
+   RESULTS BUTTONS
+   ============================================ */
+
+.results-buttons {
+    flex-direction: row;
+    justify-content: center;
+    padding: 12px 0;
+    margin-bottom: 50px;
+    flex-shrink: 0;
+}
+
+.btn-action {
+    background-color: rgba(0, 0, 0, 0);
+    border-width: 1px;
+    padding: 12px 28px;
+    font-size: 12px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    cursor: link;
+    margin: 0 8px;
+    -unity-text-align: middle-center;
+    transition-property: color, border-color, background-color;
+    transition-duration: 0.2s;
+    border-radius: 0;
+}
+
+.btn-open-another {
+    border-color: rgba(245, 158, 11, 0.4);
+    color: rgba(245, 158, 11, 0.7);
+}
+
+.btn-open-another:hover {
+    border-color: rgb(245, 158, 11);
+    background-color: rgba(245, 158, 11, 0.08);
+    color: rgb(252, 211, 77);
+}
+
+.btn-continue {
+    border-color: rgba(74, 222, 128, 0.4);
+    color: rgba(74, 222, 128, 0.7);
+}
+
+.btn-continue:hover {
+    border-color: rgb(74, 222, 128);
+    background-color: rgba(74, 222, 128, 0.08);
+    color: rgb(74, 222, 128);
+}
+
+/* ============================================
+   DOLNY PASEK INFORMACYJNY
+   ============================================ */
+
+.bottom-info-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 40px;
+    background-color: rgba(8, 12, 20, 0.7);
+    border-top-width: 1px;
+    border-top-color: rgba(245, 158, 11, 0.06);
+}
+
+.bottom-info-text {
+    font-size: 10px;
+    color: rgba(245, 158, 11, 0.25);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+}
+
+.bottom-info-separator {
+    width: 1px;
+    height: 12px;
+    background-color: rgba(245, 158, 11, 0.1);
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+/* ============================================
+   FEEDBACK POPUPS
+   ============================================ */
+
+.feedback-popup {
+    position: absolute;
+    top: 80px;
+    left: 30%;
+    right: 30%;
+    padding: 14px 32px;
+    border-width: 1px;
+    align-items: center;
+}
+
+.feedback-success {
+    background-color: rgba(12, 30, 18, 0.9);
+    border-color: rgba(74, 222, 128, 0.4);
+}
+
+.feedback-fail {
+    background-color: rgba(30, 12, 12, 0.9);
+    border-color: rgba(248, 113, 113, 0.4);
+}
+
+.feedback-text {
+    font-size: 13px;
+    letter-spacing: 3px;
+}
+
+.feedback-success .feedback-text {
+    color: rgb(74, 222, 128);
+}
+
+.feedback-fail .feedback-text {
+    color: rgb(248, 113, 113);
+}
+
+/* ============================================
+   HIDDEN
+   ============================================ */
+
+.hidden {
+    display: none;
+}

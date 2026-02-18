@@ -1,0 +1,391 @@
+/* ============================================
+   CREDITS — ART DECO STYLE
+   ============================================ */
+
+.panel-root {
+    flex-grow: 1;
+    width: 100%;
+    height: 100%;
+    background-color: rgb(10, 15, 25);
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* ============================================
+   SIDE DECORATIONS
+   ============================================ */
+
+.side-decoration-left {
+    position: absolute;
+    left: 12px;
+    top: 25%;
+    bottom: 25%;
+    width: 1px;
+    background-color: rgba(245, 158, 11, 0.06);
+}
+
+.side-decoration-right {
+    position: absolute;
+    right: 12px;
+    top: 25%;
+    bottom: 25%;
+    width: 1px;
+    background-color: rgba(245, 158, 11, 0.06);
+}
+
+.side-tick-left {
+    position: absolute;
+    left: 12px;
+    width: 16px;
+    height: 1px;
+    background-color: rgba(245, 158, 11, 0.08);
+}
+
+.side-tick-right {
+    position: absolute;
+    right: 12px;
+    width: 16px;
+    height: 1px;
+    background-color: rgba(245, 158, 11, 0.08);
+}
+
+/* ============================================
+   RADIAL BG
+   ============================================ */
+
+.credits-bg-radial {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 0;
+    height: 0;
+    overflow: visible;
+}
+
+.credits-bg-radial-line {
+    position: absolute;
+    width: 1400px;
+    height: 1px;
+    left: -700px;
+    top: 0;
+    background-color: rgba(245, 158, 11, 0.025);
+    transform-origin: center center;
+}
+
+/* ============================================
+   HEADER
+   ============================================ */
+
+.panel-header {
+    flex-direction: row;
+    align-items: center;
+    padding: 20px 40px;
+    border-bottom-width: 1px;
+    border-bottom-color: rgba(245, 158, 11, 0.12);
+    flex-shrink: 0;
+    background-color: rgba(8, 12, 20, 0.5);
+}
+
+.btn-back {
+    background-color: rgba(0, 0, 0, 0);
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.3);
+    color: rgba(245, 158, 11, 0.6);
+    font-size: 12px;
+    letter-spacing: 3px;
+    padding: 10px 20px;
+    margin-right: 24px;
+    transition-property: color, border-color, background-color;
+    transition-duration: 0.2s;
+    border-radius: 0;
+}
+
+.btn-back:hover {
+    color: rgb(252, 211, 77);
+    border-color: rgb(245, 158, 11);
+    background-color: rgba(245, 158, 11, 0.05);
+}
+
+.header-title-group {
+    flex-direction: column;
+}
+
+.panel-title {
+    font-size: 26px;
+    color: rgb(254, 243, 199);
+    letter-spacing: 10px;
+}
+
+.panel-subtitle {
+    font-size: 11px;
+    color: rgba(245, 158, 11, 0.35);
+    letter-spacing: 6px;
+    margin-top: 2px;
+}
+
+.header-spacer {
+    flex-grow: 1;
+}
+
+/* ============================================
+   SCROLL
+   ============================================ */
+
+.credits-scroll {
+    flex-grow: 1;
+}
+
+.credits-scroll .unity-scroller--vertical {
+    width: 8px;
+}
+
+.credits-scroll .unity-scroller--vertical .unity-base-slider__tracker {
+    background-color: rgba(245, 158, 11, 0.06);
+    border-width: 0;
+}
+
+.credits-scroll .unity-scroller--vertical .unity-base-slider__dragger {
+    background-color: rgba(245, 158, 11, 0.2);
+    border-radius: 4px;
+    border-width: 0;
+    min-height: 30px;
+    transition-property: background-color;
+    transition-duration: 0.2s;
+}
+
+.credits-scroll .unity-scroller--vertical .unity-base-slider__dragger:hover {
+    background-color: rgba(245, 158, 11, 0.4);
+}
+
+.credits-scroll .unity-scroller--vertical .unity-repeat-button {
+    display: none;
+}
+
+/* ============================================
+   CONTENT
+   ============================================ */
+
+.credits-content {
+    max-width: 600px;
+    align-self: center;
+    width: 100%;
+    padding: 60px 40px;
+    align-items: center;
+}
+
+/* ============================================
+   ORNAMENTS
+   ============================================ */
+
+.credits-ornament-top,
+.credits-ornament-bottom {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    margin-bottom: 40px;
+}
+
+.credits-ornament-bottom {
+    margin-bottom: 0;
+    margin-top: 48px;
+}
+
+.ornament-line-left {
+    flex-grow: 1;
+    height: 1px;
+    background-color: rgba(245, 158, 11, 0.15);
+    margin-right: 12px;
+}
+
+.ornament-line-right {
+    flex-grow: 1;
+    height: 1px;
+    background-color: rgba(245, 158, 11, 0.15);
+    margin-left: 12px;
+}
+
+.ornament-diamond-outer {
+    width: 10px;
+    height: 10px;
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.3);
+    rotate: 45deg;
+    scale: 0.7 0.7;
+    margin: 0 4px;
+}
+
+.ornament-diamond-inner {
+    width: 14px;
+    height: 14px;
+    background-color: rgba(245, 158, 11, 0.08);
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.4);
+    rotate: 45deg;
+    scale: 0.7 0.7;
+    margin: 0 4px;
+}
+
+/* ============================================
+   GAME TITLE
+   ============================================ */
+
+.credits-game-title {
+    font-size: 36px;
+    color: rgb(254, 243, 199);
+    letter-spacing: 14px;
+    -unity-text-align: upper-center;
+    margin-bottom: 8px;
+}
+
+.credits-game-subtitle {
+    font-size: 11px;
+    color: rgba(245, 158, 11, 0.35);
+    letter-spacing: 6px;
+    -unity-text-align: upper-center;
+    margin-bottom: 48px;
+}
+
+/* ============================================
+   SECTION
+   ============================================ */
+
+.credits-section {
+    width: 100%;
+    margin-bottom: 40px;
+}
+
+.credits-section-header {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 24px;
+}
+
+.credits-section-diamond {
+    width: 8px;
+    height: 8px;
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.3);
+    rotate: 45deg;
+    scale: 0.7 0.7;
+    margin: 0 12px;
+}
+
+.credits-section-title {
+    font-size: 12px;
+    color: rgba(245, 158, 11, 0.5);
+    letter-spacing: 8px;
+    -unity-text-align: upper-center;
+}
+
+/* ============================================
+   ENTRY
+   ============================================ */
+
+.credits-entry {
+    align-items: center;
+    margin-bottom: 16px;
+    padding: 12px 20px;
+    background-color: rgba(12, 18, 30, 0.4);
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.03);
+    width: 100%;
+    transition-property: border-color, background-color;
+    transition-duration: 0.25s;
+}
+
+.credits-entry:hover {
+    border-color: rgba(245, 158, 11, 0.1);
+    background-color: rgba(15, 23, 42, 0.4);
+}
+
+.credits-role {
+    font-size: 9px;
+    color: rgba(245, 158, 11, 0.4);
+    letter-spacing: 5px;
+    -unity-text-align: upper-center;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+}
+
+.credits-name {
+    font-size: 16px;
+    color: rgb(254, 243, 199);
+    letter-spacing: 4px;
+    -unity-text-align: upper-center;
+}
+
+.credits-name-tbd {
+    color: rgba(200, 210, 220, 0.3);
+    -unity-font-style: italic;
+}
+
+/* ============================================
+   THANKS
+   ============================================ */
+
+.credits-thanks-text {
+    font-size: 13px;
+    color: rgba(200, 210, 220, 0.5);
+    letter-spacing: 2px;
+    -unity-text-align: upper-center;
+}
+
+.credits-thanks-highlight {
+    color: rgba(245, 158, 11, 0.5);
+    -unity-font-style: italic;
+}
+
+/* ============================================
+   FOOTER
+   ============================================ */
+
+.credits-version {
+    font-size: 11px;
+    color: rgba(245, 158, 11, 0.3);
+    letter-spacing: 3px;
+    -unity-text-align: upper-center;
+    margin-top: 24px;
+    margin-bottom: 8px;
+}
+
+.credits-copyright {
+    font-size: 9px;
+    color: rgba(100, 116, 139, 0.4);
+    letter-spacing: 4px;
+    -unity-text-align: upper-center;
+    margin-bottom: 40px;
+}
+
+/* ============================================
+   BOTTOM BAR
+   ============================================ */
+
+.bottom-info-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 40px;
+    background-color: rgba(8, 12, 20, 0.7);
+    border-top-width: 1px;
+    border-top-color: rgba(245, 158, 11, 0.06);
+}
+
+.bottom-info-text {
+    font-size: 10px;
+    color: rgba(245, 158, 11, 0.25);
+    letter-spacing: 3px;
+}
+
+/* ============================================
+   HIDDEN
+   ============================================ */
+
+.hidden {
+    display: none;
+}

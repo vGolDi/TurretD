@@ -1,0 +1,489 @@
+/* ============================================
+   QUEST PANEL — SLIDE FROM RIGHT
+   Art Deco Style
+   ============================================ */
+
+.quest-root {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: stretch;
+}
+
+/* ============================================
+   TAB BUTTON
+   ============================================ */
+
+.quest-tab-button {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    translate: 0 -50%;
+    width: 40px;
+    height: 160px;
+    background-color: rgba(12, 18, 30, 0.9);
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.25);
+    border-right-width: 0;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: link;
+    transition-property: right, background-color, border-color;
+    transition-duration: 0.35s;
+    transition-timing-function: ease-out;
+    padding: 8px 0;
+}
+
+.quest-tab-button:hover {
+    background-color: rgba(12, 18, 30, 1);
+    border-color: rgba(245, 158, 11, 0.5);
+}
+
+.quest-tab-icon-container {
+    width: 24px;
+    height: 24px;
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.4);
+    align-items: center;
+    justify-content: center;
+    rotate: 45deg;
+    margin-bottom: 12px;
+}
+
+.quest-tab-icon {
+    font-size: 12px;
+    color: rgb(245, 158, 11);
+    rotate: -45deg;
+    -unity-font-style: bold;
+}
+
+.quest-tab-text {
+    font-size: 9px;
+    color: rgba(245, 158, 11, 0.5);
+    letter-spacing: 2px;
+    rotate: 90deg;
+    transition-property: color;
+    transition-duration: 0.2s;
+}
+
+.quest-tab-button:hover .quest-tab-text {
+    color: rgb(252, 211, 77);
+}
+
+/* Notification badge */
+.quest-notification-badge {
+    position: absolute;
+    top: 6px;
+    right: 4px;
+    width: 18px;
+    height: 18px;
+    border-radius: 9px;
+    background-color: rgb(220, 38, 38);
+    align-items: center;
+    justify-content: center;
+}
+
+.quest-notification-count {
+    font-size: 10px;
+    color: rgb(255, 255, 255);
+    -unity-font-style: bold;
+    -unity-text-align: middle-center;
+}
+
+/* ============================================
+   PANEL
+   ============================================ */
+
+.quest-panel {
+    width: 380px;
+    height: 100%;
+    background-color: rgb(10, 15, 25);
+    border-left-width: 1px;
+    border-left-color: rgba(245, 158, 11, 0.15);
+    flex-direction: column;
+    overflow: hidden;
+    transition-property: translate;
+    transition-duration: 0.35s;
+    transition-timing-function: ease-out;
+    translate: 0 0;
+}
+
+.quest-panel-closed {
+    translate: 100% 0;
+}
+
+.quest-panel-inner-border {
+    position: absolute;
+    left: 8px;
+    top: 8px;
+    right: 8px;
+    bottom: 8px;
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.04);
+}
+
+/* ============================================
+   PANEL HEADER
+   ============================================ */
+
+.quest-panel-header {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 20px 16px 20px;
+    flex-shrink: 0;
+}
+
+.quest-header-ornament-left {
+    width: 40px;
+    height: 1px;
+    background-color: rgba(245, 158, 11, 0.2);
+    margin-right: 16px;
+}
+
+.quest-header-ornament-right {
+    width: 40px;
+    height: 1px;
+    background-color: rgba(245, 158, 11, 0.2);
+    margin-left: 16px;
+}
+
+.quest-panel-title {
+    font-size: 16px;
+    color: rgb(254, 243, 199);
+    letter-spacing: 8px;
+}
+
+/* ============================================
+   FILTER TABS
+   ============================================ */
+
+.quest-tabs-bar {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    padding: 0 16px;
+    flex-shrink: 0;
+}
+
+.quest-filter-tab {
+    background-color: rgba(0, 0, 0, 0);
+    border-width: 0;
+    border-bottom-width: 2px;
+    border-bottom-color: rgba(0, 0, 0, 0);
+    color: rgba(245, 158, 11, 0.3);
+    font-size: 10px;
+    letter-spacing: 3px;
+    padding: 10px 12px;
+    cursor: link;
+    transition-property: color, border-bottom-color;
+    transition-duration: 0.2s;
+    border-radius: 0;
+}
+
+.quest-filter-tab:hover {
+    color: rgba(245, 158, 11, 0.6);
+    background-color: rgba(0, 0, 0, 0);
+}
+
+.quest-filter-active {
+    color: rgb(252, 211, 77);
+    border-bottom-color: rgb(245, 158, 11);
+}
+
+.quest-filter-active:hover {
+    color: rgb(252, 211, 77);
+}
+
+.quest-tab-divider {
+    width: 1px;
+    height: 12px;
+    background-color: rgba(245, 158, 11, 0.08);
+    margin-left: 2px;
+    margin-right: 2px;
+}
+
+.quest-tabs-line {
+    height: 1px;
+    background-color: rgba(245, 158, 11, 0.06);
+    margin-left: 16px;
+    margin-right: 16px;
+}
+
+/* ============================================
+   QUEST LIST SCROLL
+   ============================================ */
+
+.quest-scroll {
+    flex-grow: 1;
+    padding: 8px 16px;
+}
+
+.quest-scroll .unity-scroller--vertical {
+    width: 6px;
+}
+
+.quest-scroll .unity-scroller--vertical .unity-base-slider__tracker {
+    background-color: rgba(245, 158, 11, 0.04);
+    border-width: 0;
+}
+
+.quest-scroll .unity-scroller--vertical .unity-base-slider__dragger {
+    background-color: rgba(245, 158, 11, 0.15);
+    border-radius: 3px;
+    border-width: 0;
+    min-height: 20px;
+    transition-property: background-color;
+    transition-duration: 0.2s;
+}
+
+.quest-scroll .unity-scroller--vertical .unity-base-slider__dragger:hover {
+    background-color: rgba(245, 158, 11, 0.35);
+}
+
+.quest-scroll .unity-scroller--vertical .unity-repeat-button {
+    display: none;
+}
+
+.quest-list {
+    flex-direction: column;
+}
+
+/* ============================================
+   QUEST SLOT
+   ============================================ */
+
+.quest-slot {
+    background-color: rgba(12, 18, 30, 0.6);
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.08);
+    margin-bottom: 8px;
+    padding: 14px 16px;
+    flex-direction: column;
+    transition-property: border-color, background-color;
+    transition-duration: 0.2s;
+}
+
+.quest-slot:hover {
+    border-color: rgba(245, 158, 11, 0.2);
+    background-color: rgba(12, 18, 30, 0.9);
+}
+
+.quest-slot-claimable {
+    border-color: rgba(74, 222, 128, 0.3);
+}
+
+.quest-slot-claimable:hover {
+    border-color: rgba(74, 222, 128, 0.6);
+}
+
+.quest-slot-claimed {
+    opacity: 0.4;
+    border-color: rgba(100, 100, 100, 0.15);
+}
+
+/* ============================================
+   QUEST SLOT — TOP ROW
+   ============================================ */
+
+.quest-slot-top {
+    flex-direction: row;
+    align-items: flex-start;
+    margin-bottom: 8px;
+}
+
+.quest-tier-badge {
+    width: 4px;
+    height: 100%;
+    min-height: 32px;
+    margin-right: 12px;
+    flex-shrink: 0;
+}
+
+.quest-tier-daily { background-color: rgba(74, 222, 128, 0.6); }
+.quest-tier-weekly { background-color: rgba(77, 128, 255, 0.7); }
+.quest-tier-special { background-color: rgba(249, 115, 22, 0.7); }
+
+.quest-description {
+    font-size: 12px;
+    color: rgb(220, 225, 230);
+    white-space: normal;
+    flex-grow: 1;
+}
+
+/* ============================================
+   QUEST SLOT — PROGRESS BAR
+   ============================================ */
+
+.quest-progress-section {
+    flex-direction: column;
+    margin-bottom: 8px;
+}
+
+.quest-progress-bar-bg {
+    width: 100%;
+    height: 4px;
+    background-color: rgba(245, 158, 11, 0.08);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-bottom: 4px;
+}
+
+.quest-progress-bar-fill {
+    height: 100%;
+    width: 0%;
+    background-color: rgb(245, 158, 11);
+    border-radius: 2px;
+    transition-property: width, background-color;
+    transition-duration: 0.4s;
+    transition-timing-function: ease-out;
+}
+
+.quest-progress-complete {
+    background-color: rgb(74, 222, 128);
+}
+
+.quest-progress-text {
+    font-size: 9px;
+    color: rgba(245, 158, 11, 0.4);
+    letter-spacing: 2px;
+    -unity-text-align: upper-right;
+}
+
+/* ============================================
+   QUEST SLOT — BOTTOM ROW
+   ============================================ */
+
+.quest-slot-bottom {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.quest-rewards {
+    flex-direction: row;
+    align-items: center;
+    flex-grow: 1;
+}
+
+.quest-reward-item {
+    flex-direction: row;
+    align-items: center;
+    margin-right: 14px;
+}
+
+.quest-reward-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 3px;
+    margin-right: 6px;
+}
+
+.quest-reward-dot-gold { background-color: rgb(245, 158, 11); }
+.quest-reward-dot-xp { background-color: rgb(74, 222, 128); }
+.quest-reward-dot-lootbox { background-color: rgb(168, 85, 247); }
+
+.quest-reward-text {
+    font-size: 10px;
+    letter-spacing: 1px;
+}
+
+.quest-reward-gold { color: rgb(251, 191, 36); }
+.quest-reward-xp { color: rgb(74, 222, 128); }
+.quest-reward-lootbox { color: rgb(196, 140, 255); }
+
+.quest-btn-claim {
+    background-color: rgba(0, 0, 0, 0);
+    border-width: 1px;
+    border-color: rgba(74, 222, 128, 0.5);
+    color: rgb(74, 222, 128);
+    font-size: 10px;
+    letter-spacing: 3px;
+    padding: 6px 16px;
+    cursor: link;
+    transition-property: color, border-color, background-color;
+    transition-duration: 0.2s;
+    border-radius: 0;
+    flex-shrink: 0;
+}
+
+.quest-btn-claim:hover {
+    border-color: rgb(74, 222, 128);
+    background-color: rgba(74, 222, 128, 0.1);
+    color: rgb(74, 222, 128);
+}
+
+.quest-claimed-overlay {
+    flex-direction: column;
+    align-items: center;
+    padding: 4px 0;
+}
+
+.quest-claimed-text {
+    font-size: 10px;
+    color: rgba(100, 116, 139, 0.5);
+    letter-spacing: 4px;
+}
+
+.quest-timer-text {
+    font-size: 9px;
+    color: rgba(245, 158, 11, 0.3);
+    letter-spacing: 2px;
+    margin-top: 2px;
+}
+
+/* ============================================
+   EMPTY STATE
+   ============================================ */
+
+.quest-empty {
+    flex-grow: 1;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+}
+
+.quest-empty-text {
+    font-size: 12px;
+    color: rgba(245, 158, 11, 0.2);
+    letter-spacing: 4px;
+    margin-bottom: 6px;
+}
+
+.quest-empty-subtext {
+    font-size: 9px;
+    color: rgba(245, 158, 11, 0.1);
+    letter-spacing: 3px;
+}
+
+/* ============================================
+   FOOTER
+   ============================================ */
+
+.quest-panel-footer {
+    flex-shrink: 0;
+    padding: 12px 20px;
+    border-top-width: 1px;
+    border-top-color: rgba(245, 158, 11, 0.06);
+    align-items: center;
+    background-color: rgba(8, 12, 20, 0.5);
+}
+
+.quest-reset-timer {
+    font-size: 10px;
+    color: rgba(245, 158, 11, 0.25);
+    letter-spacing: 3px;
+}
+
+/* ============================================
+   HIDDEN
+   ============================================ */
+
+.hidden {
+    display: none;
+}

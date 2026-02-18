@@ -446,6 +446,8 @@ MonoBehaviour:
   - {fileID: 5411208196323590758}
   turretNameText: {fileID: 0}
   turretStatsText: {fileID: 0}
+  panelBackground: {fileID: 0}
+  buttonBackgrounds: []
 --- !u!1 &8528586999972564489
 GameObject:
   m_ObjectHideFlags: 0
@@ -649,7 +651,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3967908581772909708, guid: 71580ddf1af214a44b0f97b350662180, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4012961747304768037, guid: 71580ddf1af214a44b0f97b350662180, type: 3}
       propertyPath: m_Pivot.x

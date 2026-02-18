@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
+    <Style src="PlayerGoldHUDStyles.uss" />
+
+    <ui:VisualElement name="gold-hud-root" class="gold-hud-root" picking-mode="Ignore">
+
+        <ui:VisualElement class="gold-panel">
+            <ui:VisualElement class="gold-inner-border" />
+            <ui:VisualElement class="gold-diamond-left" />
+            <ui:VisualElement class="gold-content">
+                <ui:Label name="gold-value" text="100" class="gold-value" />
+                <ui:VisualElement class="gold-divider" />
+                <ui:Label text="GOLD" class="gold-label" />
+            </ui:VisualElement>
+            <ui:VisualElement class="gold-diamond-right" />
+        </ui:VisualElement>
+
+    </ui:VisualElement>
+</ui:UXML>

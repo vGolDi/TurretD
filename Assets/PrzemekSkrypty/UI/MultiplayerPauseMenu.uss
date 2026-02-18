@@ -1,0 +1,372 @@
+/* ============================================
+   PAUSE MENU — ART DECO
+   ============================================ */
+
+.pause-overlay {
+    position: absolute;
+    left: 0; top: 0; right: 0; bottom: 0;
+    background-color: rgba(4, 6, 12, 0.85);
+    align-items: center;
+    justify-content: center;
+}
+
+/* ============================================
+   PAUSE WINDOW
+   ============================================ */
+
+.pause-window {
+    width: 520px;
+    min-height: 380px;
+    background-color: rgb(8, 12, 22);
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.15);
+    flex-direction: column;
+    align-items: stretch;
+    overflow: hidden;
+}
+
+.pause-window-inner-border {
+    position: absolute;
+    left: 4px; top: 4px; right: 4px; bottom: 4px;
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.06);
+}
+
+/* ============================================
+   PAUSE CORNERS
+   ============================================ */
+
+.pause-corner {
+    position: absolute;
+    width: 24px; height: 24px;
+    border-color: rgba(245, 158, 11, 0.2);
+}
+
+.pause-corner-tl { left: 8px; top: 8px; border-left-width: 1px; border-top-width: 1px; }
+.pause-corner-tr { right: 8px; top: 8px; border-right-width: 1px; border-top-width: 1px; }
+.pause-corner-bl { left: 8px; bottom: 8px; border-left-width: 1px; border-bottom-width: 1px; }
+.pause-corner-br { right: 8px; bottom: 8px; border-right-width: 1px; border-bottom-width: 1px; }
+
+/* ============================================
+   HEADER
+   ============================================ */
+
+.pause-header {
+    flex-direction: column;
+    align-items: center;
+    padding: 28px 20px 20px 20px;
+}
+
+.pause-header-ornament {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 8px;
+}
+
+.pause-header-line {
+    width: 48px; height: 1px;
+    background-color: rgba(245, 158, 11, 0.2);
+    margin: 0 10px;
+}
+
+.pause-header-diamond {
+    width: 8px; height: 8px;
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.35);
+    rotate: 45deg; scale: 0.7 0.7;
+}
+
+.pause-title {
+    font-size: 20px;
+    color: rgb(254, 243, 199);
+    letter-spacing: 10px;
+    -unity-text-align: upper-center;
+}
+
+.pause-subtitle {
+    font-size: 9px;
+    color: rgba(245, 158, 11, 0.3);
+    letter-spacing: 5px;
+    -unity-text-align: upper-center;
+    margin-top: 4px;
+}
+
+.pause-header-separator {
+    width: 60%;
+    height: 1px;
+    background-color: rgba(245, 158, 11, 0.08);
+    margin-top: 16px;
+    align-self: center;
+}
+
+/* ============================================
+   CONTENT AREA
+   ============================================ */
+
+.pause-content {
+    flex-grow: 1;
+    flex-direction: column;
+    align-items: center;
+    padding: 16px 40px;
+}
+
+/* ============================================
+   MENU BUTTONS
+   ============================================ */
+
+.pause-menu-buttons {
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.pause-btn {
+    width: 280px;
+    background-color: rgba(0, 0, 0, 0);
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.12);
+    border-radius: 0;
+    color: rgba(254, 243, 199, 0.7);
+    font-size: 11px;
+    letter-spacing: 5px;
+    padding: 12px 20px;
+    margin-bottom: 8px;
+    -unity-text-align: middle-center;
+    transition-property: color, border-color, background-color, scale;
+    transition-duration: 0.2s;
+    cursor: link;
+}
+
+.pause-btn:hover {
+    border-color: rgba(245, 158, 11, 0.5);
+    background-color: rgba(245, 158, 11, 0.04);
+    color: rgb(252, 211, 77);
+    scale: 1.02 1.02;
+}
+
+.pause-btn:active {
+    background-color: rgba(245, 158, 11, 0.08);
+    scale: 0.98 0.98;
+}
+
+.pause-btn-resume {
+    border-color: rgba(74, 222, 128, 0.2);
+    color: rgba(74, 222, 128, 0.7);
+}
+
+.pause-btn-resume:hover {
+    border-color: rgba(74, 222, 128, 0.6);
+    background-color: rgba(74, 222, 128, 0.06);
+    color: rgb(74, 222, 128);
+}
+
+.pause-btn-quit {
+    border-color: rgba(248, 113, 113, 0.15);
+    color: rgba(248, 113, 113, 0.5);
+}
+
+.pause-btn-quit:hover {
+    border-color: rgba(248, 113, 113, 0.5);
+    background-color: rgba(248, 113, 113, 0.04);
+    color: rgb(248, 113, 113);
+}
+
+.pause-btn-divider {
+    width: 40%;
+    height: 1px;
+    background-color: rgba(245, 158, 11, 0.06);
+    margin: 8px 0;
+    align-self: center;
+}
+
+/* ============================================
+   SETTINGS PANEL
+   ============================================ */
+
+.settings-content {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+}
+
+.setting-row {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom-width: 1px;
+    border-bottom-color: rgba(245, 158, 11, 0.04);
+}
+
+.setting-label {
+    font-size: 10px;
+    color: rgba(254, 243, 199, 0.5);
+    letter-spacing: 3px;
+    flex-shrink: 0;
+    min-width: 120px;
+}
+
+/* Slider styling */
+.setting-slider {
+    flex-grow: 1;
+    max-width: 200px;
+    min-height: 20px;
+}
+
+.setting-slider .unity-base-slider__dragger {
+    width: 14px; height: 14px;
+    border-radius: 0;
+    background-color: rgb(245, 158, 11);
+    border-width: 1px;
+    border-color: rgb(180, 83, 9);
+    rotate: 45deg;
+    scale: 0.7 0.7;
+    margin-top: -6px;
+}
+
+.setting-slider .unity-base-slider__tracker {
+    height: 2px;
+    background-color: rgba(245, 158, 11, 0.15);
+    border-width: 0;
+    margin-top: -1px;
+}
+
+.setting-slider .unity-base-slider__drag-container {
+    min-height: 16px;
+}
+
+.setting-slider #unity-dragger-border {
+    display: none;
+}
+
+/* Volume value display */
+.setting-value {
+    font-size: 10px;
+    color: rgba(251, 191, 36, 0.6);
+    letter-spacing: 2px;
+    min-width: 40px;
+    -unity-text-align: upper-right;
+    margin-left: 12px;
+}
+
+/* Dropdown styling */
+.setting-dropdown {
+    max-width: 200px;
+    flex-grow: 1;
+    background-color: rgba(10, 15, 26, 0.9);
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.12);
+    border-radius: 0;
+    color: rgb(254, 243, 199);
+    font-size: 10px;
+    letter-spacing: 2px;
+}
+
+.setting-dropdown .unity-base-popup-field__arrow {
+    -unity-background-image-tint-color: rgba(245, 158, 11, 0.4);
+}
+
+.setting-dropdown .unity-base-popup-field__input {
+    background-color: rgba(0, 0, 0, 0);
+    border-width: 0;
+    padding: 4px 8px;
+}
+
+/* Toggle styling */
+.setting-toggle {
+    flex-direction: row-reverse;
+}
+
+.setting-toggle .unity-toggle__checkmark {
+    width: 18px; height: 18px;
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.2);
+    border-radius: 0;
+    background-color: rgba(10, 15, 26, 0.9);
+    -unity-background-image-tint-color: rgba(245, 158, 11, 0.6);
+}
+
+.setting-toggle:checked .unity-toggle__checkmark {
+    border-color: rgba(245, 158, 11, 0.5);
+    background-color: rgba(245, 158, 11, 0.1);
+}
+
+/* Settings back button */
+.settings-back-btn {
+    align-self: center;
+    margin-top: 16px;
+    width: 160px;
+}
+
+/* ============================================
+   QUIT CONFIRMATION
+   ============================================ */
+
+.quit-confirm-content {
+    flex-direction: column;
+    align-items: center;
+}
+
+.quit-confirm-text {
+    font-size: 11px;
+    color: rgba(254, 243, 199, 0.6);
+    letter-spacing: 2px;
+    -unity-text-align: upper-center;
+    margin-bottom: 8px;
+}
+
+.quit-confirm-warning {
+    font-size: 9px;
+    color: rgba(248, 113, 113, 0.5);
+    letter-spacing: 2px;
+    -unity-text-align: upper-center;
+    margin-bottom: 20px;
+}
+
+.quit-confirm-buttons {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.quit-confirm-btn {
+    width: 140px;
+    margin: 0 8px;
+}
+
+/* ============================================
+   BOTTOM ACCENT
+   ============================================ */
+
+.pause-bottom-accent {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    border-top-width: 1px;
+    border-top-color: rgba(245, 158, 11, 0.06);
+    flex-shrink: 0;
+}
+
+.pause-bottom-line {
+    width: 30px; height: 1px;
+    background-color: rgba(245, 158, 11, 0.1);
+}
+
+.pause-bottom-diamond {
+    width: 6px; height: 6px;
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.2);
+    rotate: 45deg; scale: 0.6 0.6;
+    margin: 0 8px;
+}
+
+.pause-esc-hint {
+    font-size: 8px;
+    color: rgba(245, 158, 11, 0.15);
+    letter-spacing: 3px;
+    margin: 0 12px;
+}
+
+.hidden { display: none; }

@@ -1,0 +1,503 @@
+/* ============================================
+   GAME HUD — HEALTH + HOTBAR
+   ============================================ */
+
+.hud-root {
+    flex-grow: 1;
+    width: 100%;
+    height: 100%;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+/* ============================================
+   TOP BAR
+   ============================================ */
+
+.top-bar {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-top: 12px;
+}
+
+.top-bar-spacer {
+    flex-grow: 1;
+}
+
+/* ============================================
+   HEALTH PANELS
+   ============================================ */
+
+.health-panel {
+    flex-direction: row;
+    align-items: center;
+    padding: 10px 16px;
+    background-color: rgba(10, 15, 26, 0.85);
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.12);
+    min-width: 260px;
+    overflow: hidden;
+}
+
+.health-panel-enemy {
+    flex-direction: row-reverse;
+}
+
+.health-inner-border {
+    position: absolute;
+    left: 4px;
+    top: 4px;
+    right: 4px;
+    bottom: 4px;
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.05);
+}
+
+.health-accent {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+}
+
+.health-accent-my {
+    left: 0;
+    background-color: rgba(74, 222, 128, 0.5);
+}
+
+.health-accent-enemy {
+    right: 0;
+    background-color: rgba(248, 113, 113, 0.5);
+}
+
+.health-info {
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.health-info-enemy {
+    align-items: flex-end;
+}
+
+.health-name {
+    font-size: 10px;
+    color: rgba(245, 158, 11, 0.45);
+    letter-spacing: 4px;
+    margin-bottom: 6px;
+}
+
+.health-name-enemy {
+    -unity-text-align: upper-right;
+}
+
+/* Health bar */
+.health-bar-container {
+    flex-direction: column;
+    width: 100%;
+}
+
+.health-bar-bg {
+    width: 100%;
+    height: 6px;
+    background-color: rgba(245, 158, 11, 0.08);
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.06);
+    overflow: hidden;
+    margin-bottom: 4px;
+}
+
+.health-bar-fill {
+    height: 100%;
+    width: 100%;
+    transition-property: width, background-color;
+    transition-duration: 0.4s;
+    transition-timing-function: ease-out;
+}
+
+.health-fill-my {
+    background-color: rgb(74, 222, 128);
+}
+
+.health-fill-enemy {
+    background-color: rgb(248, 113, 113);
+}
+
+.health-fill-warning {
+    background-color: rgb(251, 191, 36);
+}
+
+.health-fill-critical {
+    background-color: rgb(248, 113, 113);
+}
+
+.health-text {
+    font-size: 12px;
+    color: rgb(254, 243, 199);
+    letter-spacing: 2px;
+}
+
+.health-text-enemy {
+    -unity-text-align: upper-right;
+}
+
+/* Hex icon */
+.health-icon-section {
+    margin-left: 12px;
+    margin-right: 12px;
+    flex-shrink: 0;
+}
+
+.health-hex {
+    width: 36px;
+    height: 36px;
+    align-items: center;
+    justify-content: center;
+}
+
+.health-hex-bg {
+    position: absolute;
+    width: 36px;
+    height: 36px;
+    border-radius: 4px;
+    rotate: 45deg;
+    scale: 0.7 0.7;
+}
+
+.health-hex-bg-my {
+    background-color: rgba(74, 222, 128, 0.1);
+}
+
+.health-hex-bg-enemy {
+    background-color: rgba(248, 113, 113, 0.1);
+}
+
+.health-hex-border {
+    position: absolute;
+    width: 36px;
+    height: 36px;
+    border-width: 1px;
+    border-radius: 4px;
+    rotate: 45deg;
+    scale: 0.7 0.7;
+}
+
+.health-hex-border-my {
+    border-color: rgba(74, 222, 128, 0.4);
+}
+
+.health-hex-border-enemy {
+    border-color: rgba(248, 113, 113, 0.4);
+}
+
+.health-hex-icon {
+    font-size: 16px;
+    color: rgb(254, 243, 199);
+    -unity-text-align: middle-center;
+}
+
+/* ============================================
+   HOTBAR
+   ============================================ */
+
+.hotbar-section {
+    align-items: center;
+    padding-bottom: 16px;
+}
+
+.hotbar-container {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 20px;
+    background-color: rgba(10, 15, 26, 0.88);
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.1);
+    overflow: hidden;
+}
+
+.hotbar-inner-border {
+    position: absolute;
+    left: 4px;
+    top: 4px;
+    right: 4px;
+    bottom: 4px;
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.04);
+}
+
+.hotbar-accent-left {
+    position: absolute;
+    left: 0;
+    top: 20%;
+    bottom: 20%;
+    width: 2px;
+    background-color: rgba(245, 158, 11, 0.15);
+}
+
+.hotbar-accent-right {
+    position: absolute;
+    right: 0;
+    top: 20%;
+    bottom: 20%;
+    width: 2px;
+    background-color: rgba(245, 158, 11, 0.15);
+}
+
+.hotbar-slots {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ============================================
+   HOTBAR SLOT
+   ============================================ */
+
+.hotbar-slot {
+    width: 80px;
+    height: 90px;
+    background-color: rgba(12, 18, 30, 0.9);
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.1);
+    margin-left: 4px;
+    margin-right: 4px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px;
+    overflow: hidden;
+    transition-property: border-color, background-color, scale;
+    transition-duration: 0.2s;
+    cursor: link;
+}
+
+.hotbar-slot:hover {
+    border-color: rgba(245, 158, 11, 0.4);
+    background-color: rgba(15, 23, 42, 0.9);
+    scale: 1.05 1.05;
+}
+
+.hotbar-slot-selected {
+    border-color: rgb(34, 211, 238);
+    border-width: 2px;
+    background-color: rgba(34, 211, 238, 0.06);
+}
+
+.hotbar-slot-affordable {
+    border-color: rgba(74, 222, 128, 0.3);
+}
+
+.hotbar-slot-affordable:hover {
+    border-color: rgba(74, 222, 128, 0.6);
+}
+
+.hotbar-slot-partial {
+    border-color: rgba(251, 191, 36, 0.25);
+}
+
+.hotbar-slot-partial:hover {
+    border-color: rgba(251, 191, 36, 0.5);
+}
+
+.hotbar-slot-expensive {
+    border-color: rgba(248, 113, 113, 0.2);
+    opacity: 0.6;
+}
+
+.hotbar-slot-expensive:hover {
+    border-color: rgba(248, 113, 113, 0.4);
+    opacity: 0.8;
+}
+
+.hotbar-key {
+    font-size: 9px;
+    color: rgba(245, 158, 11, 0.35);
+    letter-spacing: 2px;
+    -unity-text-align: upper-center;
+    align-self: flex-end;
+}
+
+.hotbar-icon {
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.hotbar-name {
+    font-size: 8px;
+    color: rgb(254, 243, 199);
+    letter-spacing: 1px;
+    -unity-text-align: upper-center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+
+.hotbar-cost {
+    font-size: 9px;
+    color: rgb(251, 191, 36);
+    letter-spacing: 1px;
+    -unity-text-align: upper-center;
+    transition-property: color;
+    transition-duration: 0.2s;
+}
+
+.hotbar-cost-expensive {
+    color: rgb(248, 113, 113);
+}
+
+.hotbar-slot-bottom-accent {
+    position: absolute;
+    bottom: 0;
+    left: 25%;
+    right: 25%;
+    height: 2px;
+    background-color: rgba(245, 158, 11, 0);
+    transition-property: background-color;
+    transition-duration: 0.2s;
+}
+
+.hotbar-slot:hover .hotbar-slot-bottom-accent {
+    background-color: rgba(245, 158, 11, 0.3);
+}
+
+.hotbar-slot-selected .hotbar-slot-bottom-accent {
+    background-color: rgba(34, 211, 238, 0.5);
+}
+/* ============================================
+   HUD DECORATIONS
+   ============================================ */
+
+.hud-corner {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+}
+
+.hud-corner-tl {
+    left: 8px;
+    top: 8px;
+    border-left-width: 1px;
+    border-top-width: 1px;
+    border-left-color: rgba(245, 158, 11, 0.1);
+    border-top-color: rgba(245, 158, 11, 0.1);
+}
+
+.hud-corner-tr {
+    right: 8px;
+    top: 8px;
+    border-right-width: 1px;
+    border-top-width: 1px;
+    border-right-color: rgba(245, 158, 11, 0.1);
+    border-top-color: rgba(245, 158, 11, 0.1);
+}
+
+.hud-corner-bl {
+    left: 8px;
+    bottom: 8px;
+    border-left-width: 1px;
+    border-bottom-width: 1px;
+    border-left-color: rgba(245, 158, 11, 0.1);
+    border-bottom-color: rgba(245, 158, 11, 0.1);
+}
+
+.hud-corner-br {
+    right: 8px;
+    bottom: 8px;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    border-right-color: rgba(245, 158, 11, 0.1);
+    border-bottom-color: rgba(245, 158, 11, 0.1);
+}
+
+.hud-edge-top {
+    position: absolute;
+    top: 0;
+    left: 15%;
+    right: 15%;
+    height: 1px;
+    background-color: rgba(245, 158, 11, 0.04);
+}
+
+.hud-edge-bottom {
+    position: absolute;
+    bottom: 0;
+    left: 15%;
+    right: 15%;
+    height: 1px;
+    background-color: rgba(245, 158, 11, 0.04);
+}
+
+/* ============================================
+   WAVE INFO (center top)
+   ============================================ */
+
+.wave-info-panel {
+    flex-direction: row;
+    align-items: center;
+    padding: 6px 16px;
+    background-color: rgba(10, 15, 26, 0.75);
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.1);
+}
+
+.wave-diamond {
+    width: 8px;
+    height: 8px;
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.25);
+    rotate: 45deg;
+    scale: 0.6 0.6;
+    margin-left: 8px;
+    margin-right: 8px;
+}
+
+.wave-text {
+    font-size: 11px;
+    color: rgba(245, 158, 11, 0.5);
+    letter-spacing: 5px;
+}
+
+/* ============================================
+   HOTBAR LABELS
+   ============================================ */
+
+.hotbar-label-left {
+    flex-direction: row;
+    align-items: center;
+    margin-right: 12px;
+}
+
+.hotbar-label-diamond {
+    width: 6px;
+    height: 6px;
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.25);
+    rotate: 45deg;
+    scale: 0.6 0.6;
+    margin-right: 8px;
+}
+
+.hotbar-label-text {
+    font-size: 8px;
+    color: rgba(245, 158, 11, 0.3);
+    letter-spacing: 4px;
+}
+
+.hotbar-label-right {
+    margin-left: 12px;
+    align-items: center;
+}
+
+.hotbar-keys-hint {
+    font-size: 9px;
+    color: rgba(245, 158, 11, 0.2);
+    letter-spacing: 2px;
+}
+.hidden {
+    display: none;
+}

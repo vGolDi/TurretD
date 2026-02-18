@@ -1,0 +1,314 @@
+/* ============================================
+   PRE-GAME DECK SELECTION — ART DECO
+   ============================================ */
+
+.pregame-root {
+    flex-grow: 1;
+    width: 100%;
+    height: 100%;
+    background-color: rgb(8, 12, 22);
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+/* Background */
+.bg-layer {
+    position: absolute;
+    left: 0; top: 0; right: 0; bottom: 0;
+    overflow: hidden;
+}
+
+.bg-cross-v {
+    position: absolute; left: 50%; top: 0;
+    width: 1px; height: 100%;
+    background-color: rgba(245, 158, 11, 0.05);
+    translate: -50% 0;
+}
+
+.bg-cross-h {
+    position: absolute; top: 50%; left: 0;
+    width: 100%; height: 1px;
+    background-color: rgba(245, 158, 11, 0.05);
+}
+
+.bg-radial-origin {
+    position: absolute; left: 50%; top: 50%;
+    width: 0; height: 0; overflow: visible;
+}
+
+.bg-radial-line {
+    position: absolute;
+    width: 1600px; height: 1px;
+    left: -800px; top: 0;
+    background-color: rgba(245, 158, 11, 0.03);
+    transform-origin: center center;
+}
+
+/* Corners */
+.pg-corner {
+    position: absolute;
+    width: 60px; height: 60px;
+    border-color: rgba(245, 158, 11, 0.15);
+}
+
+.pg-corner-tl { left: 16px; top: 16px; border-left-width: 1px; border-top-width: 1px; }
+.pg-corner-tr { right: 16px; top: 16px; border-right-width: 1px; border-top-width: 1px; }
+.pg-corner-bl { left: 16px; bottom: 16px; border-left-width: 1px; border-bottom-width: 1px; }
+.pg-corner-br { right: 16px; bottom: 16px; border-right-width: 1px; border-bottom-width: 1px; }
+
+/* Center */
+.pregame-center {
+    align-items: center;
+    flex-direction: column;
+    padding: 40px;
+    max-width: 600px;
+    width: 100%;
+}
+
+/* Ornaments */
+.ornament-row {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    width: 400px;
+    margin-bottom: 24px;
+}
+
+.ornament-row-bottom { margin-bottom: 0; margin-top: 24px; }
+
+.ornament-line-l {
+    flex-grow: 1; height: 1px;
+    background-color: rgba(245, 158, 11, 0.15);
+    margin-right: 8px;
+}
+
+.ornament-line-r {
+    flex-grow: 1; height: 1px;
+    background-color: rgba(245, 158, 11, 0.15);
+    margin-left: 8px;
+}
+
+.ornament-diamond {
+    width: 12px; height: 12px;
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.3);
+    rotate: 45deg; scale: 0.7 0.7;
+}
+
+.ornament-diamond-filled {
+    background-color: rgba(245, 158, 11, 0.1);
+    border-color: rgba(245, 158, 11, 0.45);
+}
+
+/* Title */
+.pregame-title {
+    font-size: 28px;
+    color: rgb(254, 243, 199);
+    letter-spacing: 12px;
+    -unity-text-align: middle-center;
+    margin-bottom: 16px;
+}
+
+/* Arena badge */
+.arena-badge {
+    flex-direction: row;
+    align-items: center;
+    padding: 6px 20px;
+    margin-bottom: 24px;
+    background-color: rgba(245, 158, 11, 0.04);
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.12);
+}
+
+.arena-badge-diamond {
+    width: 8px; height: 8px;
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.3);
+    rotate: 45deg; scale: 0.6 0.6;
+    margin: 0 10px;
+}
+
+.arena-badge-text {
+    font-size: 11px;
+    color: rgba(245, 158, 11, 0.6);
+    letter-spacing: 5px;
+}
+
+/* Timer */
+.timer-section {
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.timer-label {
+    font-size: 10px;
+    color: rgba(245, 158, 11, 0.35);
+    letter-spacing: 6px;
+    margin-bottom: 8px;
+}
+
+.timer-value {
+    font-size: 48px;
+    color: rgb(254, 243, 199);
+    letter-spacing: 8px;
+    transition-property: color;
+    transition-duration: 0.3s;
+}
+
+.timer-critical {
+    color: rgb(248, 113, 113);
+}
+
+/* ============================================
+   DECK SELECTION CARD — FIX
+   ============================================ */
+
+.deck-selection-card {
+    width: 100%;
+    background-color: rgb(10, 15, 26);
+    border-width: 1px;
+    border-color: rgba(146, 64, 14, 0.3);
+    padding: 16px;
+    margin-bottom: 20px;
+    overflow: hidden;
+    /* Nie ustawiamy max-height — niech siê dopasuje */
+    flex-shrink: 1;
+}
+
+.deck-sel-inner-border {
+    position: absolute;
+    left: 8px; top: 8px; right: 8px; bottom: 8px;
+    border-width: 1px;
+    border-color: rgba(120, 53, 15, 0.1);
+}
+
+.ds-corner {
+    position: absolute;
+    width: 14px; height: 14px;
+    border-color: rgba(146, 64, 14, 0.3);
+}
+
+.ds-corner-tl { left: 12px; top: 12px; border-left-width: 1px; border-top-width: 1px; }
+.ds-corner-tr { right: 12px; top: 12px; border-right-width: 1px; border-top-width: 1px; }
+.ds-corner-bl { left: 12px; bottom: 12px; border-left-width: 1px; border-bottom-width: 1px; }
+.ds-corner-br { right: 12px; bottom: 12px; border-right-width: 1px; border-bottom-width: 1px; }
+
+/* Scroll — ukryj horizontal */
+.deck-sel-scroll {
+    flex-grow: 1;
+}
+
+.deck-sel-scroll .unity-scroller--horizontal {
+    display: none;
+}
+
+.deck-sel-scroll .unity-scroller--vertical {
+    width: 6px;
+}
+
+.deck-sel-scroll .unity-scroller--vertical .unity-base-slider__tracker {
+    background-color: rgba(245, 158, 11, 0.06);
+    border-width: 0;
+}
+
+.deck-sel-scroll .unity-scroller--vertical .unity-base-slider__dragger {
+    background-color: rgba(245, 158, 11, 0.2);
+    border-radius: 3px; border-width: 0;
+}
+
+.deck-sel-scroll .unity-scroller--vertical .unity-repeat-button {
+    display: none;
+}
+
+.deck-sel-list {
+    flex-direction: column;
+}
+
+/* ============================================
+   DECK ITEM — KOMPAKTOWY
+   ============================================ */
+
+.deck-sel-item {
+    flex-direction: row;
+    align-items: center;
+    padding: 10px 16px;
+    margin-bottom: 4px;
+    background-color: rgba(12, 18, 30, 0.7);
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.06);
+    transition-property: border-color, background-color, scale;
+    transition-duration: 0.25s;
+    cursor: link;
+    flex-shrink: 0;
+}
+
+.deck-sel-item:hover {
+    border-color: rgba(245, 158, 11, 0.4);
+    background-color: rgba(245, 158, 11, 0.04);
+    scale: 1.02 1.02;
+}
+
+.deck-sel-item-selected {
+    border-color: rgb(74, 222, 128);
+    background-color: rgba(74, 222, 128, 0.06);
+}
+
+.deck-sel-icon {
+    font-size: 16px;
+    color: rgba(245, 158, 11, 0.4);
+    margin-right: 14px;
+}
+
+.deck-sel-info {
+    flex-grow: 1;
+    flex-direction: column;
+}
+
+.deck-sel-name {
+    font-size: 13px;
+    color: rgb(254, 243, 199);
+    letter-spacing: 2px;
+    margin-bottom: 1px;
+}
+
+.deck-sel-count {
+    font-size: 9px;
+    color: rgba(200, 210, 220, 0.35);
+    letter-spacing: 2px;
+}
+
+.deck-sel-arrow {
+    font-size: 12px;
+    color: rgba(245, 158, 11, 0.2);
+    transition-property: color;
+    transition-duration: 0.2s;
+}
+
+.deck-sel-item:hover .deck-sel-arrow {
+    color: rgba(245, 158, 11, 0.6);
+}
+
+/* Waiting */
+.waiting-section {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    padding: 16px 32px;
+    margin-bottom: 20px;
+}
+
+.waiting-dot {
+    width: 8px; height: 8px;
+    border-radius: 4px;
+    background-color: rgb(245, 158, 11);
+    margin-right: 12px;
+}
+
+.waiting-text {
+    font-size: 12px;
+    color: rgba(245, 158, 11, 0.5);
+    letter-spacing: 4px;
+}
+
+.hidden { display: none; }

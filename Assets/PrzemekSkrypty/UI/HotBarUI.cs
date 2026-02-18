@@ -1,193 +1,247 @@
 using UnityEngine;
-using UnityEngine.UI;
-using TMPro;
-using System.Collections.Generic;
+using UnityEngine.UIElements;
 
 namespace ElementumDefense.UI
 {
-    /// <summary>
-    /// Displays turret hotbar (keys 1-5)
-    /// Shows: Icon, name, cost, affordability
-    /// </summary>
+    [RequireComponent(typeof(UIDocument))]
     public class HotbarUI : MonoBehaviour
     {
         [Header("Hotbar Configuration")]
-        [SerializeField] private TurretData[] turretHotbar; // 5 turrets (assign in Inspector)
+        [SerializeField]
+        private TurretData[] turretHotbar;
 
-        [Header("UI Slots (assign from Hierarchy)")]
-        [SerializeField] private HotbarSlot[] slots; // Drag 5 slot GameObjects here
-
-        [Header("Color Coding")]
-        [SerializeField] private Color affordableColor = Color.green;
-        [SerializeField] private Color partiallyAffordableColor = Color.yellow; // 50-99% gold
-        [SerializeField] private Color cannotAffordColor = Color.red;
-        [SerializeField] private Color selectedColor = Color.cyan; // When in build mode
+        private VisualElement root;
+        private VisualElement hotbarSlots;
 
         private PlayerGold playerGold;
         private BuildManager buildManager;
         private int selectedSlotIndex = -1;
 
-        private bool isInitialized = false;
-        private float initializationRetryTimer = 0f;
+        private bool isInitialized;
+        private float retryTimer;
         private const float RETRY_INTERVAL = 0.5f;
+
+        // Cached slot elements
+        private VisualElement[] slotElements;
+
         private void Start()
         {
-            Debug.Log("[HotbarUI] Waiting for player to spawn...");
+            var uiDoc = GetComponent<UIDocument>();
+            if (uiDoc == null) return;
+
+            root = uiDoc.rootVisualElement;
+            hotbarSlots =
+                root.Q<VisualElement>("hotbar-slots");
         }
 
         private void Update()
         {
             if (!isInitialized)
             {
-                initializationRetryTimer += Time.deltaTime;
-
-                if (initializationRetryTimer >= RETRY_INTERVAL)
+                retryTimer += Time.deltaTime;
+                if (retryTimer >= RETRY_INTERVAL)
                 {
-                    initializationRetryTimer = 0f;
+                    retryTimer = 0f;
                     TryInitialize();
                 }
-
-                return; // Don't update until initialized
+                return;
             }
-            // Update every frame (gold changes frequently)
-            UpdateDisplay();
 
-            // Highlight selected slot
+            UpdateDisplay();
             UpdateSelectedSlot();
         }
-        /// <summary>
-        /// Attempts to initialize (called repeatedly until successful)
-        /// </summary>
+
         private void TryInitialize()
         {
-            // Find player components
             playerGold = PlayerGold.LocalInstance;
-            buildManager = FindFirstObjectByType<BuildManager>();
+            buildManager =
+                FindFirstObjectByType<BuildManager>();
 
-            if (playerGold == null)
-            {
-                Debug.LogWarning("[HotbarUI] Still waiting for PlayerGold...");
-                return;
-            }
-
-            if (buildManager == null)
-            {
-                Debug.LogWarning("[HotbarUI] BuildManager not found!");
-                return;
-            }
-
-            // Success! Initialize
-            InitializeSlots();
-            UpdateDisplay();
-            isInitialized = true;
-
-            Debug.Log("[HotbarUI]  Successfully initialized!");
-        }
-        /// <summary>
-        /// Sets up each slot with turret data
-        /// </summary>
-        private void InitializeSlots()
-        {
-            if (slots == null || slots.Length == 0)
-            {
-                Debug.LogError("[HotbarUI] No slots assigned!");
-                return;
-            }
-
-            for (int i = 0; i < slots.Length && i < turretHotbar.Length; i++)
-            {
-                if (turretHotbar[i] != null)
-                {
-                    slots[i].Initialize(turretHotbar[i], i + 1); // Hotkey = index + 1
-                }
-                else
-                {
-                    slots[i].gameObject.SetActive(false); // Hide empty slots
-                }
-            }
-
-            Debug.Log($"[HotbarUI] Initialized {slots.Length} hotbar slots");
-        }
-
-        /// <summary>
-        /// Updates all slots (color coding based on gold)
-        /// </summary>
-        private void UpdateDisplay()
-        {
             if (playerGold == null) return;
+            if (buildManager == null) return;
 
-            int currentGold = playerGold.GetGold();
+            BuildSlots();
+            isInitialized = true;
+            Debug.Log("[HotbarUI] Initialized");
+        }
 
-            for (int i = 0; i < slots.Length && i < turretHotbar.Length; i++)
+        // ==========================================
+        // BUILD SLOTS
+        // ==========================================
+
+        private void BuildSlots()
+        {
+            if (hotbarSlots == null) return;
+            hotbarSlots.Clear();
+
+            if (turretHotbar == null) return;
+
+            slotElements =
+                new VisualElement[turretHotbar.Length];
+
+            for (int i = 0; i < turretHotbar.Length; i++)
             {
                 if (turretHotbar[i] == null) continue;
 
-                int cost = turretHotbar[i].cost;
-                Color slotColor = GetAffordabilityColor(currentGold, cost);
-
-                slots[i].UpdateColor(slotColor);
+                var slot = BuildSlot(
+                    turretHotbar[i], i);
+                hotbarSlots.Add(slot);
+                slotElements[i] = slot;
             }
         }
 
-        /// <summary>
-        /// Highlights currently selected turret
-        /// </summary>
+        private VisualElement BuildSlot(
+            TurretData turret, int index)
+        {
+            var slot = new VisualElement();
+            slot.AddToClassList("hotbar-slot");
+            slot.name = $"hotbar-slot-{index}";
+
+            // Hotkey label
+            var key = new Label($"{index + 1}");
+            key.AddToClassList("hotbar-key");
+            slot.Add(key);
+
+            // Icon
+            if (turret.turretIcon != null)
+            {
+                var icon = new VisualElement();
+                icon.AddToClassList("hotbar-icon");
+                icon.style.backgroundImage =
+                    new StyleBackground(
+                        turret.turretIcon);
+                slot.Add(icon);
+            }
+
+            // Name
+            var name = new Label(turret.turretName);
+            name.AddToClassList("hotbar-name");
+            slot.Add(name);
+
+            // Cost
+            var cost = new Label(
+                $"{turret.cost}");
+            cost.AddToClassList("hotbar-cost");
+            cost.name = $"cost-{index}";
+            slot.Add(cost);
+
+            // Bottom accent
+            var accent = new VisualElement();
+            accent.AddToClassList(
+                "hotbar-slot-bottom-accent");
+            slot.Add(accent);
+
+            // Click handler
+            int idx = index;
+            slot.RegisterCallback<ClickEvent>(evt =>
+            {
+                OnSlotClicked(idx);
+                evt.StopPropagation();
+            });
+
+            return slot;
+        }
+
+        private void OnSlotClicked(int index)
+        {
+            if (buildManager == null) return;
+            if (turretHotbar == null) return;
+            if (index < 0 ||
+                index >= turretHotbar.Length) return;
+
+            selectedSlotIndex = index;
+            buildManager.SelectTurretToBuild(
+                turretHotbar[index]);
+        }
+            
+        // ==========================================
+        // UPDATE DISPLAY
+        // ==========================================
+
+        private void UpdateDisplay()
+        {
+            if (playerGold == null) return;
+            if (slotElements == null) return;
+
+            int gold = playerGold.GetGold();
+
+            for (int i = 0;
+                i < slotElements.Length; i++)
+            {
+                if (slotElements[i] == null) continue;
+                if (turretHotbar[i] == null) continue;
+
+                var slot = slotElements[i];
+                int cost = turretHotbar[i].cost;
+
+                // Remove old classes
+                slot.RemoveFromClassList(
+                    "hotbar-slot-affordable");
+                slot.RemoveFromClassList(
+                    "hotbar-slot-partial");
+                slot.RemoveFromClassList(
+                    "hotbar-slot-expensive");
+
+                // Cost label color
+                var costLabel =
+                    slot.Q<Label>($"cost-{i}");
+
+                if (gold >= cost)
+                {
+                    slot.AddToClassList(
+                        "hotbar-slot-affordable");
+                    costLabel?.RemoveFromClassList(
+                        "hotbar-cost-expensive");
+                }
+                else if (gold >= cost * 0.5f)
+                {
+                    slot.AddToClassList(
+                        "hotbar-slot-partial");
+                    costLabel?.RemoveFromClassList(
+                        "hotbar-cost-expensive");
+                }
+                else
+                {
+                    slot.AddToClassList(
+                        "hotbar-slot-expensive");
+                    costLabel?.AddToClassList(
+                        "hotbar-cost-expensive");
+                }
+            }
+        }
+
         private void UpdateSelectedSlot()
         {
             if (buildManager == null) return;
+            if (slotElements == null) return;
 
-            // Check if in build mode
-            bool inBuildMode = buildManager.IsInBuildMode();
+            bool inBuild = buildManager.IsInBuildMode();
 
-            if (inBuildMode)
+            for (int i = 0;
+                i < slotElements.Length; i++)
             {
-                // Find which turret is selected (TODO: BuildManager needs to expose this)
-                // For now, just highlight based on recent keypress
-                for (int i = 0; i < slots.Length; i++)
+                if (slotElements[i] == null) continue;
+
+                if (inBuild && i == selectedSlotIndex)
                 {
-                    if (i == selectedSlotIndex)
-                    {
-                        slots[i].SetSelected(true);
-                    }
-                    else
-                    {
-                        slots[i].SetSelected(false);
-                    }
+                    slotElements[i].AddToClassList(
+                        "hotbar-slot-selected");
+                }
+                else
+                {
+                    slotElements[i].RemoveFromClassList(
+                        "hotbar-slot-selected");
                 }
             }
-            else
-            {
-                // Clear all selections
-                foreach (var slot in slots)
-                {
-                    slot.SetSelected(false);
-                }
+
+            if (!inBuild)
                 selectedSlotIndex = -1;
-            }
         }
 
-        /// <summary>
-        /// Returns color based on affordability
-        /// </summary>
-        private Color GetAffordabilityColor(int gold, int cost)
-        {
-            if (gold >= cost)
-            {
-                return affordableColor; // Can afford
-            }
-            else if (gold >= cost * 0.5f)
-            {
-                return partiallyAffordableColor; // 50-99%
-            }
-            else
-            {
-                return cannotAffordColor; // Cannot afford
-            }
-        }
+        // ==========================================
+        // PUBLIC API
+        // ==========================================
 
-        /// <summary>
-        /// Called when hotkey is pressed (from BuildManager)
-        /// </summary>
         public void OnHotkeyPressed(int slotIndex)
         {
             selectedSlotIndex = slotIndex;

@@ -1,0 +1,174 @@
+/* ============================================
+   LOOTBOX REWARD POPUP — ART DECO
+   ============================================ */
+
+.reward-popup-root {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+/* Backdrop */
+.reward-popup-backdrop {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.65);
+}
+
+/* Box */
+.reward-popup-box {
+    width: 380px;
+    background-color: rgb(10, 15, 25);
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.3);
+    padding: 28px 32px;
+    flex-direction: column;
+    align-items: center;
+    transition-property: scale, opacity;
+    transition-duration: 0.3s;
+    transition-timing-function: ease-out;
+}
+
+.reward-popup-inner-border {
+    position: absolute;
+    left: 6px;
+    top: 6px;
+    right: 6px;
+    bottom: 6px;
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.06);
+}
+
+/* Header */
+.reward-popup-header {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 24px;
+    width: 100%;
+}
+
+.reward-header-line {
+    width: 50px;
+    height: 1px;
+    background-color: rgba(245, 158, 11, 0.2);
+}
+
+.reward-popup-title {
+    font-size: 13px;
+    color: rgb(254, 243, 199);
+    letter-spacing: 6px;
+    margin-left: 16px;
+    margin-right: 16px;
+}
+
+/* Icon section */
+.reward-popup-content {
+    width: 120px;
+    height: 120px;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+}
+
+.reward-glow {
+    position: absolute;
+    width: 120px;
+    height: 120px;
+    border-radius: 60px;
+    background-color: rgba(245, 158, 11, 0.1);
+}
+
+.reward-icon {
+    width: 80px;
+    height: 80px;
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+/* Name */
+.reward-lootbox-name {
+    font-size: 20px;
+    color: rgb(254, 243, 199);
+    letter-spacing: 4px;
+    -unity-font-style: bold;
+    -unity-text-align: upper-center;
+    margin-bottom: 6px;
+}
+
+/* Reason */
+.reward-reason {
+    font-size: 11px;
+    color: rgba(245, 158, 11, 0.45);
+    letter-spacing: 3px;
+    -unity-text-align: upper-center;
+    margin-bottom: 20px;
+}
+
+/* Divider */
+.reward-popup-divider {
+    width: 60%;
+    height: 1px;
+    background-color: rgba(245, 158, 11, 0.08);
+    margin-bottom: 20px;
+    align-self: center;
+}
+
+/* Buttons */
+.reward-popup-buttons {
+    flex-direction: row;
+    justify-content: center;
+    width: 100%;
+}
+
+.reward-btn {
+    background-color: rgba(0, 0, 0, 0);
+    border-width: 1px;
+    padding: 10px 24px;
+    font-size: 11px;
+    letter-spacing: 4px;
+    cursor: link;
+    margin: 0 6px;
+    flex-grow: 1;
+    -unity-text-align: middle-center;
+    transition-property: color, border-color, background-color;
+    transition-duration: 0.2s;
+    border-radius: 0;
+}
+
+.reward-btn-open {
+    border-color: rgba(245, 158, 11, 0.4);
+    color: rgba(245, 158, 11, 0.7);
+}
+
+.reward-btn-open:hover {
+    border-color: rgb(245, 158, 11);
+    background-color: rgba(245, 158, 11, 0.08);
+    color: rgb(252, 211, 77);
+}
+
+.reward-btn-ok {
+    border-color: rgba(74, 222, 128, 0.4);
+    color: rgba(74, 222, 128, 0.7);
+}
+
+.reward-btn-ok:hover {
+    border-color: rgb(74, 222, 128);
+    background-color: rgba(74, 222, 128, 0.08);
+    color: rgb(74, 222, 128);
+}
+
+/* ============================================
+   HIDDEN
+   ============================================ */
+
+.hidden {
+    display: none;
+}

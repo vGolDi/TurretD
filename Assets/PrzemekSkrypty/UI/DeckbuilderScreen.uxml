@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements">
+    <Style src="DeckbuilderStyles.uss" />
+
+    <ui:VisualElement name="deckbuilder-root" class="panel-root">
+
+        <!-- HEADER BAR -->
+        <ui:VisualElement class="panel-header">
+            <ui:Button name="btn-back" text="BACK" class="btn-back" />
+            <ui:Label text="THE ARCHITECT" class="panel-title" />
+            <ui:Label text="DECK CONSTRUCTION" class="panel-subtitle" />
+        </ui:VisualElement>
+
+        <!-- MAIN CONTENT -->
+        <ui:VisualElement class="deckbuilder-body">
+
+            <!-- LEWA KOLUMNA: KOLEKCJA -->
+            <ui:VisualElement class="collection-panel">
+
+                <ui:VisualElement class="filters-bar">
+                    <ui:Label text="COLLECTION" class="section-label" />
+                    <ui:VisualElement class="filters-row">
+                        <ui:DropdownField name="filter-rarity" label="Rarity" class="filter-dropdown" />
+                        <ui:DropdownField name="filter-type" label="Type" class="filter-dropdown" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+
+                <ui:ScrollView name="collection-scroll" class="collection-scroll">
+                    <ui:VisualElement name="collection-grid" class="card-grid" />
+                </ui:ScrollView>
+
+            </ui:VisualElement>
+
+            <!-- PRAWA KOLUMNA: DECK -->
+            <ui:VisualElement class="deck-panel">
+
+                <ui:VisualElement class="deck-info-section">
+                    <ui:TextField name="deck-name-input" value="New Deck" class="deck-name-input" />
+
+                    <ui:VisualElement class="counters-row">
+                        <ui:Label name="deck-size" text="0/30 CARDS" class="counter-text" />
+                    </ui:VisualElement>
+
+                    <ui:VisualElement class="rarity-counters">
+                        <ui:Label name="legendary-count" text="LEGENDARY 0/5" class="counter-legendary" />
+                        <ui:Label name="rare-count" text="RARE 0/10" class="counter-rare" />
+                        <ui:Label name="common-count" text="COMMON 0/15" class="counter-common" />
+                    </ui:VisualElement>
+
+                    <ui:VisualElement class="validation-bar">
+                        <ui:Label name="validation-text" text="Deck too small" class="validation-text" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+
+                <ui:ScrollView name="deck-scroll" class="deck-scroll">
+                    <ui:VisualElement name="deck-list" class="deck-list" />
+                </ui:ScrollView>
+
+                <ui:VisualElement class="deck-actions">
+                    <ui:Button name="btn-save" text="SAVE DECK" class="btn-action btn-save" />
+                    <ui:Button name="btn-load" text="LOAD" class="btn-action btn-secondary" />
+                    <ui:Button name="btn-new" text="NEW" class="btn-action btn-secondary" />
+                    <ui:Button name="btn-clear" text="CLEAR" class="btn-action btn-danger" />
+                    <ui:Button name="btn-autofill" text="AUTO-FILL" class="btn-action btn-secondary" />
+                </ui:VisualElement>
+
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <!-- LOAD DECK POPUP -->
+        <ui:VisualElement name="load-deck-popup" class="popup-overlay hidden">
+            <ui:VisualElement class="popup-box">
+                <ui:Label text="LOAD DECK" class="popup-title" />
+                <ui:ScrollView class="popup-scroll">
+                    <ui:VisualElement name="load-deck-list" class="popup-list" />
+                </ui:ScrollView>
+                <ui:Button name="btn-close-load" text="CLOSE" class="btn-action btn-secondary" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+    </ui:VisualElement>
+</ui:UXML>

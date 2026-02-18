@@ -1,0 +1,543 @@
+/* ============================================
+   LEVEL UP POPUP — ART DECO
+   4 Visual Tiers based on level
+   ============================================ */
+
+.levelup-root {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    align-items: center;
+    justify-content: center;
+}
+
+.levelup-backdrop {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+/* ============================================
+   BOX — base style (Bronze tier)
+   ============================================ */
+
+.levelup-box {
+    width: 420px;
+    background-color: rgb(10, 15, 25);
+    border-width: 1px;
+    border-color: rgba(180, 130, 80, 0.35);
+    padding: 32px 36px;
+    flex-direction: column;
+    align-items: center;
+    overflow: visible;
+}
+
+.levelup-inner-border {
+    position: absolute;
+    left: 6px;
+    top: 6px;
+    right: 6px;
+    bottom: 6px;
+    border-width: 1px;
+    border-color: rgba(180, 130, 80, 0.06);
+}
+
+/* ============================================
+   CORNERS
+   ============================================ */
+
+.levelup-corner {
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    border-color: rgba(180, 130, 80, 0.3);
+}
+
+.levelup-corner-tl { left: 10px; top: 10px; border-left-width: 1px; border-top-width: 1px; }
+.levelup-corner-tr { right: 10px; top: 10px; border-right-width: 1px; border-top-width: 1px; }
+.levelup-corner-bl { left: 10px; bottom: 10px; border-left-width: 1px; border-bottom-width: 1px; }
+.levelup-corner-br { right: 10px; bottom: 10px; border-right-width: 1px; border-bottom-width: 1px; }
+
+/* ============================================
+   HEADER
+   ============================================ */
+
+.levelup-header {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 24px;
+    width: 100%;
+}
+
+.levelup-header-line {
+    width: 50px;
+    height: 1px;
+    background-color: rgba(180, 130, 80, 0.2);
+}
+
+.levelup-title {
+    font-size: 16px;
+    color: rgb(254, 243, 199);
+    letter-spacing: 8px;
+    margin-left: 16px;
+    margin-right: 16px;
+}
+
+/* ============================================
+   LEVEL HEXAGON
+   ============================================ */
+
+.levelup-level-section {
+    width: 100px;
+    height: 100px;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 12px;
+}
+
+.levelup-glow-outer {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    border-radius: 50px;
+    background-color: rgba(180, 130, 80, 0.05);
+}
+
+.levelup-glow-inner {
+    position: absolute;
+    width: 70px;
+    height: 70px;
+    border-radius: 35px;
+    background-color: rgba(180, 130, 80, 0.08);
+}
+
+.levelup-hexagon {
+    width: 64px;
+    height: 64px;
+    align-items: center;
+    justify-content: center;
+}
+
+.levelup-hex-bg {
+    position: absolute;
+    width: 64px;
+    height: 64px;
+    background-color: rgba(180, 130, 80, 0.12);
+    border-radius: 8px;
+    rotate: 45deg;
+    scale: 0.75 0.75;
+}
+
+.levelup-hex-border {
+    position: absolute;
+    width: 64px;
+    height: 64px;
+    border-width: 2px;
+    border-color: rgba(180, 130, 80, 0.5);
+    border-radius: 8px;
+    rotate: 45deg;
+    scale: 0.75 0.75;
+}
+
+.levelup-level-number {
+    font-size: 24px;
+    color: rgb(254, 243, 199);
+    -unity-font-style: bold;
+    -unity-text-align: middle-center;
+    letter-spacing: 2px;
+}
+
+/* ============================================
+   TIER NAME
+   ============================================ */
+
+.levelup-tier-name {
+    font-size: 12px;
+    color: rgba(180, 130, 80, 0.5);
+    letter-spacing: 6px;
+    margin-bottom: 20px;
+}
+
+/* ============================================
+   DIVIDER WITH ORNAMENTS
+   ============================================ */
+
+.levelup-divider-section {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    width: 80%;
+    margin-bottom: 20px;
+}
+
+.levelup-divider-line {
+    flex-grow: 1;
+    height: 1px;
+    background-color: rgba(180, 130, 80, 0.1);
+}
+
+.levelup-ornament-diamond {
+    width: 10px;
+    height: 10px;
+    border-width: 1px;
+    border-color: rgba(180, 130, 80, 0.25);
+    rotate: 45deg;
+    scale: 0.7 0.7;
+    margin-left: 4px;
+    margin-right: 4px;
+}
+
+.levelup-ornament-center {
+    width: 12px;
+    height: 12px;
+    background-color: rgba(180, 130, 80, 0.1);
+}
+
+/* ============================================
+   REWARDS
+   ============================================ */
+
+.levelup-rewards-title {
+    font-size: 10px;
+    color: rgba(245, 158, 11, 0.35);
+    letter-spacing: 5px;
+    margin-bottom: 12px;
+}
+
+.levelup-rewards {
+    width: 100%;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.levelup-reward-row {
+    flex-direction: row;
+    align-items: center;
+    margin: 4px 0;
+}
+
+.levelup-reward-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 4px;
+    margin-right: 10px;
+}
+
+.levelup-reward-dot-gold { background-color: rgb(245, 158, 11); }
+.levelup-reward-dot-crystal { background-color: rgb(34, 211, 238); }
+.levelup-reward-dot-lootbox { background-color: rgb(168, 85, 247); }
+.levelup-reward-dot-card { background-color: rgb(74, 222, 128); }
+
+.levelup-reward-text {
+    font-size: 13px;
+    letter-spacing: 2px;
+}
+
+.levelup-reward-gold { color: rgb(251, 191, 36); }
+.levelup-reward-crystal { color: rgb(34, 211, 238); }
+.levelup-reward-lootbox { color: rgb(196, 140, 255); }
+.levelup-reward-card { color: rgb(74, 222, 128); }
+
+/* ============================================
+   CUSTOM MESSAGE
+   ============================================ */
+
+.levelup-custom-message {
+    font-size: 11px;
+    color: rgba(254, 243, 199, 0.6);
+    letter-spacing: 2px;
+    -unity-text-align: upper-center;
+    white-space: normal;
+    margin-bottom: 16px;
+    padding: 8px 16px;
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.06);
+    background-color: rgba(8, 12, 20, 0.4);
+}
+
+/* ============================================
+   XP BAR
+   ============================================ */
+
+.levelup-xp-section {
+    width: 80%;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.levelup-xp-bar-bg {
+    width: 100%;
+    height: 4px;
+    background-color: rgba(245, 158, 11, 0.1);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-bottom: 6px;
+}
+
+.levelup-xp-fill {
+    height: 100%;
+    width: 0%;
+    background-color: rgb(245, 158, 11);
+    border-radius: 2px;
+    transition-property: width;
+    transition-duration: 0.8s;
+    transition-timing-function: ease-out;
+}
+
+.levelup-xp-text {
+    font-size: 9px;
+    color: rgba(245, 158, 11, 0.35);
+    letter-spacing: 2px;
+}
+
+/* ============================================
+   BUTTON
+   ============================================ */
+
+.levelup-btn-ok {
+    background-color: rgba(0, 0, 0, 0);
+    border-width: 1px;
+    border-color: rgba(74, 222, 128, 0.4);
+    color: rgba(74, 222, 128, 0.7);
+    font-size: 12px;
+    letter-spacing: 4px;
+    padding: 10px 40px;
+    cursor: link;
+    transition-property: color, border-color, background-color;
+    transition-duration: 0.2s;
+    border-radius: 0;
+}
+
+.levelup-btn-ok:hover {
+    border-color: rgb(74, 222, 128);
+    background-color: rgba(74, 222, 128, 0.08);
+    color: rgb(74, 222, 128);
+}
+
+/* ============================================
+   TIER OVERRIDES — Silver (11-25)
+   Applied via C# addClass
+   ============================================ */
+
+.tier-silver .levelup-hex-bg {
+    background-color: rgba(180, 200, 220, 0.12);
+}
+
+.tier-silver .levelup-hex-border {
+    border-color: rgba(180, 200, 220, 0.6);
+    border-width: 2px;
+}
+
+.tier-silver .levelup-glow-outer {
+    background-color: rgba(180, 200, 220, 0.06);
+}
+
+.tier-silver .levelup-glow-inner {
+    background-color: rgba(180, 200, 220, 0.1);
+}
+
+.tier-silver .levelup-tier-name {
+    color: rgba(180, 200, 220, 0.6);
+}
+
+.tier-silver .levelup-header-line {
+    background-color: rgba(180, 200, 220, 0.25);
+}
+
+.tier-silver .levelup-corner {
+    border-color: rgba(180, 200, 220, 0.35);
+}
+
+.tier-silver .levelup-inner-border {
+    border-color: rgba(180, 200, 220, 0.08);
+}
+
+.tier-silver .levelup-ornament-diamond {
+    border-color: rgba(180, 200, 220, 0.3);
+}
+
+.tier-silver .levelup-ornament-center {
+    background-color: rgba(180, 200, 220, 0.12);
+}
+
+.tier-silver .levelup-divider-line {
+    background-color: rgba(180, 200, 220, 0.12);
+}
+
+.tier-silver {
+    border-color: rgba(180, 200, 220, 0.4);
+}
+
+/* ============================================
+   TIER OVERRIDES — Gold (26-50)
+   ============================================ */
+
+.tier-gold .levelup-hex-bg {
+    background-color: rgba(245, 158, 11, 0.15);
+}
+
+.tier-gold .levelup-hex-border {
+    border-color: rgb(245, 158, 11);
+    border-width: 2px;
+}
+
+.tier-gold .levelup-glow-outer {
+    background-color: rgba(245, 158, 11, 0.08);
+    width: 120px;
+    height: 120px;
+    border-radius: 60px;
+}
+
+.tier-gold .levelup-glow-inner {
+    background-color: rgba(245, 158, 11, 0.12);
+}
+
+.tier-gold .levelup-tier-name {
+    color: rgba(245, 158, 11, 0.7);
+}
+
+.tier-gold .levelup-header-line {
+    background-color: rgba(245, 158, 11, 0.35);
+    width: 70px;
+}
+
+.tier-gold .levelup-corner {
+    border-color: rgba(245, 158, 11, 0.5);
+    width: 20px;
+    height: 20px;
+}
+
+.tier-gold .levelup-inner-border {
+    border-color: rgba(245, 158, 11, 0.1);
+}
+
+.tier-gold .levelup-ornament-diamond {
+    border-color: rgba(245, 158, 11, 0.5);
+    background-color: rgba(245, 158, 11, 0.08);
+}
+
+.tier-gold .levelup-ornament-center {
+    background-color: rgba(245, 158, 11, 0.2);
+    border-color: rgba(245, 158, 11, 0.5);
+}
+
+.tier-gold .levelup-divider-line {
+    background-color: rgba(245, 158, 11, 0.15);
+}
+
+.tier-gold .levelup-level-number {
+    color: rgb(252, 211, 77);
+}
+
+.tier-gold {
+    border-color: rgba(245, 158, 11, 0.5);
+    border-width: 2px;
+}
+
+/* ============================================
+   TIER OVERRIDES — Diamond (51+)
+   ============================================ */
+
+.tier-diamond .levelup-hex-bg {
+    background-color: rgba(34, 211, 238, 0.15);
+}
+
+.tier-diamond .levelup-hex-border {
+    border-color: rgb(34, 211, 238);
+    border-width: 3px;
+}
+
+.tier-diamond .levelup-glow-outer {
+    background-color: rgba(34, 211, 238, 0.08);
+    width: 140px;
+    height: 140px;
+    border-radius: 70px;
+    border-width: 1px;
+    border-color: rgba(34, 211, 238, 0.15);
+}
+
+.tier-diamond .levelup-glow-inner {
+    background-color: rgba(34, 211, 238, 0.15);
+    width: 90px;
+    height: 90px;
+    border-radius: 45px;
+}
+
+.tier-diamond .levelup-tier-name {
+    color: rgb(34, 211, 238);
+    font-size: 13px;
+}
+
+.tier-diamond .levelup-title {
+    color: rgb(34, 211, 238);
+}
+
+.tier-diamond .levelup-header-line {
+    background-color: rgba(34, 211, 238, 0.4);
+    width: 80px;
+}
+
+.tier-diamond .levelup-corner {
+    border-color: rgba(34, 211, 238, 0.6);
+    width: 24px;
+    height: 24px;
+}
+
+.tier-diamond .levelup-inner-border {
+    border-color: rgba(34, 211, 238, 0.1);
+    border-width: 1px;
+}
+
+.tier-diamond .levelup-ornament-diamond {
+    border-color: rgba(34, 211, 238, 0.6);
+    background-color: rgba(34, 211, 238, 0.1);
+    width: 12px;
+    height: 12px;
+}
+
+.tier-diamond .levelup-ornament-center {
+    background-color: rgba(34, 211, 238, 0.25);
+    border-color: rgba(34, 211, 238, 0.6);
+    width: 14px;
+    height: 14px;
+}
+
+.tier-diamond .levelup-divider-line {
+    background-color: rgba(34, 211, 238, 0.2);
+}
+
+.tier-diamond .levelup-level-number {
+    color: rgb(34, 211, 238);
+    font-size: 28px;
+}
+
+.tier-diamond .levelup-xp-fill {
+    background-color: rgb(34, 211, 238);
+}
+
+.tier-diamond .levelup-xp-bar-bg {
+    background-color: rgba(34, 211, 238, 0.1);
+}
+
+.tier-diamond .levelup-xp-text {
+    color: rgba(34, 211, 238, 0.4);
+}
+
+.tier-diamond {
+    border-color: rgba(34, 211, 238, 0.5);
+    border-width: 2px;
+}
+
+/* ============================================
+   HIDDEN
+   ============================================ */
+
+.hidden {
+    display: none;
+}

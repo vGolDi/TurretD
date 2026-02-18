@@ -103,37 +103,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   slider: {fileID: 4106587091759875500}
-  gradient:
-    serializedVersion: 2
-    key0: {r: 0.8396226, g: 0.1544589, b: 0.1544589, a: 1}
-    key1: {r: 0.8396226, g: 0.1544589, b: 0.1544589, a: 1}
-    key2: {r: 0.19159728, g: 0.8301887, b: 0.121395506, a: 0}
-    key3: {r: 0, g: 0, b: 0, a: 0}
-    key4: {r: 0, g: 0, b: 0, a: 0}
-    key5: {r: 0, g: 0, b: 0, a: 0}
-    key6: {r: 0, g: 0, b: 0, a: 0}
-    key7: {r: 0, g: 0, b: 0, a: 0}
-    ctime0: 13878
-    ctime1: 16384
-    ctime2: 49344
-    ctime3: 0
-    ctime4: 0
-    ctime5: 0
-    ctime6: 0
-    ctime7: 0
-    atime0: 0
-    atime1: 54356
-    atime2: 0
-    atime3: 0
-    atime4: 0
-    atime5: 0
-    atime6: 0
-    atime7: 0
-    m_Mode: 0
-    m_ColorSpace: -1
-    m_NumColorKeys: 3
-    m_NumAlphaKeys: 2
   fill: {fileID: 1591482049694074594}
+  background: {fileID: 0}
 --- !u!1 &266524830403848730
 GameObject:
   m_ObjectHideFlags: 0
@@ -643,8 +614,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c398163e0d200e429a5f1bff52722fe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  waypointReachDistance: 0.2
-  baseSpeed: 0.7
+  waypointReachDistance: 1
+  baseSpeed: 5
   avoidanceRadius: 0.5
   pathRefreshInterval: 0.3
   stuckThreshold: 0.05

@@ -1,0 +1,153 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
+    <Style src="SettingsStyles.uss" />
+
+    <ui:VisualElement name="settings-root" class="panel-root">
+
+        <!-- DEKORACJE BOCZNE -->
+        <ui:VisualElement picking-mode="Ignore" class="side-decoration-left" />
+        <ui:VisualElement picking-mode="Ignore" class="side-decoration-right" />
+        <ui:VisualElement picking-mode="Ignore" class="side-tick-left" style="top: 30%;" />
+        <ui:VisualElement picking-mode="Ignore" class="side-tick-left" style="top: 50%;" />
+        <ui:VisualElement picking-mode="Ignore" class="side-tick-left" style="top: 70%;" />
+        <ui:VisualElement picking-mode="Ignore" class="side-tick-right" style="top: 30%;" />
+        <ui:VisualElement picking-mode="Ignore" class="side-tick-right" style="top: 50%;" />
+        <ui:VisualElement picking-mode="Ignore" class="side-tick-right" style="top: 70%;" />
+
+        <!-- RADIAL BG -->
+        <ui:VisualElement picking-mode="Ignore" class="settings-bg-radial">
+            <ui:VisualElement picking-mode="Ignore" class="settings-bg-radial-line" style="rotate: 0;" />
+            <ui:VisualElement picking-mode="Ignore" class="settings-bg-radial-line" style="rotate: 45deg;" />
+            <ui:VisualElement picking-mode="Ignore" class="settings-bg-radial-line" style="rotate: 90deg;" />
+            <ui:VisualElement picking-mode="Ignore" class="settings-bg-radial-line" style="rotate: 135deg;" />
+        </ui:VisualElement>
+
+        <!-- HEADER -->
+        <ui:VisualElement class="panel-header">
+            <ui:Button name="btn-back" text="BACK" class="btn-back" />
+            <ui:VisualElement class="header-title-group">
+                <ui:Label text="THE WHEEL" class="panel-title" />
+                <ui:Label text="SETTINGS" class="panel-subtitle" />
+            </ui:VisualElement>
+            <ui:VisualElement class="header-spacer" />
+        </ui:VisualElement>
+
+        <!-- CONTENT -->
+        <ui:ScrollView name="settings-scroll" class="settings-scroll">
+            <ui:VisualElement class="settings-content">
+
+                <!-- ====== AUDIO ====== -->
+                <ui:VisualElement class="settings-section">
+                    <ui:VisualElement class="section-header">
+                        <ui:VisualElement class="section-diamond" />
+                        <ui:Label text="AUDIO" class="section-title" />
+                        <ui:VisualElement class="section-line" />
+                    </ui:VisualElement>
+
+                    <ui:VisualElement class="setting-row">
+                        <ui:Label text="MASTER VOLUME" class="setting-label" />
+                        <ui:VisualElement class="setting-control">
+                            <ui:Slider name="slider-master-volume" low-value="0" high-value="1" value="1" class="setting-slider" />
+                            <ui:Label name="label-master-volume" text="100%" class="setting-value" />
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+
+                    <ui:VisualElement class="setting-row">
+                        <ui:Label text="MUSIC VOLUME" class="setting-label" />
+                        <ui:VisualElement class="setting-control">
+                            <ui:Slider name="slider-music-volume" low-value="0" high-value="1" value="0.5" class="setting-slider" />
+                            <ui:Label name="label-music-volume" text="50%" class="setting-value" />
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+
+                    <ui:VisualElement class="setting-row">
+                        <ui:Label text="SFX VOLUME" class="setting-label" />
+                        <ui:VisualElement class="setting-control">
+                            <ui:Slider name="slider-sfx-volume" low-value="0" high-value="1" value="0.7" class="setting-slider" />
+                            <ui:Label name="label-sfx-volume" text="70%" class="setting-value" />
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+
+                <!-- ====== GRAPHICS ====== -->
+                <ui:VisualElement class="settings-section">
+                    <ui:VisualElement class="section-header">
+                        <ui:VisualElement class="section-diamond" />
+                        <ui:Label text="GRAPHICS" class="section-title" />
+                        <ui:VisualElement class="section-line" />
+                    </ui:VisualElement>
+
+                    <ui:VisualElement class="setting-row">
+                        <ui:Label text="QUALITY" class="setting-label" />
+                        <ui:VisualElement class="setting-control">
+                            <ui:DropdownField name="dropdown-quality" class="setting-dropdown" />
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+
+                    <ui:VisualElement class="setting-row">
+                        <ui:Label text="RESOLUTION" class="setting-label" />
+                        <ui:VisualElement class="setting-control">
+                            <ui:DropdownField name="dropdown-resolution" class="setting-dropdown" />
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+
+                    <ui:VisualElement class="setting-row">
+                        <ui:Label text="FULLSCREEN" class="setting-label" />
+                        <ui:VisualElement class="setting-control">
+                            <ui:Toggle name="toggle-fullscreen" class="setting-toggle" />
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+
+                    <ui:VisualElement class="setting-row">
+                        <ui:Label text="VSYNC" class="setting-label" />
+                        <ui:VisualElement class="setting-control">
+                            <ui:Toggle name="toggle-vsync" class="setting-toggle" />
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+
+                <!-- ====== GAMEPLAY ====== -->
+                <ui:VisualElement class="settings-section">
+                    <ui:VisualElement class="section-header">
+                        <ui:VisualElement class="section-diamond" />
+                        <ui:Label text="GAMEPLAY" class="section-title" />
+                        <ui:VisualElement class="section-line" />
+                    </ui:VisualElement>
+
+                    <ui:VisualElement class="setting-row">
+                        <ui:Label text="CAMERA SHAKE" class="setting-label" />
+                        <ui:VisualElement class="setting-control">
+                            <ui:Toggle name="toggle-camera-shake" value="true" class="setting-toggle" />
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+
+                    <ui:VisualElement class="setting-row">
+                        <ui:Label text="DAMAGE NUMBERS" class="setting-label" />
+                        <ui:VisualElement class="setting-control">
+                            <ui:Toggle name="toggle-damage-numbers" value="true" class="setting-toggle" />
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+
+                    <ui:VisualElement class="setting-row">
+                        <ui:Label text="CARD ANIMATIONS" class="setting-label" />
+                        <ui:VisualElement class="setting-control">
+                            <ui:Toggle name="toggle-card-animations" value="true" class="setting-toggle" />
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+
+                <!-- ====== ACTIONS ====== -->
+                <ui:VisualElement class="settings-actions">
+                    <ui:Button name="btn-apply" text="APPLY" class="btn-action btn-save" />
+                    <ui:Button name="btn-reset" text="RESET DEFAULTS" class="btn-action btn-danger" />
+                </ui:VisualElement>
+
+            </ui:VisualElement>
+        </ui:ScrollView>
+
+        <!-- BOTTOM INFO -->
+        <ui:VisualElement picking-mode="Ignore" class="bottom-info-bar">
+            <ui:Label text="CHANGES WILL BE SAVED AUTOMATICALLY" class="bottom-info-text" />
+        </ui:VisualElement>
+
+    </ui:VisualElement>
+</ui:UXML>
