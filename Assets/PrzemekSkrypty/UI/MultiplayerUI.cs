@@ -79,10 +79,19 @@ namespace ElementumDefense.UI
             QueryElements();
             BindButtons();
             RefreshDisplay();
+
+            var bg = root.Q<VisualElement>("multiplayer-root");
+            StarfieldInjector.Instance?.Register(bg);
         }
 
         public void Hide()
         {
+            if (root != null)
+            {
+                var bg = root.Q<VisualElement>("multiplayer-root");
+                StarfieldInjector.Instance?.Unregister(bg);
+            }
+
             StopAllCoroutines();
 
             var uiDoc = GetComponent<UIDocument>();

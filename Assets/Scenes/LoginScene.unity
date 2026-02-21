@@ -145,14 +145,14 @@ Light:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 32688002}
   m_Enabled: 1
-  serializedVersion: 11
+  serializedVersion: 12
   m_Type: 1
   m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
   m_Intensity: 1
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
-  m_CookieSize: 10
+  m_CookieSize2D: {x: 10, y: 10}
   m_Shadows:
     m_Type: 2
     m_Resolution: -1
@@ -336,6 +336,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: f1b62d0868412c644bcc7a67739d2826, type: 2}
   - {fileID: 11400000, guid: 1eac524222192474ab5713121bed0983, type: 2}
   - {fileID: 11400000, guid: 1b4fda16bb2767541b5e9b9fc0ac3641, type: 2}
+  allSabotages:
+  - {fileID: 11400000, guid: 0685fb11cefc2424aa46abbe094b34fc, type: 2}
+  - {fileID: 11400000, guid: ccd63efae43b6b4498c454a4e453a624, type: 2}
   currentGold: 0
   currentCrystals: 0
   starterCards: []
@@ -346,6 +349,8 @@ MonoBehaviour:
   levelRewardsConfig: {fileID: 11400000, guid: 96e993b2f9b430b478782bb4bb5a6c27, type: 2}
   currentELO: 1000
   SelectedGameMode: 1
+  totalWins: 0
+  totalLosses: 0
   defaultDecks:
   - {fileID: 11400000, guid: 641baf58b2e18e941b05831789aa3fad, type: 2}
   - {fileID: 11400000, guid: e8f4ea765d09f2a45a952f877a9a3dfc, type: 2}
@@ -474,6 +479,7 @@ GameObject:
   - component: {fileID: 815773124}
   - component: {fileID: 815773126}
   - component: {fileID: 815773125}
+  - component: {fileID: 815773127}
   m_Layer: 5
   m_Name: UI_Login
   m_TagString: Untagged
@@ -540,6 +546,33 @@ MonoBehaviour:
   m_PivotReferenceSize: 0
   m_Pivot: 0
   m_WorldSpaceCollider: {fileID: 0}
+--- !u!114 &815773127
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 815773119}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f681cf085ff9ad144af7b906458e6239, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ElementumDefense.UI.StarfieldInjector
+  starCount: 80
+  dustCount: 40
+  starMinSize: 1
+  starMaxSize: 3
+  starMinOpacity: 0.15
+  starMaxOpacity: 0.6
+  dustMinSize: 1
+  dustMaxSize: 2
+  dustMinOpacity: 0.05
+  dustMaxOpacity: 0.2
+  twinkleSpeed: 0.5
+  enableTwinkle: 1
+  enableDrift: 1
+  starColor: {r: 0.9, g: 0.85, b: 0.7, a: 1}
+  dustColor: {r: 0.6, g: 0.55, b: 0.45, a: 1}
 --- !u!1 &1221414976
 GameObject:
   m_ObjectHideFlags: 0

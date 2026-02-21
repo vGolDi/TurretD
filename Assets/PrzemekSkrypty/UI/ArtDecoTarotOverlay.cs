@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UIElements;
 using ElementumDefense.Cards;
+using ElementumDefense.UI;
 
 [RequireComponent(typeof(UIDocument))]
 public class ArtDecoTarotOverlay : MonoBehaviour
@@ -41,11 +42,11 @@ public class ArtDecoTarotOverlay : MonoBehaviour
     private VisualElement cardDeckbuilder;
     private VisualElement cardShop;
     private VisualElement cardLootbox;
-    private VisualElement cardSettings;
+    private VisualElement cardProfile;
 
     // Bottom menu
     private Button btnCredits;
-    private Button btnProfile;
+    private Button btnSettings;
     private Button btnQuit;
 
     // ==========================================
@@ -93,8 +94,6 @@ public class ArtDecoTarotOverlay : MonoBehaviour
             playerData = PlayerCollection.Instance;
             SubscribeToPlayerEvents();
             UpdateAllDisplayData();
-            Debug.Log(
-                "[ArtDeco] Late-bound to PlayerCollection");
         }
     }
 
@@ -188,9 +187,6 @@ public class ArtDecoTarotOverlay : MonoBehaviour
 
     private void HandleCollectionReloaded()
     {
-        Debug.Log(
-            "[ArtDeco] Collection reloaded, " +
-            "refreshing UI");
         UpdateAllDisplayData();
     }
 
@@ -230,7 +226,7 @@ public class ArtDecoTarotOverlay : MonoBehaviour
         xpLabel =
             root.Q<Label>("xp-text");
 
-        // Cards
+        // Cards — profile instead of settings
         cardMultiplayer =
             root.Q<VisualElement>("card-multiplayer");
         cardDeckbuilder =
@@ -239,14 +235,14 @@ public class ArtDecoTarotOverlay : MonoBehaviour
             root.Q<VisualElement>("card-shop");
         cardLootbox =
             root.Q<VisualElement>("card-lootbox");
-        cardSettings =
-            root.Q<VisualElement>("card-settings");
+        cardProfile =
+            root.Q<VisualElement>("card-profile");
 
-        // Bottom menu
+        // Bottom menu — settings between credits and quit
         btnCredits =
             root.Q<Button>("btn-credits");
-        btnProfile =
-            root.Q<Button>("btn-profile");
+        btnSettings =
+            root.Q<Button>("btn-settings");
         btnQuit =
             root.Q<Button>("btn-quit");
     }
@@ -264,17 +260,14 @@ public class ArtDecoTarotOverlay : MonoBehaviour
         {
             int level = playerData.GetLevel();
 
-            // Player name
             string displayName =
                 GetPlayerDisplayName();
             if (playerNameLabel != null)
                 playerNameLabel.text = displayName;
 
-            // Level number
             if (levelLabel != null)
                 levelLabel.text = level.ToString();
 
-            // Currency
             if (goldLabel != null)
                 goldLabel.text =
                     FormatNumber(playerData.GetGold());
@@ -284,33 +277,15 @@ public class ArtDecoTarotOverlay : MonoBehaviour
                     FormatNumber(
                         playerData.GetCrystals());
 
-            // Tier (based on level)
             UpdateTierDisplay(level);
-
-            // ELO rank
             UpdateEloDisplay();
 
-            // XP bar
             int currentXP = playerData.GetCurrentXP();
             int xpNeeded =
                 playerData.GetXPForNextLevel();
             HandleXPChanged(currentXP, xpNeeded);
 
-            // Subscribe if not yet
             SubscribeToPlayerEvents();
-
-            Debug.Log(
-                $"[ArtDeco] UI updated: " +
-                $"Lvl {level} ({GetTierName(level)}), " +
-                $"Gold {playerData.GetGold()}, " +
-                $"Crystals {playerData.GetCrystals()}, " +
-                $"ELO {playerData.GetElo()} " +
-                $"({playerData.GetRankName()})");
-        }
-        else
-        {
-            Debug.LogWarning(
-                "[ArtDeco] PlayerCollection not found!");
         }
 
         if (versionLabel != null)
@@ -326,7 +301,6 @@ public class ArtDecoTarotOverlay : MonoBehaviour
         Color tierColor = GetTierColor(level);
         string tierName = GetTierName(level);
 
-        // Tier label
         if (playerTierLabel != null)
         {
             playerTierLabel.text = tierName;
@@ -334,7 +308,6 @@ public class ArtDecoTarotOverlay : MonoBehaviour
                 new StyleColor(tierColor);
         }
 
-        // Hexagon background
         if (hexagonBg != null)
         {
             Color bgColor = tierColor;
@@ -343,7 +316,6 @@ public class ArtDecoTarotOverlay : MonoBehaviour
                 new StyleColor(bgColor);
         }
 
-        // Hexagon border
         if (hexagonBorder != null)
         {
             hexagonBorder.style.borderTopColor =
@@ -356,7 +328,6 @@ public class ArtDecoTarotOverlay : MonoBehaviour
                 new StyleColor(tierColor);
         }
 
-        // Level number color
         if (levelLabel != null)
         {
             if (level >= 26)
@@ -369,7 +340,6 @@ public class ArtDecoTarotOverlay : MonoBehaviour
                             0.996f, 0.953f, 0.78f));
         }
 
-        // Name divider color
         var divider = root.Q<VisualElement>(
             "player-name-divider");
         if (divider != null)
@@ -382,7 +352,7 @@ public class ArtDecoTarotOverlay : MonoBehaviour
     }
 
     // ==========================================
-    // ELO DISPLAY (based on ELO rating)
+    // ELO DISPLAY
     // ==========================================
 
     private void UpdateEloDisplay()
@@ -393,7 +363,6 @@ public class ArtDecoTarotOverlay : MonoBehaviour
         Color rankColor = playerData.GetRankColor();
         int elo = playerData.GetElo();
 
-        // ELO rank name
         if (eloRankLabel != null)
         {
             eloRankLabel.text = rankName;
@@ -401,7 +370,6 @@ public class ArtDecoTarotOverlay : MonoBehaviour
                 new StyleColor(rankColor);
         }
 
-        // ELO value
         if (eloValueLabel != null)
         {
             eloValueLabel.text = $"{elo} ELO";
@@ -436,19 +404,6 @@ public class ArtDecoTarotOverlay : MonoBehaviour
     }
 
     // ==========================================
-    // COMBINED RANK UPDATE (backward compat)
-    // ==========================================
-
-    private void UpdateRankDisplay()
-    {
-        if (playerData == null) return;
-
-        int level = playerData.GetLevel();
-        UpdateTierDisplay(level);
-        UpdateEloDisplay();
-    }
-
-    // ==========================================
     // CARD BINDING
     // ==========================================
 
@@ -456,32 +411,27 @@ public class ArtDecoTarotOverlay : MonoBehaviour
     {
         BindCard(cardMultiplayer, () =>
         {
-            Debug.Log("[ArtDeco] Card: MULTIPLAYER");
             mainMenuController?.OpenMultiplayer();
         });
 
         BindCard(cardDeckbuilder, () =>
         {
-            Debug.Log("[ArtDeco] Card: DECKBUILDER");
             mainMenuController?.OpenDeckbuilder();
         });
 
         BindCard(cardShop, () =>
         {
-            Debug.Log("[ArtDeco] Card: SHOP");
             mainMenuController?.OpenShop();
         });
 
         BindCard(cardLootbox, () =>
         {
-            Debug.Log("[ArtDeco] Card: LOOTBOX");
             mainMenuController?.OpenLootboxMenu();
         });
 
-        BindCard(cardSettings, () =>
+        BindCard(cardProfile, () =>
         {
-            Debug.Log("[ArtDeco] Card: SETTINGS");
-            mainMenuController?.OpenSettings();
+            mainMenuController?.OpenProfile();
         });
     }
 
@@ -496,21 +446,21 @@ public class ArtDecoTarotOverlay : MonoBehaviour
             };
         }
 
+        if (btnSettings != null)
+        {
+            btnSettings.clicked += () =>
+            {
+                PlayClickSound();
+                mainMenuController?.OpenSettings();
+            };
+        }
+
         if (btnQuit != null)
         {
             btnQuit.clicked += () =>
             {
                 PlayClickSound();
                 mainMenuController?.QuitGame();
-            };
-        }
-
-        if (btnProfile != null)
-        {
-            btnProfile.clicked += () =>
-            {
-                PlayClickSound();
-                Debug.Log("[ArtDeco] Profile clicked");
             };
         }
     }
@@ -543,7 +493,7 @@ public class ArtDecoTarotOverlay : MonoBehaviour
             "card-selected");
         cardLootbox?.RemoveFromClassList(
             "card-selected");
-        cardSettings?.RemoveFromClassList(
+        cardProfile?.RemoveFromClassList(
             "card-selected");
     }
 
@@ -563,10 +513,18 @@ public class ArtDecoTarotOverlay : MonoBehaviour
         root.style.display = DisplayStyle.Flex;
         ClearAllCardHighlights();
         UpdateAllDisplayData();
+
+        var bg = root.Q<VisualElement>(
+            "background-layer");
+        StarfieldInjector.Instance?.Register(bg);
     }
 
     public void Hide()
     {
+        var bg = root.Q<VisualElement>(
+            "background-layer");
+        StarfieldInjector.Instance?.Unregister(bg);
+
         root.style.display = DisplayStyle.None;
     }
 

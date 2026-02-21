@@ -1,111 +1,111 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
-    <Style src="project://database/Assets/PrzemekSkrypty/MultiplayerStyles.uss?fileID=7433441132597879392&amp;guid=0798f2d5471beb14c98267ddb87fc839&amp;type=3#MultiplayerStyles" />
+    <Style src="project://database/Assets/PrzemekSkrypty/UI/MultiplayerStyles.uss?fileID=7433441132597879392&amp;guid=0798f2d5471beb14c98267ddb87fc839&amp;type=3#MultiplayerStyles"/>
     <ui:VisualElement name="multiplayer-root" class="panel-root">
-        <ui:VisualElement picking-mode="Ignore" class="side-decoration-left" />
-        <ui:VisualElement picking-mode="Ignore" class="side-decoration-right" />
-        <ui:VisualElement picking-mode="Ignore" class="side-tick-left" style="top: 35%;" />
-        <ui:VisualElement picking-mode="Ignore" class="side-tick-left" style="top: 50%;" />
-        <ui:VisualElement picking-mode="Ignore" class="side-tick-left" style="top: 65%;" />
-        <ui:VisualElement picking-mode="Ignore" class="side-tick-right" style="top: 35%;" />
-        <ui:VisualElement picking-mode="Ignore" class="side-tick-right" style="top: 50%;" />
-        <ui:VisualElement picking-mode="Ignore" class="side-tick-right" style="top: 65%;" />
+        <ui:VisualElement picking-mode="Ignore" class="side-decoration-left"/>
+        <ui:VisualElement picking-mode="Ignore" class="side-decoration-right"/>
+        <ui:VisualElement picking-mode="Ignore" class="side-tick-left" style="top: 35%;"/>
+        <ui:VisualElement picking-mode="Ignore" class="side-tick-left" style="top: 50%;"/>
+        <ui:VisualElement picking-mode="Ignore" class="side-tick-left" style="top: 65%;"/>
+        <ui:VisualElement picking-mode="Ignore" class="side-tick-right" style="top: 35%;"/>
+        <ui:VisualElement picking-mode="Ignore" class="side-tick-right" style="top: 50%;"/>
+        <ui:VisualElement picking-mode="Ignore" class="side-tick-right" style="top: 65%;"/>
         <ui:VisualElement name="mp-bg-radial" picking-mode="Ignore" class="mp-bg-radial">
-            <ui:VisualElement picking-mode="Ignore" class="mp-bg-radial-line" style="rotate: 0;" />
-            <ui:VisualElement picking-mode="Ignore" class="mp-bg-radial-line" style="rotate: 60deg;" />
-            <ui:VisualElement picking-mode="Ignore" class="mp-bg-radial-line" style="rotate: 120deg;" />
+            <ui:VisualElement picking-mode="Ignore" class="mp-bg-radial-line" style="rotate: 0;"/>
+            <ui:VisualElement picking-mode="Ignore" class="mp-bg-radial-line" style="rotate: 60deg;"/>
+            <ui:VisualElement picking-mode="Ignore" class="mp-bg-radial-line" style="rotate: 120deg;"/>
         </ui:VisualElement>
         <ui:VisualElement class="panel-header">
-            <ui:Button name="btn-back" text="BACK" class="btn-back" />
+            <ui:Button name="btn-back" text="BACK" class="btn-back"/>
             <ui:VisualElement class="header-title-group">
-                <ui:Label text="THE BATTLE" class="panel-title" />
-                <ui:Label text="CHOOSE YOUR ARENA" class="panel-subtitle" />
+                <ui:Label text="THE BATTLE" class="panel-title"/>
+                <ui:Label text="CHOOSE YOUR ARENA" class="panel-subtitle"/>
             </ui:VisualElement>
-            <ui:VisualElement class="header-spacer" />
+            <ui:VisualElement class="header-spacer"/>
         </ui:VisualElement>
         <ui:VisualElement name="mp-content" class="mp-content">
             <ui:VisualElement class="mp-rank-section">
                 <ui:VisualElement class="mp-rank-hexagon">
-                    <ui:VisualElement class="mp-rank-hex-bg" />
-                    <ui:VisualElement class="mp-rank-hex-border" />
-                    <ui:Label name="mp-rank-icon" text="I" class="mp-rank-icon" />
+                    <ui:VisualElement class="mp-rank-hex-bg"/>
+                    <ui:VisualElement class="mp-rank-hex-border"/>
+                    <ui:Label name="mp-rank-icon" text="I" class="mp-rank-icon" style="padding-right: 1px; margin-right: 2px;"/>
                 </ui:VisualElement>
                 <ui:VisualElement class="mp-rank-info">
-                    <ui:Label name="mp-rank-name" text="BRONZE" class="mp-rank-name" />
-                    <ui:Label name="mp-elo-value" text="1000 ELO" class="mp-elo-value" />
+                    <ui:Label name="mp-rank-name" text="BRONZE" class="mp-rank-name"/>
+                    <ui:Label name="mp-elo-value" text="1000 ELO" class="mp-elo-value"/>
                 </ui:VisualElement>
             </ui:VisualElement>
             <ui:VisualElement class="mp-divider-section">
-                <ui:VisualElement class="mp-divider-diamond" />
-                <ui:VisualElement class="mp-divider-line" />
-                <ui:VisualElement class="mp-divider-diamond mp-divider-diamond-center" />
-                <ui:VisualElement class="mp-divider-line" />
-                <ui:VisualElement class="mp-divider-diamond" />
+                <ui:VisualElement class="mp-divider-diamond"/>
+                <ui:VisualElement class="mp-divider-line"/>
+                <ui:VisualElement class="mp-divider-diamond mp-divider-diamond-center"/>
+                <ui:VisualElement class="mp-divider-line"/>
+                <ui:VisualElement class="mp-divider-diamond"/>
             </ui:VisualElement>
             <ui:VisualElement class="mp-modes-container">
                 <ui:VisualElement name="mode-casual" class="mp-mode-card">
-                    <ui:VisualElement class="mp-mode-inner-border" />
-                    <ui:VisualElement class="mp-mode-corner mp-mode-corner-tl" />
-                    <ui:VisualElement class="mp-mode-corner mp-mode-corner-tr" />
-                    <ui:VisualElement class="mp-mode-corner mp-mode-corner-bl" />
-                    <ui:VisualElement class="mp-mode-corner mp-mode-corner-br" />
-                    <ui:Label text="I" class="mp-mode-numeral" />
-                    <ui:Label text="CASUAL" class="mp-mode-title" />
+                    <ui:VisualElement class="mp-mode-inner-border"/>
+                    <ui:VisualElement class="mp-mode-corner mp-mode-corner-tl"/>
+                    <ui:VisualElement class="mp-mode-corner mp-mode-corner-tr"/>
+                    <ui:VisualElement class="mp-mode-corner mp-mode-corner-bl"/>
+                    <ui:VisualElement class="mp-mode-corner mp-mode-corner-br"/>
+                    <ui:Label text="I" class="mp-mode-numeral"/>
+                    <ui:Label text="CASUAL" class="mp-mode-title"/>
                     <ui:VisualElement class="mp-mode-icon-section">
-                        <ui:VisualElement class="mp-mode-icon-glow" />
-                        <ui:Label text="⚔" class="mp-mode-icon" />
+                        <ui:VisualElement class="mp-mode-icon-glow"/>
+                        <ui:Label text="⚔" class="mp-mode-icon" style="padding-right: 1px; margin-right: 2px;"/>
                     </ui:VisualElement>
-                    <ui:Label text="No rank changes" class="mp-mode-desc" />
-                    <ui:Label text="Play for fun" class="mp-mode-subdesc" />
-                    <ui:VisualElement class="mp-mode-hover-line" />
+                    <ui:Label text="No rank changes" class="mp-mode-desc"/>
+                    <ui:Label text="Play for fun" class="mp-mode-subdesc"/>
+                    <ui:VisualElement class="mp-mode-hover-line"/>
                 </ui:VisualElement>
                 <ui:VisualElement name="mode-ranked" class="mp-mode-card mp-mode-ranked">
-                    <ui:VisualElement class="mp-mode-inner-border" />
-                    <ui:VisualElement class="mp-mode-corner mp-mode-corner-tl" />
-                    <ui:VisualElement class="mp-mode-corner mp-mode-corner-tr" />
-                    <ui:VisualElement class="mp-mode-corner mp-mode-corner-bl" />
-                    <ui:VisualElement class="mp-mode-corner mp-mode-corner-br" />
-                    <ui:Label text="II" class="mp-mode-numeral" />
-                    <ui:Label text="RANKED" class="mp-mode-title" />
+                    <ui:VisualElement class="mp-mode-inner-border"/>
+                    <ui:VisualElement class="mp-mode-corner mp-mode-corner-tl"/>
+                    <ui:VisualElement class="mp-mode-corner mp-mode-corner-tr"/>
+                    <ui:VisualElement class="mp-mode-corner mp-mode-corner-bl"/>
+                    <ui:VisualElement class="mp-mode-corner mp-mode-corner-br"/>
+                    <ui:Label text="II" class="mp-mode-numeral"/>
+                    <ui:Label text="RANKED" class="mp-mode-title"/>
                     <ui:VisualElement class="mp-mode-icon-section">
-                        <ui:VisualElement class="mp-mode-icon-glow mp-mode-icon-glow-ranked" />
-                        <ui:Label text="♕" class="mp-mode-icon" />
+                        <ui:VisualElement class="mp-mode-icon-glow mp-mode-icon-glow-ranked"/>
+                        <ui:Label text="♕" class="mp-mode-icon" style="padding-right: 1px; margin-right: 2px;"/>
                     </ui:VisualElement>
-                    <ui:Label text="ELO at stake" class="mp-mode-desc" />
-                    <ui:Label text="Climb the ladder" class="mp-mode-subdesc" />
-                    <ui:VisualElement class="mp-mode-hover-line" />
+                    <ui:Label text="ELO at stake" class="mp-mode-desc"/>
+                    <ui:Label text="Climb the ladder" class="mp-mode-subdesc"/>
+                    <ui:VisualElement class="mp-mode-hover-line"/>
                 </ui:VisualElement>
                 <ui:VisualElement name="mode-custom" class="mp-mode-card mp-mode-disabled">
-                    <ui:VisualElement class="mp-mode-inner-border" />
-                    <ui:VisualElement class="mp-mode-corner mp-mode-corner-tl" />
-                    <ui:VisualElement class="mp-mode-corner mp-mode-corner-tr" />
-                    <ui:VisualElement class="mp-mode-corner mp-mode-corner-bl" />
-                    <ui:VisualElement class="mp-mode-corner mp-mode-corner-br" />
-                    <ui:Label text="III" class="mp-mode-numeral" />
-                    <ui:Label text="CUSTOM" class="mp-mode-title" />
+                    <ui:VisualElement class="mp-mode-inner-border"/>
+                    <ui:VisualElement class="mp-mode-corner mp-mode-corner-tl"/>
+                    <ui:VisualElement class="mp-mode-corner mp-mode-corner-tr"/>
+                    <ui:VisualElement class="mp-mode-corner mp-mode-corner-bl"/>
+                    <ui:VisualElement class="mp-mode-corner mp-mode-corner-br"/>
+                    <ui:Label text="III" class="mp-mode-numeral"/>
+                    <ui:Label text="CUSTOM" class="mp-mode-title"/>
                     <ui:VisualElement class="mp-mode-icon-section">
-                        <ui:VisualElement class="mp-mode-icon-glow" />
-                        <ui:Label text="⚙" class="mp-mode-icon" />
+                        <ui:VisualElement class="mp-mode-icon-glow"/>
+                        <ui:Label text="⚙" class="mp-mode-icon"/>
                     </ui:VisualElement>
-                    <ui:Label text="Coming Soon" class="mp-mode-desc" />
-                    <ui:Label text="Create your rules" class="mp-mode-subdesc" />
+                    <ui:Label text="Coming Soon" class="mp-mode-desc"/>
+                    <ui:Label text="Create your rules" class="mp-mode-subdesc"/>
                     <ui:VisualElement class="mp-mode-lock-overlay">
-                        <ui:Label text="COMING SOON" class="mp-mode-lock-text" />
+                        <ui:Label text="COMING SOON" class="mp-mode-lock-text"/>
                     </ui:VisualElement>
-                    <ui:VisualElement class="mp-mode-hover-line" />
+                    <ui:VisualElement class="mp-mode-hover-line"/>
                 </ui:VisualElement>
             </ui:VisualElement>
         </ui:VisualElement>
         <ui:VisualElement name="mp-loading-overlay" class="mp-loading-overlay hidden">
             <ui:VisualElement class="mp-loading-box">
-                <ui:Label text="ENTERING THE ARENA" class="mp-loading-title" />
+                <ui:Label text="ENTERING THE ARENA" class="mp-loading-title"/>
                 <ui:VisualElement class="mp-loading-bar-bg">
-                    <ui:VisualElement name="mp-loading-bar-fill" class="mp-loading-bar-fill" />
+                    <ui:VisualElement name="mp-loading-bar-fill" class="mp-loading-bar-fill"/>
                 </ui:VisualElement>
-                <ui:Label name="mp-loading-text" text="Loading... 0%" class="mp-loading-text" />
+                <ui:Label name="mp-loading-text" text="Loading... 0%" class="mp-loading-text"/>
             </ui:VisualElement>
         </ui:VisualElement>
         <ui:VisualElement picking-mode="Ignore" class="bottom-info-bar">
-            <ui:Label text="SELECT A MODE TO BEGIN MATCHMAKING" class="bottom-info-text" />
+            <ui:Label text="SELECT A MODE TO BEGIN MATCHMAKING" class="bottom-info-text"/>
         </ui:VisualElement>
     </ui:VisualElement>
 </ui:UXML>

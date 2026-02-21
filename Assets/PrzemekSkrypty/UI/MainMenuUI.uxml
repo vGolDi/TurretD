@@ -184,7 +184,7 @@
                         <ui:VisualElement class="card-hover-line" />
                     </ui:VisualElement>
                 </ui:VisualElement>
-                <ui:VisualElement name="card-settings" class="tarot-card-wrapper card-offset-4">
+                   <ui:VisualElement name="card-profile" class="tarot-card-wrapper card-offset-4">
                     <ui:VisualElement class="tarot-card">
                         <ui:VisualElement class="card-inner-border" />
                         <ui:VisualElement class="card-corner card-corner-tl" />
@@ -194,20 +194,21 @@
                         <ui:Label text="V" class="card-numeral" />
                         <ui:VisualElement class="card-icon-container">
                             <ui:VisualElement class="card-icon-glow" />
-                            <ui:Label text="☉" class="card-icon" />
+                            <ui:Label text="♚" class="card-icon" />
                         </ui:VisualElement>
                         <ui:VisualElement class="card-label-container">
-                            <ui:Label text="The Wheel" class="card-title-text" />
-                            <ui:Label text="SETTINGS" class="card-name-text" />
+                            <ui:Label text="The Seeker" class="card-title-text" />
+                            <ui:Label text="PROFILE" class="card-name-text" />
                         </ui:VisualElement>
                         <ui:VisualElement class="card-hover-line" />
                     </ui:VisualElement>
-                </ui:VisualElement>
+        </ui:VisualElement>
             </ui:VisualElement>
         </ui:VisualElement>
         <ui:VisualElement name="bottom-menu" class="bottom-menu">
             <ui:VisualElement class="bottom-menu-inner">
                 <ui:Button name="btn-credits" text="CREDITS" class="bottom-menu-button" />
+                 <ui:Button name="btn-settings" text="SETTINGS" class="bottom-menu-button" />
                 <ui:Button name="btn-quit" text="QUIT" class="bottom-menu-button" />
             </ui:VisualElement>
         </ui:VisualElement>

@@ -58,10 +58,19 @@ namespace ElementumDefense.UI
             QueryElements();
             BindButtons();
             UpdateVersion();
+
+            var bg = root.Q<VisualElement>("credits-root");
+            StarfieldInjector.Instance?.Register(bg);
         }
 
         public void Hide()
         {
+            if (root != null)
+            {
+                var bg = root.Q<VisualElement>("credits-root");
+                StarfieldInjector.Instance?.Unregister(bg);
+            }
+
             var uiDoc = GetComponent<UIDocument>();
             if (uiDoc != null &&
                 uiDoc.rootVisualElement != null)

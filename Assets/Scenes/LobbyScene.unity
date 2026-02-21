@@ -145,14 +145,14 @@ Light:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 821835133}
   m_Enabled: 1
-  serializedVersion: 11
+  serializedVersion: 12
   m_Type: 1
   m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
   m_Intensity: 1
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
-  m_CookieSize: 10
+  m_CookieSize2D: {x: 10, y: 10}
   m_Shadows:
     m_Type: 2
     m_Resolution: -1
@@ -396,6 +396,7 @@ GameObject:
   - component: {fileID: 984635957}
   - component: {fileID: 984635959}
   - component: {fileID: 984635958}
+  - component: {fileID: 984635960}
   m_Layer: 0
   m_Name: NetworkManager
   m_TagString: Untagged
@@ -495,6 +496,33 @@ MonoBehaviour:
   m_PivotReferenceSize: 0
   m_Pivot: 0
   m_WorldSpaceCollider: {fileID: 0}
+--- !u!114 &984635960
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 984635954}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f681cf085ff9ad144af7b906458e6239, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ElementumDefense.UI.StarfieldInjector
+  starCount: 80
+  dustCount: 40
+  starMinSize: 1
+  starMaxSize: 3
+  starMinOpacity: 0.15
+  starMaxOpacity: 0.6
+  dustMinSize: 1
+  dustMaxSize: 2
+  dustMinOpacity: 0.05
+  dustMaxOpacity: 0.2
+  twinkleSpeed: 0.5
+  enableTwinkle: 1
+  enableDrift: 1
+  starColor: {r: 0.9, g: 0.85, b: 0.7, a: 1}
+  dustColor: {r: 0.6, g: 0.55, b: 0.45, a: 1}
 --- !u!1 &1220341589
 GameObject:
   m_ObjectHideFlags: 0

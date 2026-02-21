@@ -1,0 +1,1187 @@
+﻿/* ============================================
+   PROFILE PANEL — ART DECO STYLE
+   ============================================ */
+
+.panel-root {
+    flex-grow: 1;
+    width: 100%;
+    height: 100%;
+    background-color: rgb(10, 15, 25);
+    flex-direction: column;
+}
+
+/* ============================================
+   HEADER (reused from shop)
+   ============================================ */
+
+.panel-header {
+    flex-direction: row;
+    align-items: center;
+    padding: 20px 40px;
+    border-bottom-width: 1px;
+    border-bottom-color: rgba(245, 158, 11, 0.12);
+    flex-shrink: 0;
+    background-color: rgba(8, 12, 20, 0.5);
+}
+
+.btn-back {
+    background-color: rgba(0, 0, 0, 0);
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.3);
+    color: rgba(245, 158, 11, 0.6);
+    font-size: 12px;
+    letter-spacing: 3px;
+    padding: 10px 20px;
+    margin-right: 24px;
+    cursor: link;
+    transition-property: color, border-color, background-color;
+    transition-duration: 0.2s;
+    border-radius: 0;
+}
+
+.btn-back:hover {
+    color: rgb(252, 211, 77);
+    border-color: rgb(245, 158, 11);
+    background-color: rgba(245, 158, 11, 0.05);
+}
+
+.header-title-group {
+    flex-direction: column;
+}
+
+.panel-title {
+    font-size: 26px;
+    color: rgb(254, 243, 199);
+    letter-spacing: 10px;
+}
+
+.panel-subtitle {
+    font-size: 11px;
+    color: rgba(245, 158, 11, 0.35);
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    margin-top: 2px;
+}
+
+.header-spacer {
+    flex-grow: 1;
+}
+
+.header-currency {
+    flex-direction: row;
+    align-items: center;
+}
+
+.currency-chip {
+    flex-direction: row;
+    align-items: center;
+    padding: 10px 20px;
+    margin-left: 12px;
+    background-color: rgba(15, 23, 42, 0.6);
+    border-width: 1px;
+    border-radius: 0;
+    transition-property: background-color;
+    transition-duration: 0.2s;
+}
+
+.currency-chip:hover {
+    background-color: rgba(15, 23, 42, 0.9);
+}
+
+.currency-gold { border-color: rgba(245, 158, 11, 0.25); }
+.currency-crystal { border-color: rgba(6, 182, 212, 0.25); }
+
+.currency-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 5px;
+    margin-right: 12px;
+}
+
+.currency-dot-gold { background-color: rgb(245, 158, 11); }
+.currency-dot-crystal { background-color: rgb(34, 211, 238); }
+
+.currency-amount {
+    font-size: 18px;
+    -unity-font-style: bold;
+    letter-spacing: 2px;
+    margin-right: 10px;
+}
+
+.currency-amount-gold { color: rgb(251, 191, 36); }
+.currency-amount-crystal { color: rgb(34, 211, 238); }
+
+.currency-label {
+    font-size: 10px;
+    color: rgba(200, 200, 200, 0.4);
+    letter-spacing: 3px;
+}
+
+/* ============================================
+   SCROLL
+   ============================================ */
+
+.profile-scroll {
+    flex-grow: 1;
+    padding: 24px 40px;
+    padding-bottom: 40px;
+}
+
+.profile-scroll .unity-scroller--vertical {
+    width: 8px;
+}
+
+.profile-scroll .unity-scroller--vertical .unity-base-slider__tracker {
+    background-color: rgba(245, 158, 11, 0.06);
+    border-width: 0;
+}
+
+.profile-scroll .unity-scroller--vertical .unity-base-slider__dragger {
+    background-color: rgba(245, 158, 11, 0.2);
+    border-radius: 4px;
+    border-width: 0;
+    min-height: 30px;
+    transition-property: background-color;
+    transition-duration: 0.2s;
+}
+
+.profile-scroll .unity-scroller--vertical .unity-base-slider__dragger:hover {
+    background-color: rgba(245, 158, 11, 0.4);
+}
+
+.profile-scroll .unity-scroller--vertical .unity-repeat-button {
+    display: none;
+}
+
+/* ============================================
+   IDENTITY CARD
+   ============================================ */
+
+.identity-card {
+    background-color: rgba(12, 18, 30, 0.8);
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.15);
+    padding: 28px 32px;
+    margin-bottom: 24px;
+    flex-direction: column;
+}
+
+.identity-inner-border {
+    position: absolute;
+    left: 6px;
+    top: 6px;
+    right: 6px;
+    bottom: 6px;
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.06);
+}
+
+.identity-ornament-top {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.identity-ornament-bottom {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.orn-line-h {
+    width: 80px;
+    height: 1px;
+    background-color: rgba(245, 158, 11, 0.2);
+}
+
+.orn-diamond {
+    width: 14px;
+    height: 14px;
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.4);
+    rotate: 45deg;
+    scale: 0.7 0.7;
+    margin-left: 8px;
+    margin-right: 8px;
+    background-color: rgba(245, 158, 11, 0.08);
+}
+
+.orn-line-short {
+    width: 48px;
+    height: 1px;
+    background-color: rgba(245, 158, 11, 0.12);
+}
+
+.orn-diamond-sm {
+    width: 10px;
+    height: 10px;
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.3);
+    rotate: 45deg;
+    scale: 0.6 0.6;
+    margin-left: 6px;
+    margin-right: 6px;
+    background-color: rgba(245, 158, 11, 0.06);
+}
+
+.identity-content {
+    flex-direction: row;
+    align-items: flex-start;
+}
+
+/* ── Avatar ── */
+
+.identity-avatar-section {
+    align-items: center;
+    margin-right: 28px;
+    flex-shrink: 0;
+}
+
+.avatar-frame {
+    width: 100px;
+    height: 100px;
+    border-width: 2px;
+    border-color: rgba(245, 158, 11, 0.35);
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(245, 158, 11, 0.04);
+}
+
+.avatar-frame-inner {
+    position: absolute;
+    left: 4px;
+    top: 4px;
+    right: 4px;
+    bottom: 4px;
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.12);
+}
+
+.avatar-icon {
+    width: 72px;
+    height: 72px;
+    -unity-background-scale-mode: scale-to-fit;
+    background-color: rgba(245, 158, 11, 0.08);
+}
+
+.avatar-frame-corner {
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    border-color: rgba(245, 158, 11, 0.5);
+}
+
+.avatar-corner-tl { left: -2px; top: -2px; border-left-width: 2px; border-top-width: 2px; }
+.avatar-corner-tr { right: -2px; top: -2px; border-right-width: 2px; border-top-width: 2px; }
+.avatar-corner-bl { left: -2px; bottom: -2px; border-left-width: 2px; border-bottom-width: 2px; }
+.avatar-corner-br { right: -2px; bottom: -2px; border-right-width: 2px; border-bottom-width: 2px; }
+
+.level-badge {
+    margin-top: -14px;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+}
+
+.level-badge-bg {
+    position: absolute;
+    width: 36px;
+    height: 36px;
+    background-color: rgba(245, 158, 11, 0.15);
+    border-width: 1px;
+    border-color: rgb(245, 158, 11);
+    border-radius: 4px;
+    rotate: 45deg;
+    scale: 0.65 0.65;
+}
+
+.level-badge-text {
+    color: rgb(254, 243, 199);
+    font-size: 14px;
+    -unity-font-style: bold;
+    letter-spacing: 1px;
+}
+
+/* ── Info Section ── */
+
+.identity-info-section {
+    flex-grow: 1;
+    flex-direction: column;
+    margin-right: 28px;
+}
+
+.profile-player-name {
+    font-size: 28px;
+    color: rgb(254, 243, 199);
+    letter-spacing: 8px;
+    text-transform: uppercase;
+}
+
+.profile-name-divider {
+    height: 1px;
+    width: 100%;
+    background-color: rgba(245, 158, 11, 0.2);
+    margin-top: 6px;
+    margin-bottom: 12px;
+}
+
+/* Rank display */
+
+.rank-display-row {
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.rank-emblem {
+    width: 36px;
+    height: 36px;
+    align-items: center;
+    justify-content: center;
+    margin-right: 12px;
+}
+
+.rank-emblem-bg {
+    position: absolute;
+    width: 36px;
+    height: 36px;
+    border-width: 1px;
+    border-color: rgba(200, 150, 50, 0.4);
+    rotate: 45deg;
+    scale: 0.6 0.6;
+    background-color: rgba(200, 150, 50, 0.1);
+}
+
+.rank-emblem-icon {
+    font-size: 16px;
+    color: rgba(200, 150, 50, 0.8);
+}
+
+.rank-text-group {
+    flex-direction: column;
+}
+
+.profile-rank-label {
+    font-size: 14px;
+    color: rgba(200, 150, 50, 0.8);
+    letter-spacing: 4px;
+    -unity-font-style: bold;
+}
+
+.profile-elo-label {
+    font-size: 10px;
+    color: rgba(200, 200, 200, 0.4);
+    letter-spacing: 3px;
+    margin-top: 2px;
+}
+
+/* XP Section */
+
+.profile-xp-section {
+    flex-direction: column;
+    margin-top: 4px;
+}
+
+.profile-xp-header {
+    flex-direction: row;
+    justify-content: space-between;
+    margin-bottom: 6px;
+}
+
+.profile-xp-title {
+    font-size: 9px;
+    color: rgba(245, 158, 11, 0.4);
+    letter-spacing: 4px;
+}
+
+.profile-xp-value {
+    font-size: 10px;
+    color: rgba(245, 158, 11, 0.6);
+    letter-spacing: 2px;
+}
+
+.profile-xp-bar-bg {
+    height: 8px;
+    background-color: rgba(245, 158, 11, 0.1);
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.15);
+    overflow: hidden;
+}
+
+.profile-xp-bar-fill {
+    height: 100%;
+    width: 0%;
+    background-color: rgb(245, 158, 11);
+    transition-property: width;
+    transition-duration: 0.6s;
+    transition-timing-function: ease-out;
+}
+
+.profile-next-level-text {
+    font-size: 9px;
+    color: rgba(200, 200, 200, 0.25);
+    letter-spacing: 3px;
+    margin-top: 4px;
+    -unity-text-align: upper-right;
+}
+
+/* ── Stats Section ── */
+
+.identity-stats-section {
+    flex-direction: column;
+    min-width: 180px;
+    padding: 12px 16px;
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.06);
+    background-color: rgba(8, 12, 20, 0.4);
+}
+
+.stats-section-title {
+    font-size: 10px;
+    color: rgba(245, 158, 11, 0.4);
+    letter-spacing: 4px;
+    margin-bottom: 10px;
+}
+
+.stat-row {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+}
+
+.stat-label {
+    font-size: 10px;
+    color: rgba(200, 200, 200, 0.35);
+    letter-spacing: 2px;
+}
+
+.stat-value {
+    font-size: 12px;
+    color: rgba(254, 243, 199, 0.7);
+    letter-spacing: 1px;
+    -unity-font-style: bold;
+}
+
+.stat-value-highlight {
+    color: rgb(74, 222, 128);
+}
+
+.stat-divider {
+    height: 1px;
+    background-color: rgba(245, 158, 11, 0.06);
+    margin-top: 6px;
+    margin-bottom: 6px;
+}
+
+/* ============================================
+   TABS
+   ============================================ */
+
+.profile-tabs-bar {
+    flex-shrink: 0;
+    margin-bottom: 4px;
+}
+
+.tabs-inner {
+    flex-direction: row;
+    align-items: center;
+    padding-top: 4px;
+}
+
+.tab-button {
+    background-color: rgba(0, 0, 0, 0);
+    border-width: 0;
+    border-bottom-width: 2px;
+    border-bottom-color: rgba(0, 0, 0, 0);
+    color: rgba(245, 158, 11, 0.35);
+    font-size: 12px;
+    letter-spacing: 4px;
+    padding: 14px 24px;
+    cursor: link;
+    transition-property: color, border-bottom-color;
+    transition-duration: 0.2s;
+    border-radius: 0;
+}
+
+.tab-button:hover {
+    color: rgba(245, 158, 11, 0.7);
+    background-color: rgba(0, 0, 0, 0);
+}
+
+.tab-active {
+    color: rgb(252, 211, 77);
+    border-bottom-color: rgb(245, 158, 11);
+}
+
+.tab-active:hover {
+    color: rgb(252, 211, 77);
+}
+
+.tab-separator {
+    width: 1px;
+    height: 16px;
+    background-color: rgba(245, 158, 11, 0.08);
+    margin-left: 4px;
+    margin-right: 4px;
+}
+
+.tabs-line {
+    height: 1px;
+    background-color: rgba(245, 158, 11, 0.06);
+}
+
+/* ============================================
+   FILTER BAR
+   ============================================ */
+
+.filter-bar {
+    flex-direction: row;
+    align-items: center;
+    padding: 10px 0;
+    margin-bottom: 12px;
+}
+
+.filter-btn {
+    background-color: rgba(0, 0, 0, 0);
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.1);
+    color: rgba(245, 158, 11, 0.3);
+    font-size: 10px;
+    letter-spacing: 3px;
+    padding: 6px 16px;
+    margin-right: 8px;
+    cursor: link;
+    transition-property: color, border-color, background-color;
+    transition-duration: 0.2s;
+    border-radius: 0;
+}
+
+.filter-btn:hover {
+    color: rgba(245, 158, 11, 0.6);
+    border-color: rgba(245, 158, 11, 0.3);
+    background-color: rgba(0, 0, 0, 0);
+}
+
+.filter-active {
+    color: rgb(252, 211, 77);
+    border-color: rgba(245, 158, 11, 0.5);
+    background-color: rgba(245, 158, 11, 0.06);
+}
+
+.filter-active:hover {
+    color: rgb(252, 211, 77);
+    background-color: rgba(245, 158, 11, 0.06);
+}
+
+.filter-spacer {
+    flex-grow: 1;
+}
+
+.collection-count-text {
+    font-size: 10px;
+    color: rgba(245, 158, 11, 0.3);
+    letter-spacing: 3px;
+}
+
+/* ============================================
+   COLLECTION GRID
+   ============================================ */
+
+.tab-content {
+    flex-direction: column;
+}
+
+.collection-grid {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+}
+
+/* ── Collection Card Item ── */
+
+.collection-card {
+    width: 155px;
+    height: 220px;
+    margin: 6px;
+    background-color: rgb(12, 18, 30);
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.1);
+    flex-direction: column;
+    align-items: center;
+    overflow: hidden;
+    cursor: link;
+    transition-property: border-color, scale;
+    transition-duration: 0.25s;
+}
+
+.collection-card:hover {
+    scale: 1.04 1.04;
+    border-color: rgba(245, 158, 11, 0.45);
+}
+
+.collection-card-locked {
+    opacity: 0.4;
+}
+
+.collection-card-locked:hover {
+    opacity: 0.6;
+}
+
+.collection-card-inner {
+    position: absolute;
+    left: 4px;
+    top: 4px;
+    right: 4px;
+    bottom: 4px;
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.04);
+    transition-property: border-color;
+    transition-duration: 0.25s;
+}
+
+.collection-card:hover .collection-card-inner {
+    border-color: rgba(245, 158, 11, 0.1);
+}
+
+/* Rarity strip at top */
+.card-rarity-strip {
+    width: 100%;
+    height: 3px;
+    flex-shrink: 0;
+}
+
+.rarity-common { background-color: rgba(180, 180, 180, 0.4); }
+.rarity-rare { background-color: rgba(77, 153, 255, 0.6); }
+.rarity-legendary { background-color: rgba(255, 204, 0, 0.7); }
+
+/* Card icon */
+.collection-card-icon-section {
+    align-items: center;
+    justify-content: center;
+    height: 100px;
+    flex-shrink: 0;
+    padding-top: 12px;
+}
+
+.collection-card-icon {
+    width: 64px;
+    height: 64px;
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+/* Card info */
+.collection-card-info {
+    flex-grow: 1;
+    align-items: center;
+    padding: 0 8px;
+}
+
+.collection-card-name {
+    font-size: 11px;
+    color: rgb(254, 243, 199);
+    letter-spacing: 1px;
+    -unity-text-align: upper-center;
+    -unity-font-style: bold;
+    margin-bottom: 2px;
+}
+
+.collection-card-type {
+    font-size: 8px;
+    color: rgba(245, 158, 11, 0.35);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    -unity-text-align: upper-center;
+}
+
+.collection-card-element {
+    font-size: 8px;
+    color: rgba(200, 200, 200, 0.3);
+    letter-spacing: 2px;
+    margin-top: 2px;
+}
+
+/* Lock overlay */
+.card-lock-overlay {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    align-items: center;
+    justify-content: center;
+}
+
+.card-lock-icon {
+    font-size: 24px;
+    color: rgba(200, 200, 200, 0.3);
+}
+
+/* Owned indicator */
+.card-owned-dot {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    width: 8px;
+    height: 8px;
+    border-radius: 4px;
+    background-color: rgba(74, 222, 128, 0.6);
+}
+
+/* Hover accent */
+.collection-card-hover-line {
+    position: absolute;
+    bottom: 0;
+    left: 20%;
+    right: 20%;
+    height: 2px;
+    background-color: rgb(245, 158, 11);
+    opacity: 0;
+    transition-property: opacity;
+    transition-duration: 0.3s;
+}
+
+.collection-card:hover .collection-card-hover-line {
+    opacity: 1;
+}
+
+/* ============================================
+   SABOTAGE CARD (similar but distinct color)
+   ============================================ */
+
+.sabotage-card {
+    width: 155px;
+    height: 200px;
+    margin: 6px;
+    background-color: rgb(18, 12, 18);
+    border-width: 1px;
+    border-color: rgba(168, 85, 247, 0.15);
+    flex-direction: column;
+    align-items: center;
+    overflow: hidden;
+    cursor: link;
+    transition-property: border-color, scale;
+    transition-duration: 0.25s;
+}
+
+.sabotage-card:hover {
+    scale: 1.04 1.04;
+    border-color: rgba(168, 85, 247, 0.5);
+}
+
+.sabotage-card-inner {
+    position: absolute;
+    left: 4px;
+    top: 4px;
+    right: 4px;
+    bottom: 4px;
+    border-width: 1px;
+    border-color: rgba(168, 85, 247, 0.04);
+}
+
+.sabotage-rarity-strip {
+    width: 100%;
+    height: 3px;
+    flex-shrink: 0;
+}
+
+.sabotage-icon-section {
+    align-items: center;
+    justify-content: center;
+    height: 80px;
+    flex-shrink: 0;
+    padding-top: 12px;
+}
+
+.sabotage-icon {
+    width: 52px;
+    height: 52px;
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.sabotage-info {
+    flex-grow: 1;
+    align-items: center;
+    padding: 0 8px;
+}
+
+.sabotage-name {
+    font-size: 11px;
+    color: rgb(232, 200, 255);
+    letter-spacing: 1px;
+    -unity-text-align: upper-center;
+    -unity-font-style: bold;
+}
+
+.sabotage-tag {
+    font-size: 8px;
+    color: rgba(168, 85, 247, 0.4);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-top: 2px;
+}
+
+.sabotage-duration {
+    font-size: 8px;
+    color: rgba(200, 200, 200, 0.3);
+    letter-spacing: 2px;
+    margin-top: 2px;
+}
+
+.sabotage-hover-line {
+    position: absolute;
+    bottom: 0;
+    left: 20%;
+    right: 20%;
+    height: 2px;
+    background-color: rgb(168, 85, 247);
+    opacity: 0;
+    transition-property: opacity;
+    transition-duration: 0.3s;
+}
+
+.sabotage-card:hover .sabotage-hover-line {
+    opacity: 1;
+}
+
+/* ============================================
+   ACHIEVEMENTS
+   ============================================ */
+
+.achievements-grid {
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.achievement-card {
+    width: 280px;
+    margin: 6px;
+    padding: 14px 18px;
+    background-color: rgba(12, 18, 30, 0.8);
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.08);
+    flex-direction: row;
+    align-items: center;
+    transition-property: border-color;
+    transition-duration: 0.2s;
+}
+
+.achievement-card:hover {
+    border-color: rgba(245, 158, 11, 0.25);
+}
+
+.achievement-locked {
+    opacity: 0.35;
+}
+
+.achievement-icon {
+    width: 40px;
+    height: 40px;
+    margin-right: 14px;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.15);
+    background-color: rgba(245, 158, 11, 0.04);
+}
+
+.achievement-icon-text {
+    font-size: 18px;
+    color: rgba(245, 158, 11, 0.5);
+}
+
+.achievement-info {
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.achievement-name {
+    font-size: 12px;
+    color: rgb(254, 243, 199);
+    letter-spacing: 2px;
+    -unity-font-style: bold;
+}
+
+.achievement-desc {
+    font-size: 9px;
+    color: rgba(200, 200, 200, 0.35);
+    margin-top: 3px;
+    white-space: normal;
+}
+
+/* ============================================
+   COMING SOON
+   ============================================ */
+
+.coming-soon-section {
+    align-items: center;
+    justify-content: center;
+    padding: 80px 40px;
+}
+
+.coming-soon-icon {
+    font-size: 48px;
+    color: rgba(245, 158, 11, 0.1);
+    margin-bottom: 16px;
+}
+
+.coming-soon-text {
+    font-size: 16px;
+    color: rgba(245, 158, 11, 0.25);
+    letter-spacing: 6px;
+}
+
+.coming-soon-sub {
+    font-size: 11px;
+    color: rgba(200, 200, 200, 0.15);
+    letter-spacing: 3px;
+    margin-top: 8px;
+}
+
+/* ============================================
+   CARD DETAIL POPUP
+   ============================================ */
+
+.popup-overlay {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.75);
+    align-items: center;
+    justify-content: center;
+}
+
+.detail-box {
+    width: 560px;
+    background-color: rgb(12, 18, 30);
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.25);
+    padding: 28px;
+    flex-direction: column;
+}
+
+.btn-detail-close {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background-color: rgba(0, 0, 0, 0);
+    border-width: 0;
+    color: rgba(245, 158, 11, 0.35);
+    font-size: 18px;
+    cursor: link;
+    padding: 4px 8px;
+    transition-property: color;
+    transition-duration: 0.2s;
+}
+
+.btn-detail-close:hover {
+    color: rgb(252, 211, 77);
+    background-color: rgba(0, 0, 0, 0);
+}
+
+.detail-header {
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.detail-rarity-line {
+    width: 60px;
+    height: 3px;
+    margin-bottom: 8px;
+}
+
+.detail-rarity-text {
+    font-size: 10px;
+    letter-spacing: 5px;
+}
+
+.detail-content {
+    flex-direction: row;
+}
+
+.detail-card-visual {
+    align-items: center;
+    justify-content: center;
+    margin-right: 24px;
+    flex-shrink: 0;
+}
+
+.detail-card-frame {
+    width: 120px;
+    height: 160px;
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.2);
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(245, 158, 11, 0.03);
+}
+
+.detail-card-inner {
+    position: absolute;
+    left: 6px;
+    top: 6px;
+    right: 6px;
+    bottom: 6px;
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.08);
+}
+
+.detail-card-icon {
+    width: 80px;
+    height: 80px;
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.detail-info {
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.detail-name {
+    font-size: 22px;
+    color: rgb(254, 243, 199);
+    letter-spacing: 4px;
+    -unity-font-style: bold;
+}
+
+.detail-name-line {
+    height: 1px;
+    background-color: rgba(245, 158, 11, 0.15);
+    margin-top: 6px;
+    margin-bottom: 10px;
+}
+
+.detail-type {
+    font-size: 10px;
+    color: rgba(245, 158, 11, 0.45);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+}
+
+.detail-element {
+    font-size: 10px;
+    color: rgba(200, 200, 200, 0.3);
+    letter-spacing: 3px;
+    margin-top: 2px;
+}
+
+.detail-divider {
+    height: 1px;
+    background-color: rgba(245, 158, 11, 0.06);
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.detail-description {
+    font-size: 12px;
+    color: rgba(200, 210, 220, 0.5);
+    white-space: normal;
+    line-height: 18px;
+}
+
+.detail-stats {
+    flex-direction: column;
+    margin-top: 4px;
+}
+
+.detail-stat-row {
+    flex-direction: row;
+    justify-content: space-between;
+    margin-bottom: 4px;
+}
+
+.detail-stat-label {
+    font-size: 10px;
+    color: rgba(200, 200, 200, 0.3);
+    letter-spacing: 2px;
+}
+
+.detail-stat-value {
+    font-size: 11px;
+    color: rgba(254, 243, 199, 0.7);
+    letter-spacing: 1px;
+}
+
+.detail-ownership {
+    margin-top: 14px;
+    padding: 8px 14px;
+    border-width: 1px;
+    border-color: rgba(74, 222, 128, 0.2);
+    background-color: rgba(74, 222, 128, 0.04);
+    align-items: center;
+}
+
+.detail-owned-text {
+    font-size: 11px;
+    color: rgba(74, 222, 128, 0.7);
+    letter-spacing: 3px;
+}
+
+.detail-not-owned .detail-ownership {
+    border-color: rgba(248, 113, 113, 0.2);
+    background-color: rgba(248, 113, 113, 0.04);
+}
+
+.detail-not-owned .detail-owned-text {
+    color: rgba(248, 113, 113, 0.6);
+}
+
+.detail-ornament-bottom {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+/* ============================================
+   SIDE DECORATIONS
+   ============================================ */
+
+.side-decoration-left {
+    position: absolute;
+    left: 12px;
+    top: 30%;
+    bottom: 30%;
+    width: 1px;
+    background-color: rgba(245, 158, 11, 0.06);
+}
+
+.side-decoration-right {
+    position: absolute;
+    right: 12px;
+    top: 30%;
+    bottom: 30%;
+    width: 1px;
+    background-color: rgba(245, 158, 11, 0.06);
+}
+
+.side-tick-left {
+    position: absolute;
+    left: 12px;
+    width: 16px;
+    height: 1px;
+    background-color: rgba(245, 158, 11, 0.08);
+}
+
+.side-tick-right {
+    position: absolute;
+    right: 12px;
+    width: 16px;
+    height: 1px;
+    background-color: rgba(245, 158, 11, 0.08);
+}
+
+/* ============================================
+   HIDDEN
+   ============================================ */
+
+.hidden {
+    display: none;
+}

@@ -1,69 +1,56 @@
-<?xml version="1.0" encoding="utf-8"?>
 <ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
-    <Style src="WaveHUDStyles.uss" />
-
-    <ui:VisualElement name="wave-hud-root" class="wave-hud-root" picking-mode="Ignore">
-
-        <!-- WAVE BADGE (top center, below gold) -->
-        <ui:VisualElement class="wave-panel-anchor">
+    <Style src="project://database/Assets/PrzemekSkrypty/UI/WaveHUDStyles.uss?fileID=7433441132597879392&amp;guid=3374e5501351ea0478138775415188f9&amp;type=3#WaveHUDStyles"/>
+    <ui:VisualElement name="wave-hud-root" picking-mode="Ignore" class="wave-hud-root">
+        <ui:VisualElement class="wave-panel-anchor" style="margin-top: 72px;">
             <ui:VisualElement name="wave-badge" class="wave-badge">
-                <ui:VisualElement class="wave-badge-inner-border" />
-                <ui:VisualElement class="wave-badge-accent-left" />
-                <ui:VisualElement class="wave-badge-accent-right" />
-                <ui:VisualElement class="wave-diamond" />
-                <ui:Label text="WAVE" class="wave-label" />
-                <ui:Label name="wave-number" text="1" class="wave-number" />
-                <ui:Label name="wave-total" text="/ 10" class="wave-total" />
-                <ui:VisualElement class="wave-diamond" />
+                <ui:VisualElement class="wave-badge-inner-border"/>
+                <ui:VisualElement class="wave-badge-accent-left"/>
+                <ui:VisualElement class="wave-badge-accent-right"/>
+                <ui:VisualElement class="wave-diamond"/>
+                <ui:Label text="WAVE" class="wave-label"/>
+                <ui:Label name="wave-number" text="1" class="wave-number"/>
+                <ui:Label name="wave-total" text="/ 10" class="wave-total"/>
+                <ui:VisualElement class="wave-diamond"/>
             </ui:VisualElement>
-
-            <!-- Enemy progress -->
             <ui:VisualElement name="wave-progress" class="wave-progress-container">
                 <ui:VisualElement class="wave-progress-bar-bg">
-                    <ui:VisualElement name="wave-progress-fill" class="wave-progress-bar-fill" />
+                    <ui:VisualElement name="wave-progress-fill" class="wave-progress-bar-fill"/>
                 </ui:VisualElement>
-                <ui:Label name="wave-progress-text" text="0 / 40 SPAWNED" class="wave-progress-text" />
+                <ui:Label name="wave-progress-text" text="0 / 40 SPAWNED" class="wave-progress-text"/>
             </ui:VisualElement>
         </ui:VisualElement>
-
-        <!-- COUNTDOWN OVERLAY -->
-        <ui:VisualElement name="countdown-overlay" class="countdown-overlay hidden" picking-mode="Ignore">
+        <ui:VisualElement name="countdown-overlay" picking-mode="Ignore" class="countdown-overlay hidden">
             <ui:VisualElement class="countdown-container">
                 <ui:VisualElement class="countdown-ornament-top">
-                    <ui:VisualElement class="countdown-ornament-line" />
-                    <ui:VisualElement class="countdown-ornament-diamond" />
-                    <ui:VisualElement class="countdown-ornament-line" />
+                    <ui:VisualElement class="countdown-ornament-line"/>
+                    <ui:VisualElement class="countdown-ornament-diamond"/>
+                    <ui:VisualElement class="countdown-ornament-line"/>
                 </ui:VisualElement>
-                <ui:Label name="countdown-number" text="5" class="countdown-number" />
-                <ui:Label name="countdown-sublabel" text="PREPARE YOUR DEFENSES" class="countdown-sublabel" />
+                <ui:Label name="countdown-number" text="5" class="countdown-number"/>
+                <ui:Label name="countdown-sublabel" text="PREPARE YOUR DEFENSES" class="countdown-sublabel"/>
                 <ui:VisualElement class="countdown-ornament-bottom">
-                    <ui:VisualElement class="countdown-ornament-line-short" />
-                    <ui:VisualElement class="countdown-ornament-diamond-small" />
-                    <ui:VisualElement class="countdown-ornament-line-short" />
+                    <ui:VisualElement class="countdown-ornament-line-short"/>
+                    <ui:VisualElement class="countdown-ornament-diamond-small"/>
+                    <ui:VisualElement class="countdown-ornament-line-short"/>
                 </ui:VisualElement>
             </ui:VisualElement>
         </ui:VisualElement>
-
-        <!-- WAVE ANNOUNCEMENT OVERLAY -->
-        <ui:VisualElement name="wave-announce" class="wave-announce-overlay hidden" picking-mode="Ignore">
+        <ui:VisualElement name="wave-announce" picking-mode="Ignore" class="wave-announce-overlay hidden">
             <ui:VisualElement class="wave-announce-container">
                 <ui:VisualElement class="wave-announce-ornament">
-                    <ui:VisualElement class="wave-announce-ornament-line" />
-                    <ui:VisualElement class="wave-announce-ornament-diamond" />
-                    <ui:VisualElement class="wave-announce-ornament-line" />
+                    <ui:VisualElement class="wave-announce-ornament-line"/>
+                    <ui:VisualElement class="wave-announce-ornament-diamond"/>
+                    <ui:VisualElement class="wave-announce-ornament-line"/>
                 </ui:VisualElement>
-                <ui:Label name="wave-announce-title" text="WAVE 1" class="wave-announce-title" />
-                <ui:Label name="wave-announce-subtitle" text="ENEMIES APPROACH" class="wave-announce-subtitle" />
+                <ui:Label name="wave-announce-title" text="WAVE 1" class="wave-announce-title"/>
+                <ui:Label name="wave-announce-subtitle" text="ENEMIES APPROACH" class="wave-announce-subtitle"/>
             </ui:VisualElement>
         </ui:VisualElement>
-
-        <!-- ALL WAVES COMPLETE BANNER -->
-        <ui:VisualElement name="wave-complete" class="wave-complete-banner hidden" picking-mode="Ignore">
+        <ui:VisualElement name="wave-complete" picking-mode="Ignore" class="wave-complete-banner hidden">
             <ui:VisualElement style="align-items: center;">
-                <ui:Label text="ALL WAVES COMPLETED" class="wave-complete-text" />
-                <ui:Label text="WELL DEFENDED" class="wave-complete-subtext" />
+                <ui:Label text="ALL WAVES COMPLETED" class="wave-complete-text"/>
+                <ui:Label text="WELL DEFENDED" class="wave-complete-subtext"/>
             </ui:VisualElement>
         </ui:VisualElement>
-
     </ui:VisualElement>
 </ui:UXML>

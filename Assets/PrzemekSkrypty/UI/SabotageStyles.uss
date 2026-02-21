@@ -8,10 +8,9 @@
     top: 0;
     right: 0;
     bottom: 0;
-    background-color: rgb(8, 8, 16);
     align-items: center;
     justify-content: center;
-    overflow: hidden;
+    background-color: rgba(0, 0, 0, 0.6);
 }
 
 /* ============================================
@@ -24,6 +23,28 @@
     top: 0;
     right: 0;
     bottom: 0;
+    overflow: hidden;
+}
+.sab-window {
+    width: 75%;
+    max-width: 1100px;
+    height: 80%;
+    max-height: 700px;
+    background-color: rgb(8, 12, 22);
+    border-width: 1px;
+    border-color: rgba(220, 50, 50, 0.25);
+    overflow: hidden;
+    flex-direction: column;
+}
+
+.sab-window-inner-border {
+    position: absolute;
+    left: 6px;
+    top: 6px;
+    right: 6px;
+    bottom: 6px;
+    border-width: 1px;
+    border-color: rgba(220, 50, 50, 0.08);
 }
 
 .sab-bg-cross-v {

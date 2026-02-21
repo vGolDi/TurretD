@@ -1,55 +1,42 @@
-<?xml version="1.0" encoding="utf-8"?>
 <ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
-    <Style src="QuestPanelStyles.uss" />
-
-    <ui:VisualElement name="quest-root" class="quest-root" picking-mode="Ignore">
-
+    <Style src="project://database/Assets/PrzemekSkrypty/UI/QuestPanelStyles.uss?fileID=7433441132597879392&amp;guid=6238d1f2805ca094d8d3f444fc012967&amp;type=3#QuestPanelStyles"/>
+    <ui:VisualElement name="quest-root" picking-mode="Ignore" class="quest-root">
         <ui:VisualElement name="quest-tab-button" class="quest-tab-button">
             <ui:VisualElement class="quest-tab-icon-container">
-                <ui:Label text="!" class="quest-tab-icon" />
+                <ui:Label text="!" class="quest-tab-icon" style="padding-right: 1px; margin-right: 2px; margin-bottom: 4px; padding-bottom: 20px; padding-left: 1px;"/>
             </ui:VisualElement>
-            <ui:Label text="QUESTS" class="quest-tab-text" />
+            <ui:Label text="QUESTS" class="quest-tab-text"/>
             <ui:VisualElement name="quest-notification-badge" class="quest-notification-badge hidden">
-                <ui:Label name="quest-notification-count" text="0" class="quest-notification-count" />
+                <ui:Label name="quest-notification-count" text="0" class="quest-notification-count"/>
             </ui:VisualElement>
         </ui:VisualElement>
-
         <ui:VisualElement name="quest-panel" class="quest-panel quest-panel-closed">
-
-            <ui:VisualElement class="quest-panel-inner-border" />
-
+            <ui:VisualElement class="quest-panel-inner-border"/>
             <ui:VisualElement class="quest-panel-header">
-                <ui:VisualElement class="quest-header-ornament-left" />
-                <ui:Label name="quest-panel-title" text="DAILY QUESTS" class="quest-panel-title" />
-                <ui:VisualElement class="quest-header-ornament-right" />
+                <ui:VisualElement class="quest-header-ornament-left"/>
+                <ui:Label name="quest-panel-title" text="DAILY QUESTS" class="quest-panel-title"/>
+                <ui:VisualElement class="quest-header-ornament-right"/>
             </ui:VisualElement>
-
             <ui:VisualElement class="quest-tabs-bar">
-                <ui:Button name="quest-tab-all" text="ALL" class="quest-filter-tab quest-filter-active" />
-                <ui:VisualElement class="quest-tab-divider" />
-                <ui:Button name="quest-tab-daily" text="DAILY" class="quest-filter-tab" />
-                <ui:VisualElement class="quest-tab-divider" />
-                <ui:Button name="quest-tab-weekly" text="WEEKLY" class="quest-filter-tab" />
-                <ui:VisualElement class="quest-tab-divider" />
-                <ui:Button name="quest-tab-special" text="SPECIAL" class="quest-filter-tab" />
+                <ui:Button name="quest-tab-all" text="ALL" class="quest-filter-tab quest-filter-active"/>
+                <ui:VisualElement class="quest-tab-divider"/>
+                <ui:Button name="quest-tab-daily" text="DAILY" class="quest-filter-tab"/>
+                <ui:VisualElement class="quest-tab-divider"/>
+                <ui:Button name="quest-tab-weekly" text="WEEKLY" class="quest-filter-tab"/>
+                <ui:VisualElement class="quest-tab-divider"/>
+                <ui:Button name="quest-tab-special" text="SPECIAL" class="quest-filter-tab"/>
             </ui:VisualElement>
-
-            <ui:VisualElement class="quest-tabs-line" />
-
+            <ui:VisualElement class="quest-tabs-line"/>
             <ui:ScrollView name="quest-scroll" class="quest-scroll">
-                <ui:VisualElement name="quest-list" class="quest-list" />
+                <ui:VisualElement name="quest-list" class="quest-list"/>
             </ui:ScrollView>
-
             <ui:VisualElement name="quest-empty" class="quest-empty hidden">
-                <ui:Label text="NO ACTIVE QUESTS" class="quest-empty-text" />
-                <ui:Label text="CHECK BACK TOMORROW" class="quest-empty-subtext" />
+                <ui:Label text="NO ACTIVE QUESTS" class="quest-empty-text"/>
+                <ui:Label text="CHECK BACK TOMORROW" class="quest-empty-subtext"/>
             </ui:VisualElement>
-
             <ui:VisualElement class="quest-panel-footer">
-                <ui:Label name="quest-reset-timer" text="DAILY RESET IN 00:00:00" class="quest-reset-timer" />
+                <ui:Label name="quest-reset-timer" text="DAILY RESET IN 00:00:00" class="quest-reset-timer"/>
             </ui:VisualElement>
-
         </ui:VisualElement>
-
     </ui:VisualElement>
 </ui:UXML>

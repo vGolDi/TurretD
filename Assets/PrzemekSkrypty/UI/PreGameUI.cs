@@ -52,10 +52,19 @@ namespace ElementumDefense.UI
             QueryElements();
             PopulateDecks();
             ShowDeckSelection();
+
+            var bg = root.Q<VisualElement>("pregame-root");
+            StarfieldInjector.Instance?.Register(bg);
         }
 
         public void Hide()
         {
+            if (root != null)
+            {
+                var bg = root.Q<VisualElement>("pregame-root");
+                StarfieldInjector.Instance?.Unregister(bg);
+            }
+
             var uiDoc = GetComponent<UIDocument>();
             if (uiDoc != null &&
                 uiDoc.rootVisualElement != null)

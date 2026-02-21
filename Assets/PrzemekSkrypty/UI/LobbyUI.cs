@@ -58,6 +58,9 @@ namespace ElementumDefense.UI
             root = uiDoc.rootVisualElement;
             if (root == null) return;
 
+            var bg = root.Q<VisualElement>("lobby-root");
+            StarfieldInjector.Instance?.Register(bg);
+
             QueryElements();
             BindButtons();
             InitializeDisplay();

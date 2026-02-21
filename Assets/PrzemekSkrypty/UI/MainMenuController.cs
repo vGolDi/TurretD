@@ -13,6 +13,7 @@ public class MainMenuController : MonoBehaviour
     [SerializeField] private GameObject lootboxPanel;
     [SerializeField] private GameObject shopPanel;
     [SerializeField] private GameObject multiplayerPanel;
+    [SerializeField] private GameObject profilePanel;
 
     [Header("UI Toolkit Panels")]
     [SerializeField] private ArtDecoTarotOverlay artDecoOverlay;
@@ -22,6 +23,7 @@ public class MainMenuController : MonoBehaviour
     [SerializeField] private MultiplayerUI multiplayerUI;
     [SerializeField] private SettingsUI settingsUI;
     [SerializeField] private CreditsUI creditsUI;
+    [SerializeField] private ProfileUI profileUI;
 
     [Header("Main Menu Buttons (UGUI — legacy)")]
     [SerializeField] private Button multiPlayerButton;
@@ -122,7 +124,11 @@ public class MainMenuController : MonoBehaviour
         ShowPanel(shopPanel);
         Debug.Log("[MainMenu] Opened shop");
     }
-
+    public void OpenProfile()
+    {
+        ShowPanel(profilePanel);
+        Debug.Log("[MainMenu] Opened profile");
+    }
     public void BackToMainMenu()
     {
         ShowPanel(mainMenuPanel);
@@ -192,6 +198,14 @@ public class MainMenuController : MonoBehaviour
                 creditsUI.Show();
             else
                 creditsUI.Hide();
+        }
+
+        if (profileUI != null)
+        {
+            if (panel == profilePanel)
+                profileUI.Show();
+            else
+                profileUI.Hide();
         }
     }
 

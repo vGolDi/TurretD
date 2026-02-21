@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
+    <ui:VisualElement name="starfield-root" picking-mode="Ignore"
+        style="position: absolute; left: 0; top: 0; right: 0; bottom: 0;
+               background-color: rgba(0,0,0,0);" />
+</ui:UXML>

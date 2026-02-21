@@ -2,76 +2,88 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
     <Style src="SabotageStyles.uss" />
 
-    <ui:VisualElement name="sabotage-root" class="sabotage-root hidden">
+    <ui:VisualElement name="sabotage-root" class="sabotage-root">
 
-        <ui:VisualElement picking-mode="Ignore" class="sab-bg">
-            <ui:VisualElement picking-mode="Ignore" class="sab-bg-cross-v" />
-            <ui:VisualElement picking-mode="Ignore" class="sab-bg-cross-h" />
+        <!-- SABOTAGE WINDOW — ograniczone rozmiary jak draft -->
+        <ui:VisualElement name="sab-window" class="sab-window">
 
-            <ui:VisualElement picking-mode="Ignore" class="sab-bg-radial">
-                <ui:VisualElement picking-mode="Ignore" class="sab-bg-radial-line" style="rotate: 0;" />
-                <ui:VisualElement picking-mode="Ignore" class="sab-bg-radial-line" style="rotate: 60deg;" />
-                <ui:VisualElement picking-mode="Ignore" class="sab-bg-radial-line" style="rotate: 120deg;" />
+            <!-- Inner border okna -->
+            <ui:VisualElement picking-mode="Ignore" class="sab-window-inner-border" />
+
+            <!-- BACKGROUND wewnątrz okna -->
+            <ui:VisualElement picking-mode="Ignore" class="sab-bg">
+                <ui:VisualElement picking-mode="Ignore" class="sab-bg-cross-v" />
+                <ui:VisualElement picking-mode="Ignore" class="sab-bg-cross-h" />
+
+                <ui:VisualElement picking-mode="Ignore" class="sab-bg-radial">
+                    <ui:VisualElement picking-mode="Ignore" class="sab-bg-radial-line" style="rotate: 0;" />
+                    <ui:VisualElement picking-mode="Ignore" class="sab-bg-radial-line" style="rotate: 60deg;" />
+                    <ui:VisualElement picking-mode="Ignore" class="sab-bg-radial-line" style="rotate: 120deg;" />
+                </ui:VisualElement>
+
+                <ui:VisualElement picking-mode="Ignore" class="sab-corner sab-corner-tl" />
+                <ui:VisualElement picking-mode="Ignore" class="sab-corner sab-corner-tr" />
+                <ui:VisualElement picking-mode="Ignore" class="sab-corner sab-corner-bl" />
+                <ui:VisualElement picking-mode="Ignore" class="sab-corner sab-corner-br" />
+
+                <ui:VisualElement picking-mode="Ignore" class="sab-side-left" />
+                <ui:VisualElement picking-mode="Ignore" class="sab-side-right" />
+                <ui:VisualElement picking-mode="Ignore" class="sab-side-tick-l" style="top: 35%;" />
+                <ui:VisualElement picking-mode="Ignore" class="sab-side-tick-l" style="top: 50%;" />
+                <ui:VisualElement picking-mode="Ignore" class="sab-side-tick-l" style="top: 65%;" />
+                <ui:VisualElement picking-mode="Ignore" class="sab-side-tick-r" style="top: 35%;" />
+                <ui:VisualElement picking-mode="Ignore" class="sab-side-tick-r" style="top: 50%;" />
+                <ui:VisualElement picking-mode="Ignore" class="sab-side-tick-r" style="top: 65%;" />
             </ui:VisualElement>
 
-            <ui:VisualElement picking-mode="Ignore" class="sab-corner sab-corner-tl" />
-            <ui:VisualElement picking-mode="Ignore" class="sab-corner sab-corner-tr" />
-            <ui:VisualElement picking-mode="Ignore" class="sab-corner sab-corner-bl" />
-            <ui:VisualElement picking-mode="Ignore" class="sab-corner sab-corner-br" />
+            <!-- DRAFT PANEL -->
+            <ui:VisualElement name="sab-draft-panel" class="sab-center">
 
-            <ui:VisualElement picking-mode="Ignore" class="sab-side-left" />
-            <ui:VisualElement picking-mode="Ignore" class="sab-side-right" />
-            <ui:VisualElement picking-mode="Ignore" class="sab-side-tick-l" style="top: 35%;" />
-            <ui:VisualElement picking-mode="Ignore" class="sab-side-tick-l" style="top: 50%;" />
-            <ui:VisualElement picking-mode="Ignore" class="sab-side-tick-l" style="top: 65%;" />
-            <ui:VisualElement picking-mode="Ignore" class="sab-side-tick-r" style="top: 35%;" />
-            <ui:VisualElement picking-mode="Ignore" class="sab-side-tick-r" style="top: 50%;" />
-            <ui:VisualElement picking-mode="Ignore" class="sab-side-tick-r" style="top: 65%;" />
-        </ui:VisualElement>
+                <ui:VisualElement class="sab-header">
+                    <ui:VisualElement class="sab-header-line" />
+                    <ui:VisualElement class="sab-header-diamond" />
+                    <ui:Label text="THE SABOTEUR" class="sab-title" />
+                    <ui:VisualElement class="sab-header-diamond" />
+                    <ui:VisualElement class="sab-header-line" />
+                </ui:VisualElement>
 
-        <ui:VisualElement name="sab-draft-panel" class="sab-center">
+                <ui:Label text="CHOOSE A SABOTAGE TO INFLICT" class="sab-subtitle" />
 
-            <ui:VisualElement class="sab-header">
-                <ui:VisualElement class="sab-header-line" />
-                <ui:VisualElement class="sab-header-diamond" />
-                <ui:Label text="THE SABOTEUR" class="sab-title" />
-                <ui:VisualElement class="sab-header-diamond" />
-                <ui:VisualElement class="sab-header-line" />
+                <ui:VisualElement class="sab-timer-section">
+                    <ui:Label name="sab-timer" text="15" class="sab-timer" />
+                </ui:VisualElement>
+
+                <ui:VisualElement name="sab-cards" class="sab-cards" />
+
+                <ui:VisualElement name="sab-waiting" class="sab-waiting hidden">
+                    <ui:VisualElement class="sab-waiting-dot" />
+                    <ui:Label name="sab-waiting-text" text="AWAITING OPPONENT..." class="sab-waiting-text" />
+                </ui:VisualElement>
+
             </ui:VisualElement>
 
-            <ui:Label text="CHOOSE A SABOTAGE TO INFLICT" class="sab-subtitle" />
+            <!-- REVEAL PANEL -->
+            <ui:VisualElement name="sab-reveal-panel" class="sab-reveal-panel hidden">
 
-            <ui:VisualElement class="sab-timer-section">
-                <ui:Label name="sab-timer" text="15" class="sab-timer" />
+                <ui:VisualElement class="sab-header">
+                    <ui:VisualElement class="sab-header-line" />
+                    <ui:VisualElement class="sab-reveal-diamond" />
+                    <ui:Label text="SABOTAGES REVEALED" class="sab-title sab-title-reveal" />
+                    <ui:VisualElement class="sab-reveal-diamond" />
+                    <ui:VisualElement class="sab-header-line" />
+                </ui:VisualElement>
+
+                <ui:VisualElement name="sab-reveal-cards" class="sab-reveal-cards" />
+
+                <ui:Label name="sab-reveal-timer" text="Wave starting in: 5s" class="sab-reveal-timer" />
+
             </ui:VisualElement>
 
-            <ui:VisualElement name="sab-cards" class="sab-cards" />
-
-            <ui:VisualElement name="sab-waiting" class="sab-waiting hidden">
-                <ui:VisualElement class="sab-waiting-dot" />
-                <ui:Label name="sab-waiting-text" text="AWAITING OPPONENT..." class="sab-waiting-text" />
+            <!-- BOTTOM BAR — wewnątrz okna -->
+            <ui:VisualElement picking-mode="Ignore" class="sab-bottom-bar">
+                <ui:Label text="SABOTAGE PHASE" class="sab-bottom-text" />
             </ui:VisualElement>
 
-        </ui:VisualElement>
-
-        <ui:VisualElement name="sab-reveal-panel" class="sab-reveal-panel hidden">
-
-            <ui:VisualElement class="sab-header">
-                <ui:VisualElement class="sab-header-line" />
-                <ui:VisualElement class="sab-reveal-diamond" />
-                <ui:Label text="SABOTAGES REVEALED" class="sab-title sab-title-reveal" />
-                <ui:VisualElement class="sab-reveal-diamond" />
-                <ui:VisualElement class="sab-header-line" />
-            </ui:VisualElement>
-
-            <ui:VisualElement name="sab-reveal-cards" class="sab-reveal-cards" />
-
-            <ui:Label name="sab-reveal-timer" text="Wave starting in: 5s" class="sab-reveal-timer" />
-
-        </ui:VisualElement>
-
-        <ui:VisualElement picking-mode="Ignore" class="sab-bottom-bar">
-            <ui:Label text="SABOTAGE PHASE" class="sab-bottom-text" />
         </ui:VisualElement>
 
     </ui:VisualElement>

@@ -1,79 +1,62 @@
-<?xml version="1.0" encoding="utf-8"?>
 <ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
-    <Style src="LevelUpPopupStyles.uss" />
-
-    <ui:VisualElement name="levelup-root" class="levelup-root hidden">
-
-        <ui:VisualElement name="levelup-backdrop" class="levelup-backdrop" />
-
+    <Style src="project://database/Assets/PrzemekSkrypty/UI/LevelUpPopupStyles.uss?fileID=7433441132597879392&amp;guid=34509c3a456767147b0ce7f8c711493c&amp;type=3#LevelUpPopupStyles"/>
+    <ui:VisualElement name="levelup-root" class="levelup-root ">
+        <ui:VisualElement name="levelup-backdrop" class="levelup-backdrop"/>
         <ui:VisualElement name="levelup-box" class="levelup-box">
-
-            <ui:VisualElement name="levelup-inner-border" class="levelup-inner-border" />
-
-            <ui:VisualElement name="levelup-corner-tl" class="levelup-corner levelup-corner-tl" />
-            <ui:VisualElement name="levelup-corner-tr" class="levelup-corner levelup-corner-tr" />
-            <ui:VisualElement name="levelup-corner-bl" class="levelup-corner levelup-corner-bl" />
-            <ui:VisualElement name="levelup-corner-br" class="levelup-corner levelup-corner-br" />
-
+            <ui:VisualElement name="levelup-inner-border" class="levelup-inner-border"/>
+            <ui:VisualElement name="levelup-corner-tl" class="levelup-corner levelup-corner-tl"/>
+            <ui:VisualElement name="levelup-corner-tr" class="levelup-corner levelup-corner-tr"/>
+            <ui:VisualElement name="levelup-corner-bl" class="levelup-corner levelup-corner-bl"/>
+            <ui:VisualElement name="levelup-corner-br" class="levelup-corner levelup-corner-br"/>
             <ui:VisualElement class="levelup-header">
-                <ui:VisualElement name="levelup-header-line-left" class="levelup-header-line" />
-                <ui:Label name="levelup-title" text="LEVEL UP" class="levelup-title" />
-                <ui:VisualElement name="levelup-header-line-right" class="levelup-header-line" />
+                <ui:VisualElement name="levelup-header-line-left" class="levelup-header-line"/>
+                <ui:Label name="levelup-title" text="LEVEL UP" class="levelup-title"/>
+                <ui:VisualElement name="levelup-header-line-right" class="levelup-header-line"/>
             </ui:VisualElement>
-
             <ui:VisualElement class="levelup-level-section">
-                <ui:VisualElement name="levelup-glow-outer" class="levelup-glow-outer" />
-                <ui:VisualElement name="levelup-glow-inner" class="levelup-glow-inner" />
+                <ui:VisualElement name="levelup-glow-outer" class="levelup-glow-outer"/>
+                <ui:VisualElement name="levelup-glow-inner" class="levelup-glow-inner"/>
                 <ui:VisualElement name="levelup-hexagon" class="levelup-hexagon">
-                    <ui:VisualElement name="levelup-hex-bg" class="levelup-hex-bg" />
-                    <ui:VisualElement name="levelup-hex-border" class="levelup-hex-border" />
-                    <ui:Label name="levelup-level-number" text="2" class="levelup-level-number" />
+                    <ui:VisualElement name="levelup-hex-bg" class="levelup-hex-bg"/>
+                    <ui:VisualElement name="levelup-hex-border" class="levelup-hex-border"/>
+                    <ui:Label name="levelup-level-number" text="2" class="levelup-level-number" style="padding-right: 1px; margin-right: 2px; margin-top: 2px;"/>
                 </ui:VisualElement>
             </ui:VisualElement>
-
-            <ui:Label name="levelup-tier-name" text="NOVICE" class="levelup-tier-name" />
-
+            <ui:Label name="levelup-tier-name" text="NOVICE" class="levelup-tier-name"/>
             <ui:VisualElement class="levelup-divider-section">
-                <ui:VisualElement name="levelup-ornament-left" class="levelup-ornament-diamond" />
-                <ui:VisualElement class="levelup-divider-line" />
-                <ui:VisualElement name="levelup-ornament-center" class="levelup-ornament-diamond levelup-ornament-center" />
-                <ui:VisualElement class="levelup-divider-line" />
-                <ui:VisualElement name="levelup-ornament-right" class="levelup-ornament-diamond" />
+                <ui:VisualElement name="levelup-ornament-left" class="levelup-ornament-diamond"/>
+                <ui:VisualElement class="levelup-divider-line"/>
+                <ui:VisualElement name="levelup-ornament-center" class="levelup-ornament-diamond levelup-ornament-center"/>
+                <ui:VisualElement class="levelup-divider-line"/>
+                <ui:VisualElement name="levelup-ornament-right" class="levelup-ornament-diamond"/>
             </ui:VisualElement>
-
-            <ui:Label name="levelup-rewards-title" text="REWARDS" class="levelup-rewards-title" />
-
+            <ui:Label name="levelup-rewards-title" text="REWARDS" class="levelup-rewards-title"/>
             <ui:VisualElement name="levelup-rewards" class="levelup-rewards">
                 <ui:VisualElement name="reward-gold-row" class="levelup-reward-row">
-                    <ui:VisualElement class="levelup-reward-dot levelup-reward-dot-gold" />
-                    <ui:Label name="reward-gold-text" text="+500 Gold" class="levelup-reward-text levelup-reward-gold" />
+                    <ui:VisualElement class="levelup-reward-dot levelup-reward-dot-gold" style="margin-top: 16px;"/>
+                    <ui:Label name="reward-gold-text" text="+500 Gold" class="levelup-reward-text levelup-reward-gold"/>
                 </ui:VisualElement>
                 <ui:VisualElement name="reward-crystals-row" class="levelup-reward-row">
-                    <ui:VisualElement class="levelup-reward-dot levelup-reward-dot-crystal" />
-                    <ui:Label name="reward-crystals-text" text="+10 Crystals" class="levelup-reward-text levelup-reward-crystal" />
+                    <ui:VisualElement class="levelup-reward-dot levelup-reward-dot-crystal" style="margin-top: 16px;"/>
+                    <ui:Label name="reward-crystals-text" text="+10 Crystals" class="levelup-reward-text levelup-reward-crystal"/>
                 </ui:VisualElement>
                 <ui:VisualElement name="reward-lootbox-row" class="levelup-reward-row hidden">
-                    <ui:VisualElement class="levelup-reward-dot levelup-reward-dot-lootbox" />
-                    <ui:Label name="reward-lootbox-text" text="+1 Lootbox" class="levelup-reward-text levelup-reward-lootbox" />
+                    <ui:VisualElement class="levelup-reward-dot levelup-reward-dot-lootbox"/>
+                    <ui:Label name="reward-lootbox-text" text="+1 Lootbox" class="levelup-reward-text levelup-reward-lootbox"/>
                 </ui:VisualElement>
                 <ui:VisualElement name="reward-card-row" class="levelup-reward-row hidden">
-                    <ui:VisualElement class="levelup-reward-dot levelup-reward-dot-card" />
-                    <ui:Label name="reward-card-text" text="New Card Unlocked!" class="levelup-reward-text levelup-reward-card" />
+                    <ui:VisualElement class="levelup-reward-dot levelup-reward-dot-card"/>
+                    <ui:Label name="reward-card-text" text="New Card Unlocked!" class="levelup-reward-text levelup-reward-card"/>
                 </ui:VisualElement>
             </ui:VisualElement>
-
-            <ui:Label name="levelup-custom-message" text="" class="levelup-custom-message hidden" />
-
+            <ui:Label name="levelup-custom-message" text="" class="levelup-custom-message hidden"/>
             <ui:VisualElement class="levelup-xp-section">
                 <ui:VisualElement class="levelup-xp-bar-bg">
-                    <ui:VisualElement name="levelup-xp-fill" class="levelup-xp-fill" />
+                    <ui:VisualElement name="levelup-xp-fill" class="levelup-xp-fill"/>
                 </ui:VisualElement>
-                <ui:Label name="levelup-xp-text" text="0 / 1000 XP" class="levelup-xp-text" />
+                <ui:Label name="levelup-xp-text" text="0 / 1000 XP" class="levelup-xp-text"/>
             </ui:VisualElement>
-
-            <ui:Button name="btn-levelup-ok" text="CONTINUE" class="levelup-btn-ok" />
-
+            <ui:Button name="btn-levelup-ok" text="CONTINUE" class="levelup-btn-ok"/>
         </ui:VisualElement>
-
     </ui:VisualElement>
 </ui:UXML>

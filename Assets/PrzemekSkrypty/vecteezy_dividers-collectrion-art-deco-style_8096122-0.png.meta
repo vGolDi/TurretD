@@ -1,0 +1,389 @@
+fileFormatVersion: 2
+guid: 10e6e89095a96de42a2b4d766ef6d787
+TextureImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 0
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 4096
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 2
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: vecteezy_dividers-collectrion-art-deco-style_8096122-0_0
+      rect:
+        serializedVersion: 2
+        x: 214
+        y: 2420
+        width: 1516
+        height: 110
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 940db250af84df64b88de7edc0386d13
+      internalID: -1358222364
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: vecteezy_dividers-collectrion-art-deco-style_8096122-0_6
+      rect:
+        serializedVersion: 2
+        x: 3171
+        y: 1717
+        width: 801
+        height: 802
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e66b9dfd76e663b44a49412aeee50c1c
+      internalID: -967323861
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: vecteezy_dividers-collectrion-art-deco-style_8096122-0_8
+      rect:
+        serializedVersion: 2
+        x: 2183
+        y: 1722
+        width: 808
+        height: 809
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4fd4f3e5b13e05346b9285940b3c636a
+      internalID: 1570518961
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: vecteezy_dividers-collectrion-art-deco-style_8096122-0_9
+      rect:
+        serializedVersion: 2
+        x: 219
+        y: 1804
+        width: 1519
+        height: 126
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ec021d39f2ff1a84aad8aa015ae51552
+      internalID: 1915704518
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: vecteezy_dividers-collectrion-art-deco-style_8096122-0_14
+      rect:
+        serializedVersion: 2
+        x: 2339
+        y: 797
+        width: 684
+        height: 681
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e6221f463f174f14a82ff7905b890007
+      internalID: -2111140582
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: vecteezy_dividers-collectrion-art-deco-style_8096122-0_19
+      rect:
+        serializedVersion: 2
+        x: 194
+        y: 1278
+        width: 1494
+        height: 98
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 695bbf25bb2034e4e898983b7abbe47b
+      internalID: -2065206268
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: vecteezy_dividers-collectrion-art-deco-style_8096122-0_35
+      rect:
+        serializedVersion: 2
+        x: 3127
+        y: 775
+        width: 861
+        height: 850
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0dbdcb00c7795b74ea730d8682c34a1e
+      internalID: -265283838
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: vecteezy_dividers-collectrion-art-deco-style_8096122-0_37
+      rect:
+        serializedVersion: 2
+        x: 259
+        y: 740
+        width: 1488
+        height: 154
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b8be540ccdf8e0c43b8e5c4d386bfc19
+      internalID: 62917047
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: vecteezy_dividers-collectrion-art-deco-style_8096122-0_42
+      rect:
+        serializedVersion: 2
+        x: 243
+        y: 244
+        width: 1503
+        height: 71
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1eead76125cc2b34ba58c22e70828a0e
+      internalID: 1786598079
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: vecteezy_dividers-collectrion-art-deco-style_8096122-0_45
+      rect:
+        serializedVersion: 2
+        x: 2355
+        y: 244
+        width: 1507
+        height: 160
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6bb896f4a0b7bb643bed5ad6ed3a69b8
+      internalID: 1121145973
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 527720fe703d91e42b1efe5ae8d633f6
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries:
+      - key: SpriteEditor.SliceSettings
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":64.0,"y":64.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":0,"keepEmptyRects":false,"isAlternate":false}'
+      - key: SpriteEditor.SliceOnImport
+        value: False
+    nameFileIdTable:
+      vecteezy_dividers-collectrion-art-deco-style_8096122-0_0: -1358222364
+      vecteezy_dividers-collectrion-art-deco-style_8096122-0_1: -1881090459
+      vecteezy_dividers-collectrion-art-deco-style_8096122-0_10: -531702898
+      vecteezy_dividers-collectrion-art-deco-style_8096122-0_11: 201892181
+      vecteezy_dividers-collectrion-art-deco-style_8096122-0_12: -627168761
+      vecteezy_dividers-collectrion-art-deco-style_8096122-0_13: -2034990965
+      vecteezy_dividers-collectrion-art-deco-style_8096122-0_14: -2111140582
+      vecteezy_dividers-collectrion-art-deco-style_8096122-0_15: 1016366605
+      vecteezy_dividers-collectrion-art-deco-style_8096122-0_16: -2116852664
+      vecteezy_dividers-collectrion-art-deco-style_8096122-0_17: -2067790336
+      vecteezy_dividers-collectrion-art-deco-style_8096122-0_18: -804012494
+      vecteezy_dividers-collectrion-art-deco-style_8096122-0_19: -2065206268
+      vecteezy_dividers-collectrion-art-deco-style_8096122-0_2: -2047445718
+      vecteezy_dividers-collectrion-art-deco-style_8096122-0_20: 238817182
+      vecteezy_dividers-collectrion-art-deco-style_8096122-0_21: 1009093910
+      vecteezy_dividers-collectrion-art-deco-style_8096122-0_22: -584688854
+      vecteezy_dividers-collectrion-art-deco-style_8096122-0_23: 45704043
+      vecteezy_dividers-collectrion-art-deco-style_8096122-0_24: -645605851
+      vecteezy_dividers-collectrion-art-deco-style_8096122-0_25: -1049935781
+      vecteezy_dividers-collectrion-art-deco-style_8096122-0_26: 1475145913
+      vecteezy_dividers-collectrion-art-deco-style_8096122-0_27: -1097924647
+      vecteezy_dividers-collectrion-art-deco-style_8096122-0_28: 95983397
+      vecteezy_dividers-collectrion-art-deco-style_8096122-0_29: 619230657
+      vecteezy_dividers-collectrion-art-deco-style_8096122-0_3: -1024329422
+      vecteezy_dividers-collectrion-art-deco-style_8096122-0_30: -1038992868
+      vecteezy_dividers-collectrion-art-deco-style_8096122-0_31: 1425430452
+      vecteezy_dividers-collectrion-art-deco-style_8096122-0_32: 1816625157
+      vecteezy_dividers-collectrion-art-deco-style_8096122-0_33: 570884287
+      vecteezy_dividers-collectrion-art-deco-style_8096122-0_34: -1274202557
+      vecteezy_dividers-collectrion-art-deco-style_8096122-0_35: -265283838
+      vecteezy_dividers-collectrion-art-deco-style_8096122-0_36: -780773985
+      vecteezy_dividers-collectrion-art-deco-style_8096122-0_37: 62917047
+      vecteezy_dividers-collectrion-art-deco-style_8096122-0_38: -953126387
+      vecteezy_dividers-collectrion-art-deco-style_8096122-0_39: 1313451129
+      vecteezy_dividers-collectrion-art-deco-style_8096122-0_4: 1899737780
+      vecteezy_dividers-collectrion-art-deco-style_8096122-0_40: 68126200
+      vecteezy_dividers-collectrion-art-deco-style_8096122-0_41: -1432602876
+      vecteezy_dividers-collectrion-art-deco-style_8096122-0_42: 1786598079
+      vecteezy_dividers-collectrion-art-deco-style_8096122-0_43: 1447476568
+      vecteezy_dividers-collectrion-art-deco-style_8096122-0_44: -1617117506
+      vecteezy_dividers-collectrion-art-deco-style_8096122-0_45: 1121145973
+      vecteezy_dividers-collectrion-art-deco-style_8096122-0_46: -1156021557
+      vecteezy_dividers-collectrion-art-deco-style_8096122-0_47: 601282627
+      vecteezy_dividers-collectrion-art-deco-style_8096122-0_5: -1302804314
+      vecteezy_dividers-collectrion-art-deco-style_8096122-0_6: -967323861
+      vecteezy_dividers-collectrion-art-deco-style_8096122-0_7: -75720041
+      vecteezy_dividers-collectrion-art-deco-style_8096122-0_8: 1570518961
+      vecteezy_dividers-collectrion-art-deco-style_8096122-0_9: 1915704518
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -95,6 +95,10 @@ namespace ElementumDefense.UI
         {
             var uiDoc = GetComponent<UIDocument>();
             root = uiDoc.rootVisualElement;
+
+            var bg = root.Q<VisualElement>("endgame-root");
+            StarfieldInjector.Instance?.Register(bg);
+
             QueryElements();
             BindButtons();
         }

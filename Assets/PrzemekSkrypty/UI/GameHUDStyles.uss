@@ -1,6 +1,7 @@
-/* ============================================
-   GAME HUD � HEALTH + HOTBAR
-   ============================================ */
+﻿/* ================================================================
+   GAME HUD v5 — HYBRID
+   Oryginalne USS panele + zewnętrzne ramki jako obrazki
+   ================================================================ */
 
 .hud-root {
     flex-grow: 1;
@@ -11,322 +12,585 @@
 }
 
 /* ============================================
+   OBRAZKI — SCREEN CORNERS
+   ============================================ */
+.img-corner {
+    position: absolute;
+    width: 90px;
+    height: 90px;
+    background-image: url("project://database/Assets/UI/HUD/corner-ornament.png");
+    -unity-background-scale-mode: scale-to-fit;
+}
+.img-corner-tl { left: 4px; top: 4px; }
+.img-corner-tr { right: 4px; top: 4px; scale: -1 1; }
+.img-corner-bl { left: 4px; bottom: 4px; scale: 1 -1; }
+.img-corner-br { right: 4px; bottom: 4px; scale: -1 -1; }
+
+/* ============================================
+   OBRAZEK — TOP CONNECTOR
+   ============================================ */
+.img-top-connector {
+    position: absolute;
+    top: 6px;
+    left: 12%;
+    right: 12%;
+    height: 28px;
+    background-image: url("project://database/Assets/UI/HUD/top-connector.png");
+    -unity-background-scale-mode: stretch-to-fill;
+    /* -unity-slice-left: 40; -unity-slice-right: 40; */
+}
+
+/* ============================================
    TOP BAR
    ============================================ */
-
 .top-bar {
     flex-direction: row;
     justify-content: space-between;
     align-items: flex-start;
-    padding-left: 20px;
-    padding-right: 20px;
-    padding-top: 12px;
+    padding: 16px 20px 0 20px;
+    flex-shrink: 0;
 }
 
 .top-bar-spacer {
     flex-grow: 1;
+    min-width: 200px;
 }
 
 /* ============================================
-   HEALTH PANELS
+   HP OUTER WRAP — kontener na obrazek + kartę
    ============================================ */
-
-.health-panel {
-    flex-direction: row;
-    align-items: center;
-    padding: 10px 16px;
-    background-color: rgba(10, 15, 26, 0.85);
-    border-width: 1px;
-    border-color: rgba(245, 158, 11, 0.12);
-    min-width: 260px;
-    overflow: hidden;
+.hp-outer-wrap {
+    position: relative;
+    overflow: visible;
 }
 
-.health-panel-enemy {
-    flex-direction: row-reverse;
-}
-
-.health-inner-border {
+/* OBRAZEK — zewnętrzna ramka okalająca kartę HP */
+.img-hp-outer-frame {
     position: absolute;
-    left: 4px;
-    top: 4px;
-    right: 4px;
-    bottom: 4px;
-    border-width: 1px;
-    border-color: rgba(245, 158, 11, 0.05);
+    left: -18px;
+    top: -14px;
+    right: -18px;
+    bottom: -40px;
+    -unity-background-scale-mode: stretch-to-fill;
+    /* 9-slice żeby narożniki ramki się nie rozciągały: */
+    /* -unity-slice-left: 24; */
+    /* -unity-slice-right: 24; */
+    /* -unity-slice-top: 18; */
+    /* -unity-slice-bottom: 44; */
+}
+.img-hp-outer-frame-my {
+    background-image: url("project://database/Assets/UI/HUD/hp-outer-frame.png");
+}
+.img-hp-outer-frame-enemy {
+    background-image: url("project://database/Assets/UI/HUD/hp-outer-frame.png");
+    scale: -1 1;
 }
 
-.health-accent {
+/* ============================================
+   HP CARD — BEZ ZMIAN (Twój oryginalny kod)
+   ============================================ */
+.hp-card {
+    min-width: 310px;
+    max-width: 360px;
+    background-color: rgba(8, 12, 22, 0.94);
+    padding: 12px 16px 10px 16px;
+    flex-direction: column;
+    overflow: visible;
+    position: relative;
+}
+
+.hp-frame-outer {
     position: absolute;
-    top: 0;
-    bottom: 0;
+    left: 0; top: 0; right: 0; bottom: 0;
+    border-width: 2px;
+    border-color: rgba(217, 119, 6, 0.22);
+}
+.hp-frame-inner {
+    position: absolute;
+    left: 5px; top: 5px; right: 5px; bottom: 5px;
+    border-width: 1px;
+    border-color: rgba(217, 119, 6, 0.08);
+}
+
+.hp-corner {
+    position: absolute;
+    width: 16px;
+    height: 16px;
+}
+.hp-c-tl { left: 3px; top: 3px; border-left-width: 2px; border-top-width: 2px; border-left-color: rgba(217, 119, 6, 0.4); border-top-color: rgba(217, 119, 6, 0.4); }
+.hp-c-tr { right: 3px; top: 3px; border-right-width: 2px; border-top-width: 2px; border-right-color: rgba(217, 119, 6, 0.4); border-top-color: rgba(217, 119, 6, 0.4); }
+.hp-c-bl { left: 3px; bottom: 3px; border-left-width: 2px; border-bottom-width: 2px; border-left-color: rgba(217, 119, 6, 0.4); border-bottom-color: rgba(217, 119, 6, 0.4); }
+.hp-c-br { right: 3px; bottom: 3px; border-right-width: 2px; border-bottom-width: 2px; border-right-color: rgba(217, 119, 6, 0.4); border-bottom-color: rgba(217, 119, 6, 0.4); }
+
+.hp-stripe {
+    position: absolute;
+    top: 8px;
+    bottom: 8px;
     width: 3px;
 }
+.hp-stripe-my { left: 0; background-color: rgba(74, 222, 128, 0.6); }
+.hp-stripe-enemy { right: 0; background-color: rgba(248, 113, 113, 0.6); }
 
-.health-accent-my {
-    left: 0;
-    background-color: rgba(74, 222, 128, 0.5);
+.hp-cut {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    background-color: rgba(8, 12, 22, 0.94);
+    border-width: 0;
+}
+.hp-cut-tl {
+    left: -1px; top: -1px;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    border-right-color: rgba(217, 119, 6, 0.25);
+    border-bottom-color: rgba(217, 119, 6, 0.25);
+}
+.hp-cut-br-my {
+    right: -1px; bottom: -1px;
+    border-left-width: 1px;
+    border-top-width: 1px;
+    border-left-color: rgba(74, 222, 128, 0.2);
+    border-top-color: rgba(74, 222, 128, 0.2);
+}
+.hp-cut-tr {
+    right: -1px; top: -1px;
+    border-left-width: 1px;
+    border-bottom-width: 1px;
+    border-left-color: rgba(217, 119, 6, 0.25);
+    border-bottom-color: rgba(217, 119, 6, 0.25);
+}
+.hp-cut-bl-enemy {
+    left: -1px; bottom: -1px;
+    border-right-width: 1px;
+    border-top-width: 1px;
+    border-right-color: rgba(248, 113, 113, 0.2);
+    border-top-color: rgba(248, 113, 113, 0.2);
 }
 
-.health-accent-enemy {
-    right: 0;
-    background-color: rgba(248, 113, 113, 0.5);
+.hp-body { flex-direction: column; }
+
+.hp-row {
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 8px;
+}
+.hp-row-enemy { flex-direction: row; }
+
+.hp-icon-diamond {
+    width: 36px;
+    height: 36px;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-right: 10px;
+}
+.hp-icon-diamond-enemy { margin-right: 0; margin-left: 10px; }
+
+.hp-icon-diamond-bg {
+    position: absolute;
+    width: 36px;
+    height: 36px;
+    border-radius: 3px;
+    rotate: 45deg;
+    scale: 0.62 0.62;
+}
+.hp-icon-bg-my { background-color: rgba(74, 222, 128, 0.1); }
+.hp-icon-bg-enemy { background-color: rgba(248, 113, 113, 0.1); }
+
+.hp-icon-diamond-border {
+    position: absolute;
+    width: 36px;
+    height: 36px;
+    border-width: 2px;
+    border-radius: 3px;
+    rotate: 45deg;
+    scale: 0.62 0.62;
+}
+.hp-icon-bdr-my { border-color: rgba(74, 222, 128, 0.55); }
+.hp-icon-bdr-enemy { border-color: rgba(248, 113, 113, 0.55); }
+
+.hp-icon-glyph {
+    font-size: 16px;
+    color: rgb(254, 243, 199);
+    -unity-text-align: middle-center;
 }
 
-.health-info {
-    flex-direction: column;
-    flex-grow: 1;
-}
+.hp-info { flex-direction: column; flex-grow: 1; }
+.hp-info-enemy { align-items: flex-end; }
 
-.health-info-enemy {
-    align-items: flex-end;
-}
-
-.health-name {
+.hp-label {
     font-size: 10px;
-    color: rgba(245, 158, 11, 0.45);
-    letter-spacing: 4px;
-    margin-bottom: 6px;
+    color: rgba(217, 119, 6, 0.6);
+    letter-spacing: 5px;
+    text-transform: uppercase;
 }
+.hp-label-enemy { -unity-text-align: upper-right; }
 
-.health-name-enemy {
-    -unity-text-align: upper-right;
-}
-
-/* Health bar */
-.health-bar-container {
-    flex-direction: column;
+.hp-label-underline {
     width: 100%;
+    height: 1px;
+    margin-top: 3px;
+}
+.hp-underline-my { background-color: rgba(74, 222, 128, 0.2); }
+.hp-underline-enemy { background-color: rgba(248, 113, 113, 0.2); }
+
+.hp-value {
+    font-size: 15px;
+    color: rgb(254, 243, 199);
+    letter-spacing: 2px;
+    -unity-font-style: bold;
+    flex-shrink: 0;
+    margin-left: 8px;
+}
+.hp-value-enemy { margin-left: 0; margin-right: 8px; }
+
+/* ============================================
+   HEALTH BAR — BEZ ZMIAN
+   ============================================ */
+.hp-bar-container {
+    position: relative;
+    width: 100%;
+    height: 14px;
 }
 
-.health-bar-bg {
-    width: 100%;
-    height: 6px;
-    background-color: rgba(245, 158, 11, 0.08);
+.hp-bar-frame {
+    position: absolute;
+    left: 0; top: 0; right: 0; bottom: 0;
     border-width: 1px;
-    border-color: rgba(245, 158, 11, 0.06);
-    overflow: hidden;
-    margin-bottom: 4px;
+    border-color: rgba(217, 119, 6, 0.1);
 }
 
-.health-bar-fill {
+.hp-bar-bg {
+    position: absolute;
+    left: 1px; top: 1px; right: 1px; bottom: 1px;
+    background-color: rgba(217, 119, 6, 0.06);
+    overflow: hidden;
+}
+.hp-bar-bg-rtl { flex-direction: row-reverse; }
+
+.hp-bar-fill {
     height: 100%;
     width: 100%;
     transition-property: width, background-color;
     transition-duration: 0.4s;
     transition-timing-function: ease-out;
 }
+.hp-fill-my { background-color: rgb(74, 222, 128); }
+.hp-fill-enemy { background-color: rgb(248, 113, 113); }
+.health-fill-warning { background-color: rgb(251, 191, 36); }
+.health-fill-critical { background-color: rgb(248, 113, 113); }
 
-.health-fill-my {
-    background-color: rgb(74, 222, 128);
+.hp-bar-ticks {
+    position: absolute;
+    left: 0; top: 0; right: 0; bottom: 0;
+}
+.hp-tick {
+    position: absolute;
+    top: 0;
+    width: 1px;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
 }
 
-.health-fill-enemy {
-    background-color: rgb(248, 113, 113);
+.hp-bar-cap {
+    position: absolute;
+    top: 2px;
+    bottom: 2px;
+    width: 3px;
+}
+.hp-bar-cap-l { left: -4px; }
+.hp-bar-cap-r { right: -4px; }
+.hp-cap-my { background-color: rgba(74, 222, 128, 0.3); }
+.hp-cap-enemy { background-color: rgba(248, 113, 113, 0.3); }
+
+/* ============================================
+   HP PENDANT — BEZ ZMIAN
+   ============================================ */
+.hp-pendant {
+    position: absolute;
+    bottom: -30px;
+    left: 50%;
+    translate: -50% 0;
+    align-items: center;
+    width: 32px;
+    height: 30px;
 }
 
-.health-fill-warning {
-    background-color: rgb(251, 191, 36);
+.hp-pendant-stem {
+    width: 2px;
+    height: 10px;
 }
+.hp-pendant-stem-my { background-color: rgba(74, 222, 128, 0.25); }
+.hp-pendant-stem-enemy { background-color: rgba(248, 113, 113, 0.25); }
 
-.health-fill-critical {
-    background-color: rgb(248, 113, 113);
-}
-
-.health-text {
-    font-size: 12px;
-    color: rgb(254, 243, 199);
-    letter-spacing: 2px;
-}
-
-.health-text-enemy {
-    -unity-text-align: upper-right;
-}
-
-/* Hex icon */
-.health-icon-section {
-    margin-left: 12px;
-    margin-right: 12px;
-    flex-shrink: 0;
-}
-
-.health-hex {
-    width: 36px;
-    height: 36px;
+.hp-pendant-chevron {
+    width: 22px;
+    height: 10px;
     align-items: center;
     justify-content: center;
 }
-
-.health-hex-bg {
+.hp-pendant-arm {
     position: absolute;
-    width: 36px;
-    height: 36px;
-    border-radius: 4px;
+    width: 12px;
+    height: 2px;
+    background-color: rgba(217, 119, 6, 0.3);
+}
+.hp-pendant-arm-l { left: 0; rotate: 35deg; transform-origin: right center; }
+.hp-pendant-arm-r { right: 0; rotate: -35deg; transform-origin: left center; }
+
+.hp-pendant-diamond {
+    width: 8px;
+    height: 8px;
+    border-width: 2px;
     rotate: 45deg;
-    scale: 0.7 0.7;
+    scale: 0.55 0.55;
+    margin-top: -2px;
 }
+.hp-pendant-dia-my { border-color: rgba(74, 222, 128, 0.4); background-color: rgba(74, 222, 128, 0.1); }
+.hp-pendant-dia-enemy { border-color: rgba(248, 113, 113, 0.4); background-color: rgba(248, 113, 113, 0.1); }
 
-.health-hex-bg-my {
-    background-color: rgba(74, 222, 128, 0.1);
-}
-
-.health-hex-bg-enemy {
-    background-color: rgba(248, 113, 113, 0.1);
-}
-
-.health-hex-border {
-    position: absolute;
-    width: 36px;
-    height: 36px;
-    border-width: 1px;
-    border-radius: 4px;
-    rotate: 45deg;
-    scale: 0.7 0.7;
-}
-
-.health-hex-border-my {
-    border-color: rgba(74, 222, 128, 0.4);
-}
-
-.health-hex-border-enemy {
-    border-color: rgba(248, 113, 113, 0.4);
-}
-
-.health-hex-icon {
-    font-size: 16px;
-    color: rgb(254, 243, 199);
-    -unity-text-align: middle-center;
+/* ============================================
+   BOTTOM SECTION — BEZ ZMIAN
+   ============================================ */
+.bottom-section {
+    align-items: flex-end;
+    padding-bottom: 10px;
+    flex-direction: row;
+    justify-content: center;
 }
 
 /* ============================================
-   HOTBAR
+   OBRAZKI — WINGS
    ============================================ */
+.img-wing {
+    height: 40px;
+    -unity-background-scale-mode: scale-to-fit;
+}
+.img-wing-left {
+    width: 240px;
+    margin-right: 14px;
+    background-image: url("project://database/Assets/UI/HUD/wing-left.png");
+}
+.img-wing-right {
+    width: 240px;
+    margin-left: 14px;
+    background-image: url("project://database/Assets/UI/HUD/wing-left.png");
+    scale: -1 1;
+}
 
+/* ============================================
+   HOTBAR SECTION — BEZ ZMIAN
+   ============================================ */
 .hotbar-section {
+    flex-direction: column;
     align-items: center;
-    padding-bottom: 16px;
 }
 
-.hotbar-container {
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    padding: 10px 20px;
-    background-color: rgba(10, 15, 26, 0.88);
-    border-width: 1px;
-    border-color: rgba(245, 158, 11, 0.1);
-    overflow: hidden;
-}
-
-.hotbar-inner-border {
-    position: absolute;
-    left: 4px;
-    top: 4px;
-    right: 4px;
-    bottom: 4px;
-    border-width: 1px;
-    border-color: rgba(245, 158, 11, 0.04);
-}
-
-.hotbar-accent-left {
-    position: absolute;
-    left: 0;
-    top: 20%;
-    bottom: 20%;
-    width: 2px;
-    background-color: rgba(245, 158, 11, 0.15);
-}
-
-.hotbar-accent-right {
-    position: absolute;
-    right: 0;
-    top: 20%;
-    bottom: 20%;
-    width: 2px;
-    background-color: rgba(245, 158, 11, 0.15);
-}
-
-.hotbar-slots {
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
+/* OBRAZEK — Crown nad hotbarem */
+.img-hotbar-crown {
+    width: 160px;
+    height: 20px;
+    background-image: url("project://database/Assets/UI/HUD/hotbar-crown.png");
+    -unity-background-scale-mode: scale-to-fit;
+    margin-bottom: 2px;
 }
 
 /* ============================================
-   HOTBAR SLOT
+   HOTBAR OUTER WRAP — obrazek + karta
    ============================================ */
+.hotbar-outer-wrap {
+    position: relative;
+    overflow: visible;
+}
 
-.hotbar-slot {
-    width: 80px;
-    height: 90px;
-    background-color: rgba(12, 18, 30, 0.9);
+/* OBRAZEK — zewnętrzna ramka okalająca hotbar */
+.img-hotbar-outer-frame {
+    position: absolute;
+    left: -14px;
+    top: -8px;
+    right: -14px;
+    bottom: -8px;
+    background-image: url("project://database/Assets/UI/HUD/hotbar-outer-frame.png");
+    -unity-background-scale-mode: stretch-to-fill;
+    /* -unity-slice-left: 20; */
+    /* -unity-slice-right: 20; */
+    /* -unity-slice-top: 12; */
+    /* -unity-slice-bottom: 12; */
+}
+
+/* ============================================
+   HOTBAR CARD — BEZ ZMIAN
+   ============================================ */
+.hotbar-card {
+    background-color: rgba(8, 12, 22, 0.94);
+    padding: 8px 18px 10px 18px;
+    flex-direction: column;
+    align-items: center;
+    overflow: hidden;
+    position: relative;
+}
+
+.hbar-frame-outer {
+    position: absolute;
+    left: 0; top: 0; right: 0; bottom: 0;
+    border-width: 2px;
+    border-color: rgba(217, 119, 6, 0.2);
+}
+.hbar-frame-inner {
+    position: absolute;
+    left: 5px; top: 5px; right: 5px; bottom: 5px;
     border-width: 1px;
-    border-color: rgba(245, 158, 11, 0.1);
+    border-color: rgba(217, 119, 6, 0.06);
+}
+
+.hbar-corner {
+    position: absolute;
+    width: 14px;
+    height: 14px;
+}
+.hbar-c-tl { left: 2px; top: 2px; border-left-width: 2px; border-top-width: 2px; border-left-color: rgba(217, 119, 6, 0.3); border-top-color: rgba(217, 119, 6, 0.3); }
+.hbar-c-tr { right: 2px; top: 2px; border-right-width: 2px; border-top-width: 2px; border-right-color: rgba(217, 119, 6, 0.3); border-top-color: rgba(217, 119, 6, 0.3); }
+.hbar-c-bl { left: 2px; bottom: 2px; border-left-width: 2px; border-bottom-width: 2px; border-left-color: rgba(217, 119, 6, 0.3); border-bottom-color: rgba(217, 119, 6, 0.3); }
+.hbar-c-br { right: 2px; bottom: 2px; border-right-width: 2px; border-bottom-width: 2px; border-right-color: rgba(217, 119, 6, 0.3); border-bottom-color: rgba(217, 119, 6, 0.3); }
+
+.hbar-side-accent {
+    position: absolute;
+    top: 20%;
+    bottom: 20%;
+    width: 2px;
+    background-color: rgba(217, 119, 6, 0.15);
+}
+.hbar-side-l { left: 0; }
+.hbar-side-r { right: 0; }
+
+.hbar-label-row {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 5px;
+}
+.hbar-label-line {
+    width: 28px;
+    height: 1px;
+    background-color: rgba(217, 119, 6, 0.2);
+}
+.hbar-label-diamond {
+    width: 7px;
+    height: 7px;
+    border-width: 1px;
+    border-color: rgba(217, 119, 6, 0.35);
+    rotate: 45deg;
+    scale: 0.55 0.55;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+.hbar-label-text {
+    font-size: 9px;
+    color: rgba(217, 119, 6, 0.5);
+    letter-spacing: 5px;
     margin-left: 4px;
     margin-right: 4px;
+}
+
+.hbar-slots {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.hbar-keys {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    margin-top: 5px;
+}
+.hbar-key {
+    font-size: 9px;
+    color: rgba(217, 119, 6, 0.28);
+    letter-spacing: 1px;
+    width: 76px;
+    -unity-text-align: middle-center;
+}
+.hbar-key-sep {
+    width: 1px;
+    height: 10px;
+    background-color: rgba(217, 119, 6, 0.1);
+}
+
+/* OBRAZEK — Pendant pod hotbarem */
+.img-hotbar-pendant {
+    width: 34px;
+    height: 28px;
+    background-image: url("project://database/Assets/UI/HUD/hotbar-pendant.png");
+    -unity-background-scale-mode: scale-to-fit;
+    margin-top: 2px;
+}
+
+/* ============================================
+   OBRAZEK — BOTTOM DIVIDER
+   ============================================ */
+.img-bottom-divider {
+    position: absolute;
+    bottom: 2px;
+    left: 4%;
+    right: 4%;
+    height: 18px;
+    background-image: url("project://database/Assets/UI/HUD/bottom-divider.png");
+    -unity-background-scale-mode: stretch-to-fill;
+    /* -unity-slice-left: 60; -unity-slice-right: 60; */
+}
+
+/* ============================================
+   HOTBAR SLOT — BEZ ZMIAN
+   ============================================ */
+.hotbar-slot {
+    width: 76px;
+    height: 88px;
+    background-color: rgba(12, 18, 30, 0.92);
+    border-width: 1px;
+    border-color: rgba(217, 119, 6, 0.1);
+    margin-left: 3px;
+    margin-right: 3px;
     flex-direction: column;
     align-items: center;
     justify-content: space-between;
-    padding: 6px;
+    padding: 5px;
     overflow: hidden;
     transition-property: border-color, background-color, scale;
     transition-duration: 0.2s;
     cursor: link;
+    position: relative;
 }
-
 .hotbar-slot:hover {
-    border-color: rgba(245, 158, 11, 0.4);
-    background-color: rgba(15, 23, 42, 0.9);
-    scale: 1.05 1.05;
+    border-color: rgba(217, 119, 6, 0.45);
+    background-color: rgba(15, 23, 42, 0.92);
+    scale: 1.04 1.04;
 }
-
 .hotbar-slot-selected {
     border-color: rgb(34, 211, 238);
     border-width: 2px;
-    background-color: rgba(34, 211, 238, 0.06);
+    background-color: rgba(34, 211, 238, 0.05);
 }
-
-.hotbar-slot-affordable {
-    border-color: rgba(74, 222, 128, 0.3);
-}
-
-.hotbar-slot-affordable:hover {
-    border-color: rgba(74, 222, 128, 0.6);
-}
-
-.hotbar-slot-partial {
-    border-color: rgba(251, 191, 36, 0.25);
-}
-
-.hotbar-slot-partial:hover {
-    border-color: rgba(251, 191, 36, 0.5);
-}
-
-.hotbar-slot-expensive {
-    border-color: rgba(248, 113, 113, 0.2);
-    opacity: 0.6;
-}
-
-.hotbar-slot-expensive:hover {
-    border-color: rgba(248, 113, 113, 0.4);
-    opacity: 0.8;
-}
+.hotbar-slot-affordable { border-color: rgba(74, 222, 128, 0.3); }
+.hotbar-slot-affordable:hover { border-color: rgba(74, 222, 128, 0.55); }
+.hotbar-slot-partial { border-color: rgba(251, 191, 36, 0.25); }
+.hotbar-slot-partial:hover { border-color: rgba(251, 191, 36, 0.5); }
+.hotbar-slot-expensive { border-color: rgba(248, 113, 113, 0.2); opacity: 0.55; }
+.hotbar-slot-expensive:hover { border-color: rgba(248, 113, 113, 0.4); opacity: 0.75; }
 
 .hotbar-key {
     font-size: 9px;
-    color: rgba(245, 158, 11, 0.35);
+    color: rgba(217, 119, 6, 0.35);
     letter-spacing: 2px;
     -unity-text-align: upper-center;
     align-self: flex-end;
 }
-
 .hotbar-icon {
-    width: 36px;
-    height: 36px;
+    width: 34px;
+    height: 34px;
     flex-shrink: 0;
     -unity-background-scale-mode: scale-to-fit;
 }
-
 .hotbar-name {
     font-size: 8px;
     color: rgb(254, 243, 199);
@@ -336,7 +600,6 @@
     text-overflow: ellipsis;
     max-width: 100%;
 }
-
 .hotbar-cost {
     font-size: 9px;
     color: rgb(251, 191, 36);
@@ -345,159 +608,19 @@
     transition-property: color;
     transition-duration: 0.2s;
 }
-
-.hotbar-cost-expensive {
-    color: rgb(248, 113, 113);
-}
+.hotbar-cost-expensive { color: rgb(248, 113, 113); }
 
 .hotbar-slot-bottom-accent {
     position: absolute;
     bottom: 0;
-    left: 25%;
-    right: 25%;
+    left: 20%;
+    right: 20%;
     height: 2px;
-    background-color: rgba(245, 158, 11, 0);
+    background-color: rgba(217, 119, 6, 0);
     transition-property: background-color;
     transition-duration: 0.2s;
 }
+.hotbar-slot:hover .hotbar-slot-bottom-accent { background-color: rgba(217, 119, 6, 0.35); }
+.hotbar-slot-selected .hotbar-slot-bottom-accent { background-color: rgba(34, 211, 238, 0.5); }
 
-.hotbar-slot:hover .hotbar-slot-bottom-accent {
-    background-color: rgba(245, 158, 11, 0.3);
-}
-
-.hotbar-slot-selected .hotbar-slot-bottom-accent {
-    background-color: rgba(34, 211, 238, 0.5);
-}
-/* ============================================
-   HUD DECORATIONS
-   ============================================ */
-
-.hud-corner {
-    position: absolute;
-    width: 40px;
-    height: 40px;
-}
-
-.hud-corner-tl {
-    left: 8px;
-    top: 8px;
-    border-left-width: 1px;
-    border-top-width: 1px;
-    border-left-color: rgba(245, 158, 11, 0.1);
-    border-top-color: rgba(245, 158, 11, 0.1);
-}
-
-.hud-corner-tr {
-    right: 8px;
-    top: 8px;
-    border-right-width: 1px;
-    border-top-width: 1px;
-    border-right-color: rgba(245, 158, 11, 0.1);
-    border-top-color: rgba(245, 158, 11, 0.1);
-}
-
-.hud-corner-bl {
-    left: 8px;
-    bottom: 8px;
-    border-left-width: 1px;
-    border-bottom-width: 1px;
-    border-left-color: rgba(245, 158, 11, 0.1);
-    border-bottom-color: rgba(245, 158, 11, 0.1);
-}
-
-.hud-corner-br {
-    right: 8px;
-    bottom: 8px;
-    border-right-width: 1px;
-    border-bottom-width: 1px;
-    border-right-color: rgba(245, 158, 11, 0.1);
-    border-bottom-color: rgba(245, 158, 11, 0.1);
-}
-
-.hud-edge-top {
-    position: absolute;
-    top: 0;
-    left: 15%;
-    right: 15%;
-    height: 1px;
-    background-color: rgba(245, 158, 11, 0.04);
-}
-
-.hud-edge-bottom {
-    position: absolute;
-    bottom: 0;
-    left: 15%;
-    right: 15%;
-    height: 1px;
-    background-color: rgba(245, 158, 11, 0.04);
-}
-
-/* ============================================
-   WAVE INFO (center top)
-   ============================================ */
-
-.wave-info-panel {
-    flex-direction: row;
-    align-items: center;
-    padding: 6px 16px;
-    background-color: rgba(10, 15, 26, 0.75);
-    border-width: 1px;
-    border-color: rgba(245, 158, 11, 0.1);
-}
-
-.wave-diamond {
-    width: 8px;
-    height: 8px;
-    border-width: 1px;
-    border-color: rgba(245, 158, 11, 0.25);
-    rotate: 45deg;
-    scale: 0.6 0.6;
-    margin-left: 8px;
-    margin-right: 8px;
-}
-
-.wave-text {
-    font-size: 11px;
-    color: rgba(245, 158, 11, 0.5);
-    letter-spacing: 5px;
-}
-
-/* ============================================
-   HOTBAR LABELS
-   ============================================ */
-
-.hotbar-label-left {
-    flex-direction: row;
-    align-items: center;
-    margin-right: 12px;
-}
-
-.hotbar-label-diamond {
-    width: 6px;
-    height: 6px;
-    border-width: 1px;
-    border-color: rgba(245, 158, 11, 0.25);
-    rotate: 45deg;
-    scale: 0.6 0.6;
-    margin-right: 8px;
-}
-
-.hotbar-label-text {
-    font-size: 8px;
-    color: rgba(245, 158, 11, 0.3);
-    letter-spacing: 4px;
-}
-
-.hotbar-label-right {
-    margin-left: 12px;
-    align-items: center;
-}
-
-.hotbar-keys-hint {
-    font-size: 9px;
-    color: rgba(245, 158, 11, 0.2);
-    letter-spacing: 2px;
-}
-.hidden {
-    display: none;
-}
+.hidden { display: none; }

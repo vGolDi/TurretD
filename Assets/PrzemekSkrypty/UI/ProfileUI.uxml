@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+    <Style src="ProfileStyles.uss" />
+
+    <ui:VisualElement name="profile-root" class="panel-root">
+
+        <!-- Side decorations -->
+        <ui:VisualElement class="side-decoration-left" picking-mode="Ignore" />
+        <ui:VisualElement class="side-decoration-right" picking-mode="Ignore" />
+        <ui:VisualElement class="side-tick-left" style="top: 30%;" picking-mode="Ignore" />
+        <ui:VisualElement class="side-tick-left" style="top: 50%;" picking-mode="Ignore" />
+        <ui:VisualElement class="side-tick-left" style="top: 70%;" picking-mode="Ignore" />
+        <ui:VisualElement class="side-tick-right" style="top: 30%;" picking-mode="Ignore" />
+        <ui:VisualElement class="side-tick-right" style="top: 50%;" picking-mode="Ignore" />
+        <ui:VisualElement class="side-tick-right" style="top: 70%;" picking-mode="Ignore" />
+
+        <!-- Header -->
+        <ui:VisualElement class="panel-header">
+            <ui:Button name="btn-back" text="← BACK" class="btn-back" />
+            <ui:VisualElement class="header-title-group">
+                <ui:Label text="THE SEEKER" class="panel-title" />
+                <ui:Label text="ARCANE PROFILE" class="panel-subtitle" />
+            </ui:VisualElement>
+            <ui:VisualElement class="header-spacer" />
+            <ui:VisualElement class="header-currency">
+                <ui:VisualElement class="currency-chip currency-gold">
+                    <ui:VisualElement class="currency-dot currency-dot-gold" />
+                    <ui:Label name="header-gold" text="0" class="currency-amount currency-amount-gold" />
+                    <ui:Label text="GOLD" class="currency-label" />
+                </ui:VisualElement>
+                <ui:VisualElement class="currency-chip currency-crystal">
+                    <ui:VisualElement class="currency-dot currency-dot-crystal" />
+                    <ui:Label name="header-crystals" text="0" class="currency-amount currency-amount-crystal" />
+                    <ui:Label text="CRYSTALS" class="currency-label" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <!-- Main scroll area -->
+        <ui:ScrollView name="profile-scroll" class="profile-scroll">
+
+            <!-- ═══════════════════════════════════
+                 PLAYER IDENTITY CARD
+                 ═══════════════════════════════════ -->
+            <ui:VisualElement class="identity-card">
+                <ui:VisualElement class="identity-inner-border" />
+
+                <!-- Top ornament -->
+                <ui:VisualElement class="identity-ornament-top">
+                    <ui:VisualElement class="orn-line-h" />
+                    <ui:VisualElement class="orn-diamond" />
+                    <ui:VisualElement class="orn-line-h" />
+                </ui:VisualElement>
+
+                <ui:VisualElement class="identity-content">
+                    <!-- Left: Avatar / Level hexagon -->
+                    <ui:VisualElement class="identity-avatar-section">
+                        <ui:VisualElement class="avatar-frame">
+                            <ui:VisualElement class="avatar-frame-inner" />
+                            <ui:VisualElement name="avatar-icon" class="avatar-icon" />
+                            <ui:VisualElement class="avatar-frame-corner avatar-corner-tl" />
+                            <ui:VisualElement class="avatar-frame-corner avatar-corner-tr" />
+                            <ui:VisualElement class="avatar-frame-corner avatar-corner-bl" />
+                            <ui:VisualElement class="avatar-frame-corner avatar-corner-br" />
+                        </ui:VisualElement>
+                        <ui:VisualElement class="level-badge">
+                            <ui:VisualElement class="level-badge-bg" />
+                            <ui:Label name="profile-level" text="1" class="level-badge-text" />
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+
+                    <!-- Center: Name, Rank, XP -->
+                    <ui:VisualElement class="identity-info-section">
+                        <ui:Label name="profile-name" text="TRAVELER" class="profile-player-name" />
+                        <ui:VisualElement class="profile-name-divider" />
+
+                        <!-- Rank row -->
+                        <ui:VisualElement class="rank-display-row">
+                            <ui:VisualElement class="rank-emblem">
+                                <ui:VisualElement name="rank-emblem-bg" class="rank-emblem-bg" />
+                                <ui:Label name="rank-icon" text="◆" class="rank-emblem-icon" />
+                            </ui:VisualElement>
+                            <ui:VisualElement class="rank-text-group">
+                                <ui:Label name="profile-rank" text="BRONZE" class="profile-rank-label" />
+                                <ui:Label name="profile-elo" text="1000 ELO" class="profile-elo-label" />
+                            </ui:VisualElement>
+                        </ui:VisualElement>
+
+                        <!-- XP Bar -->
+                        <ui:VisualElement class="profile-xp-section">
+                            <ui:VisualElement class="profile-xp-header">
+                                <ui:Label text="EXPERIENCE" class="profile-xp-title" />
+                                <ui:Label name="profile-xp-text" text="0 / 1000" class="profile-xp-value" />
+                            </ui:VisualElement>
+                            <ui:VisualElement class="profile-xp-bar-bg">
+                                <ui:VisualElement name="profile-xp-bar-fill" class="profile-xp-bar-fill" />
+                            </ui:VisualElement>
+                            <ui:Label name="profile-next-level" text="NEXT: LEVEL 2" class="profile-next-level-text" />
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+
+                    <!-- Right: Stats summary -->
+                    <ui:VisualElement class="identity-stats-section">
+                        <ui:Label text="COLLECTION" class="stats-section-title" />
+                        <ui:VisualElement class="stat-row">
+                            <ui:Label text="CARDS" class="stat-label" />
+                            <ui:Label name="stat-cards" text="0 / 0" class="stat-value" />
+                        </ui:VisualElement>
+                        <ui:VisualElement class="stat-row">
+                            <ui:Label text="SABOTAGES" class="stat-label" />
+                            <ui:Label name="stat-sabotages" text="0" class="stat-value" />
+                        </ui:VisualElement>
+                        <ui:VisualElement class="stat-row">
+                            <ui:Label text="DECKS" class="stat-label" />
+                            <ui:Label name="stat-decks" text="0" class="stat-value" />
+                        </ui:VisualElement>
+                        <ui:VisualElement class="stat-divider" />
+                        <ui:VisualElement class="stat-row">
+                            <ui:Label text="WINS" class="stat-label" />
+                            <ui:Label name="stat-wins" text="0" class="stat-value stat-value-highlight" />
+                        </ui:VisualElement>
+                        <ui:VisualElement class="stat-row">
+                            <ui:Label text="LOSSES" class="stat-label" />
+                            <ui:Label name="stat-losses" text="0" class="stat-value" />
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+
+                <!-- Bottom ornament -->
+                <ui:VisualElement class="identity-ornament-bottom">
+                    <ui:VisualElement class="orn-line-short" />
+                    <ui:VisualElement class="orn-diamond-sm" />
+                    <ui:VisualElement class="orn-line-short" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+
+            <!-- ═══════════════════════════════════
+                 TABS: Cards / Sabotages / Skins / Achievements
+                 ═══════════════════════════════════ -->
+            <ui:VisualElement class="profile-tabs-bar">
+                <ui:VisualElement class="tabs-inner">
+                    <ui:Button name="tab-cards" text="CARDS" class="tab-button tab-active" />
+                    <ui:VisualElement class="tab-separator" />
+                    <ui:Button name="tab-sabotages" text="SABOTAGES" class="tab-button" />
+                    <ui:VisualElement class="tab-separator" />
+                    <ui:Button name="tab-skins" text="SKINS" class="tab-button" />
+                    <ui:VisualElement class="tab-separator" />
+                    <ui:Button name="tab-achievements" text="ACHIEVEMENTS" class="tab-button" />
+                </ui:VisualElement>
+                <ui:VisualElement class="tabs-line" />
+            </ui:VisualElement>
+
+            <!-- ═══════════════════════════════════
+                 FILTER BAR (rarity filter)
+                 ═══════════════════════════════════ -->
+            <ui:VisualElement name="filter-bar" class="filter-bar">
+                <ui:Button name="filter-all" text="ALL" class="filter-btn filter-active" />
+                <ui:Button name="filter-common" text="COMMON" class="filter-btn" />
+                <ui:Button name="filter-rare" text="RARE" class="filter-btn" />
+                <ui:Button name="filter-legendary" text="LEGENDARY" class="filter-btn" />
+                <ui:VisualElement class="filter-spacer" />
+                <ui:Label name="collection-count" text="0 / 0 COLLECTED" class="collection-count-text" />
+            </ui:VisualElement>
+
+            <!-- ═══════════════════════════════════
+                 CONTENT AREA — Cards Grid
+                 ═══════════════════════════════════ -->
+            <ui:VisualElement name="tab-content-cards" class="tab-content">
+                <ui:VisualElement name="cards-grid" class="collection-grid" />
+            </ui:VisualElement>
+
+            <!-- Content — Sabotages Grid -->
+            <ui:VisualElement name="tab-content-sabotages" class="tab-content hidden">
+                <ui:VisualElement name="sabotages-grid" class="collection-grid" />
+            </ui:VisualElement>
+
+            <!-- Content — Skins -->
+            <ui:VisualElement name="tab-content-skins" class="tab-content hidden">
+                <ui:VisualElement class="coming-soon-section">
+                    <ui:Label text="◇" class="coming-soon-icon" />
+                    <ui:Label text="SKINS COMING SOON" class="coming-soon-text" />
+                    <ui:Label text="Customize your towers and battlefield" class="coming-soon-sub" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+
+            <!-- Content — Achievements -->
+            <ui:VisualElement name="tab-content-achievements" class="tab-content hidden">
+                <ui:VisualElement name="achievements-grid" class="achievements-grid" />
+            </ui:VisualElement>
+
+        </ui:ScrollView>
+
+        <!-- ═══════════════════════════════════
+             CARD DETAIL POPUP
+             ═══════════════════════════════════ -->
+        <ui:VisualElement name="card-detail-popup" class="popup-overlay hidden">
+            <ui:VisualElement class="detail-box">
+                <!-- Close button -->
+                <ui:Button name="btn-detail-close" text="✕" class="btn-detail-close" />
+
+                <ui:VisualElement class="detail-header">
+                    <ui:VisualElement name="detail-rarity-line" class="detail-rarity-line" />
+                    <ui:Label name="detail-rarity" text="COMMON" class="detail-rarity-text" />
+                </ui:VisualElement>
+
+                <ui:VisualElement class="detail-content">
+                    <!-- Left: card visual -->
+                    <ui:VisualElement class="detail-card-visual">
+                        <ui:VisualElement class="detail-card-frame">
+                            <ui:VisualElement class="detail-card-inner" />
+                            <ui:VisualElement name="detail-icon" class="detail-card-icon" />
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+
+                    <!-- Right: info -->
+                    <ui:VisualElement class="detail-info">
+                        <ui:Label name="detail-name" text="Card Name" class="detail-name" />
+                        <ui:VisualElement class="detail-name-line" />
+                        <ui:Label name="detail-type" text="TURRET" class="detail-type" />
+                        <ui:Label name="detail-element" text="FIRE" class="detail-element" />
+                        <ui:VisualElement class="detail-divider" />
+                        <ui:Label name="detail-description" text="Description..." class="detail-description" />
+                        <ui:VisualElement class="detail-divider" />
+
+                        <!-- Stats -->
+                        <ui:VisualElement class="detail-stats">
+                            <ui:VisualElement class="detail-stat-row">
+                                <ui:Label text="MAX IN DECK" class="detail-stat-label" />
+                                <ui:Label name="detail-max-copies" text="2" class="detail-stat-value" />
+                            </ui:VisualElement>
+                            <ui:VisualElement class="detail-stat-row">
+                                <ui:Label text="ACTIVATION" class="detail-stat-label" />
+                                <ui:Label name="detail-activation" text="CONTINUOUS" class="detail-stat-value" />
+                            </ui:VisualElement>
+                        </ui:VisualElement>
+
+                        <!-- Ownership status -->
+                        <ui:VisualElement name="detail-ownership" class="detail-ownership">
+                            <ui:Label name="detail-owned-text" text="✦ OWNED" class="detail-owned-text" />
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+
+                <!-- Bottom ornament -->
+                <ui:VisualElement class="detail-ornament-bottom">
+                    <ui:VisualElement class="orn-line-short" />
+                    <ui:VisualElement class="orn-diamond-sm" />
+                    <ui:VisualElement class="orn-line-short" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+    </ui:VisualElement>
+</ui:UXML>

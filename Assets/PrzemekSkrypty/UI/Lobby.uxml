@@ -1,197 +1,142 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
-    <Style src="LobbyStyles.uss" />
-
+    <Style src="project://database/Assets/PrzemekSkrypty/UI/LobbyStyles.uss?fileID=7433441132597879392&amp;guid=fed55634661855d449543c81843b3292&amp;type=3#LobbyStyles"/>
     <ui:VisualElement name="lobby-root" class="lobby-root">
-
-        <!-- ============================================
-             BACKGROUND
-             ============================================ -->
         <ui:VisualElement picking-mode="Ignore" class="bg-layer">
-            <ui:VisualElement picking-mode="Ignore" class="bg-cross-v" />
-            <ui:VisualElement picking-mode="Ignore" class="bg-cross-h" />
-
+            <ui:VisualElement picking-mode="Ignore" class="bg-cross-v"/>
+            <ui:VisualElement picking-mode="Ignore" class="bg-cross-h"/>
             <ui:VisualElement picking-mode="Ignore" class="bg-radial-origin">
-                <ui:VisualElement picking-mode="Ignore" class="bg-radial-line" style="rotate: 0;" />
-                <ui:VisualElement picking-mode="Ignore" class="bg-radial-line" style="rotate: 30deg;" />
-                <ui:VisualElement picking-mode="Ignore" class="bg-radial-line" style="rotate: 60deg;" />
-                <ui:VisualElement picking-mode="Ignore" class="bg-radial-line" style="rotate: 90deg;" />
-                <ui:VisualElement picking-mode="Ignore" class="bg-radial-line" style="rotate: 120deg;" />
-                <ui:VisualElement picking-mode="Ignore" class="bg-radial-line" style="rotate: 150deg;" />
+                <ui:VisualElement picking-mode="Ignore" class="bg-radial-line" style="rotate: 0;"/>
+                <ui:VisualElement picking-mode="Ignore" class="bg-radial-line" style="rotate: 30deg;"/>
+                <ui:VisualElement picking-mode="Ignore" class="bg-radial-line" style="rotate: 60deg;"/>
+                <ui:VisualElement picking-mode="Ignore" class="bg-radial-line" style="rotate: 90deg;"/>
+                <ui:VisualElement picking-mode="Ignore" class="bg-radial-line" style="rotate: 120deg;"/>
+                <ui:VisualElement picking-mode="Ignore" class="bg-radial-line" style="rotate: 150deg;"/>
             </ui:VisualElement>
-
-            <!-- Narożniki -->
             <ui:VisualElement picking-mode="Ignore" class="lobby-corner lobby-corner-tl">
-                <ui:VisualElement class="lc-h" />
-                <ui:VisualElement class="lc-v" />
-                <ui:VisualElement class="lc-h-inner" />
-                <ui:VisualElement class="lc-v-inner" />
+                <ui:VisualElement class="lc-h"/>
+                <ui:VisualElement class="lc-v"/>
+                <ui:VisualElement class="lc-h-inner"/>
+                <ui:VisualElement class="lc-v-inner"/>
             </ui:VisualElement>
             <ui:VisualElement picking-mode="Ignore" class="lobby-corner lobby-corner-tr">
-                <ui:VisualElement class="lc-h" />
-                <ui:VisualElement class="lc-v" />
-                <ui:VisualElement class="lc-h-inner" />
-                <ui:VisualElement class="lc-v-inner" />
+                <ui:VisualElement class="lc-h"/>
+                <ui:VisualElement class="lc-v"/>
+                <ui:VisualElement class="lc-h-inner"/>
+                <ui:VisualElement class="lc-v-inner"/>
             </ui:VisualElement>
             <ui:VisualElement picking-mode="Ignore" class="lobby-corner lobby-corner-bl">
-                <ui:VisualElement class="lc-h" />
-                <ui:VisualElement class="lc-v" />
-                <ui:VisualElement class="lc-h-inner" />
-                <ui:VisualElement class="lc-v-inner" />
+                <ui:VisualElement class="lc-h"/>
+                <ui:VisualElement class="lc-v"/>
+                <ui:VisualElement class="lc-h-inner"/>
+                <ui:VisualElement class="lc-v-inner"/>
             </ui:VisualElement>
             <ui:VisualElement picking-mode="Ignore" class="lobby-corner lobby-corner-br">
-                <ui:VisualElement class="lc-h" />
-                <ui:VisualElement class="lc-v" />
-                <ui:VisualElement class="lc-h-inner" />
-                <ui:VisualElement class="lc-v-inner" />
+                <ui:VisualElement class="lc-h"/>
+                <ui:VisualElement class="lc-v"/>
+                <ui:VisualElement class="lc-h-inner"/>
+                <ui:VisualElement class="lc-v-inner"/>
             </ui:VisualElement>
-
-            <!-- Boczne linie -->
-            <ui:VisualElement picking-mode="Ignore" class="side-line-left" />
-            <ui:VisualElement picking-mode="Ignore" class="side-line-right" />
-            <ui:VisualElement picking-mode="Ignore" class="side-tick-l" style="top: 35%;" />
-            <ui:VisualElement picking-mode="Ignore" class="side-tick-l" style="top: 50%;" />
-            <ui:VisualElement picking-mode="Ignore" class="side-tick-l" style="top: 65%;" />
-            <ui:VisualElement picking-mode="Ignore" class="side-tick-r" style="top: 35%;" />
-            <ui:VisualElement picking-mode="Ignore" class="side-tick-r" style="top: 50%;" />
-            <ui:VisualElement picking-mode="Ignore" class="side-tick-r" style="top: 65%;" />
+            <ui:VisualElement picking-mode="Ignore" class="side-line-left"/>
+            <ui:VisualElement picking-mode="Ignore" class="side-line-right"/>
+            <ui:VisualElement picking-mode="Ignore" class="side-tick-l" style="top: 35%;"/>
+            <ui:VisualElement picking-mode="Ignore" class="side-tick-l" style="top: 50%;"/>
+            <ui:VisualElement picking-mode="Ignore" class="side-tick-l" style="top: 65%;"/>
+            <ui:VisualElement picking-mode="Ignore" class="side-tick-r" style="top: 35%;"/>
+            <ui:VisualElement picking-mode="Ignore" class="side-tick-r" style="top: 50%;"/>
+            <ui:VisualElement picking-mode="Ignore" class="side-tick-r" style="top: 65%;"/>
         </ui:VisualElement>
-
-        <!-- ============================================
-             CENTER CONTENT
-             ============================================ -->
         <ui:VisualElement class="lobby-center">
-
-            <!-- ORNAMENT TOP -->
             <ui:VisualElement class="ornament-row">
-                <ui:VisualElement class="ornament-line-l" />
-                <ui:VisualElement class="ornament-diamond" />
-                <ui:VisualElement class="ornament-line-m" />
-                <ui:VisualElement class="ornament-diamond ornament-diamond-filled" />
-                <ui:VisualElement class="ornament-line-m" />
-                <ui:VisualElement class="ornament-diamond" />
-                <ui:VisualElement class="ornament-line-r" />
+                <ui:VisualElement class="ornament-line-l"/>
+                <ui:VisualElement class="ornament-diamond"/>
+                <ui:VisualElement class="ornament-line-m"/>
+                <ui:VisualElement class="ornament-diamond ornament-diamond-filled"/>
+                <ui:VisualElement class="ornament-line-m"/>
+                <ui:VisualElement class="ornament-diamond"/>
+                <ui:VisualElement class="ornament-line-r"/>
             </ui:VisualElement>
-
-            <!-- TITLE -->
-            <ui:Label text="ENTERING THE ARENA" class="lobby-title" />
-
-            <!-- MODE BADGE -->
+            <ui:Label text="ENTERING THE ARENA" class="lobby-title"/>
             <ui:VisualElement class="mode-badge">
-                <ui:VisualElement class="mode-badge-diamond" />
-                <ui:Label name="lobby-mode" text="CASUAL" class="mode-badge-text" />
-                <ui:VisualElement class="mode-badge-diamond" />
+                <ui:VisualElement class="mode-badge-diamond"/>
+                <ui:Label name="lobby-mode" text="CASUAL" class="mode-badge-text"/>
+                <ui:VisualElement class="mode-badge-diamond"/>
             </ui:VisualElement>
-
-            <!-- ============================================
-                 VERSUS CARD
-                 ============================================ -->
             <ui:VisualElement class="versus-card">
-                <ui:VisualElement class="versus-card-inner-border" />
-                <ui:VisualElement class="vc-corner vc-corner-tl" />
-                <ui:VisualElement class="vc-corner vc-corner-tr" />
-                <ui:VisualElement class="vc-corner vc-corner-bl" />
-                <ui:VisualElement class="vc-corner vc-corner-br" />
-
-                <!-- PLAYER SLOTS -->
+                <ui:VisualElement class="versus-card-inner-border"/>
+                <ui:VisualElement class="vc-corner vc-corner-tl"/>
+                <ui:VisualElement class="vc-corner vc-corner-tr"/>
+                <ui:VisualElement class="vc-corner vc-corner-bl"/>
+                <ui:VisualElement class="vc-corner vc-corner-br"/>
                 <ui:VisualElement class="versus-players">
-
-                    <!-- PLAYER 1 (You) -->
                     <ui:VisualElement class="player-slot player-slot-you">
                         <ui:VisualElement class="player-slot-hex">
-                            <ui:VisualElement class="player-hex-bg player-hex-bg-gold" />
-                            <ui:VisualElement class="player-hex-border player-hex-border-gold" />
-                            <ui:Label text="⚔" class="player-hex-icon" />
+                            <ui:VisualElement class="player-hex-bg player-hex-bg-gold"/>
+                            <ui:VisualElement class="player-hex-border player-hex-border-gold"/>
+                            <ui:Label text="⚔" class="player-hex-icon" style="margin-right: 2px; margin-top: 2px;"/>
                         </ui:VisualElement>
-                        <ui:Label name="player1-name" text="YOU" class="player-slot-name" />
-                        <ui:Label name="player1-rank" text="BRONZE" class="player-slot-rank" />
-                        <ui:VisualElement class="player-slot-ready-dot player-ready-dot-active" />
+                        <ui:Label name="player1-name" text="YOU" class="player-slot-name"/>
+                        <ui:Label name="player1-rank" text="BRONZE" class="player-slot-rank"/>
+                        <ui:VisualElement class="player-slot-ready-dot player-ready-dot-active"/>
                     </ui:VisualElement>
-
-                    <!-- VS DIVIDER -->
                     <ui:VisualElement class="versus-divider">
-                        <ui:VisualElement class="versus-divider-line-top" />
+                        <ui:VisualElement class="versus-divider-line-top"/>
                         <ui:VisualElement class="versus-diamond-container">
-                            <ui:VisualElement class="versus-diamond-outer" />
-                            <ui:Label text="VS" class="versus-text" />
+                            <ui:VisualElement class="versus-diamond-outer"/>
+                            <ui:Label text="VS" class="versus-text" style="margin-right: 2px; padding-right: 1px;"/>
                         </ui:VisualElement>
-                        <ui:VisualElement class="versus-divider-line-bottom" />
+                        <ui:VisualElement class="versus-divider-line-bottom"/>
                     </ui:VisualElement>
-
-                    <!-- PLAYER 2 (Opponent) -->
                     <ui:VisualElement name="player2-slot" class="player-slot player-slot-opponent">
                         <ui:VisualElement class="player-slot-hex">
-                            <ui:VisualElement class="player-hex-bg" />
-                            <ui:VisualElement class="player-hex-border" />
-                            <ui:Label text="?" class="player-hex-icon player-hex-icon-waiting" />
+                            <ui:VisualElement class="player-hex-bg"/>
+                            <ui:VisualElement class="player-hex-border"/>
+                            <ui:Label text="?" class="player-hex-icon player-hex-icon-waiting" style="margin-right: 2px; margin-top: 2px;"/>
                         </ui:VisualElement>
-                        <ui:Label name="player2-name" text="SEARCHING..." class="player-slot-name player-name-waiting" />
-                        <ui:Label name="player2-rank" text="..." class="player-slot-rank" />
-                        <ui:VisualElement name="player2-ready-dot" class="player-slot-ready-dot" />
+                        <ui:Label name="player2-name" text="SEARCHING..." class="player-slot-name player-name-waiting"/>
+                        <ui:Label name="player2-rank" text="..." class="player-slot-rank"/>
+                        <ui:VisualElement name="player2-ready-dot" class="player-slot-ready-dot"/>
                     </ui:VisualElement>
-
                 </ui:VisualElement>
-
-                <!-- PLAYER COUNT -->
                 <ui:VisualElement class="player-count-section">
-                    <ui:VisualElement class="player-count-line" />
-                    <ui:Label name="lobby-player-count" text="1 / 2" class="player-count-text" />
-                    <ui:VisualElement class="player-count-line" />
+                    <ui:VisualElement class="player-count-line"/>
+                    <ui:Label name="lobby-player-count" text="1 / 2" class="player-count-text"/>
+                    <ui:VisualElement class="player-count-line"/>
                 </ui:VisualElement>
             </ui:VisualElement>
-
-            <!-- ============================================
-                 STATUS SECTION
-                 ============================================ -->
             <ui:VisualElement class="status-section">
                 <ui:VisualElement class="status-indicator">
-                    <ui:VisualElement name="status-pulse" class="status-pulse" />
-                    <ui:VisualElement name="status-dot" class="status-dot" />
+                    <ui:VisualElement name="status-pulse" class="status-pulse"/>
+                    <ui:VisualElement name="status-dot" class="status-dot"/>
                 </ui:VisualElement>
-                <ui:Label name="lobby-status" text="Connecting to server..." class="status-text" />
+                <ui:Label name="lobby-status" text="Connecting to server..." class="status-text"/>
             </ui:VisualElement>
-
-            <!-- SEARCH TIMER -->
-            <ui:Label name="lobby-timer" text="00:00" class="search-timer" />
-
-            <!-- CANCEL BUTTON -->
+            <ui:Label name="lobby-timer" text="00:00" class="search-timer"/>
             <ui:VisualElement class="lobby-actions">
-                <ui:Button name="btn-cancel" text="ABANDON" class="btn-cancel" />
+                <ui:Button name="btn-cancel" text="ABANDON" class="btn-cancel"/>
             </ui:VisualElement>
-
-            <!-- ORNAMENT BOTTOM -->
             <ui:VisualElement class="ornament-row ornament-row-bottom">
-                <ui:VisualElement class="ornament-line-l" />
-                <ui:VisualElement class="ornament-diamond" />
-                <ui:VisualElement class="ornament-line-m" />
-                <ui:VisualElement class="ornament-diamond ornament-diamond-filled" />
-                <ui:VisualElement class="ornament-line-m" />
-                <ui:VisualElement class="ornament-diamond" />
-                <ui:VisualElement class="ornament-line-r" />
+                <ui:VisualElement class="ornament-line-l"/>
+                <ui:VisualElement class="ornament-diamond"/>
+                <ui:VisualElement class="ornament-line-m"/>
+                <ui:VisualElement class="ornament-diamond ornament-diamond-filled"/>
+                <ui:VisualElement class="ornament-line-m"/>
+                <ui:VisualElement class="ornament-diamond"/>
+                <ui:VisualElement class="ornament-line-r"/>
             </ui:VisualElement>
-
         </ui:VisualElement>
-
-        <!-- ============================================
-             LOADING OVERLAY (match found)
-             ============================================ -->
         <ui:VisualElement name="match-found-overlay" class="match-found-overlay hidden">
             <ui:VisualElement class="match-found-box">
-                <ui:VisualElement class="match-found-inner-border" />
-                <ui:Label text="⚔" class="match-found-icon" />
-                <ui:Label text="MATCH FOUND" class="match-found-title" />
+                <ui:VisualElement class="match-found-inner-border"/>
+                <ui:Label text="⚔" class="match-found-icon"/>
+                <ui:Label text="MATCH FOUND" class="match-found-title"/>
                 <ui:VisualElement class="match-found-bar-bg">
-                    <ui:VisualElement name="match-found-bar-fill" class="match-found-bar-fill" />
+                    <ui:VisualElement name="match-found-bar-fill" class="match-found-bar-fill"/>
                 </ui:VisualElement>
-                <ui:Label name="match-found-text" text="Preparing arena..." class="match-found-text" />
+                <ui:Label name="match-found-text" text="Preparing arena..." class="match-found-text"/>
             </ui:VisualElement>
         </ui:VisualElement>
-
-        <!-- ============================================
-             BOTTOM BAR
-             ============================================ -->
         <ui:VisualElement picking-mode="Ignore" class="bottom-info-bar">
-            <ui:Label name="lobby-bottom-text" text="MATCHMAKING IN PROGRESS" class="bottom-info-text" />
+            <ui:Label name="lobby-bottom-text" text="MATCHMAKING IN PROGRESS" class="bottom-info-text"/>
         </ui:VisualElement>
-
     </ui:VisualElement>
 </ui:UXML>

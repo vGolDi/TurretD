@@ -80,10 +80,21 @@ namespace ElementumDefense.UI
             QueryElements();
             BindControls();
             LoadSettings();
+
+            // Starfield — inject into background
+            var bg = root.Q<VisualElement>("settings-root");
+            StarfieldInjector.Instance?.Register(bg);
         }
 
         public void Hide()
         {
+            // Starfield — remove before hiding
+            if (root != null)
+            {
+                var bg = root.Q<VisualElement>("settings-root");
+                StarfieldInjector.Instance?.Unregister(bg);
+            }
+
             SaveSettings();
 
             var uiDoc = GetComponent<UIDocument>();
