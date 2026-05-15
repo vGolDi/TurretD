@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 284ea31a561861c4f8488c783b0e8bcc, type: 3}
+  m_Name: LevelAchi
+  m_EditorClassIdentifier: Assembly-CSharp::ElementumDefense.Achievements.AchievementData
+  achievementId: LevelAchi
+  achievementName: LevelAchi
+  description: Reward for leveling your account
+  iconEmoji: "\u2605"
+  icon: {fileID: 21300000, guid: 7e11456439a62c241b634027db8dd973, type: 3}
+  trackType: 4
+  targetValue: 1
+  hasTiers: 1
+  tierTargets: 010000000a0000001a00000032000000
+  rewardGold: 10
+  rewardCrystals: 1000000
+  rewardXP: 0
+  rarity: 0
+  sortOrder: 0
+  isHidden: 0

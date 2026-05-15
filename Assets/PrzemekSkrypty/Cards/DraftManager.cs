@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -52,6 +52,7 @@ namespace ElementumDefense.Cards
         private Dictionary<int, bool> midGameSlotMulliganed = new Dictionary<int, bool>();
 
         private bool midGameCardSelected = false; // ← NOWE: flaga czy gracz wybrał kartę
+        private int currentDraftWaveIndex = 0;      // ← Tracks which wave triggered the draft (for sync keys)
 
         // ========== NOWE: RPC rarity sharing ==========
         private CardRarity[] receivedRarityCombination = null;
@@ -86,13 +87,18 @@ namespace ElementumDefense.Cards
                 Debug.LogError("[DraftManager] PhotonView not found!");
             }
 
-            if (Instance != null && Instance != this)
+            // Only claim Singleton for the LOCAL player's DraftManager.
+            // Remote players' DraftManagers must NOT be destroyed — 
+            // PUN delivers RPCs to them by PhotonView ID.
+            if (photonView != null && photonView.IsMine)
             {
-                Destroy(this);
-                return;
+                if (Instance != null && Instance != this)
+                {
+                    Destroy(this);
+                    return;
+                }
+                Instance = this;
             }
-
-            Instance = this;
 
             playerCardManager = GetComponent<PlayerCardManager>();
 
@@ -103,7 +109,7 @@ namespace ElementumDefense.Cards
 
             // ========== NOWE: Poprawna inicjalizacja nextDraftWave ==========
             nextDraftWave = wavesBetweenDrafts;
-            Debug.Log($"[DraftManager] Next mid-game draft at wave {nextDraftWave}");
+            Debug.Log($"[DraftManager] Next mid-game draft at wave {nextDraftWave} (IsMine={photonView?.IsMine})");
             // ================================================================
         }
 
@@ -178,6 +184,7 @@ namespace ElementumDefense.Cards
 
             if (currentWave >= nextDraftWave)
             {
+                currentDraftWaveIndex = currentWave;
                 nextDraftWave = currentWave + wavesBetweenDrafts;
                 Debug.Log($"[DraftManager] Triggering mid-game draft! Next at wave {nextDraftWave}");
                 StartMidGameDraft();
@@ -443,12 +450,55 @@ namespace ElementumDefense.Cards
                 }
             }
 
+            // PHASE 4: Sync — wait for all players to finish drafting
+            // This prevents one player from starting the next wave
+            // while the other is still choosing a card.
+            string draftDoneKey = $"mid_draft_{currentDraftWaveIndex}_done";
+
+            var doneProps = new ExitGames.Client.Photon.Hashtable();
+            doneProps[draftDoneKey] = true;
+            PhotonNetwork.LocalPlayer.SetCustomProperties(doneProps);
+
+            Debug.Log($"[DraftManager] Set {draftDoneKey}=true, waiting for others...");
+
+            // Show waiting message
+            var hud = ElementumDefense.UI.WaveHUD.Instance;
+            hud?.ShowWaitingMessage("WAITING FOR OTHER PLAYER...");
+
+            // Wait for ALL players to finish
+            float syncTimeout = 60f;
+            while (syncTimeout > 0f)
+            {
+                bool allDone = true;
+                foreach (var player in PhotonNetwork.PlayerList)
+                {
+                    if (!player.CustomProperties.TryGetValue(draftDoneKey, out object val) ||
+                        !(bool)val)
+                    {
+                        allDone = false;
+                        break;
+                    }
+                }
+
+                if (allDone) break;
+
+                syncTimeout -= Time.deltaTime;
+                yield return null;
+            }
+
+            hud?.HideWaitingMessage();
+
+            if (syncTimeout <= 0f)
+            {
+                Debug.LogWarning("[DraftManager] Sync timeout — proceeding anyway.");
+            }
+
             // Cleanup
             currentDraftChoices = null;
             currentMidGameRarities = null;
             isDrafting = false;
 
-            Debug.Log("[DraftManager] Mid-game draft COMPLETE.");
+            Debug.Log("[DraftManager] Mid-game draft COMPLETE (synced).");
         }
 
         // ==========================================
@@ -671,14 +721,20 @@ namespace ElementumDefense.Cards
         [PunRPC]
         private void RPC_ReceiveRarityCombination(int[] rarityInts)
         {
-            receivedRarityCombination = rarityInts
+            CardRarity[] rarities = rarityInts
                 .Select(i => (CardRarity)i)
                 .ToArray();
 
-            rarityReceived = true;
+            // RPC arrives on the SENDER's PhotonView copy.
+            // Forward to the LOCAL Instance so the waiting
+            // coroutine picks it up.
+            DraftManager target = Instance ?? this;
+            target.receivedRarityCombination = rarities;
+            target.rarityReceived = true;
 
             Debug.Log($"[DraftManager] RPC received rarities: " +
-                      $"[{string.Join(", ", receivedRarityCombination)}]");
+                      $"[{string.Join(", ", rarities)}]" +
+                      $" (forwarded to {(target == this ? "self" : "Instance")})" );
         }
 
         // ==========================================

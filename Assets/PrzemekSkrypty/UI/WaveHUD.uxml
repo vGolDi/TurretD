@@ -1,23 +1,24 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
     <Style src="project://database/Assets/PrzemekSkrypty/UI/WaveHUDStyles.uss?fileID=7433441132597879392&amp;guid=3374e5501351ea0478138775415188f9&amp;type=3#WaveHUDStyles"/>
     <ui:VisualElement name="wave-hud-root" picking-mode="Ignore" class="wave-hud-root">
-        <ui:VisualElement class="wave-panel-anchor" style="margin-top: 72px;">
+        <ui:VisualElement class="wave-panel-anchor" style="margin-top: 80px;">
             <ui:VisualElement name="wave-badge" class="wave-badge">
                 <ui:VisualElement class="wave-badge-inner-border"/>
                 <ui:VisualElement class="wave-badge-accent-left"/>
                 <ui:VisualElement class="wave-badge-accent-right"/>
                 <ui:VisualElement class="wave-diamond"/>
-                <ui:Label text="WAVE" class="wave-label"/>
+                <ui:Label text="WAVE" class="wave-label" style="color: rgba(217, 119, 6, 0.4);"/>
                 <ui:Label name="wave-number" text="1" class="wave-number"/>
-                <ui:Label name="wave-total" text="/ 10" class="wave-total"/>
+                <ui:Label name="wave-total" text="/ 10" class="wave-total" style="color: rgba(217, 119, 6, 0.3);"/>
                 <ui:VisualElement class="wave-diamond"/>
             </ui:VisualElement>
-            <ui:VisualElement name="wave-progress" class="wave-progress-container">
-                <ui:VisualElement class="wave-progress-bar-bg">
+            <ui:VisualElement name="wave-progress" class="wave-progress-container" style="opacity: 1;">
+                <ui:VisualElement class="wave-progress-bar-bg" style="background-color: rgba(217, 119, 6, 0.39);">
                     <ui:VisualElement name="wave-progress-fill" class="wave-progress-bar-fill"/>
                 </ui:VisualElement>
-                <ui:Label name="wave-progress-text" text="0 / 40 SPAWNED" class="wave-progress-text"/>
+                <ui:Label name="wave-progress-text" text="0 / 40 SPAWNED" class="wave-progress-text" style="color: rgba(217, 119, 6, 0.59);"/>
             </ui:VisualElement>
+            <ui:VisualElement name="VisualElement" style="flex-grow: 1; background-image: url(&quot;project://database/Assets/PrzemekSkrypty/art_deco_ornament%20(1).svg?fileID=7388822144124034973&amp;guid=867fd8a86e58f2446988a7715c709cc7&amp;type=3#art_deco_ornament (1)&quot;); background-color: rgba(0, 0, 0, 0); padding-top: 50px; padding-right: 150px; margin-top: 0; -unity-background-image-tint-color: rgba(255, 255, 255, 0.69);"/>
         </ui:VisualElement>
         <ui:VisualElement name="countdown-overlay" picking-mode="Ignore" class="countdown-overlay hidden">
             <ui:VisualElement class="countdown-container">

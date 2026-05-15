@@ -4,8 +4,8 @@ using ElementumDefense.UI;
 using ElementumDefense.Cards;
 
 /// <summary>
-/// Manages turret building via hotbar system
-/// Handles selection, build mode entry/exit
+/// Manages turret building via hotbar system.
+/// Handles selection, build mode entry/exit, and input.
 /// </summary>
 public class BuildManager : MonoBehaviour
 {
@@ -15,25 +15,20 @@ public class BuildManager : MonoBehaviour
 
     private TurretData selectedTurret;
     private PlayerBuilder playerBuilder;
-    //private PlayerInputManager playerInputManager;
-    private SimpleInputManager inputManager; // zamiast PlayerInputManager
+    private SimpleInputManager inputManager;
     private PhotonView photonView;
-
     private HotbarUI hotbarUI;
 
     private void Awake()
     {
         playerBuilder = GetComponent<PlayerBuilder>();
-      //  playerInputManager = GetComponent<PlayerInputManager>();
         inputManager = GetComponent<SimpleInputManager>();
         photonView = GetComponent<PhotonView>();
-
         hotbarUI = FindFirstObjectByType<HotbarUI>();
     }
 
     private void Update()
     {
-        // Only process input for local player
         if (photonView == null || !photonView.IsMine) return;
 
         HandleHotbarInput();
@@ -48,43 +43,32 @@ public class BuildManager : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Checks for hotbar key presses (1-5)
-    /// </summary>
+    /// <summary>Checks for hotbar key presses (1-9)</summary>
     private void HandleHotbarInput()
     {
-        for (int i = 0; i < turretHotbar.Length && i < 9; i++) // Support up to keys 1-9
+        for (int i = 0; i < turretHotbar.Length && i < 9; i++)
         {
             if (Input.GetKeyDown(KeyCode.Alpha1 + i))
             {
                 SelectTurretToBuild(turretHotbar[i]);
-                // ========== NOWE: Notify hotbar ==========
-                if (hotbarUI != null)
-                {
-                    hotbarUI.OnHotkeyPressed(i);
-                }
-                // =========================================
+                hotbarUI?.OnHotkeyPressed(i);
                 break;
             }
         }
     }
 
-    /// <summary>
-    /// Attempts to enter build mode with selected turret
-    /// </summary>
+    /// <summary>Attempts to enter build mode with selected turret</summary>
     public void SelectTurretToBuild(TurretData turret)
     {
         if (turret == null) return;
 
-        // ========== NOWE: Apply cost modifier ==========
+        // Calculate cost with card modifiers
         int finalCost = turret.cost;
-
         PlayerCardManager cardManager = GetComponent<PlayerCardManager>();
         if (cardManager != null)
         {
             finalCost = cardManager.GetModifiedTurretCost(turret.cost);
         }
-        // ================================================
 
         if (PlayerGold.LocalInstance.HasEnough(finalCost))
         {
@@ -98,9 +82,7 @@ public class BuildManager : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Exits build mode and cancels turret placement
-    /// </summary>
+    /// <summary>Exits build mode and cancels turret placement</summary>
     public void ExitBuildMode()
     {
         if (playerBuilder == null || inputManager == null) return;
@@ -110,9 +92,7 @@ public class BuildManager : MonoBehaviour
         selectedTurret = null;
     }
 
-    /// <summary>
-    /// Called by PlayerBuilder after successful turret placement
-    /// </summary>
+    /// <summary>Called by PlayerBuilder after successful turret placement</summary>
     public void OnTurretBuilt()
     {
         ExitBuildMode();

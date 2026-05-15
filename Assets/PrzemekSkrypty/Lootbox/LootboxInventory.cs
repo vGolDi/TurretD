@@ -1,4 +1,4 @@
-// Assets/PrzemekSkrypty/Lootbox/LootboxInventory.cs
+ï»¿// Assets/PrzemekSkrypty/Lootbox/LootboxInventory.cs
 using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
@@ -47,20 +47,17 @@ namespace ElementumDefense.Lootbox
 
         private void Start()
         {
-            // KLUCZOWE: Subskrybuj siê na event logowania
+            // KLUCZOWE: Subskrybuj siï¿½ na event logowania
             if (AuthManager.Instance != null)
             {
-                AuthManager.Instance.OnLoginSuccess += OnUserLoggedIn;
+                AuthManager.Instance.OnCloudReady += OnUserLoggedIn;
 
-                // Jeœli u¿ytkownik ju¿ jest zalogowany (np. po przejœciu miêdzy scenami)
-                if (AuthManager.Instance.IsLoggedIn)
-                {
-                    OnUserLoggedIn(AuthManager.Instance.CurrentUsername);
-                }
+                // Jeï¿½li uï¿½ytkownik juï¿½ jest zalogowany (np. po przejï¿½ciu miï¿½dzy scenami)
+                // OnCloudReady will fire after login verification
             }
             else
             {
-                // Fallback dla testów bez systemu logowania
+                // Fallback dla testï¿½w bez systemu logowania
                 Debug.LogWarning("[LootboxInventory] AuthManager not found - using default save");
                 LoadInventory();
             }
@@ -70,7 +67,7 @@ namespace ElementumDefense.Lootbox
         {
             if (AuthManager.Instance != null)
             {
-                AuthManager.Instance.OnLoginSuccess -= OnUserLoggedIn;
+                AuthManager.Instance.OnCloudReady -= OnUserLoggedIn;
             }
         }
 
@@ -81,10 +78,10 @@ namespace ElementumDefense.Lootbox
         {
             Debug.Log($"[LootboxInventory] User {username} logged in - loading their lootboxes");
 
-            // Wyczyœæ stary inventory
+            // Wyczyï¿½ï¿½ stary inventory
             inventory.Clear();
 
-            // Za³aduj inventory tego u¿ytkownika
+            // Zaï¿½aduj inventory tego uï¿½ytkownika
             LoadInventory();
 
             OnInventoryChanged?.Invoke();
@@ -204,61 +201,66 @@ namespace ElementumDefense.Lootbox
         /// <summary>
         /// Gets save path for current user
         /// </summary>
-        private string GetSavePath()
-        {
-            string username = "Guest";
-
-            if (AuthManager.Instance != null && AuthManager.Instance.IsLoggedIn)
-            {
-                username = AuthManager.Instance.CurrentUsername;
-            }
-
-            // Plik bêdzie siê nazywa³ np. "Lootboxes_GolDi.json"
-            return Path.Combine(Application.persistentDataPath, $"Lootboxes_{username}.json");
-        }
 
         public void SaveInventory()
         {
-            LootboxSaveData saveData = new LootboxSaveData
+            LootboxSaveData saveData = new LootboxSaveData();
+            foreach (var entry in inventory)
             {
-                entries = inventory
-                    .Where(e => e.count > 0)
-                    .Select(e => new LootboxSaveEntry
-                    {
-                        lootboxName = e.lootboxType.name,
-                        count = e.count
-                    })
-                    .ToList()
-            };
+                if (entry.lootboxType == null) continue;
+                saveData.entries.Add(new LootboxSaveEntry
+                {
+                    lootboxName = entry.lootboxType.name,
+                    count = entry.count
+                });
+            }
 
             string json = JsonUtility.ToJson(saveData, true);
-            string path = GetSavePath();
 
-            File.WriteAllText(path, json);
-            Debug.Log($"[LootboxInventory] Saved to {path}");
+            if (CloudSaveManager.Instance != null)
+            {
+                CloudSaveManager.Instance.SaveData("LootboxInventoryData", json);
+            }
+            else
+            {
+                Debug.LogWarning("[LootboxInventory] CloudSaveManager is null - data NOT saved!");
+            }
         }
 
         public void LoadInventory()
         {
-            string path = GetSavePath();
-
-            if (!File.Exists(path))
+            inventory.Clear();
+            if (CloudSaveManager.Instance != null)
             {
-                Debug.Log($"[LootboxInventory] No save file for user - starting fresh. Path: {path}");
-                inventory.Clear();
-                return;
+                Debug.Log("[LootboxInventory] Loading from PlayFab cloud...");
+                CloudSaveManager.Instance.LoadData("LootboxInventoryData",
+                    json =>
+                    {
+                        Debug.Log("[LootboxInventory] Cloud data loaded OK.");
+                        ProcessLoadedLootboxJson(json);
+                    },
+                    () =>
+                    {
+                        Debug.Log("[LootboxInventory] No cloud data - empty inventory.");
+                        OnInventoryChanged?.Invoke();
+                    });
             }
+            else
+            {
+                Debug.LogWarning("[LootboxInventory] CloudSaveManager is null!");
+                OnInventoryChanged?.Invoke();
+            }
+        }
 
+        private void ProcessLoadedLootboxJson(string json)
+        {
             try
             {
-                string json = File.ReadAllText(path);
                 LootboxSaveData saveData = JsonUtility.FromJson<LootboxSaveData>(json);
-
-                inventory.Clear();
-
+                // Odtwarzamy ekwipunek skrzynek
                 foreach (var entry in saveData.entries)
                 {
-                    LootboxData lootboxType = allLootboxTypes.FirstOrDefault(l => l.name == entry.lootboxName);
+                    LootboxData lootboxType = allLootboxTypes.Find(l => l.name == entry.lootboxName);
 
                     if (lootboxType != null)
                     {
@@ -268,21 +270,15 @@ namespace ElementumDefense.Lootbox
                             count = entry.count
                         });
                     }
-                    else
-                    {
-                        Debug.LogWarning($"[LootboxInventory] Lootbox type '{entry.lootboxName}' not found!");
-                    }
                 }
 
-                Debug.Log($"[LootboxInventory] Loaded {inventory.Count} types, {GetTotalLootboxCount()} total boxes for user");
+                OnInventoryChanged?.Invoke();
             }
             catch (System.Exception e)
             {
-                Debug.LogError($"[LootboxInventory] Failed to load: {e.Message}");
-                inventory.Clear();
+                Debug.LogError($"[LootboxInventory] Bï¿½ï¿½d wczytywania JSON: {e.Message}");
             }
         }
-
         // ==========================================
         // DEBUG
         // ==========================================
@@ -305,7 +301,6 @@ namespace ElementumDefense.Lootbox
         private void PrintInventory()
         {
             Debug.Log($"=== LOOTBOX INVENTORY ({GetTotalLootboxCount()} total) ===");
-            Debug.Log($"Save path: {GetSavePath()}");
             foreach (var entry in inventory)
             {
                 Debug.Log($"  {entry.lootboxType.lootboxName}: {entry.count}x");

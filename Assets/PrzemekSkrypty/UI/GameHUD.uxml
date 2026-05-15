@@ -1,13 +1,8 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
     <Style src="project://database/Assets/PrzemekSkrypty/UI/GameHUDStyles.uss?fileID=7433441132597879392&amp;guid=98b692978e7164941b1193046bddc536&amp;type=3#GameHUDStyles"/>
-    <ui:VisualElement name="hud-root" picking-mode="Ignore" class="hud-root">
-        <ui:VisualElement picking-mode="Ignore" name="VisualElement" class="img-corner img-corner-tl" style="background-image: url(&quot;project://database/Assets/PrzemekSkrypty/87f13be0e3b68250a15733333387b8279209f2.png?fileID=-1051203896&amp;guid=c9d7528764a93e74786fa6597b94ff50&amp;type=3#87f13be0e3b68250a15733333387b8279209f2_0&quot;); scale: -1.5 1.5; transform-origin: 60% top;"/>
-        <ui:VisualElement picking-mode="Ignore" name="VisualElement" class="img-corner img-corner-tr" style="background-image: url(&quot;project://database/Assets/PrzemekSkrypty/87f13be0e3b68250a15733333387b8279209f2.png?fileID=-1051203896&amp;guid=c9d7528764a93e74786fa6597b94ff50&amp;type=3#87f13be0e3b68250a15733333387b8279209f2_0&quot;); scale: 1.5 1.5; transform-origin: right top;"/>
-        <ui:VisualElement picking-mode="Ignore" class="img-corner img-corner-bl" style="background-image: url(&quot;project://database/Assets/PrzemekSkrypty/87f13be0e3b68250a15733333387b8279209f2.png?fileID=983598375&amp;guid=c9d7528764a93e74786fa6597b94ff50&amp;type=3#87f13be0e3b68250a15733333387b8279209f2_2&quot;); transform-origin: 60% bottom; scale: -1.5 1.5;"/>
-        <ui:VisualElement picking-mode="Ignore" class="img-corner img-corner-br" style="background-image: url(&quot;project://database/Assets/PrzemekSkrypty/87f13be0e3b68250a15733333387b8279209f2.png?fileID=983598375&amp;guid=c9d7528764a93e74786fa6597b94ff50&amp;type=3#87f13be0e3b68250a15733333387b8279209f2_2&quot;); scale: 1.5 1.5; transform-origin: right bottom;"/>
-        <ui:VisualElement picking-mode="Ignore" class="top-bar">
-            <ui:VisualElement class="hp-outer-wrap" style="margin-top: 35px; margin-left: 40px;">
-                <ui:VisualElement class="img-hp-outer-frame img-hp-outer-frame-enemy" style="background-image: url(&quot;project://database/Assets/PrzemekSkrypty/art%20deco%20copyspace%20tittle%20designArtboard%204.png?fileID=21300000&amp;guid=fd49cad52f974e8488d9283181177e2b&amp;type=3#art deco copyspace tittle designArtboard 4&quot;); -unity-background-image-tint-color: rgb(136, 79, 15); background-size: 100% 232%; margin-top: -41px; margin-bottom: -15px;"/>
+    <ui:VisualElement name="hud-root" picking-mode="Ignore" class="hud-root" style="background-image: url(&quot;project://database/Assets/PrzemekSkrypty/art_deco_ramka%20(1)%201.svg?fileID=7388822144124034973&amp;guid=9cae2f5f9e4f2a34fb5cbd42787f6d36&amp;type=3#art_deco_ramka (1) 1&quot;); -unity-background-image-tint-color: rgba(255, 255, 255, 0.69);">
+        <ui:VisualElement picking-mode="Ignore" class="top-bar" style="padding-top: 18px; padding-left: 21px; padding-right: 21px;">
+            <ui:VisualElement class="hp-outer-wrap" style="margin-top: 30px; margin-left: 25px;">
                 <ui:VisualElement class="hp-card hp-card-my">
                     <ui:VisualElement class="hp-frame-outer"/>
                     <ui:VisualElement class="hp-frame-inner"/>
@@ -21,7 +16,7 @@
                             <ui:VisualElement class="hp-icon-diamond">
                                 <ui:VisualElement class="hp-icon-diamond-bg hp-icon-bg-my"/>
                                 <ui:VisualElement class="hp-icon-diamond-border hp-icon-bdr-my"/>
-                                <ui:Label text="♥" class="hp-icon-glyph"/>
+                                <ui:Label text="♥" class="hp-icon-glyph" style="margin-top: 2px; padding-top: 2px; padding-right: 1px; padding-bottom: 2px; margin-right: 2px;"/>
                             </ui:VisualElement>
                             <ui:VisualElement class="hp-info">
                                 <ui:Label name="my-health-name" text="YOU" class="hp-label"/>
@@ -46,8 +41,7 @@
                 </ui:VisualElement>
             </ui:VisualElement>
             <ui:VisualElement name="VisualElement" class="top-bar-spacer"/>
-            <ui:VisualElement class="hp-outer-wrap" style="margin-top: 35px; margin-right: 40px;">
-                <ui:VisualElement class="img-hp-outer-frame img-hp-outer-frame-enemy" style="background-image: url(&quot;project://database/Assets/PrzemekSkrypty/art%20deco%20copyspace%20tittle%20designArtboard%204.png?fileID=21300000&amp;guid=fd49cad52f974e8488d9283181177e2b&amp;type=3#art deco copyspace tittle designArtboard 4&quot;); -unity-background-image-tint-color: rgb(136, 79, 15); background-size: 100% 232%; margin-top: -41px; margin-bottom: -15px;"/>
+            <ui:VisualElement class="hp-outer-wrap" style="margin-top: 30px; margin-right: 25px;">
                 <ui:VisualElement class="hp-card hp-card-enemy">
                     <ui:VisualElement class="hp-frame-outer"/>
                     <ui:VisualElement class="hp-frame-inner"/>
@@ -66,7 +60,7 @@
                             <ui:VisualElement class="hp-icon-diamond hp-icon-diamond-enemy">
                                 <ui:VisualElement class="hp-icon-diamond-bg hp-icon-bg-enemy"/>
                                 <ui:VisualElement class="hp-icon-diamond-border hp-icon-bdr-enemy"/>
-                                <ui:Label text="☠" class="hp-icon-glyph"/>
+                                <ui:Label text="☠" class="hp-icon-glyph" style="padding-right: 1px; margin-right: 2px; margin-top: 2px;"/>
                             </ui:VisualElement>
                         </ui:VisualElement>
                         <ui:VisualElement class="hp-bar-container">
@@ -87,7 +81,7 @@
             </ui:VisualElement>
         </ui:VisualElement>
         <ui:VisualElement picking-mode="Ignore" class="bottom-section">
-            <ui:VisualElement class="hotbar-section" style="margin-bottom: 30px;">
+            <ui:VisualElement class="hotbar-section" style="margin-bottom: 55px;">
                 <ui:VisualElement class="hotbar-outer-wrap">
                     <ui:VisualElement class="hotbar-card">
                         <ui:VisualElement class="hbar-frame-outer"/>
@@ -121,7 +115,5 @@
                 </ui:VisualElement>
             </ui:VisualElement>
         </ui:VisualElement>
-        <ui:VisualElement picking-mode="Ignore" class="img-top-connector" style="top: 250px; right: 4px; left: 1858px; height: 600px; background-image: url(&quot;project://database/Assets/PrzemekSkrypty/87f13be0e3b68250a15733333387b8279209f2.png?fileID=501320223&amp;guid=c9d7528764a93e74786fa6597b94ff50&amp;type=3#87f13be0e3b68250a15733333387b8279209f2_1&quot;); bottom: 250px; opacity: 0.35;"/>
-        <ui:VisualElement picking-mode="Ignore" name="VisualElement" class="img-top-connector" style="top: 250px; right: 1858px; left: 4px; height: 600px; background-image: url(&quot;project://database/Assets/PrzemekSkrypty/87f13be0e3b68250a15733333387b8279209f2.png?fileID=501320223&amp;guid=c9d7528764a93e74786fa6597b94ff50&amp;type=3#87f13be0e3b68250a15733333387b8279209f2_1&quot;); bottom: 250px; opacity: 0.35; rotate: 180deg;"/>
     </ui:VisualElement>
 </ui:UXML>

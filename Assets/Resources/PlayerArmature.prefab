@@ -134,11 +134,23 @@ MonoBehaviour:
   yOffset: 0.2
   buildableLayers:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 512
   maxBuildDistance: 100
-  validPlacementMaterial: {fileID: 2100000, guid: 1fa57024716971e4b97a01686f6fa2ad, type: 2}
-  invalidPlacementMaterial: {fileID: 2100000, guid: 22d26cd125a08cc4482c72cfdc5d5728, type: 2}
-  rangeIndicatorPrefab: {fileID: 4293474826294397615, guid: 9ddbb4202e1c0ed4fb7e8a17dfc3c807, type: 3}
+  gridSnapSize: 1
+  maxSlopeAngle: 30
+  minTurretSpacing: 2
+  blockedLayers:
+    serializedVersion: 2
+    m_Bits: 256
+  validColor: {r: 0.1, g: 0.9, b: 0.3, a: 0.4}
+  invalidColor: {r: 0.9, g: 0.15, b: 0.1, a: 0.4}
+  pulseSpeed: 2
+  pulseMin: 0.25
+  pulseMax: 0.5
+  rangeSegments: 64
+  rangeLineWidth: 0.06
+  rangeValidColor: {r: 0.2, g: 0.8, b: 0.4, a: 0.6}
+  rangeInvalidColor: {r: 0.8, g: 0.2, b: 0.15, a: 0.4}
 --- !u!114 &4502957863372945815
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -266,7 +278,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 562b656e927cb2842b01be99423cfa5d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ElementumDefense.Cards.SabotageDraftManager
-  wavesBetweenSabotages: 5
+  wavesBetweenSabotages: 2
   sabotageChoiceTime: 20
   revealDuration: 5
   sabotageChoices: 3
@@ -317,6 +329,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 512
   cameraTransform: {fileID: 2299948734737906955}
+  skinTargetId: PlayerCharacter
 --- !u!114 &8899134111234962081
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -841,7 +854,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: c621a58bcbe90d74eb17a7be36f6b9d1, type: 3}
       propertyPath: m_Name
-      value: BaseModelRigged
+      value: Model
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: c621a58bcbe90d74eb17a7be36f6b9d1, type: 3}
+      propertyPath: m_TagString
+      value: PlayerModel
+      objectReference: {fileID: 0}
+    - target: {fileID: 5866666021909216657, guid: c621a58bcbe90d74eb17a7be36f6b9d1, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: 6716776a72896ab42af26afc7c661c36, type: 2}
+    - target: {fileID: 5866666021909216657, guid: c621a58bcbe90d74eb17a7be36f6b9d1, type: 3}
+      propertyPath: m_ApplyRootMotion
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

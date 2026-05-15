@@ -1,19 +1,15 @@
-<?xml version="1.0" encoding="utf-8"?>
 <ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
-    <Style src="PlayerGoldHUDStyles.uss" />
-
-    <ui:VisualElement name="gold-hud-root" class="gold-hud-root" picking-mode="Ignore">
-
-        <ui:VisualElement class="gold-panel">
-            <ui:VisualElement class="gold-inner-border" />
-            <ui:VisualElement class="gold-diamond-left" />
+    <Style src="project://database/Assets/PrzemekSkrypty/UI/PlayerGoldHUDStyles.uss?fileID=7433441132597879392&amp;guid=651b3ddeb7109e24cb70de8e5e4a75fa&amp;type=3#PlayerGoldHUDStyles"/>
+    <ui:VisualElement name="gold-hud-root" picking-mode="Ignore" class="gold-hud-root">
+        <ui:VisualElement class="gold-panel" style="margin-top: 12px;">
+            <ui:VisualElement class="gold-inner-border"/>
+            <ui:VisualElement class="gold-diamond-left"/>
             <ui:VisualElement class="gold-content">
-                <ui:Label name="gold-value" text="100" class="gold-value" />
-                <ui:VisualElement class="gold-divider" />
-                <ui:Label text="GOLD" class="gold-label" />
+                <ui:Label name="gold-value" text="100" class="gold-value" style="color: rgb(217, 119, 6);"/>
+                <ui:VisualElement class="gold-divider"/>
+                <ui:Label text="GOLD" class="gold-label" style="color: rgba(217, 119, 6, 0.5);"/>
             </ui:VisualElement>
-            <ui:VisualElement class="gold-diamond-right" />
+            <ui:VisualElement class="gold-diamond-right"/>
         </ui:VisualElement>
-
     </ui:VisualElement>
 </ui:UXML>

@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 68b61763f6aaed04aa36703e53b1af36, type: 3}
+  m_Name: spEED
+  m_EditorClassIdentifier: Assembly-CSharp::ElementumDefense.Cards.SabotageCardData
+  sabotageName: spEED
+  description: Sabotage description...
+  rarity: 0
+  sabotageTag: 2
+  durationType: 1
+  duration: 0
+  durationRounds: 1
+  sabotageIcon: {fileID: 82707766, guid: fbc61234760eabb42b156a92652c95b1, type: 3}
+  sabotageColor: {r: 1, g: 0, b: 0, a: 1}
+  dropWeight: 59.8
+  sabotageEffect: {fileID: 11400000, guid: 0bc50b062ae4fed4fbbe6247e94c4a88, type: 2}

@@ -1,26 +1,31 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 using Photon.Pun;
+using Photon.Realtime;
 using ElementumDefense.Cards;
 using ElementumDefense.Progression;
+using ElementumDefense.Ranked;
 using ElementumDefense.UI;
+using ElementumDefense.BattlePass;
+using ElementumDefense.Projectiles;
 
 public class GameEndManager : MonoBehaviour
 {
     [Header("Rewards Config")]
     [SerializeField] private int victoryXP = 500;
     [SerializeField] private int defeatXP = 100;
-    [SerializeField] private int winElo = 25;
-    [SerializeField] private int loseElo = -15;
+
+    // ELO jest teraz dynamiczne � nie ma
+    // sta�ych winElo / loseElo!
 
     [Header("Settings")]
-    [SerializeField] private string menuSceneName = "MainMenu";
+    [SerializeField]
+    private string menuSceneName = "MainMenu";
 
     private bool gameEnded = false;
 
     private void Start()
     {
-        // Subscribe to UI return button
         if (GameEndPanelUI.Instance != null)
         {
             GameEndPanelUI.Instance.OnReturnToMenu +=
@@ -30,8 +35,6 @@ public class GameEndManager : MonoBehaviour
 
     private void OnEnable()
     {
-        // Retry subscription if panel
-        // spawns after us
         StartCoroutine(LateSubscribe());
     }
 
@@ -43,10 +46,10 @@ public class GameEndManager : MonoBehaviour
 
         if (GameEndPanelUI.Instance != null)
         {
-            GameEndPanelUI.Instance.OnReturnToMenu -=
-                ReturnToMenu;
-            GameEndPanelUI.Instance.OnReturnToMenu +=
-                ReturnToMenu;
+            GameEndPanelUI.Instance
+                .OnReturnToMenu -= ReturnToMenu;
+            GameEndPanelUI.Instance
+                .OnReturnToMenu += ReturnToMenu;
         }
     }
 
@@ -54,8 +57,8 @@ public class GameEndManager : MonoBehaviour
     {
         if (GameEndPanelUI.Instance != null)
         {
-            GameEndPanelUI.Instance.OnReturnToMenu -=
-                ReturnToMenu;
+            GameEndPanelUI.Instance
+                .OnReturnToMenu -= ReturnToMenu;
         }
     }
 
@@ -116,7 +119,7 @@ public class GameEndManager : MonoBehaviour
         if (player != null)
             player.AddXP(xpGained);
 
-        // Quests
+        // Questy
         if (questManager != null)
         {
             questManager.ReportProgress(
@@ -126,15 +129,87 @@ public class GameEndManager : MonoBehaviour
                     QuestType.WinGames, 1);
         }
 
-        // Ranked ELO
+        // ========================================
+        // RANKED ELO � dynamiczna kalkulacja
+        // ========================================
         if (player != null &&
             player.SelectedGameMode ==
                 GameMode.Ranked)
         {
-            eloChange = isVictory
-                ? winElo : loseElo;
+            int myElo = player.GetElo();
+            int opponentElo = GetOpponentElo();
+
+            eloChange =
+                EloCalculator.CalculateEloChange(
+                    myElo, opponentElo, isVictory);
+
             player.AddElo(eloChange);
+
+            // Statystyki W/L
+            if (isVictory)
+                player.AddWin();
+            else
+                player.AddLoss();
+
+            Debug.Log(
+                $"[Ranked] My ELO: {myElo}, " +
+                $"Opponent ELO: {opponentElo}, " +
+                $"Won: {isVictory}, " +
+                $"Change: {(eloChange > 0 ? "+" : "")}" +
+                $"{eloChange}");
         }
+    }
+
+    // =========================================================
+    // ODCZYT ELO PRZECIWNIKA Z PHOTON
+    // =========================================================
+
+    /// <summary>
+    /// Pobiera ELO przeciwnika z Photon Custom
+    /// Properties. Fallback: w�asne ELO gracza.
+    /// </summary>
+    private int GetOpponentElo()
+    {
+        if (!PhotonNetwork.InRoom ||
+            PhotonNetwork.CurrentRoom == null)
+        {
+            return GetFallbackElo();
+        }
+
+        foreach (var kvp in
+            PhotonNetwork.CurrentRoom.Players)
+        {
+            Player p = kvp.Value;
+            if (!p.IsLocal)
+            {
+                if (p.CustomProperties.TryGetValue(
+                    "elo", out object eloObj))
+                {
+                    int oppElo = (int)eloObj;
+                    Debug.Log(
+                        $"[Ranked] Opponent ELO " +
+                        $"from Photon: {oppElo}");
+                    return oppElo;
+                }
+
+                Debug.LogWarning(
+                    "[Ranked] Opponent has no " +
+                    "ELO property � using fallback");
+            }
+        }
+
+        return GetFallbackElo();
+    }
+
+    /// <summary>
+    /// Fallback ELO je�li nie znamy przeciwnika
+    /// (np. roz��czy� si�). Zak�adamy
+    /// podobny poziom.
+    /// </summary>
+    private int GetFallbackElo()
+    {
+        return PlayerCollection.Instance?.GetElo()
+            ?? EloCalculator.DEFAULT_ELO;
     }
 
     // =========================================================
@@ -160,7 +235,6 @@ public class GameEndManager : MonoBehaviour
             player.SelectedGameMode ==
                 GameMode.Ranked;
 
-        // Gather data
         int level = player != null
             ? player.GetLevel() : 1;
         float xpCurrent = player != null
@@ -173,13 +247,15 @@ public class GameEndManager : MonoBehaviour
             int currentElo = player != null
                 ? player.GetElo() : 1000;
             string rankNameStr = player != null
-                ? player.GetRankName() : "UNRANKED";
+                ? player.GetRankName()
+                : "UNRANKED";
             Color rankColor = player != null
                 ? player.GetRankColor()
                 : Color.gray;
 
             (int rankMin, int rankMax) =
-                GetRankRange(currentElo);
+                EloCalculator.GetRankRange(
+                    currentElo);
 
             if (isVictory)
             {
@@ -225,19 +301,6 @@ public class GameEndManager : MonoBehaviour
             PhotonNetwork.Disconnect();
 
         SceneManager.LoadScene(menuSceneName);
-    }
-
-    // =========================================================
-    // RANK THRESHOLDS
-    // =========================================================
-
-    private (int, int) GetRankRange(int elo)
-    {
-        if (elo < 1200) return (0, 1200);
-        if (elo < 1500) return (1200, 1500);
-        if (elo < 1800) return (1500, 1800);
-        if (elo < 2200) return (1800, 2200);
-        return (2200, 3000);
     }
 
     // =========================================================

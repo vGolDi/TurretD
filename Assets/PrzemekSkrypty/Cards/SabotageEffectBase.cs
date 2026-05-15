@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using Photon.Pun;
 
 namespace ElementumDefense.Cards
@@ -62,6 +62,33 @@ namespace ElementumDefense.Cards
         protected BuildManager GetBuildManager(PhotonView player)
         {
             return player?.GetComponent<BuildManager>();
+        }
+
+        /// <summary>
+        /// Finds the WaveManager belonging to a player's arena.
+        /// WaveManager lives on the Arena object (child of ArenaOwner),
+        /// NOT on the player object. So we search all ArenaOwners
+        /// and match by ownerPhotonView.
+        /// </summary>
+        protected WaveManager GetWaveManager(PhotonView playerPhotonView)
+        {
+            if (playerPhotonView == null) return null;
+
+            ArenaOwner[] arenas = Object.FindObjectsByType<ArenaOwner>(
+                FindObjectsSortMode.None);
+
+            foreach (ArenaOwner arena in arenas)
+            {
+                if (arena.ownerPhotonView == playerPhotonView)
+                {
+                    WaveManager wm = arena.GetComponentInChildren<WaveManager>();
+                    if (wm != null) return wm;
+                }
+            }
+
+            Debug.LogWarning($"[SabotageEffectBase] WaveManager not found for player " +
+                             $"{playerPhotonView.Owner?.NickName ?? "?"}");
+            return null;
         }
 
         protected void LogSabotage(PhotonView target, PhotonView caster, string message)

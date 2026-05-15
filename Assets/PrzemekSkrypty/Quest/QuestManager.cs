@@ -1,4 +1,4 @@
-// Assets/PrzemekSkrypty/Progression/QuestManager.cs
+ï»¿// Assets/PrzemekSkrypty/Progression/QuestManager.cs
 using UnityEngine;
 using System;
 using System.Collections.Generic;
@@ -122,17 +122,14 @@ namespace ElementumDefense.Progression
         {
             if (AuthManager.Instance != null)
             {
-                AuthManager.Instance.OnLoginSuccess += OnUserLoggedIn;
+                AuthManager.Instance.OnCloudReady += OnUserLoggedIn;
 
-                if (AuthManager.Instance.IsLoggedIn)
-                {
-                    OnUserLoggedIn(AuthManager.Instance.CurrentUsername);
-                }
+                // OnCloudReady will fire after login verification
             }
             else
             {
                 Debug.LogWarning("[QuestManager] AuthManager not found - using default save");
-                CheckDailyReset();
+                LoadQuests();
             }
         }
 
@@ -140,7 +137,7 @@ namespace ElementumDefense.Progression
         {
             if (AuthManager.Instance != null)
             {
-                AuthManager.Instance.OnLoginSuccess -= OnUserLoggedIn;
+                AuthManager.Instance.OnCloudReady -= OnUserLoggedIn;
             }
         }
 
@@ -152,7 +149,7 @@ namespace ElementumDefense.Progression
             lastQuestDate = "";
             lastWeeklyDate = "";
 
-            CheckDailyReset();
+            LoadQuests();
 
             OnQuestListUpdated?.Invoke();
         }
@@ -182,17 +179,6 @@ namespace ElementumDefense.Progression
         // SAVE PATH
         // ==========================================
 
-        private string GetSavePath()
-        {
-            string username = "Guest";
-
-            if (AuthManager.Instance != null && AuthManager.Instance.IsLoggedIn)
-            {
-                username = AuthManager.Instance.CurrentUsername;
-            }
-
-            return Path.Combine(Application.persistentDataPath, $"Quests_{username}.json");
-        }
 
         // ==========================================
         // DAILY/WEEKLY RESET CHECK
@@ -200,7 +186,7 @@ namespace ElementumDefense.Progression
 
         private void CheckDailyReset()
         {
-            LoadQuests();
+            
 
             string todayDate = DateTime.Now.ToString("yyyy-MM-dd");
             string thisWeek = GetWeekIdentifier();
@@ -238,7 +224,7 @@ namespace ElementumDefense.Progression
 
         private string GetWeekIdentifier()
         {
-            // Format: "2024-W05" (rok-tydzieñ)
+            // Format: "2024-W05" (rok-tydzieï¿½)
             DateTime now = DateTime.Now;
             int weekNumber = System.Globalization.CultureInfo.CurrentCulture.Calendar
                 .GetWeekOfYear(now, System.Globalization.CalendarWeekRule.FirstDay, DayOfWeek.Monday);
@@ -267,7 +253,7 @@ namespace ElementumDefense.Progression
 
         private void GenerateDailyQuests()
         {
-            // Lista dostêpnych typów questów (bez powtórek)
+            // Lista dostï¿½pnych typï¿½w questï¿½w (bez powtï¿½rek)
             List<QuestType> availableTypes = new List<QuestType>
             {
                 QuestType.PlayGames,
@@ -276,25 +262,25 @@ namespace ElementumDefense.Progression
                 QuestType.BuildTurrets
             };
 
-            // Shuffle dla losowoœci
+            // Shuffle dla losowoï¿½ci
             ShuffleList(availableTypes);
 
             for (int i = 0; i < dailyQuestCount; i++)
             {
                 QuestType questType;
 
-                // Pierwszy quest = WinGames (z lootboxem jeœli w³¹czone)
+                // Pierwszy quest = WinGames (z lootboxem jeï¿½li wï¿½ï¿½czone)
                 if (i == 0)
                 {
                     questType = QuestType.WinGames;
                 }
                 else
                 {
-                    // WeŸ kolejny typ z listy (lub losuj jeœli skoñczy³y siê unikalne)
+                    // Weï¿½ kolejny typ z listy (lub losuj jeï¿½li skoï¿½czyï¿½y siï¿½ unikalne)
                     if (i - 1 < availableTypes.Count)
                     {
                         questType = availableTypes[i - 1];
-                        // Pomiñ WinGames bo ju¿ jest
+                        // Pomiï¿½ WinGames bo juï¿½ jest
                         if (questType == QuestType.WinGames && i < availableTypes.Count)
                         {
                             questType = availableTypes[i];
@@ -306,7 +292,7 @@ namespace ElementumDefense.Progression
                     }
                 }
 
-                // Okreœl czy daæ lootbox
+                // Okreï¿½l czy daï¿½ lootbox
                 LootboxData lootbox = null;
                 if (i == 0 && firstQuestAlwaysGivesLootbox)
                 {
@@ -421,7 +407,7 @@ namespace ElementumDefense.Progression
 
         private string GetDescription(QuestType type, int target, QuestTier tier)
         {
-            // Prefix dla KA¯DEGO tieru
+            // Prefix dla KAï¿½DEGO tieru
             string prefix = tier switch
             {
                 QuestTier.Daily => "[Daily] ",
@@ -658,55 +644,63 @@ namespace ElementumDefense.Progression
             };
 
             string json = JsonUtility.ToJson(saveData, true);
-            string path = GetSavePath();
 
-            try
+            if (CloudSaveManager.Instance != null)
             {
-                File.WriteAllText(path, json);
-                Debug.Log($"[QuestManager] Saved quests to {path}");
+                CloudSaveManager.Instance.SaveData("QuestManagerData", json);
             }
-            catch (Exception e)
+            else
             {
-                Debug.LogError($"[QuestManager] Failed to save: {e.Message}");
+                Debug.LogWarning("[QuestManager] CloudSaveManager is null - data NOT saved!");
             }
         }
 
         private void LoadQuests()
         {
-            string path = GetSavePath();
-
-            if (!File.Exists(path))
+            if (CloudSaveManager.Instance != null)
             {
-                Debug.Log($"[QuestManager] No save file - will generate new quests");
-                activeQuests.Clear();
-                lastQuestDate = "";
-                lastWeeklyDate = "";
-                return;
+                Debug.Log("[QuestManager] Loading quests from PlayFab cloud...");
+                CloudSaveManager.Instance.LoadData("QuestManagerData",
+                    json =>
+                    {
+                        Debug.Log("[QuestManager] Cloud data loaded OK.");
+                        ProcessLoadedQuestJson(json);
+                    },
+                    () =>
+                    {
+                        Debug.Log("[QuestManager] No cloud data - generating new quests.");
+                        activeQuests = new List<Quest>();
+                        CheckDailyReset();
+                    });
             }
+            else
+            {
+                Debug.LogWarning("[QuestManager] CloudSaveManager is null!");
+                activeQuests = new List<Quest>();
+                CheckDailyReset();
+            }
+        }
 
+        private void ProcessLoadedQuestJson(string json)
+        {
             try
             {
-                string json = File.ReadAllText(path);
                 QuestSaveData saveData = JsonUtility.FromJson<QuestSaveData>(json);
-
                 if (saveData != null)
                 {
                     lastQuestDate = saveData.lastQuestDate ?? "";
                     lastWeeklyDate = saveData.lastWeeklyDate ?? "";
                     activeQuests = saveData.quests ?? new List<Quest>();
-
-                    Debug.Log($"[QuestManager] Loaded {activeQuests.Count} quests");
                 }
+                CheckDailyReset(); // <-- ZMIANA TUTAJ
             }
-            catch (Exception e)
+            catch (System.Exception e)
             {
-                Debug.LogError($"[QuestManager] Failed to load: {e.Message}");
-                activeQuests.Clear();
-                lastQuestDate = "";
-                lastWeeklyDate = "";
+                Debug.LogError($"[QuestManager] Failed to load JSON: {e.Message}");
+                activeQuests = new List<Quest>();
+                CheckDailyReset(); // <-- I TUTAJ
             }
         }
-
         // ==========================================
         // DEBUG TOOLS
         // ==========================================
@@ -740,10 +734,7 @@ namespace ElementumDefense.Progression
             lastWeeklyDate = "";
             activeQuests.Clear();
 
-            string path = GetSavePath();
-            if (File.Exists(path))
             {
-                File.Delete(path);
             }
 
             CheckDailyReset();
@@ -804,7 +795,6 @@ namespace ElementumDefense.Progression
         public void DebugPrintStatus()
         {
             Debug.Log($"=== QUEST STATUS ===");
-            Debug.Log($"Save Path: {GetSavePath()}");
             Debug.Log($"Last Daily: {lastQuestDate}");
             Debug.Log($"Last Weekly: {lastWeeklyDate}");
             Debug.Log($"Total Quests: {activeQuests.Count}");

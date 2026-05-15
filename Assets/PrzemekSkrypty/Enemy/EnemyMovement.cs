@@ -100,9 +100,9 @@ public class EnemyMovement : MonoBehaviour
         agent.avoidancePriority = 50;
         agent.stoppingDistance = 0f;
         agent.autoBraking = false;
-        // ========== ZMIEÑ TÊ LINIJKÊ: ==========
-        agent.baseOffset = 1f; // By³o 0f - teraz wy¿ej!
-                               // LUB dostosuj do wysokoœci swojego modelu:
+        // ========== ZMIEï¿½ Tï¿½ LINIJKï¿½: ==========
+        agent.baseOffset = 1f; // Byï¿½o 0f - teraz wyï¿½ej!
+                               // LUB dostosuj do wysokoï¿½ci swojego modelu:
                                // agent.baseOffset = GetComponent<CapsuleCollider>()?.height / 2f ?? 1f;
                                // =======================================
 
@@ -250,6 +250,15 @@ public class EnemyMovement : MonoBehaviour
             int dynamicPriority = Mathf.RoundToInt(50 + (1f - currentSpeedModifier) * 30);
             agent.avoidancePriority = Mathf.Clamp(dynamicPriority, 0, 99);
         }
+    }
+
+    public float GetBaseSpeed() => baseSpeed;
+
+    public void SetBaseSpeed(float newSpeed)
+    {
+        baseSpeed = newSpeed;
+        if (agent != null)
+            agent.speed = baseSpeed * currentSpeedModifier;
     }
 
     public void SetSpeedModifier(float modifier)

@@ -358,6 +358,67 @@ namespace ElementumDefense.UI
         }
 
         // ==========================================
+        // MAYHEM
+        // ==========================================
+
+        /// <summary>
+        /// Shows a dramatic Mayhem announcement.
+        /// Reuses the wave-announce overlay.
+        /// </summary>
+        public Coroutine ShowMayhemAnnouncement(
+            float duration = 2f)
+        {
+            return StartCoroutine(
+                MayhemAnnouncementRoutine(
+                    duration));
+        }
+
+        private IEnumerator
+            MayhemAnnouncementRoutine(
+                float duration)
+        {
+            if (waveAnnounceTitle != null)
+                waveAnnounceTitle.text =
+                    "\u26A1 MAYHEM \u26A1";
+
+            if (waveAnnounceSubtitle != null)
+                waveAnnounceSubtitle.text =
+                    "LAST ONE STANDING";
+
+            // Show
+            SetVisible(waveAnnounce, true);
+            waveAnnounce?.AddToClassList(
+                "wave-announce-visible");
+
+            PlaySound(waveStartSound);
+
+            yield return
+                new WaitForSeconds(duration);
+
+            // Hide
+            waveAnnounce?.RemoveFromClassList(
+                "wave-announce-visible");
+
+            yield return
+                new WaitForSeconds(0.4f);
+
+            SetVisible(waveAnnounce, false);
+        }
+
+        /// <summary>
+        /// Updates wave badge to show MAYHEM
+        /// instead of a wave number.
+        /// </summary>
+        public void SetMayhemBadge()
+        {
+            if (waveNumber != null)
+                waveNumber.text = "\u26A1";
+
+            if (waveTotal != null)
+                waveTotal.text = "MAYHEM";
+        }
+
+        // ==========================================
         // HELPERS
         // ==========================================
 

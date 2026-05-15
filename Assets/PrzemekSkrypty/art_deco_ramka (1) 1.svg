@@ -1,0 +1,65 @@
+<svg id="gui-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" width="1920" height="1080">
+                    
+                    
+                    
+                    <g id="frame-group" style="display: block;">
+                        <!-- Narożnik Lewy-Górny -->
+                        <g transform="translate(40, 40)">
+                            <polyline points="0,150 0,0 150,0" fill="none" stroke="#d97706" stroke-width="3px" stroke-linecap="square"/>
+                            <polyline points="20,130 20,20 130,20" fill="none" stroke="#d97706" stroke-width="3px" stroke-linecap="square"/>
+                            <rect x="0" y="0" width="20" height="20" fill="none" stroke="#d97706" stroke-width="3px"/>
+                            <rect x="30" y="30" width="10" height="10" fill="none" stroke="#d97706" stroke-width="3px"/>
+                            <polyline points="30,60 30,30 60,30" fill="none" stroke="#d97706" stroke-width="3px" stroke-linecap="square"/>
+                        </g>
+
+                        <!-- Narożnik Prawy-Górny -->
+                        <g transform="translate(1880, 40) scale(-1, 1)">
+                            <polyline points="0,150 0,0 150,0" fill="none" stroke="#d97706" stroke-width="3px" stroke-linecap="square"/>
+                            <polyline points="20,130 20,20 130,20" fill="none" stroke="#d97706" stroke-width="3px" stroke-linecap="square"/>
+                            <rect x="0" y="0" width="20" height="20" fill="none" stroke="#d97706" stroke-width="3px"/>
+                            <rect x="30" y="30" width="10" height="10" fill="none" stroke="#d97706" stroke-width="3px"/>
+                            <polyline points="30,60 30,30 60,30" fill="none" stroke="#d97706" stroke-width="3px" stroke-linecap="square"/>
+                        </g>
+
+                        <!-- Narożnik Prawy-Dolny -->
+                        <g transform="translate(1880, 1040) scale(-1, -1)">
+                            <polyline points="0,150 0,0 150,0" fill="none" stroke="#d97706" stroke-width="3px" stroke-linecap="square"/>
+                            <polyline points="20,130 20,20 130,20" fill="none" stroke="#d97706" stroke-width="3px" stroke-linecap="square"/>
+                            <rect x="0" y="0" width="20" height="20" fill="none" stroke="#d97706" stroke-width="3px"/>
+                            <rect x="30" y="30" width="10" height="10" fill="none" stroke="#d97706" stroke-width="3px"/>
+                            <polyline points="30,60 30,30 60,30" fill="none" stroke="#d97706" stroke-width="3px" stroke-linecap="square"/>
+                        </g>
+
+                        <!-- Narożnik Lewy-Dolny -->
+                        <g transform="translate(40, 1040) scale(1, -1)">
+                            <polyline points="0,150 0,0 150,0" fill="none" stroke="#d97706" stroke-width="3px" stroke-linecap="square"/>
+                            <polyline points="20,130 20,20 130,20" fill="none" stroke="#d97706" stroke-width="3px" stroke-linecap="square"/>
+                            <rect x="0" y="0" width="20" height="20" fill="none" stroke="#d97706" stroke-width="3px"/>
+                            <rect x="30" y="30" width="10" height="10" fill="none" stroke="#d97706" stroke-width="3px"/>
+                            <polyline points="30,60 30,30 60,30" fill="none" stroke="#d97706" stroke-width="3px" stroke-linecap="square"/>
+                        </g>
+
+                        <!-- Znaczniki boczne Lewe -->
+                        <g transform="translate(40, 540)">
+                            <line x1="0" y1="-250" x2="0" y2="250" stroke="#d97706" stroke-width="3px"/>
+                            <line x1="0" y1="-200" x2="15" y2="-200" stroke="#d97706" stroke-width="3px"/>
+                            <line x1="0" y1="-100" x2="15" y2="-100" stroke="#d97706" stroke-width="3px"/>
+                            <line x1="0" y1="0" x2="30" y2="0" stroke="#d97706" stroke-width="3px"/>
+                            <line x1="0" y1="100" x2="15" y2="100" stroke="#d97706" stroke-width="3px"/>
+                            <line x1="0" y1="200" x2="15" y2="200" stroke="#d97706" stroke-width="3px"/>
+                        </g>
+
+                        <!-- Znaczniki boczne Prawe -->
+                        <g transform="translate(1880, 540) scale(-1, 1)">
+                            <line x1="0" y1="-250" x2="0" y2="250" stroke="#d97706" stroke-width="3px"/>
+                            <line x1="0" y1="-200" x2="15" y2="-200" stroke="#d97706" stroke-width="3px"/>
+                            <line x1="0" y1="-100" x2="15" y2="-100" stroke="#d97706" stroke-width="3px"/>
+                            <line x1="0" y1="0" x2="30" y2="0" stroke="#d97706" stroke-width="3px"/>
+                            <line x1="0" y1="100" x2="15" y2="100" stroke="#d97706" stroke-width="3px"/>
+                            <line x1="0" y1="200" x2="15" y2="200" stroke="#d97706" stroke-width="3px"/>
+                        </g>
+                    </g>
+
+                    
+                    
+                </svg>

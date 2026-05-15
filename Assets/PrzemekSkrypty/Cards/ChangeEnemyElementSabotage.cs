@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using Photon.Pun;
 using ElementumDefense.Elements;
 
@@ -23,8 +23,22 @@ namespace ElementumDefense.Cards
                 ? GetRandomElement()
                 : newElement;
 
-            // TODO: WaveManager (target's arena).OverrideNextWaveElement(chosenElement);
-            LogSabotage(targetPhotonView, casterPhotonView, $"Next wave changed to {chosenElement}");
+            WaveManager targetWaveManager = GetWaveManager(targetPhotonView);
+            
+            if (targetWaveManager != null)
+            {
+                targetWaveManager.ApplyWaveModifiers(mod =>
+                {
+                    mod.overrideElement = true;
+                    mod.newElement = chosenElement;
+                });
+                
+                LogSabotage(targetPhotonView, casterPhotonView, $"Next wave changed to {chosenElement}");
+            }
+            else
+            {
+                Debug.LogError("[ChangeEnemyElementSabotage] Could not find WaveManager on target!");
+            }
         }
 
         public override void Remove(PhotonView targetPhotonView, PhotonView casterPhotonView)

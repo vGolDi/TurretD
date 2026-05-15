@@ -1,0 +1,71 @@
+<svg id="gui-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" width="100%" height="100%" style="color: #d4af37;">
+                    <defs>
+                        <!-- Narożnik Art Deco -->
+                        <g id="deco-corner">
+                            <!-- Zewnętrzna grubsza linia -->
+                            <polyline points="0,150 0,0 150,0" fill="none" stroke="#d4af37" stroke-width="10px" stroke-linecap="square"/>
+                            <!-- Wewnętrzna zagnieżdżona linia -->
+                            <polyline points="20,130 20,20 130,20" fill="none" stroke="#d4af37" stroke-width="10px" stroke-linecap="square"/>
+                            <!-- Geometryczny akcent w samym rogu (kwadrat) -->
+                            <rect x="0" y="0" width="20" height="20" fill="none" stroke="#d4af37" stroke-width="10px"/>
+                            <!-- Mały wewnętrzny detal -->
+                            <rect x="30" y="30" width="10" height="10" fill="none" stroke="#d4af37" stroke-width="10px"/>
+                            <polyline points="30,60 30,30 60,30" fill="none" stroke="#d4af37" stroke-width="10px" stroke-linecap="square"/>
+                        </g>
+
+                        <!-- Znaczniki na krawędziach bocznych (jak na zdjęciu) -->
+                        <g id="side-ticks">
+                            <line x1="0" y1="-250" x2="0" y2="250" stroke="#d4af37" stroke-width="10px"/>
+                            <!-- Małe poziome kreski -->
+                            <line x1="0" y1="-200" x2="15" y2="-200" stroke="#d4af37" stroke-width="10px"/>
+                            <line x1="0" y1="-100" x2="15" y2="-100" stroke="#d4af37" stroke-width="10px"/>
+                            <!-- Główny środkowy znacznik -->
+                            <line x1="0" y1="0" x2="30" y2="0" stroke="#d4af37" stroke-width="10px"/>
+                            <!-- Dolne kreski -->
+                            <line x1="0" y1="100" x2="15" y2="100" stroke="#d4af37" stroke-width="10px"/>
+                            <line x1="0" y1="200" x2="15" y2="200" stroke="#d4af37" stroke-width="10px"/>
+                        </g>
+
+                        <!-- Prosty górny ozdobnik (Geometryczny zwis) -->
+                        <g id="top-ornament">
+                            <!-- Centralny romb -->
+                            <polygon points="0,15 -20,35 0,55 20,35" fill="none" stroke="#d4af37" stroke-width="10px"/>
+                            <!-- Linia opadająca -->
+                            <line x1="0" y1="55" x2="0" y2="90" stroke="#d4af37" stroke-width="10px"/>
+                            <!-- Punkt końcowy -->
+                            <rect x="-4" y="90" width="8" height="8" fill="#d4af37"/>
+
+                            <!-- Stopniowane linie w stylu Deco -->
+                            <polyline points="-60,0 -60,15 0,15" fill="none" stroke="#d4af37" stroke-width="10px" stroke-linecap="square"/>
+                            <polyline points="60,0 60,15 0,15" fill="none" stroke="#d4af37" stroke-width="10px" stroke-linecap="square"/>
+
+                            <polyline points="-120,0 -120,5 -60,5" fill="none" stroke="#d4af37" stroke-width="10px" stroke-linecap="square"/>
+                            <polyline points="120,0 120,5 60,5" fill="none" stroke="#d4af37" stroke-width="10px" stroke-linecap="square"/>
+                        </g>
+                    </defs>
+
+                    <!-- Aplikacja zmiennej CSS dla grubości na cały SVG -->
+                    
+
+                    <!-- Rozmieszczenie elementów na płótnie 1920x1080 -->
+                    <!-- Margines od krawędzi to 40px -->
+                    
+                    <g id="frame-group" style="display: block;">
+                        <!-- Narożniki -->
+                        <use href="#deco-corner" transform="translate(40, 40)"/>
+                        <use href="#deco-corner" transform="translate(1880, 40) scale(-1, 1)"/>
+                        <use href="#deco-corner" transform="translate(1880, 1040) scale(-1, -1)"/>
+                        <use href="#deco-corner" transform="translate(40, 1040) scale(1, -1)"/>
+
+                        <!-- Boczne znaczniki (Środek w pionie: 1080/2 = 540) -->
+                        <use href="#side-ticks" transform="translate(40, 540)"/>
+                        <use href="#side-ticks" transform="translate(1880, 540) scale(-1, 1)"/>
+
+                        <!-- Opcjonalna delikatna ramka wewnętrzna (lekko przezroczysta, scala kompozycję) -->
+                        <rect x="80" y="80" width="1760" height="920" fill="none" stroke="#d4af37" stroke-width="1" opacity="0.2"/>
+                    </g>
+
+                    
+                    
+                    <!-- Wnętrze jest całkowicie przezroczyste, gotowe na zawartość gry -->
+                </svg>

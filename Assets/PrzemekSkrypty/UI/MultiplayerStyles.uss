@@ -1,5 +1,5 @@
-/* ============================================
-   MULTIPLAYER � ART DECO STYLE
+﻿/* ============================================
+   MULTIPLAYER — ART DECO STYLE
    ============================================ */
 
 .panel-root {
@@ -533,5 +533,161 @@
     color: rgba(245, 158, 11, 0.25);
     letter-spacing: 3px;
 }
+/* ============================================
+   RANK HEXAGON — OVERRIDE
+   (zamień istniejącą regułę .mp-rank-hexagon)
+   ============================================ */
 
+.mp-rank-hexagon {
+    width: 64px;
+    height: 64px;
+    align-items: center;
+    justify-content: center;
+    margin-right: 20px;
+    overflow: visible;
+    transition-property: scale;
+    transition-duration: 0.4s;
+    transition-timing-function: ease-out;
+}
+
+/* ============================================
+   RANK DECORATIONS — NEW
+   Wszystkie domyślnie ukryte (opacity: 0)
+   C# je aktywuje w zależności od rangi.
+   ============================================ */
+
+/* ---- GLOW / AURA (Silver+) ---- */
+/* Diamentowy kształt za głównym rombem,
+   delikatne "tło" w kolorze rangi */
+
+.mp-rank-glow {
+    position: absolute;
+    width: 64px;
+    height: 64px;
+    rotate: 45deg;
+    scale: 1.25 1.25;
+    border-radius: 10px;
+    background-color: rgba(0, 0, 0, 0);
+    opacity: 0;
+    transition-property: opacity, background-color;
+    transition-duration: 0.5s;
+}
+
+/* ---- OUTER RING / 2. pierścień (Gold+) ---- */
+/* Drugi obrys rombu, nieco większy */
+
+.mp-rank-outer-ring {
+    position: absolute;
+    width: 64px;
+    height: 64px;
+    border-width: 1px;
+    border-color: rgba(0, 0, 0, 0);
+    border-radius: 8px;
+    rotate: 45deg;
+    scale: 0.88 0.88;
+    opacity: 0;
+    transition-property: opacity, border-color;
+    transition-duration: 0.5s;
+}
+
+/* ---- THIRD RING / 3. pierścień (Diamond) ---- */
+/* Najdalszy obrys — tylko Diamond */
+
+.mp-rank-third-ring {
+    position: absolute;
+    width: 64px;
+    height: 64px;
+    border-width: 1px;
+    border-color: rgba(0, 0, 0, 0);
+    border-radius: 10px;
+    rotate: 45deg;
+    scale: 1.0 1.0;
+    opacity: 0;
+    transition-property: opacity, border-color;
+    transition-duration: 0.5s;
+}
+
+/* ---- TIP DECORATIONS (Silver+) ---- */
+/* 4 małe romby na czubkach głównego rombu
+   Pozycje: czubki rombu 64x64 rotated 45°
+   scaled 0.75 → tips at ~34px from center
+   Container 64x64, center (32,32) */
+
+.mp-rank-tip {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    background-color: rgba(0, 0, 0, 0);
+    border-width: 1px;
+    border-color: rgba(0, 0, 0, 0);
+    rotate: 45deg;
+    opacity: 0;
+    transition-property: opacity, background-color,
+        border-color;
+    transition-duration: 0.5s;
+}
+
+/* center tip (3px offset = 6/2)
+   Top tip at pixel (32, -2): */
+.mp-rank-tip-top {
+    left: 29px;
+    top: -5px;
+}
+
+/* Right tip at (66, 32): */
+.mp-rank-tip-right {
+    left: 63px;
+    top: 29px;
+}
+
+/* Bottom tip at (32, 66): */
+.mp-rank-tip-bottom {
+    left: 29px;
+    top: 63px;
+}
+
+/* Left tip at (-2, 32): */
+.mp-rank-tip-left {
+    left: -5px;
+    top: 29px;
+}
+
+/* ---- STARS (Platinum+) ---- */
+/* ✦ po bokach rombu */
+
+.mp-rank-star {
+    position: absolute;
+    font-size: 10px;
+    color: rgba(0, 0, 0, 0);
+    -unity-text-align: middle-center;
+    opacity: 0;
+    transition-property: opacity, color;
+    transition-duration: 0.5s;
+}
+
+.mp-rank-star-l {
+    left: -18px;
+    top: 22px;
+}
+
+.mp-rank-star-r {
+    left: 72px;
+    top: 22px;
+}
+
+/* ---- CROWN (Diamond only) ---- */
+/* ♛ nad rombem */
+
+.mp-rank-crown {
+    position: absolute;
+    left: 0;
+    top: -22px;
+    width: 64px;
+    font-size: 16px;
+    color: rgba(0, 0, 0, 0);
+    -unity-text-align: upper-center;
+    opacity: 0;
+    transition-property: opacity, color;
+    transition-duration: 0.5s;
+}
 .hidden { display: none; }

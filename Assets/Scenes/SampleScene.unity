@@ -1374,12 +1374,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ElementumDefense.Cards.SabotagePool
   allSabotageCards:
-  - {fileID: 11400000, guid: 0685fb11cefc2424aa46abbe094b34fc, type: 2}
-  - {fileID: 11400000, guid: 0685fb11cefc2424aa46abbe094b34fc, type: 2}
-  - {fileID: 11400000, guid: 0685fb11cefc2424aa46abbe094b34fc, type: 2}
-  - {fileID: 11400000, guid: 0685fb11cefc2424aa46abbe094b34fc, type: 2}
-  - {fileID: 11400000, guid: ccd63efae43b6b4498c454a4e453a624, type: 2}
-  - {fileID: 11400000, guid: ccd63efae43b6b4498c454a4e453a624, type: 2}
+  - {fileID: 11400000, guid: 9567c16d035060541a79e424ba18980e, type: 2}
+  - {fileID: 11400000, guid: 6ad1f3e063103584e99c84f40d70de80, type: 2}
   legendaryBaseWeight: 5
   rareBaseWeight: 25
   commonBaseWeight: 70
@@ -1678,8 +1674,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GameEndManager
   victoryXP: 500
   defeatXP: 100
-  winElo: 25
-  loseElo: -15
   menuSceneName: MainMenu
 --- !u!4 &1232514436
 Transform:
@@ -1960,6 +1954,7 @@ GameObject:
   - component: {fileID: 1923138151}
   - component: {fileID: 1923138150}
   - component: {fileID: 1923138149}
+  - component: {fileID: 1923138153}
   m_Layer: 0
   m_Name: UI_GameHUD
   m_TagString: Untagged
@@ -2032,6 +2027,21 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1923138153
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1923138148}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d821c2ebbe13c64488674a950265c7e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIPanelScaleFixer
+  matchWidthOrHeight: 0.5
+  referenceResolution: {x: 1920, y: 1080}
+  overrideReferenceResolution: 1
 --- !u!1 &1964602097
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -50,19 +50,24 @@ namespace ElementumDefense.Cards
 
         private void Awake()
         {
-            if (Instance != null && Instance != this)
-            {
-                Destroy(this);
-                return;
-            }
-
-            Instance = this;
-
             photonView = GetComponent<PhotonView>();
 
             if (photonView == null)
             {
                 Debug.LogError("[SabotageDraftManager] PhotonView not found!");
+            }
+
+            // Only claim Singleton for the LOCAL player's manager.
+            // Remote players' managers must NOT be destroyed — 
+            // PUN delivers RPCs to them by PhotonView ID.
+            if (photonView != null && photonView.IsMine)
+            {
+                if (Instance != null && Instance != this)
+                {
+                    Destroy(this);
+                    return;
+                }
+                Instance = this;
             }
 
             // ========== NAPRAWIONE: NIE szukamy PlayerCardManager tutaj ==========
@@ -434,9 +439,16 @@ namespace ElementumDefense.Cards
         [PunRPC]
         private void RPC_ReceiveSabotageRarities(int[] rarityInts)
         {
-            receivedSabotageRarities = rarityInts
+            CardRarity[] rarities = rarityInts
                 .Select(i => (CardRarity)i).ToArray();
-            sabotageRaritiesReceived = true;
+
+            // Forward to the LOCAL Instance
+            SabotageDraftManager target = Instance ?? this;
+            target.receivedSabotageRarities = rarities;
+            target.sabotageRaritiesReceived = true;
+
+            Debug.Log($"[SabotageDraftManager] RPC received rarities " +
+                      $"(forwarded to {(target == this ? "self" : "Instance")})");
         }
 
         [PunRPC]
@@ -450,11 +462,14 @@ namespace ElementumDefense.Cards
                 return;
             }
 
-            playerSelections[actorNumber] = sabotage;
+            // Forward to the LOCAL Instance
+            SabotageDraftManager target = Instance ?? this;
+            target.playerSelections[actorNumber] = sabotage;
 
             Player player = PhotonNetwork.CurrentRoom.GetPlayer(actorNumber);
             string pName = player?.NickName ?? $"Player{actorNumber}";
-            Debug.Log($"[SabotageDraftManager] RPC: {pName} → {sabotage.sabotageName}");
+            Debug.Log($"[SabotageDraftManager] RPC: {pName} → {sabotage.sabotageName}" +
+                      $" (forwarded to {(target == this ? "self" : "Instance")})");
         }
 
         private SabotageCardData FindSabotageByName(string name)

@@ -1,0 +1,50 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff47fe25f860a3b45936935129975cd9, type: 3}
+  m_Name: RankConfig
+  m_EditorClassIdentifier: Assembly-CSharp::ElementumDefense.Ranking.RankConfig
+  tiers:
+  - tierName: BRONZE
+    tierColor: {r: 0.8, g: 0.5, b: 0.2, a: 1}
+    tierIcon: III
+    minElo: 0
+    maxElo: 1199
+    matchRange: 400
+  - tierName: SILVER
+    tierColor: {r: 0.75, g: 0.75, b: 0.75, a: 1}
+    tierIcon: XDD
+    minElo: 1200
+    maxElo: 1499
+    matchRange: 350
+  - tierName: GOLD
+    tierColor: {r: 1, g: 0.84, b: 0, a: 1}
+    tierIcon: I
+    minElo: 1500
+    maxElo: 1799
+    matchRange: 300
+  - tierName: PLATINUM
+    tierColor: {r: 0, g: 1, b: 1, a: 1}
+    tierIcon: "\u2605"
+    minElo: 1800
+    maxElo: 2199
+    matchRange: 250
+  - tierName: DIAMOND
+    tierColor: {r: 0.68, g: 0.85, b: 0.9, a: 1}
+    tierIcon: "\u2666"
+    minElo: 2200
+    maxElo: 9999
+    matchRange: 200
+  startingElo: 1000
+  absoluteMinElo: 0
+  kFactorNew: 40
+  kFactorStandard: 32
+  newPlayerThreshold: 30

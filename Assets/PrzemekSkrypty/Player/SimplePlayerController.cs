@@ -1,5 +1,6 @@
-﻿using UnityEngine;
+using UnityEngine;
 using Photon.Pun;
+using ElementumDefense.Skins;
 
 /// <summary>
 /// Simple player movement controller for Tower Defense game.
@@ -25,6 +26,10 @@ public class SimplePlayerController : MonoBehaviour
 
     [Header("References")]
     [SerializeField] private Transform cameraTransform;
+
+    [Header("Skin")]
+    [Tooltip("ID used by SkinInventory to find equipped skin (e.g., 'PlayerCharacter')")]
+    [SerializeField] private string skinTargetId = "PlayerCharacter";
 
     // Components
     private CharacterController controller;
@@ -66,6 +71,24 @@ public class SimplePlayerController : MonoBehaviour
         {
             Cursor.lockState = CursorLockMode.Confined;
             Cursor.visible = true;
+        }
+
+        // Apply equipped character skin
+        ApplyCharacterSkin();
+    }
+
+    /// <summary>
+    /// Applies the currently equipped skin to this character.
+    /// Changes materials/tints based on SkinData settings.
+    /// </summary>
+    private void ApplyCharacterSkin()
+    {
+        if (SkinInventory.Instance == null) return;
+
+        SkinData applied = SkinInventory.Instance.ApplySkin(skinTargetId, gameObject);
+        if (applied != null)
+        {
+            Debug.Log($"[Player] Applied skin: {applied.skinName}");
         }
     }
 

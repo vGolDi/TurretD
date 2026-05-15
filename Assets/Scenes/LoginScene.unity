@@ -261,6 +261,8 @@ GameObject:
   - component: {fileID: 151654784}
   - component: {fileID: 151654783}
   - component: {fileID: 151654785}
+  - component: {fileID: 151654786}
+  - component: {fileID: 151654787}
   m_Layer: 0
   m_Name: PlayerCollection
   m_TagString: Untagged
@@ -337,8 +339,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 1eac524222192474ab5713121bed0983, type: 2}
   - {fileID: 11400000, guid: 1b4fda16bb2767541b5e9b9fc0ac3641, type: 2}
   allSabotages:
-  - {fileID: 11400000, guid: 0685fb11cefc2424aa46abbe094b34fc, type: 2}
-  - {fileID: 11400000, guid: ccd63efae43b6b4498c454a4e453a624, type: 2}
+  - {fileID: 11400000, guid: 6ad1f3e063103584e99c84f40d70de80, type: 2}
+  - {fileID: 11400000, guid: 9567c16d035060541a79e424ba18980e, type: 2}
   currentGold: 0
   currentCrystals: 0
   starterCards: []
@@ -468,6 +470,35 @@ MonoBehaviour:
   shopItems: []
   autoLoadFromResources: 1
   logPurchases: 1
+--- !u!114 &151654786
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 151654778}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 160116d9acd5f744dbe5fd05ece15312, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ElementumDefense.Skins.SkinInventory
+  allSkins:
+  - {fileID: 11400000, guid: 7cca014ac7e3b6e4c962282fd2c62773, type: 2}
+  modelChildTag: PlayerModel
+  modelChildName: Model
+--- !u!114 &151654787
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 151654778}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1f27e071572cd8841ba419b9a47a7daf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ElementumDefense.Achievements.AchievementManager
+  allAchievements: []
 --- !u!1 &815773119
 GameObject:
   m_ObjectHideFlags: 0
@@ -480,6 +511,7 @@ GameObject:
   - component: {fileID: 815773126}
   - component: {fileID: 815773125}
   - component: {fileID: 815773127}
+  - component: {fileID: 815773128}
   m_Layer: 5
   m_Name: UI_Login
   m_TagString: Untagged
@@ -573,6 +605,21 @@ MonoBehaviour:
   enableDrift: 1
   starColor: {r: 0.9, g: 0.85, b: 0.7, a: 1}
   dustColor: {r: 0.6, g: 0.55, b: 0.45, a: 1}
+--- !u!114 &815773128
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 815773119}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d821c2ebbe13c64488674a950265c7e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIPanelScaleFixer
+  matchWidthOrHeight: 0.5
+  referenceResolution: {x: 1920, y: 1080}
+  overrideReferenceResolution: 1
 --- !u!1 &1221414976
 GameObject:
   m_ObjectHideFlags: 0

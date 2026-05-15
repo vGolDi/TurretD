@@ -1,7 +1,7 @@
-/* ============================================
-   WAVE HUD — ART DECO
+ï»¿/* ============================================
+   WAVE HUD - ART DECO v2
    Positioned top-center, between health panels
-   Coexists with GameHUD & PlayerGoldHUD
+   Pure USS ornaments
    ============================================ */
 
 .wave-hud-root {
@@ -15,14 +15,44 @@
 }
 
 /* ============================================
-   WAVE PANEL — Top center cluster
-   Sits below gold HUD (top: ~55px)
+   WAVE PANEL - Top center cluster
    ============================================ */
 
 .wave-panel-anchor {
     margin-top: 52px;
     align-items: center;
     flex-direction: column;
+}
+
+/* ============================================
+   TOP ORNAMENT - above wave badge
+   ============================================ */
+.wave-top-ornament {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 4px;
+}
+.wave-orn-line {
+    width: 16px;
+    height: 1px;
+    background-color: rgba(245, 158, 11, 0.12);
+}
+.wave-orn-line-long {
+    width: 30px;
+    height: 1px;
+    background-color: rgba(245, 158, 11, 0.18);
+}
+.wave-orn-diamond-small {
+    width: 5px;
+    height: 5px;
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.25);
+    background-color: rgba(245, 158, 11, 0.05);
+    rotate: 45deg;
+    scale: 0.55 0.55;
+    margin-left: 4px;
+    margin-right: 4px;
 }
 
 /* ============================================
@@ -36,7 +66,8 @@
     background-color: rgba(10, 15, 26, 0.85);
     border-width: 1px;
     border-color: rgba(245, 158, 11, 0.15);
-    overflow: hidden;
+    overflow: visible;
+    position: relative;
     transition-property: border-color;
     transition-duration: 0.3s;
 }
@@ -49,6 +80,37 @@
     bottom: 4px;
     border-width: 1px;
     border-color: rgba(245, 158, 11, 0.04);
+}
+
+/* L-BRACKET CORNERS */
+.wave-corner {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+}
+.wave-corner-tl {
+    left: 2px; top: 2px;
+    border-left-width: 2px; border-top-width: 2px;
+    border-left-color: rgba(245, 158, 11, 0.3);
+    border-top-color: rgba(245, 158, 11, 0.3);
+}
+.wave-corner-tr {
+    right: 2px; top: 2px;
+    border-right-width: 2px; border-top-width: 2px;
+    border-right-color: rgba(245, 158, 11, 0.3);
+    border-top-color: rgba(245, 158, 11, 0.3);
+}
+.wave-corner-bl {
+    left: 2px; bottom: 2px;
+    border-left-width: 2px; border-bottom-width: 2px;
+    border-left-color: rgba(245, 158, 11, 0.3);
+    border-bottom-color: rgba(245, 158, 11, 0.3);
+}
+.wave-corner-br {
+    right: 2px; bottom: 2px;
+    border-right-width: 2px; border-bottom-width: 2px;
+    border-right-color: rgba(245, 158, 11, 0.3);
+    border-bottom-color: rgba(245, 158, 11, 0.3);
 }
 
 .wave-badge-accent-left {
@@ -106,8 +168,7 @@
 }
 
 /* ============================================
-   ENEMY PROGRESS BAR (below wave badge)
-   Shows "spawned X of Y enemies"
+   ENEMY PROGRESS BAR
    ============================================ */
 
 .wave-progress-container {
@@ -148,8 +209,30 @@
 }
 
 /* ============================================
+   PENDANT - below progress bar
+   ============================================ */
+.wave-pendant {
+    align-items: center;
+    margin-top: 3px;
+}
+.wave-pendant-stem {
+    width: 1px;
+    height: 8px;
+    background-color: rgba(245, 158, 11, 0.12);
+}
+.wave-pendant-diamond {
+    width: 5px;
+    height: 5px;
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.25);
+    background-color: rgba(245, 158, 11, 0.04);
+    rotate: 45deg;
+    scale: 0.5 0.5;
+    margin-top: -1px;
+}
+
+/* ============================================
    COUNTDOWN OVERLAY
-   Full-screen centered countdown
    ============================================ */
 
 .countdown-overlay {
@@ -248,7 +331,7 @@
 }
 
 /* ============================================
-   WAVE ANNOUNCEMENT (between-wave flash)
+   WAVE ANNOUNCEMENT
    ============================================ */
 
 .wave-announce-overlay {
@@ -334,6 +417,30 @@
 
 .wave-complete-visible {
     opacity: 1;
+}
+
+.wave-complete-ornament {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+.wave-complete-orn-line {
+    width: 50px;
+    height: 1px;
+    background-color: rgba(74, 222, 128, 0.2);
+}
+.wave-complete-orn-diamond {
+    width: 8px;
+    height: 8px;
+    border-width: 1px;
+    border-color: rgba(74, 222, 128, 0.4);
+    background-color: rgba(74, 222, 128, 0.1);
+    rotate: 45deg;
+    scale: 0.6 0.6;
+    margin-left: 8px;
+    margin-right: 8px;
 }
 
 .wave-complete-text {

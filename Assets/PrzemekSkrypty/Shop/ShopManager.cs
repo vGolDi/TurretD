@@ -1,4 +1,4 @@
-﻿// Assets/PrzemekSkrypty/Shop/ShopManager.cs
+// Assets/PrzemekSkrypty/Shop/ShopManager.cs
 using UnityEngine;
 using System;
 using System.Collections.Generic;
@@ -6,6 +6,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using ElementumDefense.Auth;
+using ElementumDefense.Skins;
 using ElementumDefense.Cards;
 using ElementumDefense.Lootbox;
 
@@ -70,13 +71,10 @@ namespace ElementumDefense.Shop
             // Subscribe to login event for per-user data loading
             if (AuthManager.Instance != null)
             {
-                AuthManager.Instance.OnLoginSuccess += OnUserLoggedIn;
+                AuthManager.Instance.OnCloudReady += OnUserLoggedIn;
 
                 // If user already logged in (e.g. scene reload)
-                if (AuthManager.Instance.IsLoggedIn)
-                {
-                    OnUserLoggedIn(AuthManager.Instance.CurrentUsername);
-                }
+                // OnCloudReady will fire after login verification
             }
             else
             {
@@ -90,7 +88,7 @@ namespace ElementumDefense.Shop
         {
             if (AuthManager.Instance != null)
             {
-                AuthManager.Instance.OnLoginSuccess -= OnUserLoggedIn;
+                AuthManager.Instance.OnCloudReady -= OnUserLoggedIn;
             }
 
             if (Instance == this) Instance = null;
@@ -248,8 +246,9 @@ namespace ElementumDefense.Shop
                     {
                         // === PLACEHOLDER ===
                         // When SkinInventory is implemented, do:
-                        // SkinInventory.Instance.UnlockSkin(item.skinReward);
-                        Debug.Log($"[ShopManager] → Skin purchased (placeholder): {item.skinReward.skinName}");
+                        if (SkinInventory.Instance != null)
+                            SkinInventory.Instance.UnlockSkin(item.skinReward.skinId);
+                        Debug.Log($"[ShopManager] Skin purchased: {item.skinReward.skinName}");
                     }
                     break;
 
@@ -272,7 +271,9 @@ namespace ElementumDefense.Shop
                     }
                     if (item.skinReward != null)
                     {
-                        Debug.Log($"[ShopManager] → Bundle skin (placeholder): {item.skinReward.skinName}");
+                        if (SkinInventory.Instance != null)
+                            SkinInventory.Instance.UnlockSkin(item.skinReward.skinId);
+                        Debug.Log($"[ShopManager] Bundle skin unlocked: {item.skinReward.skinName}");
                     }
                     if (item.consumableReward != null)
                     {
@@ -591,61 +592,60 @@ namespace ElementumDefense.Shop
         // SAVE / LOAD (Per-User)
         // ==========================================
 
-        private string GetSavePath()
-        {
-            string username = "Guest";
-
-            if (AuthManager.Instance != null && AuthManager.Instance.IsLoggedIn)
-                username = AuthManager.Instance.CurrentUsername;
-
-            return Path.Combine(Application.persistentDataPath, $"Shop_{username}.json");
-        }
 
         private void SavePurchaseData()
         {
             if (purchaseData == null) return;
 
-            try
+            string json = JsonUtility.ToJson(purchaseData, true);
+
+            if (CloudSaveManager.Instance != null)
             {
-                string json = JsonUtility.ToJson(purchaseData, true);
-                File.WriteAllText(GetSavePath(), json);
-            }
-            catch (Exception e)
-            {
-                Debug.LogError($"[ShopManager] Save failed: {e.Message}");
+                CloudSaveManager.Instance.SaveData("ShopManagerData", json);
             }
         }
 
         private void LoadPurchaseData()
         {
-            string path = GetSavePath();
-
-            if (File.Exists(path))
+            if (CloudSaveManager.Instance != null)
             {
-                try
-                {
-                    string json = File.ReadAllText(path);
-                    purchaseData = JsonUtility.FromJson<ShopSaveData>(json);
-                    Debug.Log($"[ShopManager] Loaded purchase data from {path}");
-                }
-                catch (Exception e)
-                {
-                    Debug.LogError($"[ShopManager] Load failed: {e.Message}");
-                    purchaseData = new ShopSaveData();
-                }
+                Debug.Log("[ShopManager] Loading shop data from PlayFab cloud...");
+                CloudSaveManager.Instance.LoadData("ShopManagerData",
+                    json =>
+                    {
+                        Debug.Log("[ShopManager] Cloud data loaded.");
+                        ProcessShopJson(json);
+                    },
+                    () =>
+                    {
+                        Debug.Log("[ShopManager] No cloud data - fresh shop.");
+                        purchaseData = new ShopSaveData();
+                        CheckAndResetLimits();
+                    });
             }
             else
             {
                 purchaseData = new ShopSaveData();
-                Debug.Log("[ShopManager] New user — fresh shop data created");
+                CheckAndResetLimits();
             }
-
-            CheckAndResetLimits();
         }
 
-        // ==========================================
-        // DEBUG
-        // ==========================================
+
+
+        private void ProcessShopJson(string json)
+        {
+            try
+            {
+                purchaseData = JsonUtility.FromJson<ShopSaveData>(json);
+                Debug.Log($"[ShopManager] Loaded {purchaseData.trackers.Count} purchase trackers");
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"[ShopManager] Load failed: {e.Message}");
+                purchaseData = new ShopSaveData();
+            }
+            CheckAndResetLimits();
+        }
 
         [ContextMenu("Print Shop Catalog")]
         private void DebugPrintCatalog()
@@ -671,7 +671,6 @@ namespace ElementumDefense.Shop
             Debug.Log($"=== PURCHASE HISTORY ===");
             Debug.Log($"Last Daily Reset: {purchaseData.lastDailyReset}");
             Debug.Log($"Last Weekly Reset: {purchaseData.lastWeeklyReset}");
-            Debug.Log($"Save Path: {GetSavePath()}");
 
             foreach (var t in purchaseData.trackers)
             {

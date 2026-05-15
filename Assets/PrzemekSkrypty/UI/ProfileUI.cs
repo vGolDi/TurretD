@@ -1,8 +1,9 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.UIElements;
 using System.Collections.Generic;
 using System.Linq;
 using ElementumDefense.Cards;
+using ElementumDefense.Skins;
 
 namespace ElementumDefense.UI
 {
@@ -634,6 +635,9 @@ namespace ElementumDefense.UI
                 case "sabotages":
                     PopulateSabotages();
                     break;
+                case "skins":
+                    PopulateSkins();
+                    break;
                 case "achievements":
                     PopulateAchievements();
                     break;
@@ -953,60 +957,221 @@ namespace ElementumDefense.UI
             if (achievementsGrid == null) return;
             achievementsGrid.Clear();
 
-            // Placeholder achievements
-            var achievements =
-                new (string icon, string name,
-                    string desc, bool unlocked)[]
+            var achMgr = Achievements.AchievementManager.Instance;
+            if (achMgr == null)
             {
-                ("⚔", "FIRST BLOOD",
-                    "Win your first match", false),
-                ("◆", "COLLECTOR",
-                    "Unlock 10 cards", false),
-                ("♛", "RANKED WARRIOR",
-                    "Reach Silver rank", false),
-                ("✦", "DECK MASTER",
-                    "Create 3 custom decks", false),
-                ("☉", "FORTUNE SEEKER",
-                    "Open 10 lootboxes", false),
-                ("⚖", "BIG SPENDER",
-                    "Spend 10000 gold total", false),
-                ("◇", "LEGENDARY FIND",
-                    "Unlock a legendary card", false),
-                ("♚", "DIAMOND LEAGUE",
-                    "Reach Diamond rank", false),
-            };
+                var msg = new Label("Achievement system loading...");
+                msg.style.color = new StyleColor(new Color(0.5f, 0.5f, 0.5f));
+                msg.style.unityTextAlign = TextAnchor.MiddleCenter;
+                msg.style.marginTop = 40;
+                msg.style.fontSize = 16;
+                achievementsGrid.Add(msg);
+                return;
+            }
+
+            // Re-check all achievements against LIVE stats before displaying.
+            // This catches achievements completed since last check (fixes async timing).
+            achMgr.CheckAllAchievements();
+
+            var achievements = achMgr.GetAllAchievements();
+            if (achievements.Count == 0)
+            {
+                var msg = new Label("No achievements available yet.");
+                msg.style.color = new StyleColor(new Color(0.5f, 0.5f, 0.5f));
+                msg.style.unityTextAlign = TextAnchor.MiddleCenter;
+                msg.style.marginTop = 40;
+                msg.style.fontSize = 16;
+                achievementsGrid.Add(msg);
+                return;
+            }
 
             foreach (var ach in achievements)
             {
-                var card = new VisualElement();
-                card.AddToClassList(
-                    "achievement-card");
-                if (!ach.unlocked)
-                    card.AddToClassList(
-                        "achievement-locked");
+                bool completed = achMgr.IsCompleted(ach.achievementId);
+                bool claimable = achMgr.IsClaimable(ach.achievementId);
+                int progress = achMgr.GetLiveProgress(ach);
+                int tier = achMgr.GetCurrentTier(ach.achievementId);
+                int target = ach.GetTargetForTier(tier);
 
+                var card = new VisualElement();
+                card.AddToClassList("achievement-card");
+
+                if (completed)
+                {
+                    // No locked class — fully done
+                }
+                else if (claimable)
+                {
+                    // Highlight claimable cards
+                    card.style.borderTopColor = new StyleColor(ach.GetRarityColor());
+                    card.style.borderTopWidth = 2;
+                    card.style.borderRightColor = new StyleColor(ach.GetRarityColor());
+                    card.style.borderRightWidth = 2;
+                    card.style.borderBottomColor = new StyleColor(ach.GetRarityColor());
+                    card.style.borderBottomWidth = 2;
+                }
+                else
+                {
+                    card.AddToClassList("achievement-locked");
+                }
+
+                // Rarity accent
+                card.style.borderLeftColor = new StyleColor(ach.GetRarityColor());
+                card.style.borderLeftWidth = 3;
+
+                // Icon
                 var iconWrap = new VisualElement();
-                iconWrap.AddToClassList(
-                    "achievement-icon");
-                var iconText = new Label(ach.icon);
-                iconText.AddToClassList(
-                    "achievement-icon-text");
+                iconWrap.AddToClassList("achievement-icon");
+                if (completed || claimable)
+                {
+                    iconWrap.style.backgroundColor = new StyleColor(
+                        new Color(ach.GetRarityColor().r, ach.GetRarityColor().g,
+                                  ach.GetRarityColor().b, claimable ? 0.25f : 0.15f));
+                }
+
+                var iconText = new Label(ach.iconEmoji);
+                iconText.AddToClassList("achievement-icon-text");
                 iconWrap.Add(iconText);
                 card.Add(iconWrap);
 
+                // Info
                 var info = new VisualElement();
-                info.AddToClassList(
-                    "achievement-info");
-                var nameL = new Label(ach.name);
-                nameL.AddToClassList(
-                    "achievement-name");
-                info.Add(nameL);
-                var descL = new Label(ach.desc);
-                descL.AddToClassList(
-                    "achievement-desc");
-                info.Add(descL);
-                card.Add(info);
+                info.AddToClassList("achievement-info");
 
+                var nameL = new Label(ach.achievementName);
+                nameL.AddToClassList("achievement-name");
+                if (completed)
+                    nameL.style.color = new StyleColor(ach.GetRarityColor());
+                else if (claimable)
+                    nameL.style.color = new StyleColor(new Color(1f, 0.95f, 0.7f));
+                info.Add(nameL);
+
+                var descL = new Label(ach.description);
+                descL.AddToClassList("achievement-desc");
+                info.Add(descL);
+
+                // === STATE: CLAIMABLE — show CLAIM button ===
+                if (claimable)
+                {
+                    // Show progress as complete
+                    var readyLabel = new Label($"✦ {progress} / {target} — READY!");
+                    readyLabel.style.fontSize = 9;
+                    readyLabel.style.color = new StyleColor(new Color(1f, 0.85f, 0.3f));
+                    readyLabel.style.marginTop = 2;
+                    info.Add(readyLabel);
+
+                    // Reward preview
+                    string rewardStr = "";
+                    if (ach.rewardGold > 0) rewardStr += $"🪙{ach.rewardGold} ";
+                    if (ach.rewardCrystals > 0) rewardStr += $"💎{ach.rewardCrystals} ";
+                    if (ach.rewardXP > 0) rewardStr += $"⭐{ach.rewardXP}";
+
+                    if (!string.IsNullOrEmpty(rewardStr.Trim()))
+                    {
+                        var rewardLabel = new Label(rewardStr.Trim());
+                        rewardLabel.style.fontSize = 9;
+                        rewardLabel.style.color = new StyleColor(
+                            new Color(1f, 0.85f, 0.3f, 0.8f));
+                        rewardLabel.style.marginTop = 2;
+                        info.Add(rewardLabel);
+                    }
+
+                    // CLAIM button
+                    var claimBtn = new Button(() =>
+                    {
+                        bool claimed = achMgr.ClaimAchievement(ach.achievementId);
+                        if (claimed)
+                        {
+                            Debug.Log($"[ProfileUI] Claimed achievement: {ach.achievementName}");
+                            RefreshCurrency();
+                            PopulateAchievements(); // Re-render
+                        }
+                    });
+                    claimBtn.text = "ODBIERZ";
+                    claimBtn.style.marginTop = 6;
+                    claimBtn.style.height = 24;
+                    claimBtn.style.fontSize = 11;
+                    claimBtn.style.color = new StyleColor(Color.white);
+                    claimBtn.style.backgroundColor = new StyleColor(
+                        new Color(ach.GetRarityColor().r * 0.7f,
+                                  ach.GetRarityColor().g * 0.7f,
+                                  ach.GetRarityColor().b * 0.7f, 0.9f));
+                    claimBtn.style.borderTopLeftRadius = 4;
+                    claimBtn.style.borderTopRightRadius = 4;
+                    claimBtn.style.borderBottomLeftRadius = 4;
+                    claimBtn.style.borderBottomRightRadius = 4;
+                    claimBtn.style.borderTopWidth = 0;
+                    claimBtn.style.borderBottomWidth = 0;
+                    claimBtn.style.borderLeftWidth = 0;
+                    claimBtn.style.borderRightWidth = 0;
+                    info.Add(claimBtn);
+                }
+                // === STATE: COMPLETED — already claimed ===
+                else if (completed)
+                {
+                    string tierText = ach.hasTiers
+                        ? $"✓ ODEBRANO (Tier {tier}/{ach.TierCount})"
+                        : "✓ ODEBRANO";
+                    var doneLabel = new Label(tierText);
+                    doneLabel.style.fontSize = 9;
+                    doneLabel.style.color = new StyleColor(
+                        new Color(0.2f, 0.9f, 0.4f));
+                    doneLabel.style.marginTop = 4;
+                    info.Add(doneLabel);
+                }
+                // === STATE: IN PROGRESS ===
+                else if (ach.trackType != Achievements.AchievementTrackType.Manual)
+                {
+                    var progressBar = new VisualElement();
+                    progressBar.style.height = 4;
+                    progressBar.style.marginTop = 4;
+                    progressBar.style.backgroundColor = new StyleColor(
+                        new Color(1f, 1f, 1f, 0.08f));
+                    progressBar.style.borderBottomLeftRadius = 2;
+                    progressBar.style.borderBottomRightRadius = 2;
+                    progressBar.style.borderTopLeftRadius = 2;
+                    progressBar.style.borderTopRightRadius = 2;
+
+                    float pct = target > 0
+                        ? Mathf.Clamp01((float)progress / target) * 100f
+                        : 0f;
+
+                    var fill = new VisualElement();
+                    fill.style.height = new StyleLength(Length.Percent(100));
+                    fill.style.width = new StyleLength(new Length(pct, LengthUnit.Percent));
+                    fill.style.backgroundColor = new StyleColor(ach.GetRarityColor());
+                    fill.style.borderBottomLeftRadius = 2;
+                    fill.style.borderBottomRightRadius = 2;
+                    fill.style.borderTopLeftRadius = 2;
+                    fill.style.borderTopRightRadius = 2;
+                    progressBar.Add(fill);
+
+                    info.Add(progressBar);
+
+                    var progressText = new Label($"{progress} / {target}");
+                    progressText.style.fontSize = 9;
+                    progressText.style.color = new StyleColor(new Color(0.5f, 0.5f, 0.6f));
+                    progressText.style.marginTop = 2;
+                    info.Add(progressText);
+
+                    // Rewards hint
+                    if (ach.rewardGold > 0 || ach.rewardCrystals > 0 || ach.rewardXP > 0)
+                    {
+                        string rewardStr = "";
+                        if (ach.rewardGold > 0) rewardStr += $"🪙{ach.rewardGold} ";
+                        if (ach.rewardCrystals > 0) rewardStr += $"💎{ach.rewardCrystals} ";
+                        if (ach.rewardXP > 0) rewardStr += $"⭐{ach.rewardXP}";
+
+                        var rewardLabel = new Label(rewardStr.Trim());
+                        rewardLabel.style.fontSize = 9;
+                        rewardLabel.style.color = new StyleColor(
+                            new Color(1f, 0.85f, 0.3f, 0.5f));
+                        rewardLabel.style.marginTop = 2;
+                        info.Add(rewardLabel);
+                    }
+                }
+
+                card.Add(info);
                 achievementsGrid.Add(card);
             }
         }
@@ -1169,6 +1334,181 @@ namespace ElementumDefense.UI
         private void CloseDetailPopup()
         {
             detailPopup?.AddToClassList("hidden");
+        }
+
+        // ══════════════════════════════
+        // SKINS TAB
+        // ══════════════════════════════
+
+        private void PopulateSkins()
+        {
+            if (contentSkins == null) return;
+            contentSkins.Clear();
+
+            var skinInv = SkinInventory.Instance;
+            if (skinInv == null)
+            {
+                var msg = new Label("Skin system loading...");
+                msg.style.color = new StyleColor(new Color(0.5f, 0.5f, 0.5f));
+                msg.style.unityTextAlign = TextAnchor.MiddleCenter;
+                msg.style.marginTop = 40;
+                msg.style.fontSize = 16;
+                contentSkins.Add(msg);
+                return;
+            }
+
+            var allSkins = skinInv.GetAllSkins();
+            if (allSkins.Count == 0)
+            {
+                var msg = new Label("No skins available yet.");
+                msg.style.color = new StyleColor(new Color(0.5f, 0.5f, 0.5f));
+                msg.style.unityTextAlign = TextAnchor.MiddleCenter;
+                msg.style.marginTop = 40;
+                msg.style.fontSize = 16;
+                contentSkins.Add(msg);
+                return;
+            }
+
+            // Group by target
+            var groups = allSkins
+                .GroupBy(s => string.IsNullOrEmpty(s.targetDisplayName) ? s.targetId : s.targetDisplayName)
+                .OrderBy(g => g.Key);
+
+            foreach (var group in groups)
+            {
+                // Section header
+                var header = new Label(group.Key?.ToUpper() ?? "OTHER");
+                header.AddToClassList("collection-card-type");
+                header.style.fontSize = 14;
+                header.style.marginTop = 16;
+                header.style.marginBottom = 8;
+                header.style.marginLeft = 8;
+                header.style.color = new StyleColor(new Color(0.7f, 0.8f, 0.9f));
+                header.style.letterSpacing = 2;
+                contentSkins.Add(header);
+
+                // Skin grid for this group
+                var grid = new VisualElement();
+                grid.style.flexDirection = FlexDirection.Row;
+                grid.style.flexWrap = Wrap.Wrap;
+                grid.style.paddingLeft = 4;
+                grid.style.paddingRight = 4;
+
+                foreach (var skin in group.OrderBy(s => s.rarity))
+                {
+                    bool owned = skinInv.OwnsSkin(skin);
+                    bool equipped = skinInv.IsSkinEquipped(skin.skinId);
+                    var el = CreateSkinElement(skin, owned, equipped);
+                    grid.Add(el);
+                }
+
+                contentSkins.Add(grid);
+            }
+        }
+
+        private VisualElement CreateSkinElement(SkinData skin, bool owned, bool equipped)
+        {
+            var wrapper = new VisualElement();
+            wrapper.AddToClassList("collection-card");
+            wrapper.style.width = 140;
+            wrapper.style.height = 180;
+            wrapper.style.marginRight = 8;
+            wrapper.style.marginBottom = 8;
+
+            if (!owned)
+                wrapper.AddToClassList("collection-card-locked");
+
+            // Inner
+            var inner = new VisualElement();
+            inner.AddToClassList("collection-card-inner");
+            wrapper.Add(inner);
+
+            // Rarity strip
+            var strip = new VisualElement();
+            strip.AddToClassList("card-rarity-strip");
+            strip.style.backgroundColor = new StyleColor(skin.GetRarityColor());
+            wrapper.Add(strip);
+
+            // Icon
+            var iconSection = new VisualElement();
+            iconSection.AddToClassList("collection-card-icon-section");
+            var icon = new VisualElement();
+            icon.AddToClassList("collection-card-icon");
+            if (skin.previewIcon != null)
+                icon.style.backgroundImage = new StyleBackground(skin.previewIcon);
+            else
+            {
+                // Placeholder with tint color
+                icon.style.backgroundColor = new StyleColor(
+                    new Color(skin.skinTint.r, skin.skinTint.g, skin.skinTint.b, 0.3f));
+            }
+            iconSection.Add(icon);
+            wrapper.Add(iconSection);
+
+            // Info section
+            var info = new VisualElement();
+            info.AddToClassList("collection-card-info");
+
+            var nameLabel = new Label(skin.skinName);
+            nameLabel.AddToClassList("collection-card-name");
+            nameLabel.style.fontSize = 11;
+            info.Add(nameLabel);
+
+            var rarityLabel = new Label(skin.rarity.ToString().ToUpper());
+            rarityLabel.AddToClassList("collection-card-type");
+            rarityLabel.style.color = new StyleColor(skin.GetRarityColor());
+            rarityLabel.style.fontSize = 9;
+            info.Add(rarityLabel);
+
+            // Status / action
+            if (owned)
+            {
+                if (equipped)
+                {
+                    var badge = new Label("\u2713 EQUIPPED");
+                    badge.style.color = new StyleColor(new Color(0.2f, 0.9f, 0.4f));
+                    badge.style.fontSize = 10;
+                    badge.style.unityTextAlign = TextAnchor.MiddleCenter;
+                    badge.style.marginTop = 4;
+                    info.Add(badge);
+
+                    // Click to unequip
+                    wrapper.RegisterCallback<ClickEvent>(e =>
+                    {
+                        SkinInventory.Instance?.UnequipSkin(skin.targetId);
+                        PopulateSkins();
+                    });
+                }
+                else
+                {
+                    var badge = new Label("OWNED");
+                    badge.style.color = new StyleColor(new Color(0.6f, 0.7f, 0.8f));
+                    badge.style.fontSize = 10;
+                    badge.style.unityTextAlign = TextAnchor.MiddleCenter;
+                    badge.style.marginTop = 4;
+                    info.Add(badge);
+
+                    // Click to equip
+                    wrapper.RegisterCallback<ClickEvent>(e =>
+                    {
+                        SkinInventory.Instance?.EquipSkin(skin);
+                        PopulateSkins();
+                    });
+                }
+            }
+            else
+            {
+                // Not owned - direct to shop
+                var shopLabel = new Label("BUY IN SHOP");
+                shopLabel.style.color = new StyleColor(new Color(0.5f, 0.5f, 0.5f));
+                shopLabel.style.fontSize = 10;
+                shopLabel.style.unityTextAlign = TextAnchor.MiddleCenter;
+                shopLabel.style.marginTop = 4;
+                info.Add(shopLabel);
+            }
+
+            wrapper.Add(info);
+            return wrapper;
         }
 
         // ══════════════════════════════

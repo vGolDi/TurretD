@@ -1,11 +1,13 @@
-using UnityEngine;
+Ôªøusing UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine.SceneManagement;
 using ElementumDefense.Cards;
+using ElementumDefense.Ranked;
 using ElementumDefense.UI;
 
-public class NetworkManager : MonoBehaviourPunCallbacks
+public class NetworkManager :
+    MonoBehaviourPunCallbacks
 {
     [Header("Matchmaking Settings")]
     [SerializeField]
@@ -20,10 +22,33 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     private string[] availableArenaTypes =
         { "Fire", "Ice", "Earth" };
 
-    private const string ARENA_TYPE_KEY = "arenaType";
+    // ==========================================
+    // PROPERTY KEYS
+    // ==========================================
+
+    private const string ARENA_TYPE_KEY =
+        "arenaType";
+    private const string ELO_PROP_KEY = "elo";
+    private const string BUCKET_PROP_KEY =
+        "eloBucket";
+    private const string GAMEMODE_PROP_KEY = "gm";
+    private const string HOST_ELO_KEY = "hostElo";
+
+    // ==========================================
+    // STATE
+    // ==========================================
 
     private LobbyUI lobbyUI;
     private bool isLoadingGame = false;
+
+    // Ranked matchmaking state
+    private int myBucket;
+    private int searchAttempt = 0;
+    private bool isRankedSearch = false;
+
+    // ==========================================
+    // START
+    // ==========================================
 
     private void Start()
     {
@@ -32,26 +57,27 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
         lobbyUI = FindFirstObjectByType<LobbyUI>();
 
+        // Ustaw ELO jako custom property gracza
+        SyncPlayerEloProperty();
+
         if (PhotonNetwork.IsConnected)
         {
             if (PhotonNetwork.InRoom)
             {
                 Debug.LogWarning(
-                    "[NetworkManager] Already in room. " +
-                    "Leaving...");
+                    "[NetworkManager] " +
+                    "Already in room. Leaving...");
                 PhotonNetwork.LeaveRoom();
             }
             else if (PhotonNetwork.InLobby)
             {
                 Debug.Log(
-                    "[NetworkManager] Already in Lobby.");
+                    "[NetworkManager] " +
+                    "Already in Lobby.");
                 OnJoinedLobby();
             }
             else
             {
-                Debug.Log(
-                    "[NetworkManager] Connected. " +
-                    "Joining Lobby...");
                 UpdateUI("Joining lobby...");
                 PhotonNetwork.JoinLobby();
             }
@@ -63,6 +89,38 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         }
     }
 
+    // ==========================================
+    // PHOTON PLAYER PROPERTIES
+    // ==========================================
+
+    /// <summary>
+    /// Wysy≈Ça ELO gracza jako Photon Custom
+    /// Property, ≈ºeby przeciwnik m√≥g≈Ç je
+    /// odczytaƒá w trakcie meczu.
+    /// </summary>
+    private void SyncPlayerEloProperty()
+    {
+        int elo =
+            PlayerCollection.Instance?.GetElo()
+            ?? EloCalculator.DEFAULT_ELO;
+
+        var props =
+            new ExitGames.Client.Photon.Hashtable
+            {
+                { ELO_PROP_KEY, elo }
+            };
+        PhotonNetwork.LocalPlayer
+            .SetCustomProperties(props);
+
+        Debug.Log(
+            $"[NetworkManager] Synced ELO " +
+            $"property: {elo}");
+    }
+
+    // ==========================================
+    // PHOTON CALLBACKS
+    // ==========================================
+
     #region Photon Callbacks
 
     public override void OnConnectedToMaster()
@@ -71,12 +129,17 @@ public class NetworkManager : MonoBehaviourPunCallbacks
             "[NetworkManager] Connected to Photon");
         UpdateUI("Connected! Joining lobby...");
         lobbyUI?.SetStatusConnected();
+
+        // Od≈õwie≈º ELO property po reconnect
+        SyncPlayerEloProperty();
+
         PhotonNetwork.JoinLobby();
     }
 
     public override void OnJoinedLobby()
     {
-        Debug.Log("[NetworkManager] Joined lobby");
+        Debug.Log(
+            "[NetworkManager] Joined lobby");
         lobbyUI?.SetStatusSearching();
         StartMatchmaking();
     }
@@ -86,6 +149,12 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         Debug.Log(
             $"[NetworkManager] Joined room " +
             $"'{PhotonNetwork.CurrentRoom.Name}'");
+
+        // Weryfikacja ELO (safety check)
+        if (isRankedSearch)
+        {
+            LogEloCompatibility();
+        }
 
         UpdateUI("Waiting for opponent...");
         lobbyUI?.SetStatusConnected();
@@ -105,13 +174,13 @@ public class NetworkManager : MonoBehaviourPunCallbacks
             $"[NetworkManager] Player joined: " +
             $"{newPlayer.NickName}");
 
-        UpdateUI("Opponent found!");
+        // Odczytaj rangƒô przeciwnika
+        string rank = GetPlayerRankDisplay(
+            newPlayer);
 
-        string rank = "UNKNOWN";
-        // Could fetch rank from custom properties
+        UpdateUI("Opponent found!");
         lobbyUI?.SetOpponentJoined(
             newPlayer.NickName, rank);
-
         lobbyUI?.UpdatePlayerCount(
             PhotonNetwork.CurrentRoom.PlayerCount,
             PhotonNetwork.CurrentRoom.MaxPlayers);
@@ -132,7 +201,6 @@ public class NetworkManager : MonoBehaviourPunCallbacks
             PhotonNetwork.CurrentRoom.PlayerCount,
             PhotonNetwork.CurrentRoom.MaxPlayers);
         lobbyUI?.SetCancelEnabled(true);
-
         isLoadingGame = false;
     }
 
@@ -140,7 +208,8 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         DisconnectCause cause)
     {
         Debug.LogWarning(
-            $"[NetworkManager] Disconnected: {cause}");
+            $"[NetworkManager] " +
+            $"Disconnected: {cause}");
         UpdateUI($"Disconnected: {cause}");
         lobbyUI?.SetStatusError();
         lobbyUI?.SetCancelEnabled(true);
@@ -149,45 +218,191 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     public override void OnJoinRandomFailed(
         short returnCode, string message)
     {
-        Debug.Log(
-            "[NetworkManager] No match. Creating...");
-        UpdateUI("Creating new room...");
-        CreateRoom();
+        if (isRankedSearch)
+        {
+            HandleRankedSearchFailed();
+        }
+        else
+        {
+            Debug.Log(
+                "[NetworkManager] No match. " +
+                "Creating...");
+            UpdateUI("Creating new room...");
+            CreateCasualRoom();
+        }
     }
 
     #endregion
+
+    // ==========================================
+    // MATCHMAKING ‚Äî DISPATCHER
+    // ==========================================
 
     #region Matchmaking
 
     private void StartMatchmaking()
     {
-        string modeString = "Casual";
+        GameMode mode = GameMode.Casual;
         if (PlayerCollection.Instance != null)
-            modeString = PlayerCollection.Instance
-                .SelectedGameMode.ToString();
+            mode = PlayerCollection.Instance
+                .SelectedGameMode;
 
-        UpdateUI($"Searching for {modeString} match...");
+        isRankedSearch =
+            (mode == GameMode.Ranked);
 
+        if (isRankedSearch)
+            StartRankedMatchmaking();
+        else
+            StartCasualMatchmaking();
+    }
+
+    // ==========================================
+    // CASUAL MATCHMAKING
+    // ==========================================
+
+    private void StartCasualMatchmaking()
+    {
+        UpdateUI(
+            "Searching for Casual match...");
         Debug.Log(
-            $"[NetworkManager] Searching " +
-            $"{modeString}...");
+            "[NetworkManager] Searching Casual...");
 
         var props =
             new ExitGames.Client.Photon.Hashtable
             {
-                { "gm", modeString }
+                { GAMEMODE_PROP_KEY, "Casual" }
             };
 
         PhotonNetwork.JoinRandomRoom(
             props, maxPlayersPerRoom);
     }
 
-    private void CreateRoom()
+    private void CreateCasualRoom()
     {
-        string modeString = "Casual";
-        if (PlayerCollection.Instance != null)
-            modeString = PlayerCollection.Instance
-                .SelectedGameMode.ToString();
+        RoomOptions options = new RoomOptions
+        {
+            MaxPlayers = maxPlayersPerRoom,
+            IsVisible = true,
+            IsOpen = true,
+            CustomRoomProperties =
+                new ExitGames.Client.Photon
+                    .Hashtable
+                {
+                    { GAMEMODE_PROP_KEY, "Casual" }
+                },
+            CustomRoomPropertiesForLobby =
+                new string[] { GAMEMODE_PROP_KEY }
+        };
+
+        string roomName =
+            $"Casual_{Random.Range(1000, 9999)}";
+        PhotonNetwork.CreateRoom(
+            roomName, options);
+
+        Debug.Log(
+            $"[NetworkManager] Creating " +
+            $"'{roomName}'");
+    }
+
+    // ==========================================
+    // RANKED MATCHMAKING
+    // ==========================================
+
+    /// <summary>
+    /// Rozpoczyna szukanie rankingowe:
+    /// 1) Oblicza bucket gracza
+    /// 2) Szuka pokoju w tym buckecie
+    /// 3) Je≈õli brak ‚Üí ¬±1 bucket
+    /// 4) Je≈õli brak ‚Üí tworzy pok√≥j
+    /// </summary>
+    private void StartRankedMatchmaking()
+    {
+        int elo =
+            PlayerCollection.Instance?.GetElo()
+            ?? EloCalculator.DEFAULT_ELO;
+
+        myBucket = EloCalculator.GetBucket(elo);
+        searchAttempt = 0;
+
+        (int searchMin, int searchMax) =
+            EloCalculator.GetSearchRange(elo);
+
+        string rankName =
+            EloCalculator.GetRankName(elo);
+
+        Debug.Log(
+            $"[Ranked] Starting search. " +
+            $"ELO: {elo}, Bucket: {myBucket}, " +
+            $"Rank: {rankName}");
+
+        UpdateUI(
+            $"Searching Ranked... " +
+            $"{rankName} ({elo} ELO)\n" +
+            $"Range: {searchMin}‚Äì{searchMax}");
+
+        TryJoinRankedRoom(myBucket);
+    }
+
+    /// <summary>
+    /// Pr√≥buje do≈ÇƒÖczyƒá do pokoju w danym buckecie.
+    /// </summary>
+    private void TryJoinRankedRoom(int bucket)
+    {
+        Debug.Log(
+            $"[Ranked] Trying bucket {bucket} " +
+            $"(attempt {searchAttempt})");
+
+        var props =
+            new ExitGames.Client.Photon.Hashtable
+            {
+                { GAMEMODE_PROP_KEY, "Ranked" },
+                { BUCKET_PROP_KEY, bucket }
+            };
+
+        PhotonNetwork.JoinRandomRoom(
+            props, maxPlayersPerRoom);
+    }
+
+    /// <summary>
+    /// Obs≈Çuguje brak pokoju w szukanym buckecie.
+    /// Rozszerza szukanie o sƒÖsiednie buckety,
+    /// potem tworzy pok√≥j.
+    /// </summary>
+    private void HandleRankedSearchFailed()
+    {
+        searchAttempt++;
+
+        // Krok 1: ni≈ºszy bucket
+        if (searchAttempt == 1 && myBucket > 0)
+        {
+            UpdateUI("Expanding search range...");
+            TryJoinRankedRoom(myBucket - 1);
+            return;
+        }
+
+        // Krok 2: wy≈ºszy bucket
+        // (albo je≈õli bucket by≈Ç 0)
+        if (searchAttempt <= 2)
+        {
+            UpdateUI("Expanding search range...");
+            TryJoinRankedRoom(myBucket + 1);
+            return;
+        }
+
+        // Krok 3: stw√≥rz pok√≥j
+        UpdateUI("Creating ranked room...");
+        CreateRankedRoom();
+    }
+
+    /// <summary>
+    /// Tworzy pok√≥j rankingowy z bucketem
+    /// i ELO hosta.
+    /// </summary>
+    private void CreateRankedRoom()
+    {
+        int elo =
+            PlayerCollection.Instance?.GetElo()
+            ?? EloCalculator.DEFAULT_ELO;
 
         RoomOptions options = new RoomOptions
         {
@@ -195,26 +410,118 @@ public class NetworkManager : MonoBehaviourPunCallbacks
             IsVisible = true,
             IsOpen = true,
             CustomRoomProperties =
-                new ExitGames.Client.Photon.Hashtable
+                new ExitGames.Client.Photon
+                    .Hashtable
                 {
-                    { "gm", modeString }
+                    { GAMEMODE_PROP_KEY, "Ranked" },
+                    { BUCKET_PROP_KEY, myBucket },
+                    { HOST_ELO_KEY, elo }
                 },
             CustomRoomPropertiesForLobby =
-                new string[] { "gm" }
+                new string[]
+                {
+                    GAMEMODE_PROP_KEY,
+                    BUCKET_PROP_KEY
+                }
         };
 
         string roomName =
-            $"{modeString}_{Random.Range(1000, 9999)}";
-        PhotonNetwork.CreateRoom(roomName, options);
+            $"Ranked_B{myBucket}_" +
+            $"{Random.Range(1000, 9999)}";
+        PhotonNetwork.CreateRoom(
+            roomName, options);
 
         Debug.Log(
-            $"[NetworkManager] Creating " +
-            $"'{roomName}'");
+            $"[Ranked] Created room " +
+            $"'{roomName}' " +
+            $"(Bucket: {myBucket}, ELO: {elo})");
+    }
+
+    // ==========================================
+    // ELO VERIFICATION
+    // ==========================================
+
+    /// <summary>
+    /// Loguje kompatybilno≈õƒá ELO w pokoju.
+    /// Nie roz≈ÇƒÖcza ‚Äî bucket system powinien
+    /// zapobiec du≈ºym rozbie≈ºno≈õciom.
+    /// </summary>
+    private void LogEloCompatibility()
+    {
+        int myElo =
+            PlayerCollection.Instance?.GetElo()
+            ?? EloCalculator.DEFAULT_ELO;
+
+        // Sprawd≈∫ ELO hosta
+        var roomProps =
+            PhotonNetwork.CurrentRoom
+                .CustomProperties;
+
+        if (roomProps.TryGetValue(
+            HOST_ELO_KEY, out object hostEloObj))
+        {
+            int hostElo = (int)hostEloObj;
+            bool compatible =
+                EloCalculator.CanMatch(
+                    myElo, hostElo);
+
+            Debug.Log(
+                $"[Ranked] ELO check ‚Äî " +
+                $"Me: {myElo}, Host: {hostElo}, " +
+                $"Compatible: {compatible}");
+
+            if (!compatible)
+            {
+                Debug.LogWarning(
+                    $"[Ranked] Wide ELO gap! " +
+                    $"{myElo} vs {hostElo}");
+            }
+        }
+
+        // Sprawd≈∫ innych graczy
+        foreach (var kvp in
+            PhotonNetwork.CurrentRoom.Players)
+        {
+            Player p = kvp.Value;
+            if (!p.IsLocal &&
+                p.CustomProperties.TryGetValue(
+                    ELO_PROP_KEY,
+                    out object eloObj))
+            {
+                int otherElo = (int)eloObj;
+                bool ok = EloCalculator.CanMatch(
+                    myElo, otherElo);
+
+                Debug.Log(
+                    $"[Ranked] vs {p.NickName}: " +
+                    $"{otherElo} ELO, " +
+                    $"OK: {ok}");
+            }
+        }
+    }
+
+    /// <summary>
+    /// Zwraca czytelny string rangi gracza
+    /// (do wy≈õwietlenia w lobby).
+    /// </summary>
+    private string GetPlayerRankDisplay(
+        Player player)
+    {
+        if (player.CustomProperties.TryGetValue(
+            ELO_PROP_KEY, out object eloObj))
+        {
+            int elo = (int)eloObj;
+            return $"{EloCalculator.GetRankName(elo)}" +
+                   $" ({elo})";
+        }
+
+        return "UNRANKED";
     }
 
     private void CheckForExistingOpponent()
     {
-        if (PhotonNetwork.CurrentRoom == null) return;
+        if (PhotonNetwork.CurrentRoom == null)
+            return;
 
         foreach (var kvp in
             PhotonNetwork.CurrentRoom.Players)
@@ -222,8 +529,10 @@ public class NetworkManager : MonoBehaviourPunCallbacks
             Player p = kvp.Value;
             if (!p.IsLocal)
             {
+                string rank =
+                    GetPlayerRankDisplay(p);
                 lobbyUI?.SetOpponentJoined(
-                    p.NickName, "UNKNOWN");
+                    p.NickName, rank);
                 break;
             }
         }
@@ -231,12 +540,17 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
     #endregion
 
+    // ==========================================
+    // GAME START
+    // ==========================================
+
     #region Game Start
 
     private void CheckPlayerCount()
     {
         if (isLoadingGame) return;
-        if (PhotonNetwork.CurrentRoom == null) return;
+        if (PhotonNetwork.CurrentRoom == null)
+            return;
 
         int count =
             PhotonNetwork.CurrentRoom.PlayerCount;
@@ -244,11 +558,13 @@ public class NetworkManager : MonoBehaviourPunCallbacks
             PhotonNetwork.CurrentRoom.MaxPlayers;
 
         Debug.Log(
-            $"[NetworkManager] Players: {count}/{max}");
+            $"[NetworkManager] " +
+            $"Players: {count}/{max}");
 
         if (count >= max)
         {
-            UpdateUI("Match found! Preparing...");
+            UpdateUI(
+                "Match found! Preparing...");
             lobbyUI?.SetCancelEnabled(false);
 
             if (PhotonNetwork.IsMasterClient)
@@ -274,8 +590,8 @@ public class NetworkManager : MonoBehaviourPunCallbacks
                     false;
 
                 Debug.Log(
-                    "[NetworkManager] Starting game. " +
-                    $"Arena: {arena}");
+                    "[NetworkManager] " +
+                    $"Starting game. Arena: {arena}");
                 photonView.RPC(
                     "RPC_LoadGameScene",
                     RpcTarget.All);
@@ -308,7 +624,8 @@ public class NetworkManager : MonoBehaviourPunCallbacks
             0.5f, "Loading assets...");
 
         AsyncOperation asyncLoad =
-            SceneManager.LoadSceneAsync(gameSceneName);
+            SceneManager.LoadSceneAsync(
+                gameSceneName);
         asyncLoad.allowSceneActivation = false;
 
         while (!asyncLoad.isDone)
@@ -331,7 +648,8 @@ public class NetworkManager : MonoBehaviourPunCallbacks
                     1f, "Entering arena...");
                 yield return
                     new WaitForSeconds(0.5f);
-                asyncLoad.allowSceneActivation = true;
+                asyncLoad.allowSceneActivation =
+                    true;
             }
 
             yield return null;
@@ -339,6 +657,10 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     }
 
     #endregion
+
+    // ==========================================
+    // UI HELPERS
+    // ==========================================
 
     #region UI Helpers
 
@@ -352,6 +674,9 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         Debug.Log(
             "[NetworkManager] Cancelling...");
 
+        isRankedSearch = false;
+        searchAttempt = 0;
+
         if (PhotonNetwork.InRoom)
             PhotonNetwork.LeaveRoom();
 
@@ -360,287 +685,3 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
     #endregion
 }
-//using UnityEngine;
-//using Photon.Pun;
-//using Photon.Realtime;
-//using TMPro;
-//using UnityEngine.SceneManagement;
-//using ElementumDefense.Cards; // Potrzebne do GameMode i PlayerCollection
-
-//public class NetworkManager : MonoBehaviourPunCallbacks
-//{
-//    [Header("UI References")]
-//    [SerializeField] private TMP_Text statusText;
-//    [SerializeField] private TMP_Text playerCountText;
-//    [SerializeField] private GameObject waitingText;
-//    [SerializeField] private GameObject cancelButton;
-
-//    [Header("Matchmaking Settings")]
-//    [SerializeField] private byte maxPlayersPerRoom = 2;
-//    [SerializeField] private string gameVersion = "0.1";
-//    [SerializeField] private string gameSceneName = "GameScene"; // Upewnij siÍ, øe nazwa jest poprawna!
-
-//    [Header("Arena Settings")]
-//    [SerializeField] private string[] availableArenaTypes = { "Fire", "Ice", "Earth" };
-//    private const string ARENA_TYPE_KEY = "arenaType";
-
-//    private bool isLoadingGame = false;
-
-//    private void Start()
-//    {
-//        PhotonNetwork.AutomaticallySyncScene = false;
-//        PhotonNetwork.GameVersion = gameVersion;
-
-//        // Reset UI na starcie
-//        if (cancelButton != null) cancelButton.SetActive(false);
-//        if (waitingText != null) waitingText.SetActive(false);
-//        UpdatePlayerCountUI(0, 0); // Reset licznika
-
-//        // ====================================================
-//        // POPRAWKA: Sprawdzenie stanu po≥πczenia
-//        // ====================================================
-//        if (PhotonNetwork.IsConnected)
-//        {
-//            if (PhotonNetwork.InRoom)
-//            {
-//                // B≥πd: Gracz wszed≥ na scenÍ lobby, ale jest juø w pokoju? Wychodzimy.
-//                Debug.LogWarning("[NetworkManager] Player already in room. Leaving...");
-//                PhotonNetwork.LeaveRoom();
-//            }
-//            else if (PhotonNetwork.InLobby)
-//            {
-//                // Jesteúmy w lobby i po≥πczeni - od razu szukamy meczu
-//                Debug.Log("[NetworkManager] Already in Lobby. Starting Matchmaking...");
-//                OnJoinedLobby();
-//            }
-//            else
-//            {
-//                // Po≥πczeni, ale nie w lobby - wchodzimy do lobby
-//                Debug.Log("[NetworkManager] Connected but not in Lobby. Joining Lobby...");
-//                PhotonNetwork.JoinLobby();
-//            }
-//        }
-//        else
-//        {
-//            // Niepo≥πczeni - standardowa procedura
-//            UpdateStatus("Connecting to server...");
-//            PhotonNetwork.ConnectUsingSettings();
-//        }
-//    }
-
-//    #region Photon Callbacks
-
-//    public override void OnConnectedToMaster()
-//    {
-//        Debug.Log("[NetworkManager] Connected to Photon Cloud");
-//        UpdateStatus("Connected! Joining Lobby...");
-//        PhotonNetwork.JoinLobby();
-//    }
-
-//    public override void OnJoinedLobby()
-//    {
-//        Debug.Log("[NetworkManager] Joined lobby");
-//        StartMatchmaking();
-//    }
-
-//    public override void OnJoinedRoom()
-//    {
-//        Debug.Log($"[NetworkManager] Joined room '{PhotonNetwork.CurrentRoom.Name}'");
-//        UpdateStatus("Room joined! Waiting for opponent...");
-
-//        UpdatePlayerCount(); // Aktualizuj licznik 1/2
-
-//        // Pokaø przycisk wyjúcia
-//        if (cancelButton != null) cancelButton.SetActive(true);
-
-//        // Jeúli czekamy na drugiego gracza
-//        if (PhotonNetwork.CurrentRoom.PlayerCount < maxPlayersPerRoom)
-//        {
-//            if (waitingText != null) waitingText.SetActive(true);
-//        }
-
-//        CheckPlayerCount();
-//    }
-
-//    public override void OnPlayerEnteredRoom(Player newPlayer)
-//    {
-//        Debug.Log($"[NetworkManager] Player {newPlayer.NickName} entered room");
-//        UpdateStatus("Player joined!");
-//        UpdatePlayerCount();
-//        CheckPlayerCount();
-//    }
-
-//    public override void OnPlayerLeftRoom(Player otherPlayer)
-//    {
-//        Debug.Log($"[NetworkManager] Player {otherPlayer.NickName} left room");
-//        UpdateStatus("Player left. Waiting for new opponent...");
-//        UpdatePlayerCount();
-
-//        if (waitingText != null) waitingText.SetActive(true);
-//        // Anuluj ≥adowanie gry jeúli ktoú wyjdzie w ostatniej chwili
-//        isLoadingGame = false;
-//    }
-
-//    public override void OnDisconnected(DisconnectCause cause)
-//    {
-//        Debug.LogWarning($"[NetworkManager] Disconnected: {cause}");
-//        UpdateStatus($"Disconnected: {cause}");
-//        if (cancelButton != null) cancelButton.SetActive(false);
-//    }
-
-//    public override void OnJoinRandomFailed(short returnCode, string message)
-//    {
-//        Debug.Log("[NetworkManager] No match found. Creating new room...");
-//        UpdateStatus("Creating new room...");
-//        CreateRoom();
-//    }
-
-//    #endregion
-
-//    #region Matchmaking Logic
-
-//    private void StartMatchmaking()
-//    {
-//        UpdateStatus("Searching for match...");
-
-//        // 1. Pobierz tryb gry z PlayerCollection
-//        string modeString = "Casual"; // Default
-//        if (PlayerCollection.Instance != null)
-//        {
-//            modeString = PlayerCollection.Instance.SelectedGameMode.ToString();
-//        }
-
-//        Debug.Log($"[NetworkManager] Looking for {modeString} game...");
-
-//        // 2. Ustaw filtr: Szukamy pokoju z odpowiednim trybem
-//        ExitGames.Client.Photon.Hashtable expectedCustomRoomProperties = new ExitGames.Client.Photon.Hashtable
-//        {
-//            { "gm", modeString }
-//        };
-
-//        // Szukaj pokoju z tymi w≥aúciwoúciami
-//        PhotonNetwork.JoinRandomRoom(expectedCustomRoomProperties, maxPlayersPerRoom);
-//    }
-
-//    private void CreateRoom()
-//    {
-//        string modeString = "Casual";
-//        if (PlayerCollection.Instance != null)
-//        {
-//            modeString = PlayerCollection.Instance.SelectedGameMode.ToString();
-//        }
-
-//        RoomOptions roomOptions = new RoomOptions
-//        {
-//            MaxPlayers = maxPlayersPerRoom,
-//            IsVisible = true,
-//            IsOpen = true,
-//            // WAØNE: Ustawiamy w≥aúciwoúci pokoju (gm = GameMode)
-//            CustomRoomProperties = new ExitGames.Client.Photon.Hashtable { { "gm", modeString } },
-//            CustomRoomPropertiesForLobby = new string[] { "gm" }
-//        };
-
-//        string roomName = $"{modeString}_{Random.Range(1000, 9999)}";
-//        PhotonNetwork.CreateRoom(roomName, roomOptions);
-//        Debug.Log($"[NetworkManager] Creating {modeString} room '{roomName}'");
-//    }
-
-//    #endregion
-
-//    #region Game Start Logic
-
-//    private void CheckPlayerCount()
-//    {
-//        if (isLoadingGame) return;
-
-//        Debug.Log($"[NetworkManager] CheckPlayerCount: {PhotonNetwork.CurrentRoom.PlayerCount}/{maxPlayersPerRoom}");
-
-//        if (PhotonNetwork.CurrentRoom.PlayerCount >= maxPlayersPerRoom)
-//        {
-//            UpdateStatus("Match found! Preparing game...");
-//            if (waitingText != null) waitingText.SetActive(false);
-//            if (cancelButton != null) cancelButton.SetActive(false); // Blokuj wyjúcie jak gra startuje
-
-//            // Tylko Master Client inicjuje start
-//            if (PhotonNetwork.IsMasterClient)
-//            {
-//                // 1. Losuj arenÍ
-//                string chosenArena = availableArenaTypes[Random.Range(0, availableArenaTypes.Length)];
-
-//                // 2. Zapisz w pokoju
-//                ExitGames.Client.Photon.Hashtable roomProps = new ExitGames.Client.Photon.Hashtable
-//                {
-//                    { ARENA_TYPE_KEY, chosenArena }
-//                };
-//                PhotonNetwork.CurrentRoom.SetCustomProperties(roomProps);
-
-//                // 3. Zamknij pokÛj
-//                PhotonNetwork.CurrentRoom.IsOpen = false;
-//                PhotonNetwork.CurrentRoom.IsVisible = false;
-
-//                // 4. Wyúlij RPC startu
-//                Debug.Log("[NetworkManager] Sending RPC to load game scene...");
-//                photonView.RPC("RPC_LoadGameScene", RpcTarget.All);
-//            }
-//        }
-//    }
-
-//    [PunRPC]
-//    private void RPC_LoadGameScene()
-//    {
-//        if (isLoadingGame) return;
-//        isLoadingGame = true;
-
-//        Debug.Log($"[NetworkManager] Loading Game Scene: {gameSceneName}");
-//        StartCoroutine(LoadGameSceneCoroutine());
-//    }
-
-//    private System.Collections.IEnumerator LoadGameSceneCoroutine()
-//    {
-//        // KrÛtkie opÛünienie dla efektu
-//        yield return new WaitForSeconds(1f);
-//        SceneManager.LoadScene(gameSceneName);
-//    }
-
-//    #endregion
-
-//    #region UI & Helpers
-
-//    public void CancelMatchmaking()
-//    {
-//        Debug.Log("[NetworkManager] Cancelling matchmaking...");
-
-//        // Najwaøniejsze: Wyjdü z pokoju, ale zostaÒ po≥πczony z Photonem
-//        if (PhotonNetwork.InRoom)
-//        {
-//            PhotonNetwork.LeaveRoom();
-//        }
-
-//        // WrÛÊ do menu
-//        SceneManager.LoadScene("MainMenu");
-//    }
-
-//    private void UpdateStatus(string message)
-//    {
-//        if (statusText != null) statusText.text = message;
-//    }
-
-//    private void UpdatePlayerCount()
-//    {
-//        if (PhotonNetwork.CurrentRoom != null)
-//        {
-//            UpdatePlayerCountUI(PhotonNetwork.CurrentRoom.PlayerCount, PhotonNetwork.CurrentRoom.MaxPlayers);
-//        }
-//    }
-
-//    private void UpdatePlayerCountUI(int current, int max)
-//    {
-//        if (playerCountText != null)
-//        {
-//            playerCountText.text = $"Players: {current}/{max}";
-//            playerCountText.color = current >= max ? Color.green : Color.cyan;
-//        }
-//    }
-
-//    #endregion
-//}

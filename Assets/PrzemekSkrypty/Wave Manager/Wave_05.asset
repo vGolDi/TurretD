@@ -17,5 +17,5 @@ MonoBehaviour:
     enemyCount: 25
     spawnInterval: 0.7
     pathIndex: 0
-  delayAfterWave: 5
+  delayAfterWave: 1
   waveCompletionBonus: 0

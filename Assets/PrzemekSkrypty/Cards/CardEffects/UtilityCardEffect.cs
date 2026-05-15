@@ -18,8 +18,6 @@ namespace ElementumDefense.Cards
         [Range(-50f, 100f)]
         public float moveSpeedPercent = 0f; // -50% to +100%
 
-        [Header("Wave Modifiers")]
-        public float waveDelayBonus = 0f; // Extra seconds between waves
 
         public override void Activate(PhotonView ownerPhotonView)
         {
@@ -49,12 +47,7 @@ namespace ElementumDefense.Cards
                 LogActivation(ownerPhotonView, $"Move speed: {moveSpeedPercent:+0;-0}%");
             }
 
-            // Wave delay
-            if (waveDelayBonus > 0f)
-            {
-                // TODO: Implement wave delay modifier
-                LogActivation(ownerPhotonView, $"Wave delay: +{waveDelayBonus}s");
-            }
+
         }
 
         public override string GetEffectDescription()
@@ -73,9 +66,6 @@ namespace ElementumDefense.Cards
                 desc += $"⚡ +{moveSpeedPercent}% move speed\n";
             else if (moveSpeedPercent < 0)
                 desc += $"🐌 {moveSpeedPercent}% move speed\n";
-
-            if (waveDelayBonus > 0)
-                desc += $"⏱️ +{waveDelayBonus}s wave prep time\n";
 
             return desc.TrimEnd('\n');
         }

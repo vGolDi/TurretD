@@ -1,0 +1,20 @@
+<svg id="gui-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" width="1920" height="1080">
+                    
+                    
+                    
+                    
+
+                    <g id="top-group" style="display: block;">
+                        <!-- Ozdobnik Górny -->
+                        <g transform="translate(960, 40)">
+                            <polygon points="0,15 -20,35 0,55 20,35" fill="none" stroke="#d97706" stroke-width="3px"/>
+                            <line x1="0" y1="55" x2="0" y2="90" stroke="#d97706" stroke-width="3px"/>
+                            <rect x="-4" y="90" width="8" height="8" fill="#d97706"/>
+                            <polyline points="-60,0 -60,15 0,15" fill="none" stroke="#d97706" stroke-width="3px" stroke-linecap="square"/>
+                            <polyline points="60,0 60,15 0,15" fill="none" stroke="#d97706" stroke-width="3px" stroke-linecap="square"/>
+                            <polyline points="-120,0 -120,5 -60,5" fill="none" stroke="#d97706" stroke-width="3px" stroke-linecap="square"/>
+                            <polyline points="120,0 120,5 60,5" fill="none" stroke="#d97706" stroke-width="3px" stroke-linecap="square"/>
+                        </g>
+                    </g>
+                    
+                </svg>

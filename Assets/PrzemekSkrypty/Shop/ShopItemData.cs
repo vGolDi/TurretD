@@ -1,6 +1,7 @@
-﻿// Assets/PrzemekSkrypty/Shop/ShopItemData.cs
+// Assets/PrzemekSkrypty/Shop/ShopItemData.cs
 using UnityEngine;
 using ElementumDefense.Lootbox;
+using ElementumDefense.Skins;
 
 namespace ElementumDefense.Shop
 {

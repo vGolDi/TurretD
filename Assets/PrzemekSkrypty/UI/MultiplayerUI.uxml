@@ -24,9 +24,19 @@
         </ui:VisualElement>
         <ui:VisualElement name="mp-content" class="mp-content">
             <ui:VisualElement class="mp-rank-section">
-                <ui:VisualElement class="mp-rank-hexagon">
-                    <ui:VisualElement class="mp-rank-hex-bg"/>
-                    <ui:VisualElement class="mp-rank-hex-border"/>
+                <ui:VisualElement name="mp-rank-hexagon" class="mp-rank-hexagon" style="margin-right: 35px;">
+                    <ui:VisualElement name="mp-rank-glow" class="mp-rank-glow"/>
+                    <ui:VisualElement name="mp-rank-third-ring" class="mp-rank-third-ring"/>
+                    <ui:VisualElement name="mp-rank-outer-ring" class="mp-rank-outer-ring"/>
+                    <ui:VisualElement name="mp-rank-hex-bg" class="mp-rank-hex-bg"/>
+                    <ui:VisualElement name="mp-rank-hex-border" class="mp-rank-hex-border"/>
+                    <ui:VisualElement name="mp-rank-tip-top" class="mp-rank-tip mp-rank-tip-top"/>
+                    <ui:VisualElement name="mp-rank-tip-right" class="mp-rank-tip mp-rank-tip-right"/>
+                    <ui:VisualElement name="mp-rank-tip-bottom" class="mp-rank-tip mp-rank-tip-bottom"/>
+                    <ui:VisualElement name="mp-rank-tip-left" class="mp-rank-tip mp-rank-tip-left"/>
+                    <ui:Label name="mp-rank-star-l" text="✦" class="mp-rank-star mp-rank-star-l"/>
+                    <ui:Label name="mp-rank-star-r" text="✦" class="mp-rank-star mp-rank-star-r"/>
+                    <ui:Label name="mp-rank-crown" text="♛" class="mp-rank-crown"/>
                     <ui:Label name="mp-rank-icon" text="I" class="mp-rank-icon" style="padding-right: 1px; margin-right: 2px;"/>
                 </ui:VisualElement>
                 <ui:VisualElement class="mp-rank-info">

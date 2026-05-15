@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
@@ -6,6 +6,7 @@ using ElementumDefense.Auth;
 using ElementumDefense.Elements;
 using ElementumDefense.Progression;
 using ElementumDefense.Lootbox;
+using ElementumDefense.Ranked;
 
 namespace ElementumDefense.Cards
 {
@@ -117,8 +118,17 @@ namespace ElementumDefense.Cards
         {
             if (AuthManager.Instance != null)
             {
-                AuthManager.Instance.OnLoginSuccess +=
+                AuthManager.Instance.OnCloudReady +=
                     OnUserLoggedIn;
+
+                // JeÅ›li uÅ¼ytkownik juÅ¼ jest zalogowany
+                // (np. po przejÅ›ciu miÄ™dzy scenami)
+                // Will be triggered by OnCloudReady after login
+                if (false)
+                {
+                    // Intentionally disabled - OnCloudReady handles this
+                    OnUserLoggedIn("");
+                }
             }
             else
             {
@@ -127,6 +137,15 @@ namespace ElementumDefense.Cards
                     "AuthManager missing in scene!");
             }
         }
+
+        //private void OnDestroy()
+        //{
+        //    if (AuthManager.Instance != null)
+        //    {
+        //        AuthManager.Instance.OnLoginSuccess -=
+        //            OnUserLoggedIn;
+        //    }
+        //}
 
         private void AutoLoadAllCards()
         {
@@ -153,15 +172,15 @@ namespace ElementumDefense.Cards
         private void AutoLoadAllSabotages()
         {
             // Szuka we WSZYSTKICH podfolderach
-            // Resources, wiêc znajdzie
-            // Cards/Sabotages/ te¿
+            // Resources, wiÃªc znajdzie
+            // Cards/Sabotages/ teÂ¿
             SabotageCardData[] loaded =
                 Resources.LoadAll<SabotageCardData>(
                     "Cards/Sabotages");
 
             if (loaded.Length == 0)
             {
-                // Fallback — szukaj wszêdzie
+                // Fallback â€” szukaj wszÃªdzie
                 loaded = Resources
                     .LoadAll<SabotageCardData>("");
             }
@@ -249,48 +268,49 @@ namespace ElementumDefense.Cards
         }
 
         // ==========================================
-        // RANKED SYSTEM
+        // RANKED SYSTEM (podmienione metody)
         // ==========================================
 
         public void AddElo(int amount)
         {
             currentELO += amount;
-            if (currentELO < 0) currentELO = 0;
+            if (currentELO < EloCalculator.MIN_ELO)
+                currentELO = EloCalculator.MIN_ELO;
 
             OnEloChanged?.Invoke(currentELO);
             if (autoSaveOnChange) SaveCollection();
 
             Debug.Log(
                 $"[Ranked] ELO changed by " +
-                $"{amount}. New ELO: {currentELO}");
+                $"{(amount > 0 ? "+" : "")}{amount}. " +
+                $"New ELO: {currentELO} " +
+                $"({GetRankName()})");
         }
 
         public int GetElo() => currentELO;
 
+        /// <summary>
+        /// PeÅ‚na nazwa rangi z sub-tierem:
+        /// "SILVER II", "GOLD III" itd.
+        /// </summary>
         public string GetRankName()
         {
-            if (currentELO < 1200) return "BRONZE";
-            if (currentELO < 1500) return "SILVER";
-            if (currentELO < 1800) return "GOLD";
-            if (currentELO < 2200) return "PLATINUM";
-            return "DIAMOND";
+            return EloCalculator.GetRankName(currentELO);
+        }
+
+        /// <summary>
+        /// GÅ‚Ã³wna nazwa rangi (bez sub-tieru):
+        /// "BRONZE", "SILVER" itd.
+        /// </summary>
+        public string GetMainRankName()
+        {
+            return EloCalculator.GetMainRankName(
+                currentELO);
         }
 
         public Color GetRankColor()
         {
-            if (currentELO < 1200)
-                return new Color(
-                    0.8f, 0.5f, 0.2f);
-            if (currentELO < 1500)
-                return new Color(
-                    0.75f, 0.75f, 0.75f);
-            if (currentELO < 1800)
-                return new Color(
-                    1f, 0.84f, 0f);
-            if (currentELO < 2200)
-                return new Color(
-                    0f, 1f, 1f);
-            return new Color(0.7f, 0.2f, 1f);
+            return EloCalculator.GetRankColor(currentELO);
         }
 
         // ==========================================
@@ -735,79 +755,104 @@ namespace ElementumDefense.Cards
 
         public void SaveCollection()
         {
-            List<SavedDeck> serializedDecks =
-                new List<SavedDeck>();
+            List<SavedDeck> serializedDecks = new List<SavedDeck>();
             foreach (var deck in playerDecks)
             {
                 SavedDeck sd = new SavedDeck
                 {
                     deckName = deck.deckName,
-                    preferredArena =
-                        deck.preferredArena,
-                    cardNames = deck.cards
-                        .Select(c =>
-                            c != null ? c.name : "")
-                        .ToList()
+                    preferredArena = deck.preferredArena,
+                    cardNames = deck.cards.Select(c => c != null ? c.name : "").ToList()
                 };
                 serializedDecks.Add(sd);
             }
 
-            CollectionSaveData saveData =
-                new CollectionSaveData
-                {
-                    unlockedCardNames = unlockedCards
-                        .Select(card => card.name)
-                        .ToList(),
-                    currentGold = this.currentGold,
-                    currentCrystals =
-                        this.currentCrystals,
-                    currentLevel = this.currentLevel,
-                    currentXP = this.currentXP,
-                    currentELO = this.currentELO,
-                    totalWins = this.totalWins,
-                    totalLosses = this.totalLosses,
-                    savedDecks = serializedDecks
-                };
+            CollectionSaveData saveData = new CollectionSaveData
+            {
+                unlockedCardNames = unlockedCards.Select(card => card.name).ToList(),
+                currentGold = this.currentGold,
+                currentCrystals = this.currentCrystals,
+                currentLevel = this.currentLevel,
+                currentXP = this.currentXP,
+                currentELO = this.currentELO,
+                totalWins = this.totalWins,
+                totalLosses = this.totalLosses,
+                savedDecks = serializedDecks
+            };
 
-            string json = JsonUtility.ToJson(
-                saveData, true);
-            File.WriteAllText(
-                GetSavePath(), json);
+            string json = JsonUtility.ToJson(saveData, true);
+
+            if (CloudSaveManager.Instance != null)
+            {
+                CloudSaveManager.Instance.SaveData("PlayerCollectionData", json);
+            }
+            else
+            {
+                Debug.LogWarning("[PlayerCollection] CloudSaveManager is null - data NOT saved!");
+            }
         }
 
         public void LoadCollection()
         {
-            string path = GetSavePath();
             playerDecks.Clear();
+            unlockedCards.Clear();
 
-            if (!File.Exists(path))
+            if (CloudSaveManager.Instance != null)
             {
-                Debug.Log(
-                    "[PlayerCollection] " +
-                    "New user - initializing.");
-                AssignDefaultDecks();
-                return;
+                Debug.Log("[PlayerCollection] Loading from PlayFab cloud...");
+                CloudSaveManager.Instance.LoadData("PlayerCollectionData",
+                    json =>
+                    {
+                        Debug.Log("[PlayerCollection] Cloud data loaded OK.");
+                        ProcessLoadedJson(json);
+                    },
+                    () =>
+                    {
+                        Debug.Log("[PlayerCollection] No cloud data - new player.");
+                        InitializeNewPlayer();
+                    });
             }
+            else
+            {
+                Debug.LogWarning("[PlayerCollection] CloudSaveManager is null - cannot load!");
+                InitializeNewPlayer();
+            }
+        }
 
+        /// <summary>
+        /// Gdy chmura nie ma danych, ale moÅ¼e istnieÄ‡ lokalny zapis.
+        /// JeÅ›li znajdzie lokalny, uploaduje go do chmury.
+        /// </summary>
+
+        /// <summary>
+        /// Fallback gdy CloudSaveManager nie istnieje
+        /// </summary>
+
+        /// <summary>
+        /// Inicjalizacja caÅ‚kowicie nowego gracza
+        /// </summary>
+        private void InitializeNewPlayer()
+        {
+            Debug.Log(
+                "[PlayerCollection] Inicjalizacja nowego gracza â€” starter cards + default decks.");
+            AssignDefaultDecks();
+            UnlockStarterCards();
+            OnCollectionLoaded?.Invoke();
+        }
+
+        private void ProcessLoadedJson(string json)
+        {
             try
             {
-                string json =
-                    File.ReadAllText(path);
                 CollectionSaveData saveData =
-                    JsonUtility
-                        .FromJson<CollectionSaveData>(
-                            json);
-
+                    JsonUtility.FromJson<CollectionSaveData>(json);
                 currentGold = saveData.currentGold;
-                currentCrystals =
-                    saveData.currentCrystals;
-                currentLevel =
-                    saveData.currentLevel > 0
-                        ? saveData.currentLevel : 1;
+                currentCrystals = saveData.currentCrystals;
+                currentLevel = saveData.currentLevel > 0
+                    ? saveData.currentLevel : 1;
                 currentXP = saveData.currentXP;
-                currentELO =
-                    saveData.currentELO != -1
-                        ? saveData.currentELO : 1000;
+                currentELO = saveData.currentELO != -1
+                    ? saveData.currentELO : 1000;
                 totalWins = saveData.totalWins;
                 totalLosses = saveData.totalLosses;
 
@@ -816,14 +861,13 @@ namespace ElementumDefense.Cards
                     saveData.unlockedCardNames)
                 {
                     CardData card =
-                        allAvailableCards
-                            .FirstOrDefault(
-                                c => c.name ==
-                                    cardName);
+                        allAvailableCards.FirstOrDefault(
+                            c => c.name == cardName);
                     if (card != null)
                         unlockedCards.Add(card);
                 }
 
+                playerDecks.Clear();
                 if (saveData.savedDecks != null &&
                     saveData.savedDecks.Count > 0)
                 {
@@ -832,26 +876,20 @@ namespace ElementumDefense.Cards
                     {
                         DeckData runtimeDeck =
                             ScriptableObject
-                                .CreateInstance
-                                    <DeckData>();
-                        runtimeDeck.deckName =
-                            sd.deckName;
-                        runtimeDeck.name =
-                            sd.deckName;
+                                .CreateInstance<DeckData>();
+                        runtimeDeck.deckName = sd.deckName;
+                        runtimeDeck.name = sd.deckName;
                         runtimeDeck.preferredArena =
                             sd.preferredArena;
-
                         foreach (string cName in
                             sd.cardNames)
                         {
                             CardData card =
                                 allAvailableCards
                                     .FirstOrDefault(
-                                        c => c.name ==
-                                            cName);
+                                        c => c.name == cName);
                             if (card != null)
-                                runtimeDeck.cards
-                                    .Add(card);
+                                runtimeDeck.cards.Add(card);
                         }
                         playerDecks.Add(runtimeDeck);
                     }
@@ -861,14 +899,29 @@ namespace ElementumDefense.Cards
                     AssignDefaultDecks();
                 }
 
+                // Dajemy startery tylko jeÅ›li
+                // NAPRAWDÄ˜ nie ma Å¼adnych kart
+                if (unlockedCards.Count == 0)
+                    UnlockStarterCards();
+
+                Debug.Log(
+                    $"[PlayerCollection] ZaÅ‚adowano: " +
+                    $"Level={currentLevel}, " +
+                    $"Gold={currentGold}, " +
+                    $"Crystals={currentCrystals}, " +
+                    $"Cards={unlockedCards.Count}, " +
+                    $"Decks={playerDecks.Count}, " +
+                    $"ELO={currentELO}");
+
                 OnCollectionLoaded?.Invoke();
             }
             catch (System.Exception e)
             {
                 Debug.LogError(
-                    $"[PlayerCollection] " +
-                    $"Load Error: {e.Message}");
+                    $"[PlayerCollection] BÅ‚Ä…d Å‚adowania JSON: {e.Message}");
                 AssignDefaultDecks();
+                UnlockStarterCards();
+                OnCollectionLoaded?.Invoke();
             }
         }
 
@@ -922,28 +975,14 @@ namespace ElementumDefense.Cards
             totalWins = 0;
             totalLosses = 0;
             unlockedCards.Clear();
+            playerDecks.Clear();
 
+            // LoadCollection jest asynchroniczne (czeka na PlayFab).
+            // NIE sprawdzaj unlockedCards tutaj â€” ProcessLoadedJson
+            // sam zajmie siÄ™ starter cards po otrzymaniu danych.
             LoadCollection();
-
-            if (unlockedCards.Count == 0)
-                UnlockStarterCards();
         }
 
-        private string GetSavePath()
-        {
-            string username = "Guest";
-
-            if (AuthManager.Instance != null &&
-                AuthManager.Instance.IsLoggedIn)
-            {
-                username = AuthManager.Instance
-                    .CurrentUsername;
-            }
-
-            return Path.Combine(
-                Application.persistentDataPath,
-                $"Save_{username}.json");
-        }
 
         // ==========================================
         // DEBUG
@@ -1177,8 +1216,7 @@ namespace ElementumDefense.Cards
                 $"{allSabotages.Count}");
             Debug.Log(
                 $"Decks: {playerDecks.Count}");
-            Debug.Log(
-                $"Save: {GetSavePath()}");
+            
         }
 
         [ContextMenu("Add Test Win")]
@@ -1198,7 +1236,7 @@ namespace ElementumDefense.Cards
             if (AuthManager.Instance != null)
             {
                 AuthManager.Instance
-                    .OnLoginSuccess -=
+                    .OnCloudReady -=
                     OnUserLoggedIn;
             }
 
@@ -1320,14 +1358,14 @@ namespace ElementumDefense.Cards
 //            Instance = this;
 //            DontDestroyOnLoad(gameObject);
 
-//            // Wstêpne ³adowanie definicji kart (to jest bezpieczne, bo to tylko assety)
+//            // WstÃªpne Â³adowanie definicji kart (to jest bezpieczne, bo to tylko assety)
 //            AutoLoadAllCards();
 //        }
 
 //        private void Start()
 //        {
 //            // CZEKAMY NA LOGOWANIE!
-//            // Jeœli AuthManager ju¿ istnieje, podpinamy siê pod event
+//            // JeÅ“li AuthManager juÂ¿ istnieje, podpinamy siÃª pod event
 //            if (AuthManager.Instance != null)
 //            {
 //                AuthManager.Instance.OnLoginSuccess += OnUserLoggedIn;
@@ -1367,7 +1405,7 @@ namespace ElementumDefense.Cards
 //        {
 //            int unlockedCount = 0;
 
-//            // 1. SprawdŸ listê przypisan¹ w Inspektorze (jeœli istnieje)
+//            // 1. SprawdÅ¸ listÃª przypisanÂ¹ w Inspektorze (jeÅ“li istnieje)
 //            if (starterCards != null && starterCards.Count > 0)
 //            {
 //                foreach (CardData card in starterCards)
@@ -1380,12 +1418,12 @@ namespace ElementumDefense.Cards
 //                }
 //            }
 
-//            // 2. SprawdŸ wszystkie karty pod k¹tem flagi "isStarterCard" (To jest to, czego brakowa³o!)
+//            // 2. SprawdÅ¸ wszystkie karty pod kÂ¹tem flagi "isStarterCard" (To jest to, czego brakowaÂ³o!)
 //            if (allAvailableCards != null)
 //            {
 //                foreach (CardData card in allAvailableCards)
 //                {
-//                    // Jeœli karta ma zaznaczone "Is Starter Card" I nie jest jeszcze odblokowana
+//                    // JeÅ“li karta ma zaznaczone "Is Starter Card" I nie jest jeszcze odblokowana
 //                    if (card != null && card.isStarterCard && !IsUnlocked(card))
 //                    {
 //                        UnlockCard(card, silent: true);
@@ -1394,7 +1432,7 @@ namespace ElementumDefense.Cards
 //                }
 //            }
 
-//            // 3. Wyœwietl logi dopiero na koñcu
+//            // 3. WyÅ“wietl logi dopiero na koÃ±cu
 //            if (unlockedCount > 0)
 //            {
 //                Debug.Log($"[PlayerCollection] Unlocked {unlockedCount} starter cards (Total owned: {unlockedCards.Count})");
@@ -1402,7 +1440,7 @@ namespace ElementumDefense.Cards
 //            }
 //            else
 //            {
-//                // Ostrze¿enie tylko jeœli NIC nie znaleziono ani w liœcie, ani przez flagi
+//                // OstrzeÂ¿enie tylko jeÅ“li NIC nie znaleziono ani w liÅ“cie, ani przez flagi
 //                if (unlockedCards.Count == 0)
 //                {
 //                    Debug.LogWarning("[PlayerCollection] No starter cards found! Check Inspector list OR 'Is Starter Card' bools.");
@@ -1416,7 +1454,7 @@ namespace ElementumDefense.Cards
 //        public void AddElo(int amount)
 //        {
 //            currentELO += amount;
-//            if (currentELO < 0) currentELO = 0; // Nie schodzimy poni¿ej 0
+//            if (currentELO < 0) currentELO = 0; // Nie schodzimy poniÂ¿ej 0
 
 //            OnEloChanged?.Invoke(currentELO);
 //            if (autoSaveOnChange) SaveCollection();
@@ -1629,7 +1667,7 @@ namespace ElementumDefense.Cards
 //            currentXP += amount;
 //            int xpNeeded = GetXPForNextLevel();
 
-//            // SprawdŸ czy level up (mo¿e byæ kilka na raz)
+//            // SprawdÅ¸ czy level up (moÂ¿e byÃ¦ kilka na raz)
 //            while (currentXP >= xpNeeded)
 //            {
 //                currentXP -= xpNeeded;
@@ -1674,7 +1712,7 @@ namespace ElementumDefense.Cards
 //                    LootboxInventory.Instance.AddLootbox(reward.lootbox, 1);
 //                    Debug.Log($"[LevelUp] Lootbox rewarded: {reward.lootbox.lootboxName}");
 
-//                    // Opcjonalnie: Wywo³aj event dla UI
+//                    // Opcjonalnie: WywoÂ³aj event dla UI
 //                    OnLootboxRewarded?.Invoke(reward.lootbox);
 //                }
 
@@ -1687,7 +1725,7 @@ namespace ElementumDefense.Cards
 //            }
 //            else
 //            {
-//                // Fallback jeœli brak configu
+//                // Fallback jeÅ“li brak configu
 //                AddGold(500);
 //                AddCrystals(5);
 //            }
@@ -1829,20 +1867,20 @@ namespace ElementumDefense.Cards
 
 //        public void SaveUserDeck(DeckData deck)
 //        {
-//            // 1. SprawdŸ czy to nowa talia czy aktualizacja istniej¹cej
+//            // 1. SprawdÅ¸ czy to nowa talia czy aktualizacja istniejÂ¹cej
 //            DeckData existing = playerDecks.FirstOrDefault(d => d.deckName == deck.deckName);
 
 //            if (existing != null)
 //            {
-//                // Aktualizuj istniej¹c¹ (kopiuj karty)
+//                // Aktualizuj istniejÂ¹cÂ¹ (kopiuj karty)
 //                existing.cards = new List<CardData>(deck.cards);
 //                existing.preferredArena = deck.preferredArena;
 //            }
 //            else
 //            {
-//                // Dodaj now¹ (musimy stworzyæ osobn¹ instancjê, ¿eby nie nadpisywaæ edytora)
+//                // Dodaj nowÂ¹ (musimy stworzyÃ¦ osobnÂ¹ instancjÃª, Â¿eby nie nadpisywaÃ¦ edytora)
 //                DeckData newDeck = Instantiate(deck);
-//                newDeck.name = deck.deckName; // Wa¿ne dla nazwy instancji
+//                newDeck.name = deck.deckName; // WaÂ¿ne dla nazwy instancji
 //                playerDecks.Add(newDeck);
 //            }
 
@@ -1897,12 +1935,12 @@ namespace ElementumDefense.Cards
 //        public void LoadCollection()
 //        {
 //            string path = GetSavePath();
-//            playerDecks.Clear(); // Wyczyœæ stare talie przed ³adowaniem
+//            playerDecks.Clear(); // WyczyÅ“Ã¦ stare talie przed Â³adowaniem
 
 //            if (!File.Exists(path))
 //            {
 //                Debug.Log("[PlayerCollection] New user - initializing defaults.");
-//                // Jeœli nie ma zapisu, daj talie startowe
+//                // JeÅ“li nie ma zapisu, daj talie startowe
 //                AssignDefaultDecks();
 //                return;
 //            }
@@ -1912,7 +1950,7 @@ namespace ElementumDefense.Cards
 //                string json = File.ReadAllText(path);
 //                CollectionSaveData saveData = JsonUtility.FromJson<CollectionSaveData>(json);
 
-//                // ... (£adowanie waluty i kart bez zmian) ...
+//                // ... (Â£adowanie waluty i kart bez zmian) ...
 //                currentGold = saveData.currentGold;
 //                currentCrystals = saveData.currentCrystals;
 //                currentLevel = saveData.currentLevel > 0 ? saveData.currentLevel : 1;
@@ -1928,15 +1966,15 @@ namespace ElementumDefense.Cards
 //                    if (card != null) unlockedCards.Add(card);
 //                }
 
-//                // £ADOWANIE TALII
+//                // Â£ADOWANIE TALII
 //                if (saveData.savedDecks != null && saveData.savedDecks.Count > 0)
 //                {
 //                    foreach (SavedDeck sd in saveData.savedDecks)
 //                    {
-//                        // Odtwórz ScriptableObject w pamiêci
+//                        // OdtwÃ³rz ScriptableObject w pamiÃªci
 //                        DeckData runtimeDeck = ScriptableObject.CreateInstance<DeckData>();
 //                        runtimeDeck.deckName = sd.deckName;
-//                        runtimeDeck.name = sd.deckName; // Nazwa assetu w pamiêci
+//                        runtimeDeck.name = sd.deckName; // Nazwa assetu w pamiÃªci
 //                        runtimeDeck.preferredArena = sd.preferredArena;
 
 //                        foreach (string cName in sd.cardNames)
@@ -1949,7 +1987,7 @@ namespace ElementumDefense.Cards
 //                }
 //                else
 //                {
-//                    // Jeœli gracz ma zapis, ale 0 talii (np. stare konto) -> daj mu startowe
+//                    // JeÅ“li gracz ma zapis, ale 0 talii (np. stare konto) -> daj mu startowe
 //                    AssignDefaultDecks();
 //                }
 
@@ -1970,15 +2008,15 @@ namespace ElementumDefense.Cards
 //            {
 //                if (defDeck == null) continue;
 
-//                // Klonujemy taliê startow¹ do pamiêci gracza
+//                // Klonujemy taliÃª startowÂ¹ do pamiÃªci gracza
 //                DeckData newDeck = Instantiate(defDeck);
-//                newDeck.name = defDeck.name; // Zachowaj nazwê
+//                newDeck.name = defDeck.name; // Zachowaj nazwÃª
 //                newDeck.deckName = defDeck.deckName;
 
 //                playerDecks.Add(newDeck);
 //            }
 //            Debug.Log($"[PlayerCollection] Assigned {playerDecks.Count} default decks.");
-//            // Nie zapisujemy od razu, zapisze siê przy pierwszej zmianie waluty/XP/talii
+//            // Nie zapisujemy od razu, zapisze siÃª przy pierwszej zmianie waluty/XP/talii
 //        }
 
 //        /// <summary>
@@ -2001,7 +2039,7 @@ namespace ElementumDefense.Cards
 //        {
 //            Debug.Log($"[PlayerCollection] User {username} logged in. Loading distinct save file...");
 
-//            // Resetujemy stan (wa¿ne przy przelogowywaniu!)
+//            // Resetujemy stan (waÂ¿ne przy przelogowywaniu!)
 //            currentGold = 0;
 //            currentCrystals = 0;
 //            currentLevel = 1;
@@ -2009,10 +2047,10 @@ namespace ElementumDefense.Cards
 //            currentELO = 1000;
 //            unlockedCards.Clear();
 
-//            // £adujemy plik konkretnego gracza
+//            // Â£adujemy plik konkretnego gracza
 //            LoadCollection();
 
-//            // Jeœli to nowe konto (brak unlockedCards po load), daj starter pack
+//            // JeÅ“li to nowe konto (brak unlockedCards po load), daj starter pack
 //            if (unlockedCards.Count == 0)
 //            {
 //                UnlockStarterCards();
@@ -2027,7 +2065,7 @@ namespace ElementumDefense.Cards
 //                username = AuthManager.Instance.CurrentUsername;
 //            }
 
-//            // Plik bêdzie siê nazywa³ np. "Save_GolDi.json"
+//            // Plik bÃªdzie siÃª nazywaÂ³ np. "Save_GolDi.json"
 //            return Path.Combine(Application.persistentDataPath, $"Save_{username}.json");
 //        }
 
@@ -2075,7 +2113,7 @@ namespace ElementumDefense.Cards
 //        [ContextMenu("Force Re-Check Starter Cards")]
 //        public void ForceCheckStarterCards()
 //        {
-//            // Upewnij siê, ¿e mamy za³adowane wszystkie karty
+//            // Upewnij siÃª, Â¿e mamy zaÂ³adowane wszystkie karty
 //            if (allAvailableCards == null || allAvailableCards.Count == 0)
 //            {
 //                AutoLoadAllCards();
@@ -2084,7 +2122,7 @@ namespace ElementumDefense.Cards
 //            int addedCount = 0;
 //            foreach (CardData card in allAvailableCards)
 //            {
-//                // Jeœli karta jest oznaczona jako startowa I jej nie mamy
+//                // JeÅ“li karta jest oznaczona jako startowa I jej nie mamy
 //                if (card != null && card.isStarterCard && !IsUnlocked(card))
 //                {
 //                    UnlockCard(card, silent: true);
@@ -2101,7 +2139,7 @@ namespace ElementumDefense.Cards
 //            currentGold = 0;
 //            currentCrystals = 0;
 
-//            // Odœwie¿amy UI
+//            // OdÅ“wieÂ¿amy UI
 //            OnGoldChanged?.Invoke(currentGold);
 //            OnCrystalsChanged?.Invoke(currentCrystals);
 
@@ -2112,19 +2150,19 @@ namespace ElementumDefense.Cards
 //        [ContextMenu("Add 100 ELO")]
 //        public void DebugAddElo()
 //        {
-//            AddElo(100); // Twoja funkcja ju¿ obs³uguje logi i zapis
+//            AddElo(100); // Twoja funkcja juÂ¿ obsÂ³uguje logi i zapis
 //        }
 
 //        [ContextMenu("Remove 100 ELO")]
 //        public void DebugRemoveElo()
 //        {
-//            AddElo(-100); // Twoja funkcja AddElo przyjmuje int, wiêc minus zadzia³a poprawnie
+//            AddElo(-100); // Twoja funkcja AddElo przyjmuje int, wiÃªc minus zadziaÂ³a poprawnie
 //        }
 
 //        [ContextMenu("Add 1 Level (Test XP)")]
 //        public void DebugLevelUp()
 //        {
-//            // Dodajemy dok³adnie tyle XP, ile brakuje do nastêpnego poziomu
+//            // Dodajemy dokÂ³adnie tyle XP, ile brakuje do nastÃªpnego poziomu
 //            int xpNeeded = GetXPForNextLevel() - currentXP;
 //            AddXP(xpNeeded);
 //        }
@@ -2267,7 +2305,6 @@ namespace ElementumDefense.Cards
 //    {
 //        public string deckName;
 //        public ElementType preferredArena;
-//        public List<string> cardNames = new List<string>(); // Lista nazw ScriptableObjectów
+//        public List<string> cardNames = new List<string>(); // Lista nazw ScriptableObjectÃ³w
 //    }
 //}
-

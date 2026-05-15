@@ -8,6 +8,18 @@ public class EnemyHealth : MonoBehaviour
     [SerializeField, Tooltip("Enemy health points")] private int maxHP = 100;
     private int currentHP;
 
+    public int GetMaxHP() => maxHP;
+    public void SetMaxHP(int newMaxHP)
+    {
+        maxHP = newMaxHP;
+        currentHP = newMaxHP;
+        if (healthBar != null)
+        {
+            healthBar.SetMaxHealth(maxHP);
+            healthBar.SetHealth(currentHP);
+        }
+    }
+
     [Header("Element")]
     [SerializeField, Tooltip("Elemental type of this enemy (affects damage taken)")]
     private ElementType elementType = ElementType.None;
@@ -50,7 +62,7 @@ public class EnemyHealth : MonoBehaviour
     //    Debug.Log($"[EnemyHealth] {gameObject.name} took {finalDamage} damage " +
     //              $"(base: {baseDamage}, element: {damageElement} vs {elementType}, mult: {elementMultiplier}x)");
 
-    //    // NOWE: Show damage number (opcjonalne - zrobimy póŸniej)
+    //    // NOWE: Show damage number (opcjonalne - zrobimy pï¿½niej)
     //    if (showDamageNumbers)
     //    {
     //        ShowDamageNumber(finalDamage, elementMultiplier);
@@ -106,7 +118,7 @@ public class EnemyHealth : MonoBehaviour
     }
     private void Die(int killerPhotonViewID)
     {
-        // 1. Waluta (istniej¹cy kod)
+        // 1. Waluta (istniejï¿½cy kod)
         if (killerPhotonViewID != -1)
         {
             PhotonView killerView = PhotonView.Find(killerPhotonViewID);
@@ -121,11 +133,11 @@ public class EnemyHealth : MonoBehaviour
         }
 
         // 2. DODAJ TO: Raportowanie do QuestManagera
-        // Sprawdzamy czy to my zabiliœmy (killerPhotonViewID != -1 oznacza ¿e trafi³a go wie¿a/pocisk)
-        // Wa¿ne: Musimy siê upewniæ, ¿e zaliczamy to lokalnemu graczowi tylko jeœli to JEGO wie¿a zabi³a,
+        // Sprawdzamy czy to my zabiliï¿½my (killerPhotonViewID != -1 oznacza ï¿½e trafiï¿½a go wieï¿½a/pocisk)
+        // Waï¿½ne: Musimy siï¿½ upewniï¿½, ï¿½e zaliczamy to lokalnemu graczowi tylko jeï¿½li to JEGO wieï¿½a zabiï¿½a,
         // LUB w trybie single/co-op po prostu zaliczamy.
 
-        // Wersja prosta (zalicza œmieræ ka¿demu na mapie - dobre dla Co-op):
+        // Wersja prosta (zalicza ï¿½mierï¿½ kaï¿½demu na mapie - dobre dla Co-op):
         if (ElementumDefense.Progression.QuestManager.Instance != null)
         {
             ElementumDefense.Progression.QuestManager.Instance.ReportProgress(
@@ -134,7 +146,7 @@ public class EnemyHealth : MonoBehaviour
             );
         }
 
-        // 3. VFX i zniszczenie (istniej¹cy kod)
+        // 3. VFX i zniszczenie (istniejï¿½cy kod)
         // TODO: Death VFX/SFX
         Destroy(gameObject);
     }
@@ -159,7 +171,7 @@ public class EnemyHealth : MonoBehaviour
     /// </summary>
     private void ShowDamageNumber(int damage, float multiplier)
     {
-        // Placeholder - zaimplementujemy póŸniej z VFX system
+        // Placeholder - zaimplementujemy pï¿½niej z VFX system
         Color numberColor = Color.white;
 
         if (multiplier > 1.0f)
