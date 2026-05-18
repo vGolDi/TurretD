@@ -1,0 +1,560 @@
+/* ============================================
+   BATTLE PASS UI — ART DECO STYLE
+   ============================================ */
+
+.bp-root {
+    flex-grow: 1;
+    width: 100%;
+    height: 100%;
+    background-color: rgb(10, 15, 25);
+    flex-direction: column;
+}
+
+/* ============================================
+   SIDE DECORATIONS
+   ============================================ */
+
+.bp-side-decoration-left {
+    position: absolute;
+    left: 12px;
+    top: 30%;
+    bottom: 30%;
+    width: 1px;
+    background-color: rgba(245, 158, 11, 0.06);
+}
+
+.bp-side-decoration-right {
+    position: absolute;
+    right: 12px;
+    top: 30%;
+    bottom: 30%;
+    width: 1px;
+    background-color: rgba(245, 158, 11, 0.06);
+}
+
+/* ============================================
+   HEADER
+   ============================================ */
+
+.bp-header {
+    flex-direction: row;
+    align-items: center;
+    padding: 20px 40px;
+    border-bottom-width: 1px;
+    border-bottom-color: rgba(245, 158, 11, 0.12);
+    flex-shrink: 0;
+    background-color: rgba(8, 12, 20, 0.5);
+}
+
+.bp-btn-back {
+    background-color: rgba(0, 0, 0, 0);
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.3);
+    color: rgba(245, 158, 11, 0.6);
+    font-size: 12px;
+    letter-spacing: 3px;
+    padding: 10px 20px;
+    margin-right: 24px;
+    cursor: link;
+    transition-property: color, border-color, background-color;
+    transition-duration: 0.2s;
+    border-radius: 0;
+}
+
+.bp-btn-back:hover {
+    color: rgb(252, 211, 77);
+    border-color: rgb(245, 158, 11);
+    background-color: rgba(245, 158, 11, 0.05);
+}
+
+.bp-header-title-group {
+    flex-direction: column;
+}
+
+.bp-season-title {
+    font-size: 26px;
+    color: rgb(254, 243, 199);
+    letter-spacing: 10px;
+}
+
+.bp-header-subtitle {
+    font-size: 11px;
+    color: rgba(245, 158, 11, 0.35);
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    margin-top: 2px;
+}
+
+.bp-header-spacer {
+    flex-grow: 1;
+}
+
+.bp-season-timer {
+    font-size: 11px;
+    color: rgba(200, 200, 200, 0.4);
+    letter-spacing: 3px;
+    margin-right: 24px;
+}
+
+.bp-header-currency {
+    flex-direction: row;
+    align-items: center;
+}
+
+.bp-currency-chip {
+    flex-direction: row;
+    align-items: center;
+    padding: 10px 20px;
+    margin-left: 12px;
+    background-color: rgba(15, 23, 42, 0.6);
+    border-width: 1px;
+    border-radius: 0;
+    transition-property: background-color;
+    transition-duration: 0.2s;
+}
+
+.bp-currency-chip:hover {
+    background-color: rgba(15, 23, 42, 0.9);
+}
+
+.bp-currency-gold {
+    border-color: rgba(245, 158, 11, 0.25);
+}
+
+.bp-currency-crystal {
+    border-color: rgba(6, 182, 212, 0.25);
+}
+
+.bp-currency-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 5px;
+    margin-right: 12px;
+}
+
+.bp-currency-dot-gold {
+    background-color: rgb(245, 158, 11);
+}
+
+.bp-currency-dot-crystal {
+    background-color: rgb(34, 211, 238);
+}
+
+.bp-currency-amount {
+    font-size: 18px;
+    -unity-font-style: bold;
+    letter-spacing: 2px;
+    margin-right: 10px;
+}
+
+.bp-currency-amount-gold {
+    color: rgb(251, 191, 36);
+}
+
+.bp-currency-amount-crystal {
+    color: rgb(34, 211, 238);
+}
+
+.bp-currency-label {
+    font-size: 10px;
+    color: rgba(200, 200, 200, 0.4);
+    letter-spacing: 3px;
+}
+
+/* ============================================
+   XP PROGRESS SECTION
+   ============================================ */
+
+.bp-xp-section {
+    flex-direction: row;
+    align-items: center;
+    padding: 16px 40px;
+    border-bottom-width: 1px;
+    border-bottom-color: rgba(245, 158, 11, 0.06);
+    flex-shrink: 0;
+}
+
+.bp-tier-label {
+    font-size: 16px;
+    color: rgb(254, 243, 199);
+    -unity-font-style: bold;
+    letter-spacing: 4px;
+    min-width: 100px;
+    margin-right: 20px;
+}
+
+.bp-xp-bar-bg {
+    flex-grow: 1;
+    height: 8px;
+    background-color: rgba(245, 158, 11, 0.1);
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.15);
+    overflow: hidden;
+}
+
+.bp-xp-bar-fill {
+    height: 100%;
+    width: 0%;
+    background-color: rgb(245, 158, 11);
+    transition-property: width;
+    transition-duration: 0.6s;
+    transition-timing-function: ease-out;
+}
+
+.bp-xp-label {
+    font-size: 10px;
+    color: rgba(245, 158, 11, 0.6);
+    letter-spacing: 2px;
+    margin-left: 16px;
+    min-width: 130px;
+    -unity-text-align: middle-right;
+}
+
+/* ============================================
+   PREMIUM / ACTIONS SECTION
+   ============================================ */
+
+.bp-premium-section {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    padding: 14px 40px;
+    border-bottom-width: 1px;
+    border-bottom-color: rgba(245, 158, 11, 0.06);
+    flex-shrink: 0;
+}
+
+.bp-premium-badge {
+    flex-direction: row;
+    align-items: center;
+    padding: 8px 20px;
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.4);
+    background-color: rgba(245, 158, 11, 0.06);
+    margin-right: 20px;
+}
+
+.bp-premium-text {
+    font-size: 11px;
+    color: rgb(252, 211, 77);
+    letter-spacing: 4px;
+    -unity-font-style: bold;
+}
+
+.bp-btn-premium {
+    background-color: rgba(0, 0, 0, 0);
+    border-width: 1px;
+    border-color: rgba(168, 85, 247, 0.5);
+    color: rgba(200, 170, 255, 0.8);
+    font-size: 11px;
+    letter-spacing: 3px;
+    padding: 10px 24px;
+    margin-right: 16px;
+    cursor: link;
+    transition-property: color, border-color, background-color;
+    transition-duration: 0.2s;
+    border-radius: 0;
+}
+
+.bp-btn-premium:hover {
+    color: rgb(220, 200, 255);
+    border-color: rgba(168, 85, 247, 0.9);
+    background-color: rgba(168, 85, 247, 0.08);
+}
+
+.bp-btn-claim-all {
+    background-color: rgba(0, 0, 0, 0);
+    border-width: 1px;
+    border-color: rgba(74, 222, 128, 0.3);
+    color: rgba(74, 222, 128, 0.6);
+    font-size: 11px;
+    letter-spacing: 3px;
+    padding: 10px 20px;
+    cursor: link;
+    transition-property: color, border-color, background-color;
+    transition-duration: 0.2s;
+    border-radius: 0;
+}
+
+.bp-btn-claim-all:hover {
+    color: rgb(74, 222, 128);
+    border-color: rgba(74, 222, 128, 0.7);
+    background-color: rgba(74, 222, 128, 0.05);
+}
+
+/* ============================================
+   TRACKS AREA — main layout
+   Left: track labels (fixed width)
+   Right: horizontal scroll of tiers
+   ============================================ */
+
+.bp-tracks-area {
+    flex-grow: 1;
+    flex-direction: row;
+    padding-top: 16px;
+    padding-bottom: 16px;
+}
+
+/* ── Track Labels (left column) ── */
+
+.bp-track-labels {
+    flex-direction: column;
+    align-items: flex-end;
+    width: 90px;
+    flex-shrink: 0;
+    padding-right: 16px;
+    padding-left: 24px;
+    padding-top: 26px;
+}
+
+.bp-track-label-premium {
+    font-size: 9px;
+    color: rgba(168, 85, 247, 0.6);
+    letter-spacing: 3px;
+    -unity-font-style: bold;
+    height: 90px;
+    -unity-text-align: middle-right;
+}
+
+.bp-track-label-free {
+    font-size: 9px;
+    color: rgba(245, 158, 11, 0.45);
+    letter-spacing: 3px;
+    -unity-font-style: bold;
+    height: 90px;
+    margin-top: 20px;
+    -unity-text-align: middle-right;
+}
+
+/* ── Tiers Scroll (right area) ── */
+
+.bp-tiers-scroll {
+    flex-grow: 1;
+    padding-right: 24px;
+}
+
+.bp-tiers-scroll .unity-scroller--horizontal {
+    height: 8px;
+}
+
+.bp-tiers-scroll .unity-scroller--horizontal .unity-base-slider__tracker {
+    background-color: rgba(245, 158, 11, 0.06);
+    border-width: 0;
+}
+
+.bp-tiers-scroll .unity-scroller--horizontal .unity-base-slider__dragger {
+    background-color: rgba(245, 158, 11, 0.2);
+    border-radius: 4px;
+    border-width: 0;
+    min-width: 40px;
+    transition-property: background-color;
+    transition-duration: 0.2s;
+}
+
+.bp-tiers-scroll .unity-scroller--horizontal .unity-base-slider__dragger:hover {
+    background-color: rgba(245, 158, 11, 0.4);
+}
+
+.bp-tiers-scroll .unity-scroller--horizontal .unity-repeat-button {
+    display: none;
+}
+
+.bp-tiers-container {
+    flex-direction: row;
+    align-items: stretch;
+}
+
+/* ============================================
+   SINGLE TIER COLUMN
+   ============================================ */
+
+.bp-tier {
+    flex-direction: column;
+    align-items: center;
+    width: 120px;
+    flex-shrink: 0;
+    margin-right: 4px;
+    padding: 8px 6px;
+    border-width: 1px;
+    border-color: rgba(245, 158, 11, 0.06);
+    background-color: rgba(12, 18, 30, 0.6);
+    transition-property: border-color, background-color;
+    transition-duration: 0.2s;
+}
+
+.bp-tier:hover {
+    border-color: rgba(245, 158, 11, 0.2);
+}
+
+.bp-tier-reached {
+    border-color: rgba(245, 158, 11, 0.15);
+    background-color: rgba(245, 158, 11, 0.02);
+}
+
+.bp-tier-reached:hover {
+    border-color: rgba(245, 158, 11, 0.35);
+}
+
+.bp-tier-current {
+    border-color: rgba(245, 158, 11, 0.5);
+    background-color: rgba(245, 158, 11, 0.04);
+}
+
+/* Tier number at top */
+.bp-tier-number {
+    font-size: 10px;
+    color: rgba(200, 200, 200, 0.3);
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+    flex-shrink: 0;
+}
+
+.bp-tier-reached .bp-tier-number {
+    color: rgba(245, 158, 11, 0.6);
+}
+
+.bp-tier-current .bp-tier-number {
+    color: rgb(252, 211, 77);
+}
+
+/* ============================================
+   CONNECTOR (between premium and free slots)
+   ============================================ */
+
+.bp-tier-connector {
+    width: 1px;
+    height: 12px;
+    flex-shrink: 0;
+    background-color: rgba(245, 158, 11, 0.08);
+    margin: 4px 0;
+}
+
+.bp-tier-connector-active {
+    background-color: rgba(245, 158, 11, 0.25);
+}
+
+/* ============================================
+   REWARD SLOTS
+   ============================================ */
+
+.bp-reward-slot {
+    width: 100px;
+    height: 90px;
+    flex-shrink: 0;
+    border-width: 1px;
+    padding: 6px;
+    padding-bottom: 24px;
+    align-items: center;
+    justify-content: center;
+    margin: 2px 0;
+    transition-property: border-color, background-color;
+    transition-duration: 0.2s;
+}
+
+.bp-reward-free {
+    border-color: rgba(245, 158, 11, 0.12);
+    background-color: rgba(15, 23, 42, 0.4);
+}
+
+.bp-reward-free:hover {
+    border-color: rgba(245, 158, 11, 0.3);
+}
+
+.bp-reward-premium {
+    border-color: rgba(168, 85, 247, 0.18);
+    background-color: rgba(20, 15, 30, 0.4);
+}
+
+.bp-reward-premium:hover {
+    border-color: rgba(168, 85, 247, 0.4);
+}
+
+.bp-reward-empty {
+    border-color: rgba(50, 50, 60, 0.15);
+    background-color: rgba(10, 12, 18, 0.3);
+}
+
+.bp-reward-claimed {
+    opacity: 0.4;
+}
+
+.bp-reward-claimable {
+    border-color: rgba(74, 222, 128, 0.4);
+    background-color: rgba(74, 222, 128, 0.03);
+}
+
+.bp-reward-claimable:hover {
+    border-color: rgba(74, 222, 128, 0.7);
+    background-color: rgba(74, 222, 128, 0.06);
+}
+
+.bp-reward-locked {
+    opacity: 0.5;
+}
+
+/* ============================================
+   REWARD CONTENT
+   ============================================ */
+
+.bp-reward-icon {
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+    margin-bottom: 4px;
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.bp-reward-name {
+    font-size: 8px;
+    color: rgba(200, 200, 200, 0.6);
+    letter-spacing: 1px;
+    -unity-text-align: middle-center;
+    white-space: normal;
+    max-width: 88px;
+}
+
+.bp-reward-checkmark {
+    font-size: 18px;
+    color: rgba(74, 222, 128, 0.6);
+    position: absolute;
+    -unity-text-align: middle-center;
+}
+
+.bp-reward-lock {
+    font-size: 14px;
+    color: rgba(200, 200, 200, 0.3);
+    position: absolute;
+    bottom: 4px;
+    right: 4px;
+}
+
+.bp-claim-btn {
+    background-color: rgba(0, 0, 0, 0);
+    border-width: 1px;
+    border-color: rgba(74, 222, 128, 0.5);
+    color: rgba(74, 222, 128, 0.8);
+    padding: 3px 10px;
+    font-size: 9px;
+    letter-spacing: 2px;
+    -unity-font-style: bold;
+    position: absolute;
+    bottom: 4px;
+    cursor: link;
+    transition-property: color, border-color, background-color;
+    transition-duration: 0.2s;
+    border-radius: 0;
+}
+
+.bp-claim-btn:hover {
+    color: rgb(74, 222, 128);
+    border-color: rgb(74, 222, 128);
+    background-color: rgba(74, 222, 128, 0.08);
+}
+
+/* ============================================
+   HIDDEN
+   ============================================ */
+
+.hidden {
+    display: none;
+}

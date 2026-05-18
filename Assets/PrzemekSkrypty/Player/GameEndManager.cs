@@ -6,8 +6,8 @@ using ElementumDefense.Cards;
 using ElementumDefense.Progression;
 using ElementumDefense.Ranked;
 using ElementumDefense.UI;
-using ElementumDefense.BattlePass;
 using ElementumDefense.Projectiles;
+using ElementumDefense.BattlePass;
 
 public class GameEndManager : MonoBehaviour
 {
@@ -127,6 +127,12 @@ public class GameEndManager : MonoBehaviour
             if (isVictory)
                 questManager.ReportProgress(
                     QuestType.WinGames, 1);
+        }
+
+        // Battle Pass XP
+        if (BattlePassManager.Instance != null)
+        {
+            BattlePassManager.Instance.AwardMatchXP(isVictory);
         }
 
         // ========================================

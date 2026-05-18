@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using ElementumDefense.Skins;
 using ElementumDefense.Achievements;
+using ElementumDefense.BattlePass;
 
 namespace ElementumDefense.Auth
 {
@@ -64,6 +65,13 @@ namespace ElementumDefense.Auth
                 var achGo = new GameObject("AchievementManager");
                 achGo.AddComponent<AchievementManager>();
                 Debug.Log("[Auth] AchievementManager created automatically.");
+            }
+
+            if (BattlePass.BattlePassManager.Instance == null)
+            {
+                var bpGo = new GameObject("BattlePassManager");
+                bpGo.AddComponent<BattlePass.BattlePassManager>();
+                Debug.Log("[Auth] BattlePassManager created automatically.");
             }
         }
 

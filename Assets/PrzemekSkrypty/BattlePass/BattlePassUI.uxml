@@ -1,0 +1,51 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/PrzemekSkrypty/BattlePass/BattlePassUI.uss?fileID=7433441132597879392&amp;guid=a74ee5bdda9fae94284b62b70211944e&amp;type=3#BattlePassUI"/>
+    <ui:VisualElement name="bp-root" class="bp-root">
+        <ui:VisualElement picking-mode="Ignore" class="bp-side-decoration-left" style="padding-top: 0; background-color: rgba(245, 158, 11, 0.45); background-size: 100% 230%; margin-top: 0; top: 450px; bottom: 255px; width: 1px; left: 10px;"/>
+        <ui:VisualElement picking-mode="Ignore" class="bp-side-decoration-right" style="top: 450px; bottom: 255px; right: 10px; background-color: rgba(245, 158, 11, 0.45);"/>
+        <ui:VisualElement class="bp-header">
+            <ui:Button name="btn-back" text="← BACK" class="bp-btn-back"/>
+            <ui:VisualElement class="bp-header-title-group">
+                <ui:Label name="bp-season-title" text="SEASON 1" class="bp-season-title"/>
+                <ui:Label text="BATTLE PASS" class="bp-header-subtitle"/>
+            </ui:VisualElement>
+            <ui:VisualElement class="bp-header-spacer"/>
+            <ui:Label name="bp-season-timer" text="60 DAYS LEFT" class="bp-season-timer"/>
+            <ui:VisualElement class="bp-header-currency">
+                <ui:VisualElement class="bp-currency-chip bp-currency-gold">
+                    <ui:VisualElement class="bp-currency-dot bp-currency-dot-gold"/>
+                    <ui:Label name="header-gold" text="0" class="bp-currency-amount bp-currency-amount-gold"/>
+                    <ui:Label text="GOLD" class="bp-currency-label"/>
+                </ui:VisualElement>
+                <ui:VisualElement class="bp-currency-chip bp-currency-crystal">
+                    <ui:VisualElement class="bp-currency-dot bp-currency-dot-crystal"/>
+                    <ui:Label name="header-crystals" text="0" class="bp-currency-amount bp-currency-amount-crystal"/>
+                    <ui:Label text="CRYSTALS" class="bp-currency-label"/>
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:VisualElement class="bp-xp-section">
+            <ui:Label name="bp-tier-label" text="TIER 0" class="bp-tier-label"/>
+            <ui:VisualElement class="bp-xp-bar-bg">
+                <ui:VisualElement name="bp-xp-bar-fill" class="bp-xp-bar-fill"/>
+            </ui:VisualElement>
+            <ui:Label name="bp-xp-label" text="0 / 1000 XP" class="bp-xp-label"/>
+        </ui:VisualElement>
+        <ui:VisualElement class="bp-premium-section">
+            <ui:VisualElement name="bp-premium-badge" class="bp-premium-badge" style="display: none;">
+                <ui:Label text="✦ PREMIUM ACTIVE" class="bp-premium-text"/>
+            </ui:VisualElement>
+            <ui:Button name="btn-buy-premium" text="UNLOCK PREMIUM" class="bp-btn-premium"/>
+            <ui:Button name="btn-claim-all" text="CLAIM ALL" class="bp-btn-claim-all"/>
+        </ui:VisualElement>
+        <ui:VisualElement class="bp-tracks-area" style="padding-top: 200px; margin-left: 25px; margin-right: 25px;">
+            <ui:VisualElement name="VisualElement" class="bp-track-labels" style="height: 377px; padding-bottom: 26px;">
+                <ui:Label text="PREMIUM" class="bp-track-label-premium"/>
+                <ui:Label text="FREE" class="bp-track-label-free"/>
+            </ui:VisualElement>
+            <ui:ScrollView name="bp-tiers-scroll" mode="Horizontal" class="bp-tiers-scroll" style="height: 375px;">
+                <ui:VisualElement name="bp-tiers-container" class="bp-tiers-container"/>
+            </ui:ScrollView>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

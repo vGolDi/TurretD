@@ -7,6 +7,7 @@ using System.Linq;
 using ElementumDefense.Cards;
 using ElementumDefense.Lootbox;
 using ElementumDefense.Auth;
+using ElementumDefense.BattlePass;
 
 namespace ElementumDefense.Progression
 {
@@ -40,6 +41,7 @@ namespace ElementumDefense.Progression
 
         public int rewardGold;
         public int rewardXP;
+        public int rewardBPXP;
 
         public string rewardLootboxName;
         [NonSerialized] public LootboxData rewardLootbox;
@@ -58,42 +60,22 @@ namespace ElementumDefense.Progression
         public event Action OnQuestListUpdated;
         public event Action<LootboxData> OnLootboxRewarded;
 
-        [Header("Daily Quest Settings")]
-        [SerializeField, Range(1, 10)]
+        [Header("Quest Pool Settings")]
+        [SerializeField, Range(1, 10), Tooltip("How many daily quests to assign per day")]
         private int dailyQuestCount = 3;
 
-        [SerializeField, Tooltip("First daily quest always gives lootbox")]
-        private bool firstQuestAlwaysGivesLootbox = true;
-
-        [SerializeField, Range(0f, 1f)]
-        private float otherQuestsLootboxChance = 0.33f;
-
-        [Header("Weekly Quest Settings")]
-        [SerializeField]
+        [SerializeField, Tooltip("Generate weekly quests?")]
         private bool generateWeeklyQuest = true;
 
-        [SerializeField, Range(1, 5)]
+        [SerializeField, Range(1, 5), Tooltip("How many weekly quests to assign per week")]
         private int weeklyQuestCount = 1;
 
-        [Header("Quest Difficulty Scaling")]
-        [SerializeField] private int minPlayGames = 2;
-        [SerializeField] private int maxPlayGames = 5;
-        [SerializeField] private int minWinGames = 1;
-        [SerializeField] private int maxWinGames = 3;
-        [SerializeField] private int minKillEnemies = 20;
-        [SerializeField] private int maxKillEnemies = 100;
-        [SerializeField] private int minBuildTurrets = 5;
-        [SerializeField] private int maxBuildTurrets = 20;
+        [SerializeField, Range(1, 5), Tooltip("How many special (BP) quests to assign per week")]
+        private int specialQuestCount = 2;
 
-        [Header("Lootbox Rewards")]
-        [SerializeField] private LootboxData dailyQuestLootbox;
-        [SerializeField] private LootboxData weeklyQuestLootbox;
-        [SerializeField] private LootboxData specialQuestLootbox;
-
-        [Header("Reward Scaling")]
-        [SerializeField] private int baseGoldReward = 100;
-        [SerializeField] private int baseXPReward = 50;
-        [SerializeField] private float weeklyRewardMultiplier = 3f;
+        [Header("Quest Pool (auto-loaded from Resources/Quests/)")]
+        [SerializeField, Tooltip("All available quest templates. Auto-loads if empty.")]
+        private List<QuestData> questPool = new List<QuestData>();
 
         public List<Quest> activeQuests = new List<Quest>();
 
@@ -115,6 +97,7 @@ namespace ElementumDefense.Progression
             Instance = this;
             DontDestroyOnLoad(gameObject);
 
+            LoadQuestPool();
             CacheLootboxes();
         }
 
@@ -123,8 +106,6 @@ namespace ElementumDefense.Progression
             if (AuthManager.Instance != null)
             {
                 AuthManager.Instance.OnCloudReady += OnUserLoggedIn;
-
-                // OnCloudReady will fire after login verification
             }
             else
             {
@@ -154,6 +135,26 @@ namespace ElementumDefense.Progression
             OnQuestListUpdated?.Invoke();
         }
 
+        /// <summary>
+        /// Loads all QuestData SOs from Resources/Quests/
+        /// </summary>
+        private void LoadQuestPool()
+        {
+            if (questPool.Count > 0) return; // Already assigned in Inspector
+
+            QuestData[] loaded = Resources.LoadAll<QuestData>("Quests");
+            if (loaded.Length > 0)
+            {
+                questPool.Clear();
+                questPool.AddRange(loaded);
+                Debug.Log($"[QuestManager] Auto-loaded {loaded.Length} quest templates from Resources/Quests/");
+            }
+            else
+            {
+                Debug.LogWarning("[QuestManager] No QuestData found in Resources/Quests/. Create some!");
+            }
+        }
+
         private void CacheLootboxes()
         {
             LootboxData[] allLootboxes = Resources.LoadAll<LootboxData>("Lootboxes");
@@ -176,18 +177,11 @@ namespace ElementumDefense.Progression
         }
 
         // ==========================================
-        // SAVE PATH
-        // ==========================================
-
-
-        // ==========================================
         // DAILY/WEEKLY RESET CHECK
         // ==========================================
 
         private void CheckDailyReset()
         {
-            
-
             string todayDate = DateTime.Now.ToString("yyyy-MM-dd");
             string thisWeek = GetWeekIdentifier();
 
@@ -199,17 +193,23 @@ namespace ElementumDefense.Progression
 
             if (dailyReset)
             {
-                Debug.Log("[QuestManager] New day - generating daily quests");
+                Debug.Log("[QuestManager] New day - assigning daily quests from pool");
                 RemoveQuestsByTier(QuestTier.Daily);
-                GenerateDailyQuests();
+                AssignQuestsFromPool(QuestTier.Daily, dailyQuestCount);
                 lastQuestDate = todayDate;
             }
 
             if (weeklyReset && generateWeeklyQuest)
             {
-                Debug.Log("[QuestManager] New week - generating weekly quests");
+                Debug.Log("[QuestManager] New week - assigning weekly quests from pool");
                 RemoveQuestsByTier(QuestTier.Weekly);
-                GenerateWeeklyQuests();
+                AssignQuestsFromPool(QuestTier.Weekly, weeklyQuestCount);
+
+                // Special quests (BP quests) also reset weekly
+                Debug.Log("[QuestManager] New week - assigning special (BP) quests from pool");
+                RemoveQuestsByTier(QuestTier.Special);
+                AssignQuestsFromPool(QuestTier.Special, specialQuestCount);
+
                 lastWeeklyDate = thisWeek;
             }
 
@@ -224,7 +224,6 @@ namespace ElementumDefense.Progression
 
         private string GetWeekIdentifier()
         {
-            // Format: "2024-W05" (rok-tydzie�)
             DateTime now = DateTime.Now;
             int weekNumber = System.Globalization.CultureInfo.CurrentCulture.Calendar
                 .GetWeekOfYear(now, System.Globalization.CalendarWeekRule.FirstDay, DayOfWeek.Monday);
@@ -248,196 +247,89 @@ namespace ElementumDefense.Progression
         }
 
         // ==========================================
-        // QUEST GENERATION
+        // QUEST ASSIGNMENT FROM POOL
         // ==========================================
 
-        private void GenerateDailyQuests()
+        /// <summary>
+        /// Picks random quests from the SO pool for the given tier.
+        /// Uses weighted random selection without repeats.
+        /// </summary>
+        private void AssignQuestsFromPool(QuestTier tier, int count)
         {
-            // Lista dost�pnych typ�w quest�w (bez powt�rek)
-            List<QuestType> availableTypes = new List<QuestType>
+            // Filter pool by tier, not manual-only, and level requirement
+            int playerLevel = PlayerCollection.Instance?.GetLevel() ?? 1;
+
+            List<QuestData> eligible = questPool
+                .Where(q => q != null
+                    && q.questTier == tier
+                    && !q.manualOnly
+                    && q.requiredLevel <= playerLevel)
+                .ToList();
+
+            if (eligible.Count == 0)
             {
-                QuestType.PlayGames,
-                QuestType.WinGames,
-                QuestType.KillEnemies,
-                QuestType.BuildTurrets
-            };
+                Debug.LogWarning($"[QuestManager] No eligible quests in pool for tier {tier}!");
+                return;
+            }
 
-            // Shuffle dla losowo�ci
-            ShuffleList(availableTypes);
+            // Pick 'count' unique quests (weighted random, no duplicates)
+            List<QuestData> selected = new List<QuestData>();
+            List<QuestData> remaining = new List<QuestData>(eligible);
 
-            for (int i = 0; i < dailyQuestCount; i++)
+            for (int i = 0; i < count && remaining.Count > 0; i++)
             {
-                QuestType questType;
+                QuestData picked = WeightedRandomPick(remaining);
+                if (picked != null)
+                {
+                    selected.Add(picked);
+                    remaining.Remove(picked);
+                }
+            }
 
-                // Pierwszy quest = WinGames (z lootboxem je�li w��czone)
-                if (i == 0)
+            // If we need more quests than unique templates, allow repeats
+            if (selected.Count < count)
+            {
+                for (int i = selected.Count; i < count; i++)
                 {
-                    questType = QuestType.WinGames;
+                    QuestData picked = WeightedRandomPick(eligible);
+                    if (picked != null)
+                        selected.Add(picked);
                 }
-                else
-                {
-                    // We� kolejny typ z listy (lub losuj je�li sko�czy�y si� unikalne)
-                    if (i - 1 < availableTypes.Count)
-                    {
-                        questType = availableTypes[i - 1];
-                        // Pomi� WinGames bo ju� jest
-                        if (questType == QuestType.WinGames && i < availableTypes.Count)
-                        {
-                            questType = availableTypes[i];
-                        }
-                    }
-                    else
-                    {
-                        questType = GetRandomQuestType();
-                    }
-                }
+            }
 
-                // Okre�l czy da� lootbox
-                LootboxData lootbox = null;
-                if (i == 0 && firstQuestAlwaysGivesLootbox)
-                {
-                    lootbox = dailyQuestLootbox;
-                }
-                else if (UnityEngine.Random.value < otherQuestsLootboxChance)
-                {
-                    lootbox = dailyQuestLootbox;
-                }
-
-                Quest quest = GenerateQuestOfType(questType, QuestTier.Daily, lootbox);
+            // Create runtime quests from selected templates
+            foreach (var questData in selected)
+            {
+                Quest quest = questData.CreateRuntimeQuest();
                 activeQuests.Add(quest);
             }
 
-            Debug.Log($"[QuestManager] Generated {dailyQuestCount} daily quests");
+            Debug.Log($"[QuestManager] Assigned {selected.Count} {tier} quests from pool");
         }
 
-        private void GenerateWeeklyQuests()
+        /// <summary>
+        /// Weighted random selection from a list of QuestData.
+        /// </summary>
+        private QuestData WeightedRandomPick(List<QuestData> pool)
         {
-            for (int i = 0; i < weeklyQuestCount; i++)
+            if (pool.Count == 0) return null;
+            if (pool.Count == 1) return pool[0];
+
+            int totalWeight = 0;
+            foreach (var q in pool)
+                totalWeight += q.selectionWeight;
+
+            int roll = UnityEngine.Random.Range(0, totalWeight);
+            int cumulative = 0;
+
+            foreach (var q in pool)
             {
-                QuestType questType = GetRandomQuestType();
-                Quest quest = GenerateQuestOfType(questType, QuestTier.Weekly, weeklyQuestLootbox);
-                activeQuests.Add(quest);
+                cumulative += q.selectionWeight;
+                if (roll < cumulative)
+                    return q;
             }
 
-            Debug.Log($"[QuestManager] Generated {weeklyQuestCount} weekly quests");
-        }
-
-        private Quest GenerateQuestOfType(QuestType type, QuestTier tier, LootboxData lootbox = null)
-        {
-            int target = GetTargetForType(type, tier);
-            int gold = CalculateGoldReward(type, target, tier);
-            int xp = CalculateXPReward(type, target, tier);
-            string description = GetDescription(type, target, tier);
-
-            return new Quest
-            {
-                questID = Guid.NewGuid().ToString(),
-                type = type,
-                tier = tier,
-                description = description,
-                targetAmount = target,
-                rewardGold = gold,
-                rewardXP = xp,
-                rewardLootbox = lootbox,
-                rewardLootboxName = lootbox != null ? lootbox.name : "",
-                currentProgress = 0,
-                isCompleted = false,
-                isClaimed = false
-            };
-        }
-
-        private QuestType GetRandomQuestType()
-        {
-            QuestType[] types = {
-                QuestType.PlayGames,
-                QuestType.WinGames,
-                QuestType.KillEnemies,
-                QuestType.BuildTurrets
-            };
-            return types[UnityEngine.Random.Range(0, types.Length)];
-        }
-
-        private int GetTargetForType(QuestType type, QuestTier tier)
-        {
-            float multiplier = tier == QuestTier.Weekly ? 3f : 1f;
-
-            return type switch
-            {
-                QuestType.PlayGames => Mathf.RoundToInt(UnityEngine.Random.Range(minPlayGames, maxPlayGames + 1) * multiplier),
-                QuestType.WinGames => Mathf.RoundToInt(UnityEngine.Random.Range(minWinGames, maxWinGames + 1) * multiplier),
-                QuestType.KillEnemies => Mathf.RoundToInt(UnityEngine.Random.Range(minKillEnemies, maxKillEnemies + 1) * multiplier),
-                QuestType.BuildTurrets => Mathf.RoundToInt(UnityEngine.Random.Range(minBuildTurrets, maxBuildTurrets + 1) * multiplier),
-                QuestType.SpendGold => Mathf.RoundToInt(UnityEngine.Random.Range(500, 2000) * multiplier),
-                QuestType.OpenLootboxes => Mathf.RoundToInt(UnityEngine.Random.Range(1, 3) * multiplier),
-                QuestType.UnlockCards => Mathf.RoundToInt(UnityEngine.Random.Range(1, 3) * multiplier),
-                _ => 1
-            };
-        }
-
-        private int CalculateGoldReward(QuestType type, int target, QuestTier tier)
-        {
-            float baseReward = type switch
-            {
-                QuestType.WinGames => baseGoldReward * 2f * target,
-                QuestType.KillEnemies => baseGoldReward * 0.5f + target * 2,
-                QuestType.BuildTurrets => baseGoldReward + target * 5,
-                _ => baseGoldReward * target
-            };
-
-            if (tier == QuestTier.Weekly)
-                baseReward *= weeklyRewardMultiplier;
-
-            return Mathf.RoundToInt(baseReward);
-        }
-
-        private int CalculateXPReward(QuestType type, int target, QuestTier tier)
-        {
-            float baseReward = type switch
-            {
-                QuestType.WinGames => baseXPReward * 2f * target,
-                QuestType.KillEnemies => baseXPReward * 0.3f + target,
-                _ => baseXPReward * target
-            };
-
-            if (tier == QuestTier.Weekly)
-                baseReward *= weeklyRewardMultiplier;
-
-            return Mathf.RoundToInt(baseReward);
-        }
-
-        private string GetDescription(QuestType type, int target, QuestTier tier)
-        {
-            // Prefix dla KA�DEGO tieru
-            string prefix = tier switch
-            {
-                QuestTier.Daily => "[Daily] ",
-                QuestTier.Weekly => "[Weekly] ",
-                QuestTier.Special => "[Special] ",
-                _ => ""
-            };
-
-            return type switch
-            {
-                QuestType.PlayGames => $"{prefix}Play {target} matches",
-                QuestType.WinGames => $"{prefix}Win {target} matches",
-                QuestType.KillEnemies => $"{prefix}Eliminate {target} enemies",
-                QuestType.BuildTurrets => $"{prefix}Build {target} turrets",
-                QuestType.SpendGold => $"{prefix}Spend {target} gold",
-                QuestType.OpenLootboxes => $"{prefix}Open {target} lootboxes",
-                QuestType.UnlockCards => $"{prefix}Unlock {target} new cards",
-                _ => $"{prefix}Complete objective"
-            };
-        }
-
-        private void ShuffleList<T>(List<T> list)
-        {
-            for (int i = list.Count - 1; i > 0; i--)
-            {
-                int randomIndex = UnityEngine.Random.Range(0, i + 1);
-                T temp = list[i];
-                list[i] = list[randomIndex];
-                list[randomIndex] = temp;
-            }
+            return pool[pool.Count - 1];
         }
 
         // ==========================================
@@ -445,16 +337,34 @@ namespace ElementumDefense.Progression
         // ==========================================
 
         /// <summary>
-        /// Adds a custom quest
+        /// Adds a quest from a specific QuestData template.
+        /// </summary>
+        public Quest AddQuestFromData(QuestData questData)
+        {
+            if (questData == null) return null;
+
+            Quest quest = questData.CreateRuntimeQuest();
+            activeQuests.Add(quest);
+            SaveQuests();
+            OnQuestListUpdated?.Invoke();
+
+            Debug.Log($"[QuestManager] Added quest from SO: {quest.description}");
+            return quest;
+        }
+
+        /// <summary>
+        /// Adds a custom quest (legacy API, still works for code-driven quests).
         /// </summary>
         public Quest AddQuest(QuestType type, QuestTier tier, int target, int gold, int xp, LootboxData lootbox = null)
         {
+            string description = $"[{tier}] Complete objective ({target})";
+
             Quest quest = new Quest
             {
                 questID = Guid.NewGuid().ToString(),
                 type = type,
                 tier = tier,
-                description = GetDescription(type, target, tier),
+                description = description,
                 targetAmount = target,
                 rewardGold = gold,
                 rewardXP = xp,
@@ -474,40 +384,7 @@ namespace ElementumDefense.Progression
         }
 
         /// <summary>
-        /// Adds a random daily quest
-        /// </summary>
-        public Quest AddRandomDailyQuest(bool withLootbox = false)
-        {
-            QuestType type = GetRandomQuestType();
-            LootboxData lootbox = withLootbox ? dailyQuestLootbox : null;
-            Quest quest = GenerateQuestOfType(type, QuestTier.Daily, lootbox);
-
-            activeQuests.Add(quest);
-            SaveQuests();
-            OnQuestListUpdated?.Invoke();
-
-            Debug.Log($"[QuestManager] Added random daily quest: {quest.description}");
-            return quest;
-        }
-
-        /// <summary>
-        /// Adds a random weekly quest
-        /// </summary>
-        public Quest AddRandomWeeklyQuest()
-        {
-            QuestType type = GetRandomQuestType();
-            Quest quest = GenerateQuestOfType(type, QuestTier.Weekly, weeklyQuestLootbox);
-
-            activeQuests.Add(quest);
-            SaveQuests();
-            OnQuestListUpdated?.Invoke();
-
-            Debug.Log($"[QuestManager] Added random weekly quest: {quest.description}");
-            return quest;
-        }
-
-        /// <summary>
-        /// Adds a special/event quest
+        /// Adds a special/event quest (legacy API for code-driven special quests).
         /// </summary>
         public Quest AddSpecialQuest(QuestType type, int target, int gold, int xp, string customDescription = null)
         {
@@ -516,12 +393,12 @@ namespace ElementumDefense.Progression
                 questID = Guid.NewGuid().ToString(),
                 type = type,
                 tier = QuestTier.Special,
-                description = customDescription ?? $"[Special] {GetDescription(type, target, QuestTier.Special)}",
+                description = customDescription ?? $"[Special] Complete objective ({target})",
                 targetAmount = target,
                 rewardGold = gold,
                 rewardXP = xp,
-                rewardLootbox = specialQuestLootbox,
-                rewardLootboxName = specialQuestLootbox != null ? specialQuestLootbox.name : "",
+                rewardLootbox = null,
+                rewardLootboxName = "",
                 currentProgress = 0,
                 isCompleted = false,
                 isClaimed = false
@@ -536,7 +413,7 @@ namespace ElementumDefense.Progression
         }
 
         /// <summary>
-        /// Removes a specific quest
+        /// Removes a specific quest.
         /// </summary>
         public void RemoveQuest(Quest quest)
         {
@@ -550,12 +427,17 @@ namespace ElementumDefense.Progression
         }
 
         /// <summary>
-        /// Gets quests by tier
+        /// Gets quests by tier.
         /// </summary>
         public List<Quest> GetQuestsByTier(QuestTier tier)
         {
             return activeQuests.Where(q => q.tier == tier).ToList();
         }
+
+        /// <summary>
+        /// Gets the full quest pool (for editor/debug).
+        /// </summary>
+        public List<QuestData> GetQuestPool() => questPool;
 
         // ==========================================
         // PROGRESS & CLAIMING
@@ -596,6 +478,12 @@ namespace ElementumDefense.Progression
             {
                 PlayerCollection.Instance.AddGold(quest.rewardGold);
                 PlayerCollection.Instance.AddXP(quest.rewardXP);
+            }
+
+            // Battle Pass XP (independent from player XP)
+            if (quest.rewardBPXP > 0 && BattlePassManager.Instance != null)
+            {
+                BattlePassManager.Instance.AddXP(quest.rewardBPXP);
             }
 
             if (quest.HasLootboxReward)
@@ -692,15 +580,16 @@ namespace ElementumDefense.Progression
                     lastWeeklyDate = saveData.lastWeeklyDate ?? "";
                     activeQuests = saveData.quests ?? new List<Quest>();
                 }
-                CheckDailyReset(); // <-- ZMIANA TUTAJ
+                CheckDailyReset();
             }
             catch (System.Exception e)
             {
                 Debug.LogError($"[QuestManager] Failed to load JSON: {e.Message}");
                 activeQuests = new List<Quest>();
-                CheckDailyReset(); // <-- I TUTAJ
+                CheckDailyReset();
             }
         }
+
         // ==========================================
         // DEBUG TOOLS
         // ==========================================
@@ -710,7 +599,7 @@ namespace ElementumDefense.Progression
         {
             lastQuestDate = "";
             RemoveQuestsByTier(QuestTier.Daily);
-            GenerateDailyQuests();
+            AssignQuestsFromPool(QuestTier.Daily, dailyQuestCount);
             SaveQuests();
             OnQuestListUpdated?.Invoke();
             Debug.Log("<color=yellow>[DEBUG] Forced Daily Reset</color>");
@@ -721,10 +610,12 @@ namespace ElementumDefense.Progression
         {
             lastWeeklyDate = "";
             RemoveQuestsByTier(QuestTier.Weekly);
-            GenerateWeeklyQuests();
+            AssignQuestsFromPool(QuestTier.Weekly, weeklyQuestCount);
+            RemoveQuestsByTier(QuestTier.Special);
+            AssignQuestsFromPool(QuestTier.Special, specialQuestCount);
             SaveQuests();
             OnQuestListUpdated?.Invoke();
-            Debug.Log("<color=yellow>[DEBUG] Forced Weekly Reset</color>");
+            Debug.Log("<color=yellow>[DEBUG] Forced Weekly + Special Reset</color>");
         }
 
         [ContextMenu("DEBUG: Force Full Reset (Daily + Weekly)")]
@@ -733,36 +624,8 @@ namespace ElementumDefense.Progression
             lastQuestDate = "";
             lastWeeklyDate = "";
             activeQuests.Clear();
-
-            {
-            }
-
             CheckDailyReset();
             Debug.Log("<color=yellow>[DEBUG] Forced Full Reset</color>");
-        }
-
-        [ContextMenu("DEBUG: Add Random Daily Quest")]
-        public void DebugAddDailyQuest()
-        {
-            AddRandomDailyQuest(withLootbox: false);
-        }
-
-        [ContextMenu("DEBUG: Add Daily Quest with Lootbox")]
-        public void DebugAddDailyQuestWithLootbox()
-        {
-            AddRandomDailyQuest(withLootbox: true);
-        }
-
-        [ContextMenu("DEBUG: Add Weekly Quest")]
-        public void DebugAddWeeklyQuest()
-        {
-            AddRandomWeeklyQuest();
-        }
-
-        [ContextMenu("DEBUG: Add Special Quest")]
-        public void DebugAddSpecialQuest()
-        {
-            AddSpecialQuest(QuestType.WinGames, 5, 1000, 500, "[EVENT] Win 5 matches for special reward!");
         }
 
         [ContextMenu("DEBUG: Complete All Quests")]
@@ -798,6 +661,7 @@ namespace ElementumDefense.Progression
             Debug.Log($"Last Daily: {lastQuestDate}");
             Debug.Log($"Last Weekly: {lastWeeklyDate}");
             Debug.Log($"Total Quests: {activeQuests.Count}");
+            Debug.Log($"Quest Pool: {questPool.Count} templates");
             Debug.Log($"");
 
             Debug.Log($"--- DAILY ({GetQuestsByTier(QuestTier.Daily).Count}) ---");
@@ -825,31 +689,16 @@ namespace ElementumDefense.Progression
             }
         }
 
-        [ContextMenu("DEBUG: Clear All Quest Data")]
-        public void DebugClearAllData()
+        [ContextMenu("DEBUG: Print Quest Pool")]
+        public void DebugPrintPool()
         {
-            string[] files = Directory.GetFiles(Application.persistentDataPath, "Quests_*.json");
-            foreach (string file in files)
+            Debug.Log($"=== QUEST POOL ({questPool.Count} templates) ===");
+            foreach (var q in questPool)
             {
-                File.Delete(file);
-                Debug.Log($"[DEBUG] Deleted: {file}");
+                if (q == null) continue;
+                Debug.Log($"  [{q.questTier}] {q.questId}: {q.GetFormattedDescription()} " +
+                          $"(target={q.targetAmount}, gold={q.rewardGold}, xp={q.rewardXP}, weight={q.selectionWeight})");
             }
-
-            activeQuests.Clear();
-            lastQuestDate = "";
-            lastWeeklyDate = "";
-            OnQuestListUpdated?.Invoke();
-
-            Debug.Log("<color=red>[DEBUG] All quest data cleared!</color>");
-        }
-
-        [ContextMenu("DEBUG: Remove All Claimed Quests")]
-        public void DebugRemoveClaimed()
-        {
-            int removed = activeQuests.RemoveAll(q => q.isClaimed);
-            SaveQuests();
-            OnQuestListUpdated?.Invoke();
-            Debug.Log($"<color=yellow>[DEBUG] Removed {removed} claimed quests</color>");
         }
     }
 }

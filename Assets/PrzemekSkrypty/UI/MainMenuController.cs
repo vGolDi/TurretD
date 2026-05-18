@@ -14,6 +14,7 @@ public class MainMenuController : MonoBehaviour
     [SerializeField] private GameObject shopPanel;
     [SerializeField] private GameObject multiplayerPanel;
     [SerializeField] private GameObject profilePanel;
+    [SerializeField] private GameObject battlePassPanel;
 
     [Header("UI Toolkit Panels")]
     [SerializeField] private ArtDecoTarotOverlay artDecoOverlay;
@@ -24,8 +25,9 @@ public class MainMenuController : MonoBehaviour
     [SerializeField] private SettingsUI settingsUI;
     [SerializeField] private CreditsUI creditsUI;
     [SerializeField] private ProfileUI profileUI;
+    [SerializeField] private ElementumDefense.BattlePass.BattlePassUI battlePassUI;
 
-    [Header("Main Menu Buttons (UGUI — legacy)")]
+    [Header("Main Menu Buttons (UGUI ï¿½ legacy)")]
     [SerializeField] private Button multiPlayerButton;
     [SerializeField] private Button settingsButton;
     [SerializeField] private Button deckbuilderButton;
@@ -129,6 +131,11 @@ public class MainMenuController : MonoBehaviour
         ShowPanel(profilePanel);
         Debug.Log("[MainMenu] Opened profile");
     }
+    public void OpenBattlePass()
+    {
+        ShowPanel(battlePassPanel);
+        Debug.Log("[MainMenu] Opened battle pass");
+    }
     public void BackToMainMenu()
     {
         ShowPanel(mainMenuPanel);
@@ -140,8 +147,8 @@ public class MainMenuController : MonoBehaviour
         mainMenuPanel?.SetActive(
             panel == mainMenuPanel);
 
-        // WA¯NE: NIE rób SetActive na dummy tokenach!
-        // Tylko porównuj referencje.
+        // WAï¿½NE: NIE rï¿½b SetActive na dummy tokenach!
+        // Tylko porï¿½wnuj referencje.
 
         // UI Toolkit: Art Deco main overlay
         if (artDecoOverlay != null)
@@ -206,6 +213,14 @@ public class MainMenuController : MonoBehaviour
                 profileUI.Show();
             else
                 profileUI.Hide();
+        }
+
+        if (battlePassUI != null)
+        {
+            if (panel == battlePassPanel)
+                battlePassUI.Show();
+            else
+                battlePassUI.Hide();
         }
     }
 

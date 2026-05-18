@@ -519,6 +519,14 @@ namespace ElementumDefense.UI
                         "quest-reward-xp"));
                 }
 
+                if (quest.rewardBPXP > 0)
+                {
+                    rewards.Add(BuildRewardItem(
+                        $"{quest.rewardBPXP} BP XP",
+                        "quest-reward-dot-xp",
+                        "quest-reward-xp"));
+                }
+
                 if (quest.HasLootboxReward)
                 {
                     string lbName =
@@ -827,8 +835,8 @@ namespace ElementumDefense.UI
 //    [SerializeField] private GameObject scrollDownIndicator;
 
 //    [Header("Settings")]
-//    //[SerializeField] private float slotHeight = 100f; // Wysokoœæ jednego slotu
-//    [SerializeField] private int visibleSlots = 3;    // Ile slotów widocznych
+//    //[SerializeField] private float slotHeight = 100f; // Wysokoï¿½ï¿½ jednego slotu
+//    [SerializeField] private int visibleSlots = 3;    // Ile slotï¿½w widocznych
 //    [SerializeField] private float scrollIndicatorThreshold = 0.05f;
 
 //    private List<GameObject> spawnedSlots = new List<GameObject>();
@@ -880,8 +888,8 @@ namespace ElementumDefense.UI
 
 //    private void UpdateTabVisuals()
 //    {
-//        // Mo¿esz tu zmieniæ kolory/stany przycisków zak³adek
-//        // np. podœwietliæ aktywn¹ zak³adkê
+//        // Moï¿½esz tu zmieniï¿½ kolory/stany przyciskï¿½w zakï¿½adek
+//        // np. podï¿½wietliï¿½ aktywnï¿½ zakï¿½adkï¿½
 //    }
 
 //    public void RefreshUI()
@@ -953,14 +961,14 @@ namespace ElementumDefense.UI
 //        int totalQuests = spawnedSlots.Count;
 //        bool canScroll = totalQuests > visibleSlots;
 
-//        // Scroll up indicator (pokazuje siê gdy nie jesteœmy na górze)
+//        // Scroll up indicator (pokazuje siï¿½ gdy nie jesteï¿½my na gï¿½rze)
 //        if (scrollUpIndicator != null)
 //        {
 //            bool showUp = canScroll && scrollRect.verticalNormalizedPosition < (1f - scrollIndicatorThreshold);
 //            scrollUpIndicator.SetActive(showUp);
 //        }
 
-//        // Scroll down indicator (pokazuje siê gdy nie jesteœmy na dole)
+//        // Scroll down indicator (pokazuje siï¿½ gdy nie jesteï¿½my na dole)
 //        if (scrollDownIndicator != null)
 //        {
 //            bool showDown = canScroll && scrollRect.verticalNormalizedPosition > scrollIndicatorThreshold;

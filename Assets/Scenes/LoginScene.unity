@@ -399,25 +399,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fbb32f2adb73c8943896627a7adb09dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ElementumDefense.Progression.QuestManager
-  dailyQuestCount: 5
-  firstQuestAlwaysGivesLootbox: 1
-  otherQuestsLootboxChance: 0.33
+  dailyQuestCount: 1
   generateWeeklyQuest: 1
-  weeklyQuestCount: 2
-  minPlayGames: 2
-  maxPlayGames: 5
-  minWinGames: 1
-  maxWinGames: 3
-  minKillEnemies: 20
-  maxKillEnemies: 100
-  minBuildTurrets: 5
-  maxBuildTurrets: 20
-  dailyQuestLootbox: {fileID: 11400000, guid: 6c20ccda294069740899d7e832fa2c8f, type: 2}
-  weeklyQuestLootbox: {fileID: 11400000, guid: 2a8a2675321c1794e8d1e91c75bf5c8e, type: 2}
-  specialQuestLootbox: {fileID: 11400000, guid: 2a8a2675321c1794e8d1e91c75bf5c8e, type: 2}
-  baseGoldReward: 100
-  baseXPReward: 50
-  weeklyRewardMultiplier: 3
+  weeklyQuestCount: 1
+  specialQuestCount: 1
+  questPool: []
   activeQuests: []
 --- !u!114 &151654783
 MonoBehaviour:

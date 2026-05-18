@@ -43,6 +43,7 @@ public class ArtDecoTarotOverlay : MonoBehaviour
     private VisualElement cardShop;
     private VisualElement cardLootbox;
     private VisualElement cardProfile;
+    private VisualElement cardBattlePass;
 
     // Bottom menu
     private Button btnCredits;
@@ -237,6 +238,8 @@ public class ArtDecoTarotOverlay : MonoBehaviour
             root.Q<VisualElement>("card-lootbox");
         cardProfile =
             root.Q<VisualElement>("card-profile");
+        cardBattlePass =
+            root.Q<VisualElement>("card-battlepass");
 
         // Bottom menu — settings between credits and quit
         btnCredits =
@@ -433,6 +436,11 @@ public class ArtDecoTarotOverlay : MonoBehaviour
         {
             mainMenuController?.OpenProfile();
         });
+
+        BindCard(cardBattlePass, () =>
+        {
+            mainMenuController?.OpenBattlePass();
+        });
     }
 
     private void BindBottomMenu()
@@ -494,6 +502,8 @@ public class ArtDecoTarotOverlay : MonoBehaviour
         cardLootbox?.RemoveFromClassList(
             "card-selected");
         cardProfile?.RemoveFromClassList(
+            "card-selected");
+        cardBattlePass?.RemoveFromClassList(
             "card-selected");
     }
 

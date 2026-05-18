@@ -565,27 +565,29 @@
 }
 
 .tarot-card-wrapper {
-    margin-left: 8px;
-    margin-right: 8px;
+    margin-left: 6px;
+    margin-right: 6px;
     transition-property: translate, scale;
     transition-duration: 0.4s;
     transition-timing-function: ease-out;
     cursor: link;
 }
 
-/* Offset łukowy — stan normalny */
-.card-offset-0 { translate: 0 24px; }
-.card-offset-1 { translate: 0 12px; }
-.card-offset-2 { translate: 0 0; }
-.card-offset-3 { translate: 0 12px; }
-.card-offset-4 { translate: 0 24px; }
+/* Offset łukowy — stan normalny (6 kart) */
+.card-offset-0 { translate: 0 28px; }
+.card-offset-1 { translate: 0 14px; }
+.card-offset-2 { translate: 0 4px; }
+.card-offset-3 { translate: 0 4px; }
+.card-offset-4 { translate: 0 14px; }
+.card-offset-5 { translate: 0 28px; }
 
 /* Hover — karta unosi się */
-.card-offset-0:hover { translate: 0 -8px; scale: 1.03 1.03; }
-.card-offset-1:hover { translate: 0 -20px; scale: 1.03 1.03; }
-.card-offset-2:hover { translate: 0 -32px; scale: 1.03 1.03; }
-.card-offset-3:hover { translate: 0 -20px; scale: 1.03 1.03; }
-.card-offset-4:hover { translate: 0 -8px; scale: 1.03 1.03; }
+.card-offset-0:hover { translate: 0 -4px; scale: 1.03 1.03; }
+.card-offset-1:hover { translate: 0 -18px; scale: 1.03 1.03; }
+.card-offset-2:hover { translate: 0 -28px; scale: 1.03 1.03; }
+.card-offset-3:hover { translate: 0 -28px; scale: 1.03 1.03; }
+.card-offset-4:hover { translate: 0 -18px; scale: 1.03 1.03; }
+.card-offset-5:hover { translate: 0 -4px; scale: 1.03 1.03; }
 
 .tarot-card {
     width: 160px;

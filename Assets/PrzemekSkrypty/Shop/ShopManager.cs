@@ -9,6 +9,7 @@ using ElementumDefense.Auth;
 using ElementumDefense.Skins;
 using ElementumDefense.Cards;
 using ElementumDefense.Lootbox;
+using ElementumDefense.BattlePass;
 
 namespace ElementumDefense.Shop
 {
@@ -283,6 +284,15 @@ namespace ElementumDefense.Shop
 
                 case ShopItemType.CurrencyPack:
                     // Currency packs only give bonus currency (handled below)
+                    break;
+
+                case ShopItemType.BattlePass:
+                    // Grants premium Battle Pass
+                    if (BattlePass.BattlePassManager.Instance != null)
+                    {
+                        BattlePass.BattlePassManager.Instance.GrantPremium();
+                        Debug.Log("[ShopManager] → Battle Pass Premium granted via shop!");
+                    }
                     break;
             }
 

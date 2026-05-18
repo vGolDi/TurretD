@@ -184,7 +184,7 @@
                         <ui:VisualElement class="card-hover-line" />
                     </ui:VisualElement>
                 </ui:VisualElement>
-                   <ui:VisualElement name="card-profile" class="tarot-card-wrapper card-offset-4">
+                <ui:VisualElement name="card-profile" class="tarot-card-wrapper card-offset-4">
                     <ui:VisualElement class="tarot-card">
                         <ui:VisualElement class="card-inner-border" />
                         <ui:VisualElement class="card-corner card-corner-tl" />
@@ -202,7 +202,26 @@
                         </ui:VisualElement>
                         <ui:VisualElement class="card-hover-line" />
                     </ui:VisualElement>
-        </ui:VisualElement>
+                </ui:VisualElement>
+                <ui:VisualElement name="card-battlepass" class="tarot-card-wrapper card-offset-5">
+                    <ui:VisualElement class="tarot-card">
+                        <ui:VisualElement class="card-inner-border" />
+                        <ui:VisualElement class="card-corner card-corner-tl" />
+                        <ui:VisualElement class="card-corner card-corner-tr" />
+                        <ui:VisualElement class="card-corner card-corner-bl" />
+                        <ui:VisualElement class="card-corner card-corner-br" />
+                        <ui:Label text="VI" class="card-numeral" />
+                        <ui:VisualElement class="card-icon-container">
+                            <ui:VisualElement class="card-icon-glow" />
+                            <ui:Label text="◈" class="card-icon" />
+                        </ui:VisualElement>
+                        <ui:VisualElement class="card-label-container">
+                            <ui:Label text="The Journey" class="card-title-text" />
+                            <ui:Label text="BATTLE PASS" class="card-name-text" />
+                        </ui:VisualElement>
+                        <ui:VisualElement class="card-hover-line" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
             </ui:VisualElement>
         </ui:VisualElement>
         <ui:VisualElement name="bottom-menu" class="bottom-menu">

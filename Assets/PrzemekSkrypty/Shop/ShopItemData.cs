@@ -15,7 +15,8 @@ namespace ElementumDefense.Shop
         Skin,
         Consumable,
         Bundle,
-        CurrencyPack
+        CurrencyPack,
+        BattlePass
     }
 
     public enum ShopCurrencyType
