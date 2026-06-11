@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 using Photon.Pun;
 using Photon.Realtime;
@@ -9,6 +9,9 @@ using ElementumDefense.UI;
 using ElementumDefense.Projectiles;
 using ElementumDefense.BattlePass;
 
+
+namespace ElementumDefense.Players
+{
 public class GameEndManager : MonoBehaviour
 {
     [Header("Rewards Config")]
@@ -85,6 +88,12 @@ public class GameEndManager : MonoBehaviour
     private void EndGameSequence(bool isVictory)
     {
         gameEnded = true;
+
+        // Match concluded normally — clear pending-match marker so the
+        // reconnect popup doesn't fire on the next menu visit.
+        ElementumDefense.Multiplayer.PendingMatchState.Clear();
+        // Also drop the in-match state snapshot (match is over).
+        ElementumDefense.Multiplayer.Reconnect.MatchSnapshotService.Instance?.Clear();
 
         FreezeGameScene();
 
@@ -318,4 +327,5 @@ public class GameEndManager : MonoBehaviour
 
     [ContextMenu("DEBUG: Defeat")]
     public void DebugDefeat() => ShowDefeat();
+}
 }

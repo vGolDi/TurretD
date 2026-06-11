@@ -1,7 +1,11 @@
 using UnityEngine;
 using ElementumDefense.Elements;
 using ElementumDefense.StatusEffects;
+using ElementumDefense.Waves;
 
+
+namespace ElementumDefense.Turrets
+{
 [CreateAssetMenu(fileName = "New Turret", menuName = "Tower Defense/Turret")]
 public class TurretData : ScriptableObject
 {
@@ -42,6 +46,10 @@ public class TurretData : ScriptableObject
     [Tooltip("Available upgrade options (typically 2-3 paths)")]
     public TurretData[] upgradePaths;
 
+    [Tooltip("Czy ten turret może być zmergowany z innym? " +
+             "Ustaw TRUE na LV3, FALSE na zmergowanych turretach (LV4)")]
+    public bool canMerge = false;
+
     // TODO: Add elemental type
     [Header("Element")]
     [Tooltip("Elemental type of this turret")]
@@ -74,4 +82,4 @@ public class TurretData : ScriptableObject
     // TODO: Add synergy bonuses
     // public SynergyData[] synergyWith;
 }
-
+}

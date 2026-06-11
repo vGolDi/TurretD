@@ -309,13 +309,31 @@ namespace ElementumDefense.Lootbox
         }
 
         /// <summary>
-        /// Gets all cards that can drop from lootboxes
+        /// Gets all cards that can drop from lootboxes.
+        /// 
+        /// Cached on first call. <c>Resources.LoadAll</c> is not cheap — it
+        /// iterates every CardData asset in Resources/Cards/, allocates an
+        /// array, and re-serializes references. Lootbox openings are bursty
+        /// (Open All button can fire 10+ in a row), so we read the asset
+        /// list once per app session.
+        /// 
+        /// If you author new CardData assets at runtime (e.g. modding) call
+        /// <see cref="InvalidateDroppableCardsCache"/> to rebuild.
         /// </summary>
+        private List<CardData> droppableCardsCache;
+
         private List<CardData> GetAllDroppableCards()
         {
+            if (droppableCardsCache != null)
+                return droppableCardsCache;
+
             CardData[] allCards = Resources.LoadAll<CardData>("Cards");
-            return allCards.Where(c => c != null && c.canDropFromLootbox).ToList();
+            droppableCardsCache = allCards.Where(c => c != null && c.canDropFromLootbox).ToList();
+            return droppableCardsCache;
         }
+
+        /// <summary>Drops the cached card list — next OpenLootbox will re-scan.</summary>
+        public void InvalidateDroppableCardsCache() => droppableCardsCache = null;
 
         // ==========================================
         // UTILITY

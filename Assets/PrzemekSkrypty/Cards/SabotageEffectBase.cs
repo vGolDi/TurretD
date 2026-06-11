@@ -1,5 +1,7 @@
 using UnityEngine;
 using Photon.Pun;
+using ElementumDefense.Players;
+using ElementumDefense.Waves;
 
 namespace ElementumDefense.Cards
 {
@@ -23,6 +25,17 @@ namespace ElementumDefense.Cards
         /// <param name="targetPhotonView">Opponent being sabotaged</param>
         /// <param name="casterPhotonView">Player who cast sabotage</param>
         public abstract void Apply(PhotonView targetPhotonView, PhotonView casterPhotonView);
+
+        /// <summary>
+        /// Reconnect restore hint. When TRUE (default) the restore flow re-runs
+        /// <see cref="Apply"/> to rebuild this effect's state (modifier stacks,
+        /// wave modifiers, timers). Override to FALSE for effects whose Apply has
+        /// a one-time irreversible side effect that is already reflected in the
+        /// snapshot (e.g. a lump-sum gold sacrifice) — re-applying would double it.
+        /// Such effects are still re-registered for duration/reward tracking, but
+        /// their Apply is skipped on restore.
+        /// </summary>
+        public virtual bool ReapplyOnRestore => true;
 
         /// <summary>
         /// Removes sabotage effect (when duration expires)

@@ -1,9 +1,10 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.UIElements;
 using UnityEngine.SceneManagement;
 using System.Collections;
 using ElementumDefense.Cards;
 using ElementumDefense.Ranked;
+using ElementumDefense.Multiplayer;
 
 namespace ElementumDefense.UI
 {
@@ -101,7 +102,9 @@ namespace ElementumDefense.UI
 
             QueryElements();
             BindButtons();
+            EnsureBanLabels();
             RefreshDisplay();
+            StartBanTicker();
 
             var bg = root.Q<VisualElement>(
                 "multiplayer-root");
@@ -120,6 +123,7 @@ namespace ElementumDefense.UI
             }
 
             StopAllCoroutines();
+            banTickerRoutine = null;
 
             var uiDoc =
                 GetComponent<UIDocument>();
@@ -495,6 +499,25 @@ namespace ElementumDefense.UI
 
         private void SelectMode(GameMode mode)
         {
+            if (ElementumDefense.Multiplayer.PendingMatchState.HasPending)
+            {
+                Debug.LogWarning("[MultiplayerUI] Matchmaking blocked. A match is currently pending.");
+                if (loadingText != null)
+                {
+                    loadingText.text = "You must Reconnect or Abandon your current match first.";
+                }
+                return;
+            }
+
+            // Gate matchmaking on local matchmaking ban (forfeit cooldown).
+            if (MatchmakingBan.IsBannedForMode(mode))
+            {
+                Debug.LogWarning($"[MultiplayerUI] Matchmaking blocked. " +
+                    $"Ban active for {MatchmakingBan.SecondsRemainingForMode(mode)}s ({MatchmakingBan.GetReasonForMode(mode)}).");
+                FlashBanLabel(mode);
+                return;
+            }
+
             var player =
                 PlayerCollection.Instance;
             if (player != null)
@@ -505,6 +528,128 @@ namespace ElementumDefense.UI
                 $"Selected: {mode}");
             StartCoroutine(
                 LoadSceneSequence(lobbySceneName));
+        }
+
+        private void ShowBanMessage()
+        {
+            // Reuse the loading-text label as a transient warning channel.
+            if (loadingText != null)
+            {
+                loadingText.text = $"Matchmaking locked. " +
+                    $"Try again in {MatchmakingBan.FormatRemaining()}.";
+            }
+        }
+
+        // ==========================================
+        // BAN COUNTDOWN UI
+        // ==========================================
+
+        // Created lazily under each mode card. Holding our own refs avoids
+        // re-querying the tree in the per-second update.
+        private Label banLabelCasual;
+        private Label banLabelRanked;
+        private Coroutine banTickerRoutine;
+
+        /// <summary>
+        /// Adds a small "BAN: M:SS" label under each mode card if not yet
+        /// present. We do this in C# rather than in the UXML so the menu
+        /// continues to work even if the UXML hasn't been edited yet.
+        /// </summary>
+        private void EnsureBanLabels()
+        {
+            banLabelCasual = AttachBanLabel(modeCasual, "ban-label-casual", banLabelCasual);
+            banLabelRanked = AttachBanLabel(modeRanked, "ban-label-ranked", banLabelRanked);
+        }
+
+        private Label AttachBanLabel(VisualElement card, string name, Label existing)
+        {
+            if (card == null) return existing;
+            if (existing != null && existing.parent == card) return existing;
+
+            // Maybe a previous Show() already added it.
+            var found = card.Q<Label>(name);
+            if (found != null) return found;
+
+            var lbl = new Label("") { name = name };
+            lbl.AddToClassList("mp-mode-ban");
+            // Inline minimal styling — fits all themes without needing USS edits.
+            lbl.style.position = Position.Absolute;
+            lbl.style.bottom = 6;
+            lbl.style.left = 0;
+            lbl.style.right = 0;
+            lbl.style.unityTextAlign = TextAnchor.MiddleCenter;
+            lbl.style.color = new StyleColor(new Color(0.96f, 0.62f, 0.04f));
+            lbl.style.fontSize = 11;
+            lbl.style.unityFontStyleAndWeight = FontStyle.Bold;
+            lbl.style.letterSpacing = 2;
+            lbl.style.display = DisplayStyle.None;
+            card.Add(lbl);
+            return lbl;
+        }
+
+        private void StartBanTicker()
+        {
+            if (banTickerRoutine != null) StopCoroutine(banTickerRoutine);
+            banTickerRoutine = StartCoroutine(BanTickerRoutine());
+        }
+
+        private IEnumerator BanTickerRoutine()
+        {
+            // Refresh once on entry so the label is already correct, then once a second.
+            while (true)
+            {
+                UpdateBanLabels();
+                yield return new WaitForSeconds(1f);
+            }
+        }
+
+        private void UpdateBanLabels()
+        {
+            bool casualBanned = MatchmakingBan.IsBannedForMode(GameMode.Casual);
+            string casualRemaining = casualBanned ? MatchmakingBan.FormatRemainingForMode(GameMode.Casual) : "";
+            ApplyBanLabel(banLabelCasual, modeCasual, casualBanned, casualRemaining);
+
+            bool rankedBanned = MatchmakingBan.IsBannedForMode(GameMode.Ranked);
+            string rankedRemaining = rankedBanned ? MatchmakingBan.FormatRemainingForMode(GameMode.Ranked) : "";
+            ApplyBanLabel(banLabelRanked, modeRanked, rankedBanned, rankedRemaining);
+        }
+
+        private void ApplyBanLabel(Label lbl, VisualElement card, bool banned, string timeStr)
+        {
+            if (lbl == null) return;
+            lbl.style.display = banned ? DisplayStyle.Flex : DisplayStyle.None;
+            if (banned) lbl.text = $"BAN  {timeStr}";
+
+            if (card != null)
+            {
+                if (banned)
+                {
+                    card.AddToClassList("mp-mode-disabled");
+                }
+                else
+                {
+                    if (card.name == "mode-casual" || card.name == "mode-ranked")
+                    {
+                        card.RemoveFromClassList("mp-mode-disabled");
+                    }
+                }
+            }
+        }
+
+        private void FlashBanLabel(GameMode mode)
+        {
+            // Briefly highlight the label so the click feels acknowledged.
+            Label target = mode == GameMode.Ranked ? banLabelRanked : banLabelCasual;
+            if (target == null) return;
+            target.style.color = new StyleColor(new Color(1f, 0.4f, 0.4f));
+            StartCoroutine(ResetLabelColorAfter(target, 0.6f));
+        }
+
+        private IEnumerator ResetLabelColorAfter(Label lbl, float seconds)
+        {
+            yield return new WaitForSeconds(seconds);
+            if (lbl != null)
+                lbl.style.color = new StyleColor(new Color(0.96f, 0.62f, 0.04f));
         }
 
         // ==========================================

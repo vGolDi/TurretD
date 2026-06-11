@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using ElementumDefense.Skins;
 using ElementumDefense.Achievements;
 using ElementumDefense.BattlePass;
+using ElementumDefense.Multiplayer;
 
 namespace ElementumDefense.Auth
 {
@@ -206,6 +207,9 @@ namespace ElementumDefense.Auth
         {
             CurrentUsername = null;
             PlayFabId = null;
+            // Clear any per-account state bound to the previous user.
+            ElementumDefense.Multiplayer.PendingMatchState.UseAccount(null);
+            ElementumDefense.Multiplayer.MatchmakingBan.UseAccount(null);
             PlayFabClientAPI.ForgetAllCredentials();
             UnityEngine.SceneManagement.SceneManager.LoadScene("LoginScene");
         }

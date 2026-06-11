@@ -1,9 +1,13 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using Photon.Pun;
 using ElementumDefense.Cards;
 using ElementumDefense.UI;
+using ElementumDefense.Waves;
 
+
+namespace ElementumDefense.Multiplayer
+{
 public class GameStartCountdown : MonoBehaviourPunCallbacks
 {
     [Header("Countdown Settings")]
@@ -111,4 +115,5 @@ public class GameStartCountdown : MonoBehaviourPunCallbacks
 
         waveManager.StartWaves();
     }
+}
 }

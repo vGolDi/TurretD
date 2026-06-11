@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements">
+    <Style src="ReconnectPromptStyles.uss" />
+    <ui:VisualElement name="reconnect-root" class="reconnect-root" picking-mode="Position">
+
+        <!-- Backdrop blocks input behind the popup -->
+        <ui:VisualElement name="reconnect-backdrop" class="reconnect-backdrop" />
+
+        <!-- Card -->
+        <ui:VisualElement name="reconnect-card" class="reconnect-card">
+
+            <!-- Top brand strip -->
+            <ui:VisualElement class="reconnect-strip-top">
+                <ui:VisualElement class="reconnect-strip-line" />
+                <ui:VisualElement class="reconnect-strip-diamond" />
+                <ui:VisualElement class="reconnect-strip-line" />
+            </ui:VisualElement>
+
+            <!-- Heading -->
+            <ui:Label name="reconnect-title" text="Match in progress" class="reconnect-title" />
+            <ui:Label name="reconnect-subtitle" text="A match left unfinished was detected on this account."
+                      class="reconnect-subtitle" />
+
+            <!-- Detail rows -->
+            <ui:VisualElement class="reconnect-detail-block">
+                <ui:VisualElement class="reconnect-detail-row">
+                    <ui:Label text="Mode" class="reconnect-detail-label" />
+                    <ui:Label name="reconnect-mode" text="Casual" class="reconnect-detail-value" />
+                </ui:VisualElement>
+                <ui:VisualElement class="reconnect-detail-row">
+                    <ui:Label text="Room" class="reconnect-detail-label" />
+                    <ui:Label name="reconnect-room" text="—" class="reconnect-detail-value" />
+                </ui:VisualElement>
+                <ui:VisualElement class="reconnect-detail-row">
+                    <ui:Label text="Window left" class="reconnect-detail-label" />
+                    <ui:Label name="reconnect-window" text="0:00" class="reconnect-detail-value reconnect-detail-window" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+
+            <!-- Forfeit warning -->
+            <ui:Label name="reconnect-forfeit-note" class="reconnect-forfeit-note"
+                      text="Forfeit will count as a loss and lock matchmaking briefly." />
+
+            <!-- Status text (shown during reconnecting / failed) -->
+            <ui:Label name="reconnect-status" text="" class="reconnect-status" />
+
+            <!-- Buttons -->
+            <ui:VisualElement name="reconnect-buttons" class="reconnect-buttons">
+                <ui:Button name="reconnect-btn-rejoin" text="RECONNECT" class="reconnect-btn reconnect-btn-primary" />
+                <ui:Button name="reconnect-btn-forfeit" text="FORFEIT" class="reconnect-btn reconnect-btn-danger" />
+            </ui:VisualElement>
+
+            <!-- Bottom brand strip -->
+            <ui:VisualElement class="reconnect-strip-bottom">
+                <ui:VisualElement class="reconnect-strip-line" />
+                <ui:VisualElement class="reconnect-strip-diamond" />
+                <ui:VisualElement class="reconnect-strip-line" />
+            </ui:VisualElement>
+
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

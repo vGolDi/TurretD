@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine.SceneManagement;
@@ -6,6 +6,9 @@ using ElementumDefense.Cards;
 using ElementumDefense.Ranked;
 using ElementumDefense.UI;
 
+
+namespace ElementumDefense.Multiplayer
+{
 public class NetworkManager :
     MonoBehaviourPunCallbacks
 {
@@ -33,6 +36,15 @@ public class NetworkManager :
         "eloBucket";
     private const string GAMEMODE_PROP_KEY = "gm";
     private const string HOST_ELO_KEY = "hostElo";
+
+    /// <summary>
+    /// How long Photon keeps a disconnected player's slot reserved (ms).
+    /// Within this window the player can call PhotonNetwork.RejoinRoom().
+    /// 90 seconds = enough for a quick app restart, network blip, or menu trip.
+    /// </summary>
+    public const int RECONNECT_PLAYER_TTL_MS = 90000;
+    /// <summary>EmptyRoomTtl matches PlayerTtl so a one-player-left room survives.</summary>
+    public const int RECONNECT_EMPTY_ROOM_TTL_MS = 90000;
 
     // ==========================================
     // STATE
@@ -84,6 +96,16 @@ public class NetworkManager :
         }
         else
         {
+            string playFabId = ElementumDefense.Auth.AuthManager.Instance != null
+                ? ElementumDefense.Auth.AuthManager.Instance.PlayFabId
+                : null;
+            if (!string.IsNullOrEmpty(playFabId))
+            {
+                if (PhotonNetwork.AuthValues == null)
+                    PhotonNetwork.AuthValues = new Photon.Realtime.AuthenticationValues();
+                PhotonNetwork.AuthValues.UserId = playFabId;
+            }
+
             UpdateUI("Connecting to server...");
             PhotonNetwork.ConnectUsingSettings();
         }
@@ -284,6 +306,8 @@ public class NetworkManager :
             MaxPlayers = maxPlayersPerRoom,
             IsVisible = true,
             IsOpen = true,
+            PlayerTtl = RECONNECT_PLAYER_TTL_MS,
+            EmptyRoomTtl = RECONNECT_EMPTY_ROOM_TTL_MS,
             CustomRoomProperties =
                 new ExitGames.Client.Photon
                     .Hashtable
@@ -409,6 +433,8 @@ public class NetworkManager :
             MaxPlayers = maxPlayersPerRoom,
             IsVisible = true,
             IsOpen = true,
+            PlayerTtl = RECONNECT_PLAYER_TTL_MS,
+            EmptyRoomTtl = RECONNECT_EMPTY_ROOM_TTL_MS,
             CustomRoomProperties =
                 new ExitGames.Client.Photon
                     .Hashtable
@@ -609,6 +635,34 @@ public class NetworkManager :
             $"[NetworkManager] Loading: " +
             $"{gameSceneName}");
 
+        // ===== Reconnect: persist match identity BEFORE scene load. =====
+        // We do this here (not at OnJoinedRoom) because the match doesn't
+        // really start until both players are in and the scene is loading.
+        // If the player closes the app between this point and the game-end,
+        // the menu screen on next launch will see HasPending and offer rejoin.
+        if (PhotonNetwork.CurrentRoom != null)
+        {
+            // Bind per-account namespace if not yet bound (defensive — login
+            // normally runs before matchmaking, so this is mostly redundant).
+            if (!PendingMatchState.HasAccount && ElementumDefense.Auth.AuthManager.Instance != null)
+            {
+                string pid = ElementumDefense.Auth.AuthManager.Instance.PlayFabId;
+                if (!string.IsNullOrEmpty(pid))
+                {
+                    PendingMatchState.UseAccount(pid);
+                    MatchmakingBan.UseAccount(pid);
+                }
+            }
+
+            GameMode mode = PlayerCollection.Instance?.SelectedGameMode
+                            ?? GameMode.Casual;
+            PendingMatchState.Set(
+                PhotonNetwork.CurrentRoom.Name,
+                mode,
+                RECONNECT_PLAYER_TTL_MS);
+        }
+        // ================================================================
+
         lobbyUI?.ShowMatchFound();
         StartCoroutine(LoadGameSceneCoroutine());
     }
@@ -684,4 +738,5 @@ public class NetworkManager :
     }
 
     #endregion
+}
 }

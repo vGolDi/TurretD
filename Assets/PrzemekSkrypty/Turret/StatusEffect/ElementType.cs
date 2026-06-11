@@ -1,27 +1,36 @@
-﻿using UnityEngine;
+using UnityEngine;
+using ElementumDefense.Turrets;
 
 namespace ElementumDefense.Elements
 {
     /// <summary>
-    /// Defines all element types in the game
-    /// Used by turrets, enemies, and damage calculations
+    /// Defines all element types in the game.
+    /// Used by turrets, enemies, and damage calculations.
+    /// 
+    /// IMPORTANT: enum values are EXPLICIT. We removed Water (was 2) and
+    /// Earth (was 4) but kept the remaining numbers stable so existing
+    /// SO assets (turrets, cards, enemies) that store an int value
+    /// don't get silently re-mapped to a different element.
+    /// 
+    /// If you ever see "INVALID" element in an Inspector, that asset
+    /// originally pointed to Water or Earth — delete or reassign it.
     /// </summary>
     public enum ElementType
     {
-        None,       // Neutral - no bonuses/penalties
-        Fire,       //  High damage, burn effect
-        Water,      //  Balanced, splash damage
-        Ice,        // ❄ Slows enemies
-        Earth,      //  Tank killer, armor penetration
-        Lightning,  //  Chain damage, fast attack
-        Nature,     //  DOT (poison), summons
-        Dark,       //  Lifesteal, debuffs
-        Light       //  Buffs allies, healing
+        None      = 0,  // Neutral - no bonuses/penalties
+        Fire      = 1,  // High damage, burn effect
+        // 2 was Water — removed
+        Ice       = 3,  // Slows enemies
+        // 4 was Earth — removed
+        Lightning = 5,  // Chain damage, fast attack
+        Nature    = 6,  // DOT (poison), summons
+        Dark      = 7,  // Lifesteal, debuffs
+        Light     = 8   // Buffs allies, healing
     }
 
     /// <summary>
-    /// Static utility class for element-related calculations
-    /// Handles damage modifiers, color coding, and relationships
+    /// Static utility class for element-related calculations.
+    /// Handles damage modifiers, color coding, and relationships.
     /// </summary>
     public static class ElementUtility
     {
@@ -30,122 +39,91 @@ namespace ElementumDefense.Elements
         // ==========================================
 
         /// <summary>
-        /// Returns damage multiplier based on attacker vs defender element
-        /// Example: Fire vs Ice = 1.5x damage (strong against)
-        ///          Fire vs Water = 0.5x damage (weak against)
+        /// Returns damage multiplier based on attacker vs defender element.
+        /// Example: Fire vs Ice = 1.5x damage (strong against).
+        ///          Fire vs Nature = depends (Fire is strong vs Nature in current chart).
         /// </summary>
-        /// <param name="attackerElement">Element of attacking turret</param>
-        /// <param name="defenderElement">Element of target enemy</param>
-        /// <returns>Damage multiplier (1.0 = normal, 1.5 = strong, 0.5 = weak)</returns>
         public static float GetDamageMultiplier(ElementType attackerElement, ElementType defenderElement)
         {
-            // None element always deals normal damage
             if (attackerElement == ElementType.None || defenderElement == ElementType.None)
                 return 1.0f;
 
-            // Same element = slight resistance
             if (attackerElement == defenderElement)
                 return 0.75f;
 
-            // Check strong matchups (1.5x damage)
             if (IsStrongAgainst(attackerElement, defenderElement))
                 return 1.5f;
 
-            // Check weak matchups (0.5x damage)
             if (IsWeakAgainst(attackerElement, defenderElement))
                 return 0.5f;
 
-            // Neutral matchup
             return 1.0f;
         }
 
         /// <summary>
-        /// Checks if attackerElement is STRONG against defenderElement
-        /// Based on classic RPG element wheel
+        /// Strong matchups for the 6-element setup (Fire/Ice/Lightning/Nature/Dark/Light).
+        /// Pairs:
+        ///   Fire    > Ice, Nature
+        ///   Ice     > Lightning
+        ///   Lightning > Nature
+        ///   Nature  > Dark   (life > corruption)
+        ///   Dark    <-> Light
         /// </summary>
         private static bool IsStrongAgainst(ElementType attacker, ElementType defender)
         {
             return attacker switch
             {
-                ElementType.Fire => defender == ElementType.Ice || defender == ElementType.Nature,
-                ElementType.Water => defender == ElementType.Fire || defender == ElementType.Earth,
-                ElementType.Ice => defender == ElementType.Water || defender == ElementType.Earth,
-                ElementType.Earth => defender == ElementType.Lightning,
-                ElementType.Lightning => defender == ElementType.Water,
-                ElementType.Nature => defender == ElementType.Water || defender == ElementType.Earth,
-                ElementType.Light => defender == ElementType.Dark,
-                ElementType.Dark => defender == ElementType.Light,
+                ElementType.Fire      => defender == ElementType.Ice || defender == ElementType.Nature,
+                ElementType.Ice       => defender == ElementType.Lightning,
+                ElementType.Lightning => defender == ElementType.Nature,
+                ElementType.Nature    => defender == ElementType.Dark,
+                ElementType.Light     => defender == ElementType.Dark,
+                ElementType.Dark      => defender == ElementType.Light,
                 _ => false
             };
         }
 
-        /// <summary>
-        /// Checks if attackerElement is WEAK against defenderElement
-        /// (Inverse of strong matchups)
-        /// </summary>
         private static bool IsWeakAgainst(ElementType attacker, ElementType defender)
-        {
-            return IsStrongAgainst(defender, attacker);
-        }
+            => IsStrongAgainst(defender, attacker);
 
         // ==========================================
         // VISUAL HELPERS
         // ==========================================
 
-        /// <summary>
-        /// Returns signature color for each element
-        /// Used for UI, particles, indicators
-        /// </summary>
         public static Color GetElementColor(ElementType element)
         {
             return element switch
             {
-                ElementType.Fire => new Color(1f, 0.3f, 0f),        // Orange-red
-                ElementType.Water => new Color(0f, 0.5f, 1f),       // Blue
-                ElementType.Ice => new Color(0.5f, 0.9f, 1f),       // Cyan
-                ElementType.Earth => new Color(0.6f, 0.4f, 0.2f),   // Brown
-                ElementType.Lightning => new Color(1f, 1f, 0.3f),   // Yellow
-                ElementType.Nature => new Color(0.2f, 0.8f, 0.2f),  // Green
-                ElementType.Dark => new Color(0.3f, 0f, 0.5f),      // Purple
-                ElementType.Light => new Color(1f, 1f, 0.8f),       // White-yellow
-                _ => Color.white                                     // Neutral
+                ElementType.Fire      => new Color(1f, 0.3f, 0f),        // Orange-red
+                ElementType.Ice       => new Color(0.5f, 0.9f, 1f),      // Cyan
+                ElementType.Lightning => new Color(1f, 1f, 0.3f),        // Yellow
+                ElementType.Nature    => new Color(0.2f, 0.8f, 0.2f),    // Green
+                ElementType.Dark      => new Color(0.3f, 0f, 0.5f),      // Purple
+                ElementType.Light     => new Color(1f, 1f, 0.8f),        // White-yellow
+                _ => Color.white
             };
         }
 
-        /// <summary>
-        /// Returns emoji icon for element (for debug/UI)
-        /// </summary>
         public static string GetElementIcon(ElementType element)
         {
             return element switch
             {
-                ElementType.Fire => "Fire",
-                ElementType.Water => "Water",
-                ElementType.Ice => "Ice",
-                ElementType.Earth => "Earth",
+                ElementType.Fire      => "Fire",
+                ElementType.Ice       => "Ice",
                 ElementType.Lightning => "Lightning",
-                ElementType.Nature => "Nature",
-                ElementType.Dark => "Dark",
-                ElementType.Light => "Light",
+                ElementType.Nature    => "Nature",
+                ElementType.Dark      => "Dark",
+                ElementType.Light     => "Light",
                 _ => "Neutral"
             };
         }
 
-        /// <summary>
-        /// Returns descriptive name for element
-        /// </summary>
-        public static string GetElementName(ElementType element)
-        {
-            return element.ToString();
-        }
+        public static string GetElementName(ElementType element) => element.ToString();
 
         // ==========================================
         // DEBUG HELPERS
         // ==========================================
 
-        /// <summary>
-        /// Logs element matchup table (for testing/balancing)
-        /// </summary>
         [System.Diagnostics.Conditional("UNITY_EDITOR")]
         public static void LogElementMatchups()
         {
@@ -163,10 +141,8 @@ namespace ElementumDefense.Elements
 
                     float mult = GetDamageMultiplier(attacker, defender);
 
-                    if (mult > 1.0f)
-                        log += $"   {defender}({mult}x)";
-                    else if (mult < 1.0f)
-                        log += $"   {defender}({mult}x)";
+                    if (mult > 1.0f)      log += $"   {defender}({mult}x)";
+                    else if (mult < 1.0f) log += $"   {defender}({mult}x)";
                 }
 
                 Debug.Log(log);

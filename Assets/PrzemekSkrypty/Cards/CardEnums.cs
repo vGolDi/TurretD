@@ -1,4 +1,6 @@
-﻿namespace ElementumDefense.Cards
+using ElementumDefense.Turrets;
+
+namespace ElementumDefense.Cards
 {
     /// <summary>
     /// Rarity tiers for cards

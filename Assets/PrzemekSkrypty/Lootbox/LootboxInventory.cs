@@ -1,8 +1,9 @@
-﻿// Assets/PrzemekSkrypty/Lootbox/LootboxInventory.cs
+// Assets/PrzemekSkrypty/Lootbox/LootboxInventory.cs
 using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
+using ElementumDefense.Multiplayer;
 using ElementumDefense.Auth; // DODANE - dla AuthManager
 
 namespace ElementumDefense.Lootbox

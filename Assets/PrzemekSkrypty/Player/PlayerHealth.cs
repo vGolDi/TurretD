@@ -1,8 +1,11 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System;
 using Photon.Pun;
 using TMPro;
 
+
+namespace ElementumDefense.Players
+{
 public class PlayerHealth : MonoBehaviour
 {
     [Header("Health Settings")]
@@ -11,6 +14,13 @@ public class PlayerHealth : MonoBehaviour
 
     public event Action<int, int> OnHealthChanged;
     public event Action OnPlayerDied;
+
+    /// <summary>
+    /// Fired the moment current HP would hit 0, BEFORE death is committed
+    /// and BEFORE the death RPC is broadcast. Subscribers (e.g. PhoenixHeartGuard)
+    /// may heal the player here to cancel the death.
+    /// </summary>
+    public event Action OnLethalDamage;
 
     public static PlayerHealth LocalInstance { get; private set; }
 
@@ -110,6 +120,15 @@ public class PlayerHealth : MonoBehaviour
 
         OnHealthChanged?.Invoke(currentHealth, maxHealth);
 
+        // ===== PhoenixHeart hook =====
+        // If a listener (PhoenixHeartGuard) heals us back above 0 inside this
+        // event, the Die() check below will skip and the OthersBuffered RPC
+        // below will sync the post-revive HP to the remote. No desync.
+        if (currentHealth <= 0 && !isDead)
+        {
+            OnLethalDamage?.Invoke();
+        }
+
         if (photonView.IsMine)
         {
             Debug.Log($"[PlayerHealth] Syncing health to others via RPC (ViewID: {photonView.ViewID})");
@@ -174,6 +193,22 @@ public class PlayerHealth : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Reconnect restore: set HP to the snapshot value and re-broadcast it so
+    /// the remote peer's tracked value matches. Does not trigger death unless
+    /// the restored value is lethal.
+    /// </summary>
+    public void RestoreHealth(int hp)
+    {
+        currentHealth = Mathf.Clamp(hp, 0, maxHealth);
+        OnHealthChanged?.Invoke(currentHealth, maxHealth);
+
+        if (photonView != null && photonView.IsMine && photonView.ViewID != 0)
+        {
+            photonView.RPC("RPC_SyncHealth", RpcTarget.OthersBuffered, currentHealth);
+        }
+    }
+
     private void Die()
     {
         if (isDead) return;
@@ -186,6 +221,20 @@ public class PlayerHealth : MonoBehaviour
         if (photonView.IsMine && photonView.ViewID != 0)
         {
             photonView.RPC("RPC_PlayerDied", RpcTarget.AllBuffered);
+
+            // Reconnect-robust win signal: publish the dead actor as a room
+            // property. The opponent's MatchOpponentWatcher reads it and wins,
+            // even if our PhotonView changed/duplicated after a reconnect (which
+            // can make the RPC above miss its target).
+            if (PhotonNetwork.CurrentRoom != null && PhotonNetwork.LocalPlayer != null)
+            {
+                var props = new ExitGames.Client.Photon.Hashtable
+                {
+                    { ElementumDefense.Multiplayer.MatchOpponentWatcher.DEAD_ACTOR_KEY,
+                      PhotonNetwork.LocalPlayer.ActorNumber }
+                };
+                PhotonNetwork.CurrentRoom.SetCustomProperties(props);
+            }
         }
 
         GameEndManager gameEndManager = FindAnyObjectByType<GameEndManager>();
@@ -242,4 +291,5 @@ public class PlayerHealth : MonoBehaviour
             LocalInstance = null;
         }
     }
+}
 }

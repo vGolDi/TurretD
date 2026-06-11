@@ -3,6 +3,7 @@ using UnityEngine.UIElements;
 using System.Collections.Generic;
 using System.Linq;
 using ElementumDefense.Cards;
+using ElementumDefense.UI;
 
 [RequireComponent(typeof(UIDocument))]
 public class DeckbuilderUI : MonoBehaviour
@@ -144,6 +145,15 @@ public class DeckbuilderUI : MonoBehaviour
             PlayClick();
             CloseLoadDeckPanel();
         });
+
+        deckNameInput?.RegisterValueChangedCallback(evt =>
+        {
+            if (currentDeck != null)
+            {
+                currentDeck.deckName = evt.newValue;
+                ValidateDeck();
+            }
+        });
     }
 
     // ==========================================
@@ -234,6 +244,11 @@ public class DeckbuilderUI : MonoBehaviour
         if (currentDeck == null || card == null) return;
         if (!playerCollection.IsUnlocked(card)) return;
 
+        if (playerCollection != null && playerCollection.GetPlayerDecks().Any(d => d.deckName == currentDeck.deckName && d.isDefaultDeck))
+        {
+            return;
+        }
+
         if (currentDeck.AddCard(card))
         {
             PlayClick();
@@ -245,6 +260,11 @@ public class DeckbuilderUI : MonoBehaviour
     public void RemoveCardFromDeck(CardData card)
     {
         if (currentDeck == null || card == null) return;
+
+        if (playerCollection != null && playerCollection.GetPlayerDecks().Any(d => d.deckName == currentDeck.deckName && d.isDefaultDeck))
+        {
+            return;
+        }
 
         if (currentDeck.RemoveCard(card))
         {
@@ -560,23 +580,44 @@ public class DeckbuilderUI : MonoBehaviour
 
         bool valid = currentDeck.IsValid(out string error);
 
+        bool isDefault = false;
+        if (playerCollection != null)
+        {
+            isDefault = playerCollection.GetPlayerDecks().Any(d => d.deckName == currentDeck.deckName && d.isDefaultDeck);
+        }
+
         if (validationLabel != null)
         {
-            validationLabel.text = valid
-                ? "\u2713 DECK VALID"
-                : $"\u2717 {error.ToUpper()}";
+            if (isDefault)
+            {
+                validationLabel.text = "\u2717 LOCKED (DEFAULT DECK)";
+                validationLabel.RemoveFromClassList("validation-valid");
+                validationLabel.AddToClassList("validation-invalid");
+            }
+            else
+            {
+                validationLabel.text = valid
+                    ? "\u2713 DECK VALID"
+                    : $"\u2717 {error.ToUpper()}";
 
-            validationLabel.RemoveFromClassList(
-                "validation-valid");
-            validationLabel.RemoveFromClassList(
-                "validation-invalid");
-            validationLabel.AddToClassList(
-                valid ? "validation-valid"
-                      : "validation-invalid");
+                validationLabel.RemoveFromClassList(
+                    "validation-valid");
+                validationLabel.RemoveFromClassList(
+                    "validation-invalid");
+                validationLabel.AddToClassList(
+                    valid ? "validation-valid"
+                          : "validation-invalid");
+            }
         }
 
         if (btnSave != null)
-            btnSave.SetEnabled(valid);
+            btnSave.SetEnabled(valid && !isDefault);
+
+        if (btnClear != null)
+            btnClear.SetEnabled(!isDefault);
+
+        if (btnAutoFill != null)
+            btnAutoFill.SetEnabled(!isDefault);
 
         UpdateCounters();
     }

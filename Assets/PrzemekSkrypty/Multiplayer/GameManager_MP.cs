@@ -1,8 +1,14 @@
-﻿using UnityEngine;
+using UnityEngine;
 using Photon.Pun;
 using System.Collections.Generic;
+using ElementumDefense.Players;
+using ElementumDefense.Skins;
+using ElementumDefense.Waves;
 
 
+
+namespace ElementumDefense.Multiplayer
+{
 [System.Serializable]
 public struct ArenaPrefabEntry
 {
@@ -23,9 +29,13 @@ public class GameManager_MP : MonoBehaviour
     [SerializeField] private ArenaPrefabEntry[] arenaPrefabs;
     private const string ARENA_TYPE_KEY = "arenaType";
     private string arenaPrefabNameToLoad;
+    private string currentArenaType = "";
 
     private Dictionary<int, GameObject> playerArenas = new Dictionary<int, GameObject>();
     private Dictionary<int, GameObject> playerObjects = new Dictionary<int, GameObject>();
+
+    // Reconnect: snapshot to restore once the local player object exists.
+    private ElementumDefense.Multiplayer.Reconnect.PlayerMatchSnapshot pendingRestore;
 
     private PhotonView photonView;
     private void Awake()
@@ -51,10 +61,27 @@ public class GameManager_MP : MonoBehaviour
             return;
         }
 
+        // Failsafe: if a reconnect paused the message queue for scene loading,
+        // make sure it's running now that the game scene is active. Buffered
+        // instantiates (opponent's Player_MP) will now process into THIS scene.
+        if (!PhotonNetwork.IsMessageQueueRunning)
+        {
+            Debug.Log("[GameManager_MP] Resuming paused Photon message queue.");
+            PhotonNetwork.IsMessageQueueRunning = true;
+        }
+
+        // ===== Reconnect: detect a saved snapshot for THIS match. =====
+        // Set RestorePending BEFORE arenas spawn so the normal bootstrap
+        // (PreGame → countdown → WaveManager.StartWaves) suppresses its wave-0
+        // start and lets the restore resume from the saved wave instead.
+        TryDetectReconnectSnapshot();
+        // ==============================================================
+
         // Logika wyboru areny
         if (PhotonNetwork.CurrentRoom.CustomProperties.TryGetValue(ARENA_TYPE_KEY, out object arenaTypeObj))
         {
             string arenaType = (string)arenaTypeObj;
+            currentArenaType = arenaType;
             arenaPrefabNameToLoad = GetPrefabNameForArenaType(arenaType);
 
             Debug.Log($"[GameManager_MP] Odczytano typ areny z pokoju: {arenaType}. Ładuję prefab: {arenaPrefabNameToLoad}");
@@ -79,6 +106,54 @@ public class GameManager_MP : MonoBehaviour
     {
         yield return new WaitForSeconds(0.5f); // Wait half a second
         SpawnPlayerAndArena();
+    }
+
+    /// <summary>
+    /// Reconnect: load + verify the local match snapshot. If valid, mark a
+    /// restore as pending and stash it for <see cref="SpawnPlayer"/> to apply.
+    /// If a snapshot exists but fails the server-witnessed hash check (tampering),
+    /// forfeit immediately.
+    /// </summary>
+    private void TryDetectReconnectSnapshot()
+    {
+        var svc = ElementumDefense.Multiplayer.Reconnect.MatchSnapshotService.Instance;
+        if (svc == null) return;
+
+        if (!svc.TryLoad(out var snap))
+            return; // no snapshot (fresh match) or undecryptable — normal flow
+
+        // Room guard: a snapshot only applies to the room it was saved in. A
+        // leftover snapshot from a previous match (forfeit/abandon) must NOT
+        // restore into a brand-new match. Clear it and continue normally.
+        string currentRoom = PhotonNetwork.CurrentRoom != null ? PhotonNetwork.CurrentRoom.Name : "";
+        if (string.IsNullOrEmpty(snap.roomName) || snap.roomName != currentRoom)
+        {
+            Debug.Log($"[GameManager_MP] Snapshot room '{snap.roomName}' != current '{currentRoom}' — " +
+                      "stale snapshot, clearing and starting fresh.");
+            svc.Clear();
+            return;
+        }
+
+        if (!svc.VerifyServerHash(snap))
+        {
+            Debug.LogWarning("[GameManager_MP] Snapshot failed integrity check — forfeiting (anti-tamper).");
+            ForfeitForTampering();
+            return;
+        }
+
+        pendingRestore = snap;
+        ElementumDefense.Multiplayer.Reconnect.MatchRestoreService.RestorePending = true;
+        Debug.Log($"[GameManager_MP] Reconnect snapshot accepted (wave={snap.currentWaveIndex}).");
+    }
+
+    private void ForfeitForTampering()
+    {
+        ElementumDefense.Multiplayer.MatchOpponentWatcher.RaiseForfeit();
+        ElementumDefense.Multiplayer.Reconnect.MatchSnapshotService.Instance?.Clear();
+        ElementumDefense.Multiplayer.PendingMatchState.Clear();
+
+        var gem = FindAnyObjectByType<GameEndManager>();
+        gem?.ShowDefeat();
     }
 
     private void ValidateSetup()
@@ -162,6 +237,13 @@ public class GameManager_MP : MonoBehaviour
 
         GameObject arena = Instantiate(arenaPrefab, arenaPosition, spawnPoint.rotation);
         arena.name = $"Arena_Player{actorNumber}";
+
+        // Set arena type for skin compatibility
+        ArenaSkinApplier skinApplier = arena.GetComponent<ArenaSkinApplier>();
+        if (skinApplier != null)
+        {
+            skinApplier.arenaType = currentArenaType;
+        }
 
         // ... (logi walidacyjne, np. WaveManager, Paths) ...
 
@@ -269,38 +351,65 @@ public class GameManager_MP : MonoBehaviour
     }
     private void SpawnPlayer(Transform spawnPoint, int actorNumber)
     {
-        //Debug.Log($"========== SPAWNING PLAYER {actorNumber} ==========");
-        //Debug.Log($"[GameManager_MP] Player spawn position: {spawnPoint.position}");
-
-        //GameObject playerObject = PhotonNetwork.Instantiate(
-        //    playerPrefabName,
-        //    spawnPoint.position,
-        //    spawnPoint.rotation
-        //);
-
-        //Debug.Log($"[GameManager_MP] Player instantiated: {playerObject.name}");
         Debug.Log($"========== SPAWNING PLAYER {actorNumber} ==========");
         Debug.Log($"[GameManager_MP] Player spawn position: {spawnPoint.position}");
         Debug.Log($"[GameManager_MP] PhotonNetwork.IsConnected: {PhotonNetwork.IsConnected}");
         Debug.Log($"[GameManager_MP] PhotonNetwork.InRoom: {PhotonNetwork.InRoom}");
 
-        // ========== DODAJ: Sprawdź czy prefab istnieje ==========
-        GameObject prefabCheck = Resources.Load<GameObject>(playerPrefabName);
-        Debug.Log($"[GameManager_MP] Prefab '{playerPrefabName}' exists in Resources: {prefabCheck != null}");
-        if (prefabCheck != null)
+        // ========== CHECK FOR EXISTING PLAYER ON RECONNECT ==========
+        // Identify the player object by its PlayerHealth component + ownership,
+        // NOT by name. (The prefab is "PlayerArmature", not "Player_MP" — the old
+        // name check never matched, so reconnect always spawned a DUPLICATE.)
+        GameObject playerObject = null;
+        var duplicates = new System.Collections.Generic.List<GameObject>();
+        PhotonView[] allViews = Object.FindObjectsByType<PhotonView>(FindObjectsSortMode.None);
+        foreach (var pvExisting in allViews)
         {
-            PlayerHealth healthCheck = prefabCheck.GetComponentInChildren<PlayerHealth>();
-            Debug.Log($"[GameManager_MP] Prefab has PlayerHealth: {healthCheck != null}");
+            if (pvExisting.IsMine && pvExisting.GetComponentInChildren<PlayerHealth>() != null)
+            {
+                if (playerObject == null)
+                {
+                    playerObject = pvExisting.gameObject;
+                    Debug.Log($"[GameManager_MP] Found existing player '{pvExisting.gameObject.name}' " +
+                              $"(ViewID {pvExisting.ViewID}) — reusing, skipping instantiation.");
+                }
+                else
+                {
+                    // A second owned player object = leftover duplicate (buffered
+                    // old instance + a spurious new one). Clean it up.
+                    duplicates.Add(pvExisting.gameObject);
+                }
+            }
         }
-        // =========================================================
 
-        GameObject playerObject = PhotonNetwork.Instantiate(
-            playerPrefabName,
-            spawnPoint.position,
-            spawnPoint.rotation
-        );
+        foreach (var dup in duplicates)
+        {
+            Debug.LogWarning($"[GameManager_MP] Destroying duplicate player '{dup.name}' " +
+                             $"(ViewID {dup.GetComponent<PhotonView>()?.ViewID}).");
+            PhotonNetwork.Destroy(dup);
+        }
 
-        Debug.Log($"[GameManager_MP] Player instantiated: {playerObject.name}");
+        if (playerObject == null)
+        {
+            // ========== DODAJ: Sprawdź czy prefab istnieje ==========
+            GameObject prefabCheck = Resources.Load<GameObject>(playerPrefabName);
+            Debug.Log($"[GameManager_MP] Prefab '{playerPrefabName}' exists in Resources: {prefabCheck != null}");
+            if (prefabCheck != null)
+            {
+                PlayerHealth healthCheck = prefabCheck.GetComponentInChildren<PlayerHealth>();
+                Debug.Log($"[GameManager_MP] Prefab has PlayerHealth: {healthCheck != null}");
+            }
+            // =========================================================
+
+            playerObject = PhotonNetwork.Instantiate(
+                playerPrefabName,
+                spawnPoint.position,
+                spawnPoint.rotation
+            );
+
+            Debug.Log($"[GameManager_MP] Player instantiated: {playerObject.name}");
+        }
+        
         Debug.Log($"[GameManager_MP] Player has {playerObject.transform.childCount} children");
 
         // ========== DODAJ: Sprawdź PlayerHealth na zaspawnowanym obiekcie ==========
@@ -340,6 +449,16 @@ public class GameManager_MP : MonoBehaviour
                         Debug.LogError("[GameManager_MP] Arena has no ArenaOwner component!");
                     }
                 }
+
+                // ===== Reconnect: apply the restore once arena is linked. =====
+                if (pendingRestore != null)
+                {
+                    Debug.Log("[GameManager_MP] Starting match-state restore...");
+                    StartCoroutine(
+                        ElementumDefense.Multiplayer.Reconnect.MatchRestoreService.Restore(pendingRestore));
+                    pendingRestore = null;
+                }
+                // ==============================================================
             }
             else
             {
@@ -433,4 +552,5 @@ public class GameManager_MP : MonoBehaviour
             }
         }
     }
+}
 }

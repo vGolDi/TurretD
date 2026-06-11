@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.UIElements;
 using System.Collections.Generic;
 using ElementumDefense.Cards;
+using ElementumDefense.UI;
 
 namespace ElementumDefense.BattlePass
 {

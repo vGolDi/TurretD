@@ -1,6 +1,10 @@
 using UnityEngine;
 using Photon.Pun;
+using ElementumDefense.Players;
 
+
+namespace ElementumDefense.Turrets
+{
 public class TurretInteract : MonoBehaviour
 {
     [Header("Settings")]
@@ -97,4 +101,5 @@ public class TurretInteract : MonoBehaviour
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position, proximityRadius);
     }
+}
 }

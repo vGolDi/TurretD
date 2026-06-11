@@ -1,6 +1,9 @@
 using UnityEngine;
 using UnityEngine.UIElements;
 
+
+namespace ElementumDefense.UI
+{
 /// <summary>
 /// Attached to ANY GameObject with a UIDocument.
 /// On Awake, it finds the PanelSettings used by that UIDocument
@@ -95,4 +98,5 @@ public class UIPanelScaleFixer : MonoBehaviour
         }
     }
 #endif
+}
 }

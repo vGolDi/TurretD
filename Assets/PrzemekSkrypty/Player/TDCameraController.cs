@@ -2,6 +2,9 @@ using UnityEngine;
 using Unity.Cinemachine;
 using Photon.Pun;
 
+
+namespace ElementumDefense.Players
+{
 /// <summary>
 /// Tower Defense camera controller.
 /// Features: Q/E rotation, edge scrolling, zoom.
@@ -192,4 +195,5 @@ public class TDCameraController : MonoBehaviour
         Gizmos.DrawWireSphere(followTarget.position, 0.5f);
         Gizmos.DrawLine(transform.position, followTarget.position);
     }
+}
 }

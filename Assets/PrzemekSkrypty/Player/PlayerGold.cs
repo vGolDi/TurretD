@@ -2,6 +2,9 @@ using UnityEngine;
 using UnityEngine.UIElements;
 using Photon.Pun;
 
+
+namespace ElementumDefense.Players
+{
 public class PlayerGold : MonoBehaviour
 {
     [Header("Starting Settings")]
@@ -14,7 +17,17 @@ public class PlayerGold : MonoBehaviour
     public static PlayerGold LocalInstance
     { get; private set; }
 
-    // UI Toolkit — na TYM SAMYM PREFABIE
+    /// <summary>
+    /// Reconnect restore: overwrite the in-match gold balance directly.
+    /// Bypasses earn/spend so the snapshot value is reproduced exactly.
+    /// </summary>
+    public void RestoreGold(int amount)
+    {
+        currentGold = Mathf.Max(0, amount);
+        UpdateUI();
+    }
+
+    // UI Toolkit ï¿½ na TYM SAMYM PREFABIE
     private UIDocument uiDocument;
     private Label goldValueLabel;
 
@@ -32,7 +45,7 @@ public class PlayerGold : MonoBehaviour
 
         if (photonView != null && !photonView.IsMine)
         {
-            // Nie nasz gracz — ukryj gold UI
+            // Nie nasz gracz ï¿½ ukryj gold UI
             uiDocument = GetComponent<UIDocument>();
             if (uiDocument != null)
                 uiDocument.enabled = false;
@@ -45,7 +58,7 @@ public class PlayerGold : MonoBehaviour
 
     private void FindGoldLabel()
     {
-        // Szukaj UIDocument na W£ASNYM GameObject
+        // Szukaj UIDocument na Wï¿½ASNYM GameObject
         uiDocument = GetComponent<UIDocument>();
 
         if (uiDocument != null &&
@@ -142,4 +155,5 @@ public class PlayerGold : MonoBehaviour
         if (LocalInstance == this)
             LocalInstance = null;
     }
+}
 }

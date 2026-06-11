@@ -1,0 +1,16 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ebca03fcf59188947b1cb20cccbc1e05, type: 3}
+  m_Name: Mythic_Sabotage
+  m_EditorClassIdentifier: Assembly-CSharp::ElementumDefense.Cards.MythicSabotage
+  effectDescription: Sabotage effect description...
+  mythicPrefab: {fileID: 8399832402143531616, guid: b11ab99c28c08564f8fa183384152898, type: 3}

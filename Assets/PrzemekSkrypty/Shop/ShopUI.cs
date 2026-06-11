@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.UIElements;
 using System.Collections;
 using System.Collections.Generic;
@@ -836,7 +836,13 @@ namespace ElementumDefense.UI
                     item.lootboxReward.lootboxName);
 
             if (item.skinReward != null)
+            {
                 rewards.Add(item.skinReward.skinName);
+                if (!item.skinReward.IsUniversal)
+                {
+                    rewards.Add($"<color=#FF9900>[Requires Map: {string.Join(", ", item.skinReward.compatibleArenaTypes)}]</color>");
+                }
+            }
 
             if (item.consumableReward != null)
                 rewards.Add(

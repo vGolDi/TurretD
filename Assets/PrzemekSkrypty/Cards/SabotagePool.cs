@@ -123,6 +123,22 @@ namespace ElementumDefense.Cards
             return combination;
         }
 
+        /// <summary>
+        /// Generates a rarity combination WITHOUT the master-client gate. Used by
+        /// the reconnect catch-up path, where the rejoining (possibly non-master)
+        /// player runs a draft for a wave the opponent already passed — so the
+        /// master won't broadcast rarities. The opponent isn't viewing this draft,
+        /// so local rarities are fine.
+        /// </summary>
+        public CardRarity[] GenerateRarityCombinationLocal()
+        {
+            if (!isInitialized) InitializePool();
+            CardRarity[] combination = new CardRarity[3];
+            for (int i = 0; i < 3; i++)
+                combination[i] = GetRandomRarity();
+            return combination;
+        }
+
         public SabotageCardData[] DrawSabotageCards(CardRarity[] rarityCombination)
         {
             // ========== NOWE: Ensure initialized ==========

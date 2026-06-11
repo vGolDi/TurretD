@@ -35,6 +35,9 @@ namespace ElementumDefense.Progression
         [Min(0)]
         public int rewardGold = 100;
 
+        [Min(0), Tooltip("Crystals (premium currency) reward")]
+        public int rewardCrystals = 0;
+
         [Min(0), Tooltip("XP awarded to player level progression")]
         public int rewardXP = 50;
 
@@ -89,6 +92,7 @@ namespace ElementumDefense.Progression
                 description = GetFormattedDescription(),
                 targetAmount = targetAmount,
                 rewardGold = rewardGold,
+                rewardCrystals = rewardCrystals,
                 rewardXP = rewardXP,
                 rewardBPXP = rewardBPXP,
                 rewardLootbox = rewardLootbox,

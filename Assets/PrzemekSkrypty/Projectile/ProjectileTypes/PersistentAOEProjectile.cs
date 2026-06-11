@@ -1,4 +1,4 @@
-﻿//using UnityEngine;
+//using UnityEngine;
 //using ElementumDefense.Elements;
 //using ElementumDefense.StatusEffects;
 
@@ -124,6 +124,7 @@ using UnityEngine;
 using ElementumDefense.Elements;
 using ElementumDefense.StatusEffects;
 using System.Collections.Generic;
+using ElementumDefense.Enemies;
 
 namespace ElementumDefense.Projectiles
 {

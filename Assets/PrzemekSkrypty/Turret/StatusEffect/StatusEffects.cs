@@ -1,5 +1,6 @@
 // Assets/PrzemekSkrypty/StatusEffects/StatusEffect.cs
 using UnityEngine;
+using ElementumDefense.Enemies;
 
 namespace ElementumDefense.StatusEffects
 {
@@ -65,7 +66,7 @@ namespace ElementumDefense.StatusEffects
             {
                 StackCount++;
 
-                // Odœwie¿ czas przy stackowaniu
+                // Odï¿½wieï¿½ czas przy stackowaniu
                 if (RefreshOnReapply)
                 {
                     RemainingDuration = MaxDuration;
@@ -97,14 +98,28 @@ namespace ElementumDefense.StatusEffects
 
     public enum StatusEffectType
     {
+        // --- Fire ---
         Burn,
+
+        // --- Ice ---
+        Chill,
         Freeze,
-        Slow,
-        Poison,
+
+        // --- Lightning ---
         Stun,
+
+        // --- Nature ---
+        Poison,
+
+        // --- Dark ---
+        Curse,
+
+        // --- Light (aura) ---
+        Expose,
+
+        // --- Generic ---
+        Slow,
         Bleed,
-        Weakness,
-        Armor,
         Speed
     }
 }   

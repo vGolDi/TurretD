@@ -3,6 +3,9 @@ using UnityEngine.UI;
 using TMPro;
 using ElementumDefense.UI;
 
+
+namespace ElementumDefense.UI
+{
 public class MainMenuController : MonoBehaviour
 {
     [Header("Panel Tokens (dummy GameObjects for ShowPanel routing)")]
@@ -261,4 +264,5 @@ public class MainMenuController : MonoBehaviour
     }
 
     #endregion
+}
 }

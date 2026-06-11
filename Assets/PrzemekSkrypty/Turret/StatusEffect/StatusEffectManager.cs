@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using System;
+using ElementumDefense.Enemies;
 
 namespace ElementumDefense.StatusEffects
 {
-    public class StatusEffectManager : MonoBehaviour
+    public class StatusEffectManager : MonoBehaviour, ElementumDefense.Enemies.IEnemyPoolable
     {
         // Events
         public event Action<StatusEffectType> OnEffectApplied;
@@ -15,6 +16,8 @@ namespace ElementumDefense.StatusEffects
         public event Action OnSlowEffectEnded;
         public event Action OnFreezeEffectEnded;
         public event Action OnAnyEffectEnded;
+        public event Action OnChillStackedToFreeze;
+        public event Action<float> OnCurseDamageMultiplierChanged; // float = multiplier
 
         [Header("Debug")]
         [SerializeField] private bool logEffects = false;
@@ -22,10 +25,16 @@ namespace ElementumDefense.StatusEffects
         private List<StatusEffect> activeEffects = new List<StatusEffect>();
         private EnemyHealth enemyHealth;
         private EnemyMovement enemyMovement;
+        private ElementumDefense.Enemies.EnemyArmor enemyArmor;
 
         private float cachedSpeedMultiplier = 1f;
         private bool cachedIsFrozen = false;
 
+        private float cachedDamageMultiplier = 1f; // Curse: amplify all incoming damage
+        private float cachedArmorReduction = 0f;   // Expose: armor reduction
+
+        public float IncomingDamageMultiplier => cachedDamageMultiplier;
+        public float ArmorReduction => cachedArmorReduction;
         public float SpeedModifier => cachedSpeedMultiplier;
         public bool IsFrozen => cachedIsFrozen;
 
@@ -33,6 +42,24 @@ namespace ElementumDefense.StatusEffects
         {
             enemyHealth = GetComponent<EnemyHealth>();
             enemyMovement = GetComponent<EnemyMovement>();
+            enemyArmor = GetComponent<ElementumDefense.Enemies.EnemyArmor>();
+        }
+
+        // ==========================================
+        // POOLING
+        // ==========================================
+
+        /// <summary>Wipe all status effects when an enemy is reused from the pool.</summary>
+        public void OnSpawnedFromPool()
+        {
+            // RemoveAllEffects also resets cached modifiers and pushes 1f speed
+            // back to EnemyMovement.
+            RemoveAllEffects();
+        }
+
+        public void OnReturnedToPool()
+        {
+            RemoveAllEffects();
         }
 
         private void Update()
@@ -51,14 +78,26 @@ namespace ElementumDefense.StatusEffects
         {
             if (newEffect == null) return;
 
-            // Sprawd� immunitet (opcjonalne - do implementacji)
+            // SprawdÄŹĹĽËť immunitet (opcjonalne - do implementacji)
             // if (IsImmuneToEffect(newEffect.EffectType)) return;
+
+            // ARMOR GUARD: jeśli wróg jest opancerzony i flaga blockStatusEffectsWhileArmored
+            // jest włączona, blokujemy aplikowanie WSZYSTKICH statusów. Spójne z guardem
+            // ARMOR GUARD: jeśli wróg jest opancerzony i flaga blockStatusEffectsWhileArmored
+            // jest włączona, blokujemy aplikowanie WSZYSTKICH statusów. Spójne z guardem
+            // w EnemyHealth.TakeDamage - gracz musi zbić armor żeby wszystko zaczęło działać.
+            if (enemyArmor != null && enemyArmor.IsArmored && enemyArmor.BlockStatusEffectsWhileArmored)
+            {
+                if (logEffects)
+                    Debug.Log($"[StatusEffectManager:{name}] ApplyEffect({newEffect.EffectType}) BLOKOWANE przez armor");
+                return;
+            }
 
             StatusEffect existingEffect = GetEffect(newEffect.EffectType);
 
             if (existingEffect != null)
             {
-                // Efekt ju� istnieje - stack lub refresh
+                // Efekt juÄŹĹĽËť istnieje - stack lub refresh
                 if (existingEffect.IsStackable && existingEffect.StackCount < existingEffect.MaxStacks)
                 {
                     existingEffect.OnStackAdded();
@@ -77,7 +116,11 @@ namespace ElementumDefense.StatusEffects
             }
 
             // Nowy efekt
-            newEffect.Initialize(enemyHealth, newEffect.MaxDuration);
+            // Only Initialize if not pre-initialized (MaxDuration == 0 means fresh)
+            if (newEffect.MaxDuration <= 0f)
+                newEffect.Initialize(enemyHealth, 3f); // Default duration fallback
+            else
+                newEffect.Initialize(enemyHealth, newEffect.MaxDuration);
             activeEffects.Add(newEffect);
 
             OnEffectApplied?.Invoke(newEffect.EffectType);
@@ -161,6 +204,8 @@ namespace ElementumDefense.StatusEffects
         {
             cachedSpeedMultiplier = 1f;
             cachedIsFrozen = false;
+            cachedDamageMultiplier = 1f;
+            cachedArmorReduction = 0f;
 
             foreach (var effect in activeEffects)
             {
@@ -169,7 +214,7 @@ namespace ElementumDefense.StatusEffects
                 {
                     cachedIsFrozen = true;
                     cachedSpeedMultiplier = 0f;
-                    break; // Nie trzeba sprawdza� dalej
+                    break; // Nie trzeba sprawdzaÄŹĹĽËť dalej
                 }
 
                 // Stun = also stops movement
@@ -178,6 +223,27 @@ namespace ElementumDefense.StatusEffects
                     cachedIsFrozen = true;
                     cachedSpeedMultiplier = 0f;
                     break;
+                }
+
+                // Chill = partial slow (Ice element)
+                if (effect is ChillEffect chillEffect)
+                {
+                    cachedSpeedMultiplier *= chillEffect.SlowMultiplier;
+                    continue;
+}
+
+                // Curse = amplify incoming damage (Dark element)
+                if (effect is CurseEffect curseEffect)
+                {
+                    cachedDamageMultiplier *= curseEffect.DamageMultiplier;
+                    continue;
+                }
+
+                // Expose = armor reduction (Light aura)
+                if (effect is ExposeEffect exposeEffect)
+                {
+                    cachedArmorReduction = Mathf.Max(cachedArmorReduction, exposeEffect.ArmorReduction);
+                    continue;
                 }
 
                 // Slow = reduce speed
@@ -189,7 +255,7 @@ namespace ElementumDefense.StatusEffects
                 // Speed buff = increase speed
                 if (effect.EffectType == StatusEffectType.Speed)
                 {
-                    cachedSpeedMultiplier *= 1.5f; // Dostosuj mno�nik
+                    cachedSpeedMultiplier *= 1.5f; // Dostosuj mnoÄŹĹĽËťnik
                 }
             }
 

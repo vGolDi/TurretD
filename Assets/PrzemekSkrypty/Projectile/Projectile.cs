@@ -1,6 +1,8 @@
 using UnityEngine;
 using ElementumDefense.Elements;
 using ElementumDefense.StatusEffects;
+using ElementumDefense.Enemies;
+using ElementumDefense.Turrets;
 
 namespace ElementumDefense.Projectiles
 {
@@ -92,10 +94,11 @@ namespace ElementumDefense.Projectiles
             {
                 trailEffect.Play();
             }
-            if (ProjectileStatsManager.Instance != null)
-            {
-                ProjectileStatsManager.Instance.RegisterShotFired();
-            }
+
+            // NOTE: RegisterShotFired is called by the spawner (TurretShooter)
+            // before Initialize. Calling it here too would double-count every
+            // shot, halving the reported accuracy.
+
             OnInitialized();
         }
 
@@ -259,39 +262,68 @@ namespace ElementumDefense.Projectiles
         }
 
         /// <summary>
-        /// Creates appropriate status effect instance
+        /// Creates appropriate status effect instance via the shared factory.
+        /// Override only if a specific projectile type needs custom behavior.
         /// </summary>
         protected virtual StatusEffect CreateStatusEffect()
         {
-            return statusEffect switch
-            {
-                StatusEffectType.Burn => new BurnEffect(statusStrength, statusDuration),
-                StatusEffectType.Freeze => new FreezeEffect(statusDuration),
-                StatusEffectType.Slow => new SlowEffect(statusStrength, statusDuration),
-                StatusEffectType.Poison => new PoisonEffect(statusStrength, statusDuration),
-                _ => null
-            };
+            return StatusEffectFactory.Create(statusEffect, statusStrength, statusDuration);
         }
 
         // ==========================================
         // VISUAL EFFECTS
         // ==========================================
 
+        // Cached MPB so we don't allocate one per shot. MPBs are cheap, but
+        // they're also reusable across all renderers (just clear + set + apply).
+        // 
+        // IMPORTANT: cannot use a field initializer here â€” Unity forbids
+        // `new MaterialPropertyBlock()` from MonoBehaviour constructors / static
+        // initializers ("CreateImpl is not allowed to be called from a
+        // MonoBehaviour constructor"). Lazily created on first ApplyElementColor
+        // call instead.
+        private static MaterialPropertyBlock s_PropBlock;
+        private static readonly int s_BaseColorId = Shader.PropertyToID("_BaseColor");
+        private static readonly int s_LegacyColorId = Shader.PropertyToID("_Color");
+        private static readonly int s_EmissionColorId = Shader.PropertyToID("_EmissionColor");
+
         /// <summary>
-        /// Applies element color to projectile visual
+        /// Applies element color to projectile visual via MaterialPropertyBlock.
+        /// 
+        /// Why MPB instead of <c>renderer.material.color = c</c>? Touching
+        /// <c>renderer.material</c> CLONES the shared material â€” every projectile
+        /// then keeps its own GC-allocated material instance for life. With
+        /// pooling and 100+ active projectiles that's a steady memory leak and
+        /// breaks SRP batching. MPB writes per-renderer overrides without
+        /// instantiating a material, so all projectiles share one source asset.
+        /// 
+        /// Sets BOTH <c>_BaseColor</c> (URP/HDRP/Shader Graph) and <c>_Color</c>
+        /// (built-in / legacy) so it works across render pipelines without
+        /// per-shader configuration.
         /// </summary>
         protected virtual void ApplyElementColor()
         {
             Color elementColor = ElementUtility.GetElementColor(elementType);
 
-            // Apply to renderer
+            // Lazy init â€” must NOT be in a static field initializer (Unity
+            // throws CreateImpl error during MB construction otherwise).
+            if (s_PropBlock == null)
+                s_PropBlock = new MaterialPropertyBlock();
+
+            // Apply to renderer via MPB (zero-alloc, no material clone).
             Renderer rend = GetComponent<Renderer>();
             if (rend != null)
             {
-                rend.material.color = elementColor;
+                rend.GetPropertyBlock(s_PropBlock);
+                s_PropBlock.SetColor(s_BaseColorId, elementColor);
+                s_PropBlock.SetColor(s_LegacyColorId, elementColor);
+                // Optional emission tint â€” harmless if shader doesn't read it.
+                s_PropBlock.SetColor(s_EmissionColorId, elementColor);
+                rend.SetPropertyBlock(s_PropBlock);
             }
 
-            // Apply to trail
+            // Trail particle system: setting startColor on the main module
+            // doesn't clone a material, so this is fine as-is.
             if (trailEffect != null)
             {
                 var main = trailEffect.main;
@@ -333,10 +365,10 @@ namespace ElementumDefense.Projectiles
             if (trailEffect != null)
             {
                 trailEffect.Stop();
-                trailEffect.Clear(); // <-- DODAJ to ¿eby wyczyœciæ trail
+                trailEffect.Clear(); // <-- DODAJ to ï¿½eby wyczyï¿½ciï¿½ trail
             }
 
-            // ========== POPRAWKA: ZnajdŸ pool parent ==========
+            // ========== POPRAWKA: Znajdï¿½ pool parent ==========
             // Try to find pool by checking parent hierarchy
             Transform currentParent = transform.parent;
 

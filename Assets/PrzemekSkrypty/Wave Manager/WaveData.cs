@@ -1,5 +1,8 @@
 using UnityEngine;
 
+
+namespace ElementumDefense.Waves
+{
 /// <summary>
 /// ScriptableObject defining a single wave
 /// Contains multiple wave parts (enemy groups)
@@ -77,4 +80,5 @@ public class WavePart
 
     // TODO: Add spawn formation patterns
     // public SpawnPattern spawnPattern = SpawnPattern.Linear;
+}
 }

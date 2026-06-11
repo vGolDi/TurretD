@@ -417,12 +417,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 05f9b2dfd35bf404eb497f7d73341bbf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NetworkManager
-  maxPlayersPerRoom: 1
+  maxPlayersPerRoom: 2
   gameVersion: 0.1
   gameSceneName: SampleScene
   availableArenaTypes:
-  - Fire
   - Ice
+  - Fire
 --- !u!4 &984635956
 Transform:
   m_ObjectHideFlags: 0

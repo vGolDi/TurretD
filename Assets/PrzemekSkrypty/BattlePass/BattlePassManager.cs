@@ -7,6 +7,8 @@ using ElementumDefense.Auth;
 using ElementumDefense.Cards;
 using ElementumDefense.Lootbox;
 using ElementumDefense.Skins;
+using ElementumDefense.Multiplayer;
+using ElementumDefense.Players;
 
 namespace ElementumDefense.BattlePass
 {

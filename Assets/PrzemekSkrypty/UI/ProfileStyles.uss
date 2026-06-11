@@ -721,6 +721,17 @@
     color: rgba(200, 200, 200, 0.3);
 }
 
+/* Inline lock — placed inside .collection-card-info as the last element.
+   Sits below name / type / element, gives a visual hint that the card is
+   locked without dimming the entire card with a full overlay. */
+.card-lock-inline {
+    font-size: 18px;
+    color: rgba(200, 200, 200, 0.5);
+    -unity-text-align: middle-center;
+    margin-top: 6px;
+    align-self: center;
+}
+
 /* Owned indicator */
 .card-owned-dot {
     position: absolute;

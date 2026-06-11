@@ -1,8 +1,10 @@
-﻿
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
+
+namespace ElementumDefense.Turrets
+{
 public class TurretUiController : MonoBehaviour
 {
     [Header("UI References")]
@@ -14,18 +16,36 @@ public class TurretUiController : MonoBehaviour
     [SerializeField] private TextMeshProUGUI turretNameText;
     [SerializeField] private TextMeshProUGUI turretStatsText;
 
+    [Header("Merge")]
+    [Tooltip("Przycisk MERGE — ustaw w prefabie TurretUI. Będzie ukryty gdy merge niedostępny.")]
+    [SerializeField] private Button mergeButton;
+    [SerializeField] private TextMeshProUGUI mergeButtonText;
+
     private Turret turret;
     private Camera mainCamera;
+    private MergeReadyIndicator mergeIndicator;
+
+    // ==========================================
+    // LIFECYCLE
+    // ==========================================
 
     private void Start()
     {
         mainCamera = Camera.main;
         Hide();
+
+        // Merge button: ukryj natychmiast (zanim cokolwiek zrobi Show)
+        if (mergeButton != null)
+        {
+            mergeButton.gameObject.SetActive(false);
+            mergeButton.onClick.RemoveAllListeners();
+            mergeButton.onClick.AddListener(OnMergeButtonClicked);
+        }
     }
 
     private void LateUpdate()
     {
-        if (uiPanel.activeSelf && mainCamera != null)
+        if (uiPanel != null && uiPanel.activeSelf && mainCamera != null)
         {
             uiPanel.transform.LookAt(
                 uiPanel.transform.position + mainCamera.transform.rotation * Vector3.forward,
@@ -34,18 +54,38 @@ public class TurretUiController : MonoBehaviour
         }
     }
 
+    private void OnDestroy()
+    {
+        if (turret != null)
+            turret.OnUpgraded -= UpdateDisplay;
+    }
+
+    // ==========================================
+    // LINK
+    // ==========================================
+
     public void LinkTurret(Turret ownerTurret)
     {
         turret = ownerTurret;
-
         turret.OnUpgraded -= UpdateDisplay;
         turret.OnUpgraded += UpdateDisplay;
+
+        // Cache MergeReadyIndicator — szuka na root, parent lub children
+        // (obsługuje wzorzec Turret_Logic jako child)
+        mergeIndicator = turret.GetComponentInParent<MergeReadyIndicator>();
+        if (mergeIndicator == null)
+            mergeIndicator = turret.GetComponent<MergeReadyIndicator>();
+        if (mergeIndicator == null)
+            mergeIndicator = turret.GetComponentInChildren<MergeReadyIndicator>();
     }
+
+    // ==========================================
+    // SHOW / HIDE
+    // ==========================================
 
     public void Show()
     {
         if (turret == null) return;
-
         UpdateDisplay();
         uiPanel.SetActive(true);
     }
@@ -53,9 +93,7 @@ public class TurretUiController : MonoBehaviour
     public void Hide()
     {
         if (uiPanel != null)
-        {
             uiPanel.SetActive(false);
-        }
     }
 
     public bool IsVisible()
@@ -63,103 +101,115 @@ public class TurretUiController : MonoBehaviour
         return uiPanel != null && uiPanel.activeSelf;
     }
 
+    // ==========================================
+    // UPDATE DISPLAY
+    // ==========================================
+
     private void UpdateDisplay()
     {
         if (turret == null) return;
 
-        // ========== NOWE: Show current stats with modifiers ==========
+        // --- Nazwa turretu ---
         if (turretNameText != null && turret.TurretData != null)
-        {
             turretNameText.text = turret.TurretData.turretName;
-        }
 
+        // --- Statystyki ---
         if (turretStatsText != null)
-        {
-            bool hasModifier = Mathf.Abs(turret.CurrentDamage - turret.BaseDamage) > 0.01f ||
-                               Mathf.Abs(turret.CurrentFireRate - turret.BaseFireRate) > 0.01f ||
-                               Mathf.Abs(turret.CurrentRange - turret.BaseRange) > 0.01f;
+            turretStatsText.text = BuildStatsText();
 
-            string stats = "";
+        // --- Przyciski upgrade ---
+        UpdateUpgradeButtons();
 
-            // Damage
-            stats += $"⚔️ DMG: {turret.CurrentDamage:F0}";
-            if (Mathf.Abs(turret.CurrentDamage - turret.BaseDamage) > 0.01f)
-            {
-                float diff = turret.CurrentDamage - turret.BaseDamage;
-                string color = diff > 0 ? "green" : "red";
-                stats += $" <color={color}>({diff:+0.0;-0.0})</color>";
-            }
-            stats += "\n";
+        // --- Przycisk MERGE ---
+        UpdateMergeButton();
+    }
 
-            // Fire Rate
-            stats += $"⚡ FR: {turret.CurrentFireRate:F2}/s";
-            if (Mathf.Abs(turret.CurrentFireRate - turret.BaseFireRate) > 0.01f)
-            {
-                float diff = turret.CurrentFireRate - turret.BaseFireRate;
-                string color = diff > 0 ? "green" : "red";
-                stats += $" <color={color}>({diff:+0.00;-0.00})</color>";
-            }
-            stats += "\n";
+    // ==========================================
+    // STATS TEXT
+    // ==========================================
 
-            // Range
-            stats += $"🎯 RNG: {turret.CurrentRange:F1}";
-            if (Mathf.Abs(turret.CurrentRange - turret.BaseRange) > 0.01f)
-            {
-                float diff = turret.CurrentRange - turret.BaseRange;
-                string color = diff > 0 ? "green" : "red";
-                stats += $" <color={color}>({diff:+0.0;-0.0})</color>";
-            }
+    private string BuildStatsText()
+    {
+        string stats = "";
 
-            turretStatsText.text = stats;
-        }
-        // ============================================================
+        // Damage
+        stats += $"⚔ DMG: {turret.CurrentDamage:F0}";
+        float dmgDiff = turret.CurrentDamage - turret.BaseDamage;
+        if (Mathf.Abs(dmgDiff) > 0.01f)
+            stats += $" <color={(dmgDiff > 0 ? "green" : "red")}>({dmgDiff:+0.0;-0.0})</color>";
+        stats += "\n";
 
-        // Update upgrade buttons
+        // Fire Rate
+        stats += $"⚡ FR: {turret.CurrentFireRate:F2}/s";
+        float frDiff = turret.CurrentFireRate - turret.BaseFireRate;
+        if (Mathf.Abs(frDiff) > 0.01f)
+            stats += $" <color={(frDiff > 0 ? "green" : "red")}>({frDiff:+0.00;-0.00})</color>";
+        stats += "\n";
+
+        // Range
+        stats += $"◎ RNG: {turret.CurrentRange:F1}";
+        float rngDiff = turret.CurrentRange - turret.BaseRange;
+        if (Mathf.Abs(rngDiff) > 0.01f)
+            stats += $" <color={(rngDiff > 0 ? "green" : "red")}>({rngDiff:+0.0;-0.0})</color>";
+
+        return stats;
+    }
+
+    // ==========================================
+    // UPGRADE BUTTONS
+    // ==========================================
+
+    private void UpdateUpgradeButtons()
+    {
         TurretData[] availableUpgrades = turret.GetAvailableUpgrades();
+        bool isMaxLevel = IsMaxLevel();
 
         for (int i = 0; i < upgradeButtons.Length; i++)
         {
-            if (availableUpgrades != null &&
-                i < availableUpgrades.Length &&
-                availableUpgrades[i] != null)
-            {
-                upgradeButtons[i].gameObject.SetActive(true);
-                TurretData upgrade = availableUpgrades[i];
+            if (upgradeButtons[i] == null) continue;
 
-                buttonTexts[i].text = FormatUpgradeText(upgrade);
-
-                int pathIndex = i;
-                upgradeButtons[i].onClick.RemoveAllListeners();
-                upgradeButtons[i].onClick.AddListener(() => OnUpgradeButtonClicked(pathIndex));
-            }
-            else
+            // Ukryj upgrade buttony gdy turret jest max level (gotowy do merge)
+            if (isMaxLevel)
             {
                 upgradeButtons[i].gameObject.SetActive(false);
+                continue;
             }
+
+            bool hasUpgrade = availableUpgrades != null &&
+                              i < availableUpgrades.Length &&
+                              availableUpgrades[i] != null;
+
+            upgradeButtons[i].gameObject.SetActive(hasUpgrade);
+
+            if (!hasUpgrade) continue;
+
+            TurretData upgrade = availableUpgrades[i];
+
+            if (buttonTexts != null && i < buttonTexts.Length && buttonTexts[i] != null)
+                buttonTexts[i].text = FormatUpgradeText(upgrade);
+
+            int pathIndex = i;
+            upgradeButtons[i].onClick.RemoveAllListeners();
+            upgradeButtons[i].onClick.AddListener(() => OnUpgradeButtonClicked(pathIndex));
         }
     }
 
     private string FormatUpgradeText(TurretData upgrade)
     {
-        // ========== NOWE: Show cost with modifier ==========
         string costText = $"{upgrade.upgradeCost}";
 
-        // Try to get card manager for cost modifier
-        if (turret != null && turret.GetOwner() != null)
+        // Sprawdź modyfikatory kart
+        if (turret?.GetOwner() != null)
         {
             var cardMgr = turret.GetOwner()
                 .GetComponent<ElementumDefense.Cards.PlayerCardManager>();
-
             if (cardMgr != null)
             {
                 int modifiedCost = cardMgr.GetModifiedTurretCost(upgrade.upgradeCost);
                 if (modifiedCost != upgrade.upgradeCost)
-                {
                     costText = $"<s>{upgrade.upgradeCost}</s> {modifiedCost}";
-                }
             }
         }
-        // ===================================================
 
         return $"<b>{upgrade.turretName}</b>\n" +
                $"Cost: {costText} Gold\n" +
@@ -171,11 +221,70 @@ public class TurretUiController : MonoBehaviour
         turret?.Upgrade(pathIndex);
     }
 
-    private void OnDestroy()
+    // ==========================================
+    // MERGE BUTTON
+    // ==========================================
+
+    private void UpdateMergeButton()
     {
-        if (turret != null)
+        if (mergeButton == null) return;
+
+        bool isMaxLevel = IsMaxLevel();
+        bool hasPartner = mergeIndicator != null && mergeIndicator.HasMergePartner;
+
+        // Pokaż przycisk tylko gdy turret jest na max levelu
+        mergeButton.gameObject.SetActive(isMaxLevel);
+
+        if (!isMaxLevel) return;
+
+        // Dostępność przycisku zależy od tego czy partner jest w zasięgu
+        mergeButton.interactable = hasPartner;
+
+        // Tekst przycisku
+        if (mergeButtonText != null)
         {
-            turret.OnUpgraded -= UpdateDisplay;
+            mergeButtonText.text = hasPartner
+                ? "MERGE!"
+                : "MERGE\n<size=70%>(brak partnera w zasięgu)</size>";
         }
     }
+
+    private void OnMergeButtonClicked()
+    {
+        if (mergeIndicator == null || !mergeIndicator.HasMergePartner)
+        {
+            Debug.Log("[TurretUI] Merge attempted but no partner available.");
+            return;
+        }
+
+        bool success = mergeIndicator.TryMerge();
+
+        if (success)
+        {
+            // UI zostanie zniszczone razem z turretem po merge
+            Debug.Log("[TurretUI] Merge successful!");
+        }
+        else
+        {
+            Debug.LogWarning("[TurretUI] Merge failed — check TurretMergeManager synergies list.");
+        }
+    }
+
+    // ==========================================
+    // HELPERS
+    // ==========================================
+
+    /// <summary>
+    /// Turret jest na max levelu i MOŻE być mergowany gdy:
+    /// - TurretData nie ma żadnych upgradePaths (koniec drzewka upgrade)
+    /// - TurretData.canMerge == true (nie jest już zmergowanym turretem LV4)
+    /// </summary>
+    private bool IsMaxLevel()
+    {
+        if (turret?.TurretData == null) return false;
+        bool noUpgrades = turret.TurretData.upgradePaths == null ||
+                          turret.TurretData.upgradePaths.Length == 0;
+        return noUpgrades && turret.TurretData.canMerge;
+    }
+}
 }

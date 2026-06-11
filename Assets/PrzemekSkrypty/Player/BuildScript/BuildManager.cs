@@ -2,7 +2,11 @@ using UnityEngine;
 using Photon.Pun;
 using ElementumDefense.UI;
 using ElementumDefense.Cards;
+using ElementumDefense.Turrets;
 
+
+namespace ElementumDefense.Players
+{
 /// <summary>
 /// Manages turret building via hotbar system.
 /// Handles selection, build mode entry/exit, and input.
@@ -58,9 +62,54 @@ public class BuildManager : MonoBehaviour
     }
 
     /// <summary>Attempts to enter build mode with selected turret</summary>
+    // ==========================================
+    // SABOTAGE: BUILD DISABLE
+    // ==========================================
+
+    private bool isBuildingDisabled = false;
+
+    // Element block — set of element types that cannot be built right now.
+    // Used by ElementBlockSabotage. Cleared at end of sabotage duration.
+    private readonly System.Collections.Generic.HashSet<ElementumDefense.Elements.ElementType> blockedElements
+        = new System.Collections.Generic.HashSet<ElementumDefense.Elements.ElementType>();
+
+    /// <summary>Sabotage API: disables/enables building turrets</summary>
+    public void SetBuildingDisabled(bool disabled)
+    {
+        isBuildingDisabled = disabled;
+        if (disabled)
+        {
+            ExitBuildMode();
+            Debug.Log("[BuildManager] Building DISABLED by sabotage");
+        }
+        else
+        {
+            Debug.Log("[BuildManager] Building RESTORED");
+        }
+    }
+
+    public bool IsBuildingDisabled => isBuildingDisabled;
+
+    /// <summary>Sabotage API: blocks/unblocks an element type from being built.</summary>
+    public void SetElementBlocked(ElementumDefense.Elements.ElementType element, bool blocked)
+    {
+        if (blocked) blockedElements.Add(element);
+        else blockedElements.Remove(element);
+        Debug.Log($"[BuildManager] Element {element} blocked={blocked}");
+    }
+
+    public bool IsElementBlocked(ElementumDefense.Elements.ElementType element)
+        => blockedElements.Contains(element);
+
     public void SelectTurretToBuild(TurretData turret)
     {
         if (turret == null) return;
+        if (isBuildingDisabled) { Debug.Log("[BuildManager] Building disabled by sabotage!"); return; }
+        if (blockedElements.Contains(turret.elementType))
+        {
+            Debug.Log($"[BuildManager] Element {turret.elementType} is currently blocked by sabotage!");
+            return;
+        }
 
         // Calculate cost with card modifiers
         int finalCost = turret.cost;
@@ -99,4 +148,5 @@ public class BuildManager : MonoBehaviour
     }
 
     public bool IsInBuildMode() => inputManager?.IsInBuildMode ?? false;
+}
 }

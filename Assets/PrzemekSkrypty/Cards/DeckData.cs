@@ -14,6 +14,7 @@ namespace ElementumDefense.Cards
     {
         [Header("Deck Info")]
         public string deckName = "New Deck";
+        public bool isDefaultDeck = false;
 
         [Tooltip("Which arena is this deck optimized for?")]
         public ElementType preferredArena = ElementType.Fire;

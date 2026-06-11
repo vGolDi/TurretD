@@ -1,6 +1,9 @@
 using UnityEngine;
 using UnityEngine.UI;
 
+
+namespace ElementumDefense.Enemies
+{
 public class HealthBar : MonoBehaviour
 {
     [SerializeField] private Slider slider;
@@ -120,3 +123,4 @@ public class HealthBar : MonoBehaviour
 //            fill.color = gradient.Evaluate(slider.normalizedValue);
 //    }
 //}
+}

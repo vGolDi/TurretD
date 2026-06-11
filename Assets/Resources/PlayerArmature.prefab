@@ -25,6 +25,12 @@ GameObject:
   - component: {fileID: 1878839749677311197}
   - component: {fileID: 8899134111234962081}
   - component: {fileID: 9191803843147774557}
+  - component: {fileID: 2514145434303759233}
+  - component: {fileID: 8567543431320500626}
+  - component: {fileID: 3854174444404142005}
+  - component: {fileID: 8852863723485319795}
+  - component: {fileID: 4013958528147407902}
+  - component: {fileID: 2110785522223634509}
   m_Layer: 0
   m_Name: PlayerArmature
   m_TagString: Player
@@ -216,8 +222,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   turretHotbar:
-  - {fileID: 11400000, guid: 48fa49effc929664a87001b01e45f281, type: 2}
-  - {fileID: 11400000, guid: dcdac1595ca2afc45976fb81df584480, type: 2}
+  - {fileID: 11400000, guid: fcaafef3fa522674c94cddfa98f59a70, type: 2}
+  - {fileID: 11400000, guid: 875a7fe68fa6d20469a0fdfc3882fb25, type: 2}
 --- !u!114 &8191898322271192458
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -233,7 +239,13 @@ MonoBehaviour:
   interactableLayers:
     serializedVersion: 2
     m_Bits: 128
+  enemyLayers:
+    serializedVersion: 2
+    m_Bits: 8
   maxInteractionDistance: 100
+  enemyClickRadius: 0.6
+  enemyScreenFallbackPixels: 50
+  debugLogs: 0
 --- !u!114 &1755303372287176825
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -294,18 +306,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 499efd1f5618d444e8bac95f326ddc20, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ElementumDefense.Cards.PlayerCardManager
-  activeCards: []
-  damageMultiplier: 1
-  fireRateMultiplier: 1
-  rangeMultiplier: 1
-  turretCostMultiplier: 1
-  passiveGoldPerSecond: 0
-  sabotageDamageModifier: 1
-  sabotageFireRateModifier: 1
-  sabotageRangeModifier: 1
-  sabotageCostModifier: 1
-  upgradesDisabled: 0
-  activeSabotages: []
 --- !u!114 &1878839749677311197
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -365,6 +365,106 @@ MonoBehaviour:
   m_PivotReferenceSize: 0
   m_Pivot: 0
   m_WorldSpaceCollider: {fileID: 0}
+--- !u!114 &2514145434303759233
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 746025431052519908}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3448b7ebf994aa0418b282baf1f9c4e1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TurretMergeManager
+  mergeRadius: 100
+  requiredLevel: 3
+  mergedTurretLogicPrefab: {fileID: 1686734785971361127, guid: ca24cfa8d4d5cde45a9ddac7b45a2d13, type: 3}
+  synergies:
+  - synergyElementA: 1
+    synergyElementB: 3
+    synergyName: FrostFire
+    mergedTurretData: {fileID: 11400000, guid: b4425c03311c29747b659ba023ec9a3c, type: 2}
+    mergedTurretPrefab: {fileID: 0}
+    lightSynergyEffect: 0
+  lightSynergyDotDamage: 5.07
+  lightSynergyEffectDuration: 3
+  mergeEffectPrefab: {fileID: 0}
+--- !u!114 &8567543431320500626
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 746025431052519908}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6e7c6a313ff885847996a153b4913913, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ElementumDefense.Cards.PlayerModifierStack
+  damageMultiplier: 1
+  fireRateMultiplier: 1
+  rangeMultiplier: 1
+  turretCostMultiplier: 1
+  passiveGoldPerSecond: 0
+  critChance: 0
+  critMultiplier: 2
+  bonusGoldPerKill: 0
+  bossKillGoldMultiplier: 1
+  conditionalDmgMods: []
+  activeSabotageMods: []
+  upgradesDisabled: 0
+--- !u!114 &3854174444404142005
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 746025431052519908}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 12e9949a45461e845af8caa1f96ee8f0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ElementumDefense.Cards.PlayerCardActivator
+  activeCards: []
+--- !u!114 &8852863723485319795
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 746025431052519908}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b99192b70dc8dca4d87406ee16493367, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ElementumDefense.Cards.PlayerSabotageController
+  activeSabotages: []
+--- !u!114 &4013958528147407902
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 746025431052519908}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 01010684f1ec3a6428ff528a750a2dfa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ElementumDefense.Cards.PlayerWaveTriggerListener
+--- !u!114 &2110785522223634509
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 746025431052519908}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7bc753a66efd879418935dea2cc761c0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ElementumDefense.Cards.SelfSabotageTracker
+  logRewards: 1
 --- !u!1 &2945295305449548627
 GameObject:
   m_ObjectHideFlags: 0

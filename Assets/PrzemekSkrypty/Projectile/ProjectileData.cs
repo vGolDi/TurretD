@@ -1,5 +1,8 @@
 using UnityEngine;
 
+
+namespace ElementumDefense.Projectiles
+{
 public class ProjectileData : MonoBehaviour
 {
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -13,4 +16,5 @@ public class ProjectileData : MonoBehaviour
     {
         
     }
+}
 }

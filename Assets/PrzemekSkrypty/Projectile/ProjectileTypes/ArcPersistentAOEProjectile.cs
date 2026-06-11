@@ -1,6 +1,7 @@
 using UnityEngine;
 using ElementumDefense.Elements;
 using ElementumDefense.StatusEffects;
+using ElementumDefense.Enemies;
 
 namespace ElementumDefense.Projectiles
 {

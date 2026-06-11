@@ -1,5 +1,6 @@
-﻿using UnityEngine;
+using UnityEngine;
 using ElementumDefense.Elements;
+using ElementumDefense.Turrets;
 
 namespace ElementumDefense.Cards
 {
@@ -36,6 +37,23 @@ namespace ElementumDefense.Cards
         public Sprite sabotageIcon;
         public Color sabotageColor = Color.red;
 
+        [Header("VFX — Visual Feedback")]
+        [Tooltip("Efekt VFX spawnowany na arenie ofiary (np. lecące nietoperze, eksplozja)")]
+        public GameObject arenaVFXPrefab;
+
+        [Tooltip("Czas życia efektu areny w sekundach (0 = auto-destroy z ParticleSystem)")]
+        public float arenaVFXDuration = 3f;
+
+        [Tooltip("Ikona/prefab przypinany do każdego turretu ofiary (np. kłódka, zębatka).\n" +
+                 "Pozostaw puste jeśli sabotaż nie dotyczy turretów.")]
+        public GameObject turretIndicatorPrefab;
+
+        [Tooltip("Kolor flash na ekranie ofiary (alpha 0 = brak flash)")]
+        public Color screenFlashColor = new Color(1f, 0f, 0f, 0f);
+
+        [Tooltip("Dźwięk odtwarzany przy aktywacji sabotażu")]
+        public AudioClip activationSound;
+
         [Header("Drop Rate (for weighted random)")]
         [Tooltip("Weight for random selection (higher = more common)")]
         [Range(1f, 100f)]
@@ -48,6 +66,29 @@ namespace ElementumDefense.Cards
         [Header("Effect Implementation")]
         [Tooltip("Drag SabotageEffect ScriptableObject here")]
         public SabotageEffectBase sabotageEffect;
+
+        // ==========================================
+        // SELF-SABOTAGE (GAMBLE)
+        // ==========================================
+
+        [Header("Self-Sabotage / Gamble")]
+        [Tooltip("Opponent = klasyczny sabotaz na wroga. Self = utrudnienie sobie gry za nagrode.")]
+        public SabotageTarget targetType = SabotageTarget.Opponent;
+
+        [Tooltip("Bonus gold za przetrwanie self-sabotazu (in-match gold dodawany do PlayerGold)")]
+        public int rewardGold = 0;
+
+        [Tooltip("Mnoznik golda z fali (np. 2.0 = 2x wiecej golda z zabitych wrogow)")]
+        public float rewardGoldMultiplier = 1f;
+
+        [Tooltip("Czy nagroda jest przyznawana TYLKO jesli gracz przezyje fale?")]
+        public bool rewardOnSurvive = true;
+
+        [Tooltip("Ile fal trwa self-sabotaz (nagroda po przetrwaniu tylu fal)")]
+        public int challengeWaves = 1;
+
+        /// <summary>Czy to self-sabotaz?</summary>
+        public bool IsSelfSabotage => targetType == SabotageTarget.Self;
 
         // ==========================================
         // HELPER METHODS
@@ -144,7 +185,17 @@ namespace ElementumDefense.Cards
         Turrets,    // Turret damage, upgrades, building
         Enemies,    // Enemy HP, speed, element
         Arena,      // Build spots, fog, path manipulation
-        Player      // Player HP, movement, vision
+        Player,     // Player HP, movement, vision
+        SelfSabotage // Self-imposed challenge for reward
+    }
+
+    /// <summary>
+    /// Who does the sabotage target?
+    /// </summary>
+    public enum SabotageTarget
+    {
+        Opponent,   // Classic — hurts the enemy player
+        Self        // Gamble — hurts yourself for a reward
     }
 
     /// <summary>

@@ -3,7 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using Photon.Pun;
 using ElementumDefense.Cards;
+using ElementumDefense.Turrets;
 
+
+namespace ElementumDefense.Players
+{
 /// <summary>
 /// Handles turret ghost preview, placement validation, and building.
 /// Ghost uses transparent pulsing materials. Range shown via LineRenderer circle.
@@ -527,6 +531,32 @@ public class PlayerBuilder : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Reconnect restore: rebuild a turret at a saved position from the given
+    /// <see cref="TurretData"/> WITHOUT charging gold. Mirrors <see cref="PlaceTurret"/>
+    /// + <see cref="DelayedInitializeTurret"/>. The current upgrade level IS the
+    /// passed TurretData, so no separate level state is needed. Stats and card/
+    /// sabotage modifiers recompute deterministically inside Turret.Initialize.
+    /// </summary>
+    public void PlaceTurretFromRestore(TurretData data, Vector3 position)
+    {
+        if (data == null)
+        {
+            Debug.LogError("[PlayerBuilder] PlaceTurretFromRestore: null TurretData.");
+            return;
+        }
+        if (turretLogicPrefab == null)
+        {
+            Debug.LogError("[PlayerBuilder] PlaceTurretFromRestore: turretLogicPrefab not assigned.");
+            return;
+        }
+
+        GameObject turret = Instantiate(turretLogicPrefab, position, Quaternion.identity);
+        StartCoroutine(DelayedInitializeTurret(turret, data));
+
+        Debug.Log($"[PlayerBuilder] Restored turret {data.turretName} at {position} (no cost).");
+    }
+
     // ==========================================
     // PUBLIC API
     // ==========================================
@@ -539,4 +569,5 @@ public class PlayerBuilder : MonoBehaviour
 
     /// <summary>Whether build mode is active</summary>
     public bool IsActive => ghostInstance != null;
+}
 }

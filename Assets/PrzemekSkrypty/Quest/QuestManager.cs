@@ -1,4 +1,4 @@
-﻿// Assets/PrzemekSkrypty/Progression/QuestManager.cs
+// Assets/PrzemekSkrypty/Progression/QuestManager.cs
 using UnityEngine;
 using System;
 using System.Collections.Generic;
@@ -8,6 +8,7 @@ using ElementumDefense.Cards;
 using ElementumDefense.Lootbox;
 using ElementumDefense.Auth;
 using ElementumDefense.BattlePass;
+using ElementumDefense.Multiplayer;
 
 namespace ElementumDefense.Progression
 {
@@ -40,6 +41,7 @@ namespace ElementumDefense.Progression
         public int targetAmount;
 
         public int rewardGold;
+        public int rewardCrystals;
         public int rewardXP;
         public int rewardBPXP;
 
@@ -59,6 +61,13 @@ namespace ElementumDefense.Progression
 
         public event Action OnQuestListUpdated;
         public event Action<LootboxData> OnLootboxRewarded;
+
+        /// <summary>
+        /// Fires once per quest when its reward is claimed. Achievement /
+        /// telemetry systems subscribe to this instead of polling
+        /// OnQuestListUpdated (which fires on every progress tick).
+        /// </summary>
+        public event Action<Quest> OnQuestClaimed;
 
         [Header("Quest Pool Settings")]
         [SerializeField, Range(1, 10), Tooltip("How many daily quests to assign per day")]
@@ -182,7 +191,7 @@ namespace ElementumDefense.Progression
 
         private void CheckDailyReset()
         {
-            string todayDate = DateTime.Now.ToString("yyyy-MM-dd");
+            string todayDate = DateTime.UtcNow.ToString("yyyy-MM-dd");
             string thisWeek = GetWeekIdentifier();
 
             Debug.Log($"[QuestManager] Last Daily: '{lastQuestDate}', Today: '{todayDate}'");
@@ -224,7 +233,7 @@ namespace ElementumDefense.Progression
 
         private string GetWeekIdentifier()
         {
-            DateTime now = DateTime.Now;
+            DateTime now = DateTime.UtcNow;
             int weekNumber = System.Globalization.CultureInfo.CurrentCulture.Calendar
                 .GetWeekOfYear(now, System.Globalization.CalendarWeekRule.FirstDay, DayOfWeek.Monday);
             return $"{now.Year}-W{weekNumber:D2}";
@@ -477,6 +486,8 @@ namespace ElementumDefense.Progression
             if (PlayerCollection.Instance != null)
             {
                 PlayerCollection.Instance.AddGold(quest.rewardGold);
+                if (quest.rewardCrystals > 0)
+                    PlayerCollection.Instance.AddCrystals(quest.rewardCrystals);
                 PlayerCollection.Instance.AddXP(quest.rewardXP);
             }
 
@@ -505,6 +516,7 @@ namespace ElementumDefense.Progression
             quest.isClaimed = true;
             SaveQuests();
             OnQuestListUpdated?.Invoke();
+            OnQuestClaimed?.Invoke(quest);
 
             Debug.Log($"[QuestManager] Reward claimed: {quest.rewardGold}g, {quest.rewardXP}xp" +
                       (quest.HasLootboxReward ? $" + {quest.rewardLootboxName}" : ""));

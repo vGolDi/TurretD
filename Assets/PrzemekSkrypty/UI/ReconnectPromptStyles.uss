@@ -1,0 +1,236 @@
+/* ============================================
+   RECONNECT PROMPT — Art Deco styling
+   Palette / motifs match ArtDecoTarotStyles.uss:
+     deep navy bg, amber-gold accents (#F59E0B),
+     thin double frames, diamond corners.
+   ============================================ */
+
+.reconnect-root {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    align-items: center;
+    justify-content: center;
+}
+
+.reconnect-backdrop {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(6, 10, 18, 0.82);
+}
+
+/* ============================================
+   CARD
+   ============================================ */
+.reconnect-card {
+    width: 520px;
+    padding: 28px 32px;
+    background-color: rgb(18, 24, 36);
+    border-left-color: rgba(245, 158, 11, 0.55);
+    border-right-color: rgba(245, 158, 11, 0.55);
+    border-top-color: rgba(245, 158, 11, 0.55);
+    border-bottom-color: rgba(245, 158, 11, 0.55);
+    border-left-width: 1px;
+    border-right-width: 1px;
+    border-top-width: 1px;
+    border-bottom-width: 1px;
+    border-top-left-radius: 2px;
+    border-top-right-radius: 2px;
+    border-bottom-left-radius: 2px;
+    border-bottom-right-radius: 2px;
+    align-items: stretch;
+}
+
+/* ============================================
+   TOP / BOTTOM STRIPS — line + diamond + line
+   Mirrors the LobbyStyles divider motif
+   ============================================ */
+.reconnect-strip-top,
+.reconnect-strip-bottom {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+    margin-top: 0;
+}
+.reconnect-strip-bottom {
+    margin-top: 22px;
+    margin-bottom: 0;
+}
+
+.reconnect-strip-line {
+    flex-grow: 1;
+    height: 1px;
+    background-color: rgba(245, 158, 11, 0.35);
+    margin-left: 6px;
+    margin-right: 6px;
+}
+
+.reconnect-strip-diamond {
+    width: 8px;
+    height: 8px;
+    background-color: rgb(245, 158, 11);
+    rotate: 45deg;
+}
+
+/* ============================================
+   TYPOGRAPHY
+   ============================================ */
+.reconnect-title {
+    -unity-text-align: middle-center;
+    color: rgb(245, 222, 179);
+    font-size: 26px;
+    -unity-font-style: bold;
+    letter-spacing: 4px;
+    margin-bottom: 6px;
+}
+
+.reconnect-subtitle {
+    -unity-text-align: middle-center;
+    color: rgba(245, 222, 179, 0.65);
+    font-size: 12px;
+    margin-bottom: 18px;
+    white-space: normal;
+}
+
+/* ============================================
+   DETAIL ROWS
+   ============================================ */
+.reconnect-detail-block {
+    background-color: rgba(245, 158, 11, 0.04);
+    border-left-color: rgba(245, 158, 11, 0.2);
+    border-right-color: rgba(245, 158, 11, 0.2);
+    border-top-color: rgba(245, 158, 11, 0.2);
+    border-bottom-color: rgba(245, 158, 11, 0.2);
+    border-left-width: 1px;
+    border-right-width: 1px;
+    border-top-width: 1px;
+    border-bottom-width: 1px;
+    padding: 14px 18px;
+    margin-bottom: 14px;
+}
+
+.reconnect-detail-row {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 4px;
+    margin-bottom: 4px;
+}
+
+.reconnect-detail-label {
+    color: rgba(245, 222, 179, 0.55);
+    font-size: 12px;
+    letter-spacing: 1.5px;
+}
+
+.reconnect-detail-value {
+    color: rgb(245, 222, 179);
+    font-size: 14px;
+    -unity-font-style: bold;
+}
+
+.reconnect-detail-window {
+    color: rgb(245, 158, 11);
+}
+
+/* ============================================
+   NOTES
+   ============================================ */
+.reconnect-forfeit-note {
+    -unity-text-align: middle-center;
+    color: rgba(245, 158, 11, 0.75);
+    font-size: 11px;
+    white-space: normal;
+    margin-bottom: 10px;
+}
+
+.reconnect-status {
+    -unity-text-align: middle-center;
+    color: rgba(245, 222, 179, 0.85);
+    font-size: 13px;
+    height: 18px;
+    margin-bottom: 6px;
+}
+
+/* ============================================
+   BUTTONS
+   ============================================ */
+.reconnect-buttons {
+    flex-direction: row;
+    justify-content: space-between;
+    margin-top: 6px;
+}
+
+.reconnect-btn {
+    flex-grow: 1;
+    height: 42px;
+    -unity-text-align: middle-center;
+    -unity-font-style: bold;
+    letter-spacing: 3px;
+    font-size: 14px;
+    background-color: rgba(245, 158, 11, 0.08);
+    color: rgb(245, 222, 179);
+    border-left-color: rgba(245, 158, 11, 0.55);
+    border-right-color: rgba(245, 158, 11, 0.55);
+    border-top-color: rgba(245, 158, 11, 0.55);
+    border-bottom-color: rgba(245, 158, 11, 0.55);
+    border-left-width: 1px;
+    border-right-width: 1px;
+    border-top-width: 1px;
+    border-bottom-width: 1px;
+    border-top-left-radius: 1px;
+    border-top-right-radius: 1px;
+    border-bottom-left-radius: 1px;
+    border-bottom-right-radius: 1px;
+    margin-left: 4px;
+    margin-right: 4px;
+    transition-duration: 120ms;
+    transition-property: background-color, color;
+}
+
+.reconnect-btn:hover {
+    background-color: rgba(245, 158, 11, 0.18);
+}
+
+.reconnect-btn-primary {
+    background-color: rgba(245, 158, 11, 0.18);
+    color: rgb(255, 234, 180);
+    border-left-color: rgb(245, 158, 11);
+    border-right-color: rgb(245, 158, 11);
+    border-top-color: rgb(245, 158, 11);
+    border-bottom-color: rgb(245, 158, 11);
+}
+
+.reconnect-btn-primary:hover {
+    background-color: rgba(245, 158, 11, 0.32);
+}
+
+.reconnect-btn-danger {
+    color: rgba(245, 100, 100, 0.85);
+    border-left-color: rgba(245, 100, 100, 0.55);
+    border-right-color: rgba(245, 100, 100, 0.55);
+    border-top-color: rgba(245, 100, 100, 0.55);
+    border-bottom-color: rgba(245, 100, 100, 0.55);
+}
+
+.reconnect-btn-danger:hover {
+    background-color: rgba(245, 100, 100, 0.15);
+    color: rgb(255, 200, 200);
+}
+
+.reconnect-btn:disabled {
+    opacity: 0.45;
+}
+
+/* ============================================
+   STATE — hide buttons row while reconnecting
+   ============================================ */
+.reconnect-card.is-busy .reconnect-buttons {
+    display: none;
+}

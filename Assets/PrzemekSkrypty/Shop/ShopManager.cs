@@ -10,6 +10,7 @@ using ElementumDefense.Skins;
 using ElementumDefense.Cards;
 using ElementumDefense.Lootbox;
 using ElementumDefense.BattlePass;
+using ElementumDefense.Multiplayer;
 
 namespace ElementumDefense.Shop
 {

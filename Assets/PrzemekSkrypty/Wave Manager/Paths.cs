@@ -1,5 +1,8 @@
 using UnityEngine;
 
+
+namespace ElementumDefense.Waves
+{
 /// <summary>
 /// Stores sequence of waypoints defining enemy path
 /// Visualizes path in editor with colored lines
@@ -110,4 +113,5 @@ public class Paths : MonoBehaviour
         Gizmos.DrawRay(position, right * arrowSize);
         Gizmos.DrawRay(position, left * arrowSize);
     }
+}
 }

@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 40cc6fd2f217f804bb1059706c79d4e6, type: 3}
+  m_Name: IceTheme
+  m_EditorClassIdentifier: Assembly-CSharp::MapThemeData
+  themeId: IceTheme
+  themeName: IceTheme
+  description: A visual theme for the arena map.
+  groundMaterial: {fileID: 0}
+  groundPrefabOverride: {fileID: 5060611087639217806, guid: fbfdea07d46bba54dbfa400c6834bf07, type: 3}
+  pathMaterial: {fileID: 0}
+  pathBorderPrefab: {fileID: 0}
+  ambientLightColor: {r: 1, g: 0.95, b: 0.9, a: 1}
+  fogColor: {r: 0.5, g: 0.5, b: 0.6, a: 1}
+  skyboxMaterial: {fileID: 0}
+  decorationPrefabs: []
+  ambientParticlesPrefab: {fileID: 0}
+  basePrefabOverride: {fileID: 0}
+  goldMinePrefabOverride: {fileID: 1869752425139524944, guid: dc03d25a79e20d840bc0fbe4756d1078, type: 3}

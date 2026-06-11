@@ -5,6 +5,8 @@ using System.Linq;
 using Photon.Pun;
 using Photon.Realtime;
 using TMPro;
+using ElementumDefense.Multiplayer;
+using ElementumDefense.Waves;
 
 namespace ElementumDefense.Cards
 {
@@ -33,6 +35,23 @@ namespace ElementumDefense.Cards
 
         [Header("Mid-Game Draft Configuration")]
         [SerializeField] private int midGameChoices = 3;
+
+        // Sabotage override — when set to a positive value, the next mid-game
+        // draft uses this count instead of midGameChoices, then resets to 0.
+        // ForcePickSabotage uses this to reduce the target's choices.
+        private int nextDraftChoiceOverride = 0;
+        public void SetNextDraftChoiceOverride(int count) => nextDraftChoiceOverride = count;
+
+        // Active runtime state of mulligan disable for the CURRENT draft.
+        // Set from nextDraftMulliganDisabled at draft start, cleared on draft end.
+        private bool currentDraftMulliganDisabled = false;
+
+        // Disables mulligan for ONE upcoming mid-game draft. Set by
+        // NoMulliganSelfSabotage; consumed (cleared) when the next mid-game
+        // draft starts. UI can read CanMulliganMidGameSlot which respects this.
+        private bool nextDraftMulliganDisabled = false;
+        public void SetNextDraftMulliganDisabled(bool disabled) => nextDraftMulliganDisabled = disabled;
+        public bool IsNextDraftMulliganDisabled => nextDraftMulliganDisabled;
         
 
         // References
@@ -111,6 +130,55 @@ namespace ElementumDefense.Cards
             nextDraftWave = wavesBetweenDrafts;
             Debug.Log($"[DraftManager] Next mid-game draft at wave {nextDraftWave} (IsMine={photonView?.IsMine})");
             // ================================================================
+
+            if (photonView != null && photonView.IsMine)
+            {
+                // Check if we are reconnecting to a game already in progress
+                if (PhotonNetwork.CurrentRoom != null && 
+                    PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey(PreGameManager.ALL_DECKS_READY_KEY) &&
+                    (bool)PhotonNetwork.CurrentRoom.CustomProperties[PreGameManager.ALL_DECKS_READY_KEY])
+                {
+                    // Auto-assign deck if null — REQUIRED even on restore, because
+                    // mid-game drafts draw from playerDeck. (Bug fix: previously the
+                    // restore guard returned before this, leaving the deck null and
+                    // crashing the next mid-game draft with "Deck is empty!".)
+                    if (playerDeck == null)
+                    {
+                        var decks = PlayerCollection.Instance?.GetPlayerDecks();
+                        if (decks != null && decks.Count > 0)
+                            SetDeck(decks[0]);
+                        else
+                        {
+                            var resDecks = Resources.LoadAll<DeckData>("Decks");
+                            if (resDecks.Length > 0) SetDeck(resDecks[0]);
+                        }
+                    }
+
+                    // Reconnect WITH a state snapshot: MatchRestoreService re-activates
+                    // the player's cards directly, so skip the starter-draft auto-start
+                    // to avoid double-activating starter cards. The deck above is still
+                    // assigned so future mid-game drafts work.
+                    if (ElementumDefense.Multiplayer.Reconnect.MatchRestoreService.RestorePending)
+                    {
+                        Debug.Log("[DraftManager] Restore pending — deck assigned, skipping starter-draft auto-start.");
+                        return;
+                    }
+
+                    Debug.Log("[DraftManager] Game is already in progress! Starting Starter Draft.");
+
+                    // Start the starter draft
+                    StartStarterDraft();
+                }
+            }
+        }
+
+        public override void OnDisable()
+        {
+            base.OnDisable();
+            if (Instance == this)
+            {
+                Instance = null;
+            }
         }
 
         // ==========================================
@@ -159,6 +227,98 @@ namespace ElementumDefense.Cards
         }
 
         public DeckData GetPlayerDeck() => playerDeck;
+
+        // ==========================================
+        // RECONNECT — DRAFT STATE CAPTURE / RESTORE
+        // ==========================================
+
+        /// <summary>Reconnect: snapshot the draft-phase state into the given struct.</summary>
+        public void CaptureDraftState(ElementumDefense.Multiplayer.Reconnect.DraftStateSnapshot snap)
+        {
+            if (snap == null) return;
+            snap.isStarterDraftComplete = isStarterDraftComplete;
+            snap.nextDraftWave = nextDraftWave;
+            snap.currentDraftWaveIndex = currentDraftWaveIndex;
+            snap.midGameCardSelected = midGameCardSelected;
+            snap.nextDraftChoiceOverride = nextDraftChoiceOverride;
+            snap.nextDraftMulliganDisabled = nextDraftMulliganDisabled;
+            snap.currentDraftMulliganDisabled = currentDraftMulliganDisabled;
+            snap.selectedDeckName = playerDeck != null ? playerDeck.name : "";
+
+            snap.starterDraftedCardNames.Clear();
+            foreach (var c in starterDraftedCards)
+                snap.starterDraftedCardNames.Add(c != null ? c.name : "");
+        }
+
+        /// <summary>
+        /// Reconnect: restore draft-phase flags so the draft system does not
+        /// re-trigger or re-offer choices the player already resolved.
+        /// Active cards themselves are restored separately by re-activation.
+        /// </summary>
+        public void RestoreDraftState(ElementumDefense.Multiplayer.Reconnect.DraftStateSnapshot snap)
+        {
+            if (snap == null) return;
+            isStarterDraftComplete = snap.isStarterDraftComplete;
+            isDrafting = false;
+            waitingForConfirmation = false;
+            nextDraftWave = snap.nextDraftWave;
+            currentDraftWaveIndex = snap.currentDraftWaveIndex;
+            midGameCardSelected = snap.midGameCardSelected;
+            nextDraftChoiceOverride = snap.nextDraftChoiceOverride;
+            nextDraftMulliganDisabled = snap.nextDraftMulliganDisabled;
+            currentDraftMulliganDisabled = snap.currentDraftMulliganDisabled;
+
+            // Restore the actual deck used this match (overrides the default that
+            // Awake auto-assigned), so mid-game drafts draw from the correct pool.
+            if (!string.IsNullOrEmpty(snap.selectedDeckName))
+            {
+                DeckData deck = ResolveDeckByName(snap.selectedDeckName);
+                if (deck != null) SetDeck(deck);
+                else Debug.LogWarning($"[DraftManager] Restore: deck '{snap.selectedDeckName}' not found — keeping current.");
+            }
+
+            starterDraftedCards.Clear();
+            foreach (var name in snap.starterDraftedCardNames)
+            {
+                if (string.IsNullOrEmpty(name)) { starterDraftedCards.Add(null); continue; }
+                CardData card = ResolveCardByName(name);
+                starterDraftedCards.Add(card);
+            }
+
+            Debug.Log($"[DraftManager] Restored draft state: starterComplete={isStarterDraftComplete}, " +
+                      $"nextDraftWave={nextDraftWave}, midGameSelected={midGameCardSelected}");
+        }
+
+        private CardData ResolveCardByName(string name)
+        {
+            if (playerDeck != null && playerDeck.cards != null)
+            {
+                foreach (var c in playerDeck.cards)
+                    if (c != null && c.name == name) return c;
+            }
+            // Recursive search across Resources/Cards (cards live in subfolders).
+            foreach (var c in Resources.LoadAll<CardData>("Cards"))
+                if (c != null && c.name == name) return c;
+
+            Debug.LogWarning($"[DraftManager] ResolveCardByName: '{name}' not found in deck or Resources/Cards.");
+            return null;
+        }
+
+        private DeckData ResolveDeckByName(string name)
+        {
+            // Prefer the player's own decks (matches by asset name or display name).
+            var decks = PlayerCollection.Instance?.GetPlayerDecks();
+            if (decks != null)
+            {
+                foreach (var d in decks)
+                    if (d != null && (d.name == name || d.deckName == name)) return d;
+            }
+            // Fallback to Resources/Decks.
+            foreach (var d in Resources.LoadAll<DeckData>("Decks"))
+                if (d != null && (d.name == name || d.deckName == name)) return d;
+            return null;
+        }
+
 
         /// <summary>
         /// Called by WaveManager after each wave to check if draft should trigger
@@ -283,6 +443,17 @@ namespace ElementumDefense.Cards
 
             Debug.Log("[DraftManager] Player confirmed starter draft!");
 
+            // Check if game is already running (Reconnecting scenario)
+            if (PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey(ALL_CARDS_READY_KEY) &&
+                (bool)PhotonNetwork.CurrentRoom.CustomProperties[ALL_CARDS_READY_KEY])
+            {
+                Debug.Log("[DraftManager] Room already started. Activating cards immediately for Reconnected player.");
+                var hud = ElementumDefense.UI.WaveHUD.Instance;
+                hud?.HideWaitingMessage();
+                ActivateStarterCards();
+                return;
+            }
+
             var playerProps = new ExitGames.Client.Photon.Hashtable();
             playerProps[CARDS_CONFIRMED_KEY] = true;
             PhotonNetwork.LocalPlayer.SetCustomProperties(playerProps);
@@ -354,17 +525,32 @@ namespace ElementumDefense.Cards
             isDrafting = true;
             midGameCardSelected = false;
 
-            // ========== NOWE: Reset mulligan tracking ==========
-            midGameSlotMulliganed.Clear();
-            for (int i = 0; i < midGameChoices; i++)
+            // ========== Per-player choice count (ForcePick / NoMulligan) ==========
+            // IMPORTANT: the choice COUNT is per-player. The shared rarity combo
+            // (broadcast by master) is generated at the DEFAULT length; each player
+            // then truncates it to their own effectiveChoices below. This stops a
+            // ForcePick on one player from shrinking the OTHER player's draft.
+            int effectiveChoices = midGameChoices;
+            if (nextDraftChoiceOverride > 0)
             {
-                midGameSlotMulliganed[i] = false;
+                effectiveChoices = nextDraftChoiceOverride;
+                nextDraftChoiceOverride = 0;
+                Debug.Log($"[DraftManager] ForcePick: THIS player gets {effectiveChoices} choices");
             }
-            // ===================================================
+
+            // Apply NoMulligan sabotage override if any (one-shot, then clear).
+            currentDraftMulliganDisabled = nextDraftMulliganDisabled;
+            if (currentDraftMulliganDisabled)
+            {
+                nextDraftMulliganDisabled = false;
+                Debug.Log("[DraftManager] NoMulligan: this draft has no mulligan");
+            }
 
             Debug.Log("[DraftManager] === MID-GAME DRAFT START ===");
 
-            // PHASE 1: Rarity generation
+            // PHASE 1: Rarity generation — master makes a FULL-length combo and
+            // broadcasts it (so both players see the SAME rarities). Per-player
+            // count is applied by truncation afterwards.
             CardRarity[] rarityCombination = null;
 
             if (PhotonNetwork.IsMasterClient)
@@ -390,12 +576,34 @@ namespace ElementumDefense.Cards
 
                 if (!rarityReceived)
                 {
-                    Debug.LogError("[DraftManager] Timeout waiting for rarity combination!");
-                    isDrafting = false;
-                    yield break;
+                    // Catch-up case (reconnect): master already passed this draft
+                    // and won't broadcast rarities. Generate locally and continue —
+                    // the opponent isn't viewing our draft anyway.
+                    Debug.LogWarning("[DraftManager] No rarities from master " +
+                                     "(catch-up after reconnect?) — generating locally.");
+                    rarityCombination = GenerateRandomRarityCombination(midGameChoices);
                 }
+                else
+                {
+                    rarityCombination = receivedRarityCombination;
+                }
+            }
 
-                rarityCombination = receivedRarityCombination;
+            // Per-player truncation: this player sees only `effectiveChoices` of the
+            // shared combo. A ForcePick'd player gets the first N rarities; the other
+            // player keeps the full set.
+            if (rarityCombination != null && effectiveChoices < rarityCombination.Length)
+            {
+                rarityCombination = rarityCombination.Take(effectiveChoices).ToArray();
+                Debug.Log($"[DraftManager] Truncated to {effectiveChoices} choices for this player.");
+            }
+
+            // Mulligan tracking based on the FINAL (possibly reduced) count.
+            midGameSlotMulliganed.Clear();
+            int finalCount = rarityCombination != null ? rarityCombination.Length : 0;
+            for (int i = 0; i < finalCount; i++)
+            {
+                midGameSlotMulliganed[i] = false;
             }
 
             // PHASE 2: Draw cards (store rarities for mulligan)
@@ -496,6 +704,7 @@ namespace ElementumDefense.Cards
             // Cleanup
             currentDraftChoices = null;
             currentMidGameRarities = null;
+            currentDraftMulliganDisabled = false;
             isDrafting = false;
 
             Debug.Log("[DraftManager] Mid-game draft COMPLETE (synced).");
@@ -521,6 +730,12 @@ namespace ElementumDefense.Cards
             if (!isDrafting)
             {
                 Debug.LogWarning("[DraftManager] Not currently drafting!");
+                return false;
+            }
+
+            if (currentDraftMulliganDisabled)
+            {
+                Debug.LogWarning("[DraftManager] Mulligan disabled this draft (NoMulligan sabotage)");
                 return false;
             }
 
@@ -589,6 +804,9 @@ namespace ElementumDefense.Cards
             if (currentDraftChoices == null) return false;
             if (slotIndex < 0 || slotIndex >= currentDraftChoices.Length) return false;
 
+            // NoMulligan sabotage gate — also blocks mulligan during this draft.
+            if (currentDraftMulliganDisabled) return false;
+
             return !midGameSlotMulliganed.ContainsKey(slotIndex) ||
                    !midGameSlotMulliganed[slotIndex];
         }
@@ -628,6 +846,9 @@ namespace ElementumDefense.Cards
 
             ActivateCard(chosenCard);
             midGameCardSelected = true;
+
+            // Reconnect save point (a): a network-visible card choice was committed.
+            ElementumDefense.Multiplayer.Reconnect.MatchSnapshotService.Instance?.CaptureAndSave($"card-selected: {chosenCard.cardName}");
 
             Debug.Log($"[DraftManager] ✅ Selected mid-game card: {chosenCard.cardName}");
         }

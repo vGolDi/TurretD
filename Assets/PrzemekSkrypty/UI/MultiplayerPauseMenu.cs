@@ -320,10 +320,19 @@ namespace ElementumDefense.UI
 
         private void ConfirmQuit()
         {
-            Debug.Log("[PauseMenu] Leaving match...");
+            Debug.Log("[PauseMenu] Leaving match (becoming inactive for reconnect)...");
 
-            if (PhotonNetwork.IsConnected)
-                PhotonNetwork.Disconnect();
+            // Start the reconnect window NOW (from the leave moment) so a long
+            // match doesn't arrive at the menu with an already-expired window.
+            ElementumDefense.Multiplayer.PendingMatchState.RefreshWindow();
+
+            // Leave the room as INACTIVE (slot reserved by PlayerTtl). This is
+            // crucial: staying in the room means buffered instantiates are NOT
+            // re-delivered on reconnect, so the player would miss the opponent's
+            // object and orphan their own (causing duplicate players). Becoming
+            // inactive + RejoinRoom later gives a clean buffer re-delivery.
+            if (PhotonNetwork.InRoom)
+                PhotonNetwork.LeaveRoom(true);
 
             SceneManager.LoadScene(mainMenuSceneName);
         }

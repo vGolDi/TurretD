@@ -1,6 +1,9 @@
 using UnityEngine;
 using Photon.Pun;
 
+
+namespace ElementumDefense.Players
+{
 /// <summary>
 /// Simplified input manager for Tower Defense.
 /// Cursor is ALWAYS visible - no lock states.
@@ -52,4 +55,5 @@ public class SimpleInputManager : MonoBehaviour
             LocalInstance = null;
         }
     }
+}
 }

@@ -4,6 +4,7 @@ using PlayFab.ClientModels;
 using System.Collections;
 using System.Collections.Generic;
 using System;
+using ElementumDefense.Multiplayer;
 
 namespace ElementumDefense.Auth
 {

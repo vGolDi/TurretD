@@ -52,6 +52,7 @@ MonoBehaviour:
   - RPC_EndDraft
   - RPC_PlayerIsReady
   - RPC_EndDraft_Public
+  - RPC_ShowEmote
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

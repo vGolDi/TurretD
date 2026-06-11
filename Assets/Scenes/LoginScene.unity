@@ -282,65 +282,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cd71ddaa69ded4b428496d288e3a96a4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ElementumDefense.Cards.PlayerCollection
-  allAvailableCards:
-  - {fileID: 11400000, guid: 1ae8c8c0905ccb34a9560c844eb85c38, type: 2}
-  - {fileID: 11400000, guid: be93cc188d8d4784db16d18d0313b188, type: 2}
-  - {fileID: 11400000, guid: a507321bcf48c3f429cad224b6e9770d, type: 2}
-  - {fileID: 11400000, guid: e5dc3304cdf18254c98a940d4433438d, type: 2}
-  - {fileID: 11400000, guid: eab923cc5d46a6f4185b9ad666febfb3, type: 2}
-  - {fileID: 11400000, guid: 44510f7ecd66454458c28e733a2d27b9, type: 2}
-  - {fileID: 11400000, guid: 36201d96c49e19449ac5aee297743e1b, type: 2}
-  - {fileID: 11400000, guid: a05fa3a748c933843bc285253b1f97dc, type: 2}
-  - {fileID: 11400000, guid: 344a40e9c17bf5b4b980b79e75b8761c, type: 2}
-  - {fileID: 11400000, guid: 0c7bd05688b81144a9ab885cc984a019, type: 2}
-  - {fileID: 11400000, guid: 975149403c21f5945ba49a8d4a787b56, type: 2}
-  - {fileID: 11400000, guid: 7f929820f121cbe479877419c8a45f6d, type: 2}
-  - {fileID: 11400000, guid: ac5be0f55bc51cb4cbcba28f135a8a52, type: 2}
-  - {fileID: 11400000, guid: 34dd03b7bdf8da14782a9d74cef56596, type: 2}
-  - {fileID: 11400000, guid: 10bc850cc2e91ce41bef2046ff84d425, type: 2}
-  - {fileID: 11400000, guid: 15e562a6ce2c01f4fa2300dfc883217d, type: 2}
-  - {fileID: 11400000, guid: 7baa3bcf286644c429b2f49d6b2f329e, type: 2}
-  - {fileID: 11400000, guid: 878d80d387e9cf84ea61e834ba1059c4, type: 2}
-  - {fileID: 11400000, guid: 0a5a98eebd3efb545a90ee23ce5c7526, type: 2}
-  - {fileID: 11400000, guid: 8aaf5f7c72a3286419d0d85ddaaf5c79, type: 2}
-  - {fileID: 11400000, guid: 8e97cb4a138a2914d8fb54a46073596d, type: 2}
-  - {fileID: 11400000, guid: 73cc1fbd6b6c9ea46aaae598fd51e7dd, type: 2}
-  - {fileID: 11400000, guid: 2a7403438cb77a049a5bfbb44b1716ab, type: 2}
-  - {fileID: 11400000, guid: 81db7a43b58cce44f8cc92c4e009df00, type: 2}
-  - {fileID: 11400000, guid: 2adea98361ca6ae499a9766887b4eefc, type: 2}
-  - {fileID: 11400000, guid: 8aab05925ea1d094ca0ffdc221ce1aeb, type: 2}
-  - {fileID: 11400000, guid: b0e16921ea5785f4b8dd2f0a013c0a49, type: 2}
-  - {fileID: 11400000, guid: cbce7f5c2d4240242afa5b61c57df2c1, type: 2}
-  - {fileID: 11400000, guid: 6e4039ee0cf72fb42be079f56bcc4dcf, type: 2}
-  - {fileID: 11400000, guid: 4437a20449c6fce4098140d5418c732e, type: 2}
-  - {fileID: 11400000, guid: 980f490ae8c18ae46b4a2577306e3ac3, type: 2}
-  - {fileID: 11400000, guid: c16694fb56c798f4db649b49ca1cc7d6, type: 2}
-  - {fileID: 11400000, guid: 2648e039b5850f548b2af2e6ea3f2de4, type: 2}
-  - {fileID: 11400000, guid: 82c95b2821f78064bbc687772ed265fb, type: 2}
-  - {fileID: 11400000, guid: 5633a2c227b43f442ae9020e78a44fd9, type: 2}
-  - {fileID: 11400000, guid: f1b62d0868412c644bcc7a67739d2826, type: 2}
-  - {fileID: 11400000, guid: 1eac524222192474ab5713121bed0983, type: 2}
-  - {fileID: 11400000, guid: ced3fcc2f76d1bd4aba8cf19e54ae5b5, type: 2}
-  - {fileID: 11400000, guid: 1c020bde30754624baf9a1766188a2de, type: 2}
-  - {fileID: 11400000, guid: e9a4a468a23e8be45a87b7d0622d394a, type: 2}
-  - {fileID: 11400000, guid: 28e077655fdb85242b55bb82b856bc71, type: 2}
-  - {fileID: 11400000, guid: 046e9bdfcf317584697f51b6633ec98e, type: 2}
-  - {fileID: 11400000, guid: 1b4fda16bb2767541b5e9b9fc0ac3641, type: 2}
-  unlockedCards:
-  - {fileID: 11400000, guid: 1ae8c8c0905ccb34a9560c844eb85c38, type: 2}
-  - {fileID: 11400000, guid: be93cc188d8d4784db16d18d0313b188, type: 2}
-  - {fileID: 11400000, guid: ac5be0f55bc51cb4cbcba28f135a8a52, type: 2}
-  - {fileID: 11400000, guid: 81db7a43b58cce44f8cc92c4e009df00, type: 2}
-  - {fileID: 11400000, guid: c16694fb56c798f4db649b49ca1cc7d6, type: 2}
-  - {fileID: 11400000, guid: 2648e039b5850f548b2af2e6ea3f2de4, type: 2}
-  - {fileID: 11400000, guid: 82c95b2821f78064bbc687772ed265fb, type: 2}
-  - {fileID: 11400000, guid: 5633a2c227b43f442ae9020e78a44fd9, type: 2}
-  - {fileID: 11400000, guid: f1b62d0868412c644bcc7a67739d2826, type: 2}
-  - {fileID: 11400000, guid: 1eac524222192474ab5713121bed0983, type: 2}
-  - {fileID: 11400000, guid: 1b4fda16bb2767541b5e9b9fc0ac3641, type: 2}
-  allSabotages:
-  - {fileID: 11400000, guid: 6ad1f3e063103584e99c84f40d70de80, type: 2}
-  - {fileID: 11400000, guid: 9567c16d035060541a79e424ba18980e, type: 2}
+  allAvailableCards: []
+  unlockedCards: []
+  allSabotages: []
   currentGold: 0
   currentCrystals: 0
   starterCards: []
@@ -355,8 +299,8 @@ MonoBehaviour:
   totalLosses: 0
   defaultDecks:
   - {fileID: 11400000, guid: 641baf58b2e18e941b05831789aa3fad, type: 2}
-  - {fileID: 11400000, guid: e8f4ea765d09f2a45a952f877a9a3dfc, type: 2}
-  - {fileID: 11400000, guid: ad0ef3cb8a0c02e41b4d881a29f0de61, type: 2}
+  - {fileID: 11400000, guid: 15f91a404d722ff4489d9b85b7275bd4, type: 2}
+  - {fileID: 11400000, guid: b450ac72706019f4487df078ab40e156, type: 2}
 --- !u!4 &151654780
 Transform:
   m_ObjectHideFlags: 0

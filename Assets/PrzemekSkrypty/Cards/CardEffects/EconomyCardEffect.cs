@@ -1,7 +1,12 @@
-﻿using ElementumDefense.Cards;
+using ElementumDefense.Cards;
 using Photon.Pun;
 using UnityEngine;
+using ElementumDefense.Players;
+using ElementumDefense.Turrets;
 
+
+namespace ElementumDefense.Cards
+{
 [CreateAssetMenu(fileName = "EconomyCard_Effect", menuName = "Tower Defense/Cards/Effects/Economy Boost")]
 public class EconomyCardEffect : CardEffectBase
 {
@@ -15,6 +20,19 @@ public class EconomyCardEffect : CardEffectBase
     [Tooltip("Turret cost discount % (Continuous effect)")]
     [Range(0f, 100f)]
     public float turretCostDiscount = 0f;
+
+    [Header("Tradeoff (per-card cost of the buff)")]
+    [Tooltip("Global damage penalty % (e.g. 15 = -15% damage). Used by Gold Mine / Midas Touch.")]
+    [Range(0f, 100f)]
+    public float globalDamagePenaltyPercent = 0f;
+
+    [Tooltip("Global range penalty %.")]
+    [Range(0f, 100f)]
+    public float globalRangePenaltyPercent = 0f;
+
+    [Tooltip("Global fire rate penalty %.")]
+    [Range(0f, 100f)]
+    public float globalFireRatePenaltyPercent = 0f;
 
     public override void Activate(PhotonView ownerPhotonView)
     {
@@ -56,4 +74,5 @@ public class EconomyCardEffect : CardEffectBase
             // TODO: TurretCostManager.Instance.RemoveDiscount(ownerPhotonView, turretCostDiscount);
         }
     }
+}
 }

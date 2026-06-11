@@ -306,7 +306,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 0}
   m_FillRect: {fileID: 8490700600829683783}
   m_HandleRect: {fileID: 0}
@@ -412,6 +412,8 @@ GameObject:
   - component: {fileID: 354177296588094364}
   - component: {fileID: -7844970920060943452}
   - component: {fileID: 3105399027368534284}
+  - component: {fileID: 6932134911241863878}
+  - component: {fileID: -8094724944193893946}
   m_Layer: 3
   m_Name: Enemy Variant
   m_TagString: Enemy
@@ -599,10 +601,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9f871b68a7d5d1f439a23dcdd24c302f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHP: 5
-  elementType: 3
+  enemyData: {fileID: 0}
+  maxHP: 200
+  elementType: 0
   showDamageNumbers: 1
   goldReward: 20
+  isBoss: 0
 --- !u!114 &354177296588094364
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -615,11 +619,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c398163e0d200e429a5f1bff52722fe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  enemyData: {fileID: 0}
   waypointReachDistance: 1
-  baseSpeed: 5
+  baseSpeed: 1.5
   avoidanceRadius: 0.5
-  pathRefreshInterval: 0.3
-  stuckThreshold: 0.05
 --- !u!114 &-7844970920060943452
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -664,6 +667,49 @@ MonoBehaviour:
   - effectType: 2
     icon: {fileID: 21300000, guid: 188f39e4b2a27914ea23654382c33c01, type: 3}
     tintColor: {r: 1, g: 1, b: 1, a: 1}
+--- !u!114 &6932134911241863878
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8399832402143531616}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 929d78dc75485724598c5e0bbdf6c341, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ElementumDefense.Enemies.EnemyTraitIndicator
+  worldOffset: {x: 0, y: 2.4, z: 0}
+  iconSize: 0.4
+  iconSpacing: 0.05
+  armorIcon: {fileID: 0}
+  splitIcon: {fileID: 0}
+  reviveIcon: {fileID: 21300000, guid: f0ed2d4ae97ec86448fb35199b0349e3, type: 3}
+  armorColor: {r: 0.85, g: 0.85, b: 0.95, a: 1}
+  splitColor: {r: 1, g: 0.55, b: 0.2, a: 1}
+  reviveColor: {r: 0.7, g: 0.3, b: 0.9, a: 1}
+  textColor: {r: 1, g: 1, b: 1, a: 1}
+  customLabel: debil
+--- !u!114 &-8094724944193893946
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8399832402143531616}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e518cb6e91163f144b0d173068a9d203, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ElementumDefense.Enemies.EnemyReviveOnDeath
+  revivePrefab: {fileID: 8399832402143531616, guid: a2ac844852a41024fa5e7a434da3eb23, type: 3}
+  reviveHpPercent: 1
+  maxRevives: 2
+  reviveCount: 0
+  reviveScale: 0.7
+  spawnOffset: {x: 0, y: 0, z: 0}
+  reviveVfx: {fileID: 0}
+  debugLogs: 0
 --- !u!1 &8649469204856150936
 GameObject:
   m_ObjectHideFlags: 0

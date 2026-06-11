@@ -1,3 +1,5 @@
+namespace ElementumDefense.Multiplayer
+{
 #if (UNITY_EDITOR)
 using UnityEngine;
 using Photon.Pun;
@@ -33,3 +35,4 @@ public class SceneLoadedDebug : MonoBehaviour
     }
 }
 #endif
+}

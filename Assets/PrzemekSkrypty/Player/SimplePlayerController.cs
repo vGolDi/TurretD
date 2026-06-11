@@ -2,6 +2,9 @@ using UnityEngine;
 using Photon.Pun;
 using ElementumDefense.Skins;
 
+
+namespace ElementumDefense.Players
+{
 /// <summary>
 /// Simple player movement controller for Tower Defense game.
 /// WASD movement relative to camera, character rotates to face movement direction.
@@ -174,4 +177,5 @@ public class SimplePlayerController : MonoBehaviour
         Gizmos.color = isGrounded ? Color.green : Color.red;
         Gizmos.DrawWireSphere(spherePosition, groundCheckRadius);
     }
+}
 }

@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using TMPro;
 using System.Collections;
 using System.Collections.Generic;
@@ -7,6 +7,9 @@ using ElementumDefense.UI;
 using Photon.Pun;
 using Photon.Realtime;
 
+
+namespace ElementumDefense.Multiplayer
+{
 public class PreGameManager : MonoBehaviourPunCallbacks
 {
     [Header("Settings")]
@@ -20,7 +23,7 @@ public class PreGameManager : MonoBehaviourPunCallbacks
         "PreGameStartTime";
     private const string DECK_SELECTED_KEY =
         "DeckSelected";
-    private const string ALL_DECKS_READY_KEY =
+    public const string ALL_DECKS_READY_KEY =
         "AllDecksReady";
 
     private bool deckWasSelected = false;
@@ -97,20 +100,55 @@ public class PreGameManager : MonoBehaviourPunCallbacks
         if (gameStartCountdown != null)
             gameStartCountdown.enabled = false;
 
+        // CHECK IF ALREADY COMPLETED IN ROOM
+        if (PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey(ALL_DECKS_READY_KEY) &&
+            (bool)PhotonNetwork.CurrentRoom.CustomProperties[ALL_DECKS_READY_KEY])
+        {
+            Debug.Log("[PreGameManager] Rejoined! All decks are already ready. Skipping PreGame Phase.");
+            preGameUI?.Hide();
+
+            // Auto-select a deck so DraftManager has a deck to use
+            var decks = ElementumDefense.Cards.PlayerCollection.Instance?.GetPlayerDecks();
+            if (decks != null && decks.Count > 0)
+                ElementumDefense.Cards.DraftManager.Instance?.SetDeck(decks[0]);
+            else
+            {
+                var resDecks = Resources.LoadAll<ElementumDefense.Cards.DeckData>("Decks");
+                if (resDecks.Length > 0) ElementumDefense.Cards.DraftManager.Instance?.SetDeck(resDecks[0]);
+            }
+
+            // Note: DraftManager might not exist yet because Player_MP hasn't spawned.
+            // DraftManager will check ALL_DECKS_READY_KEY in its Start() method and trigger StarterDraft itself.
+            return;
+        }
+
         if (PhotonNetwork.IsMasterClient)
         {
-            double startTime =
-                PhotonNetwork.Time + 1.0;
+            // Only set if not already set (e.g. by previous master client)
+            if (!PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey(PREGAME_START_TIME_KEY))
+            {
+                double startTime =
+                    PhotonNetwork.Time + 1.0;
 
-            var roomProps =
-                new ExitGames.Client.Photon.Hashtable
-                {
-                    { PREGAME_START_TIME_KEY,
-                        startTime },
-                    { ALL_DECKS_READY_KEY, false }
-                };
-            PhotonNetwork.CurrentRoom
-                .SetCustomProperties(roomProps);
+                var roomProps =
+                    new ExitGames.Client.Photon.Hashtable
+                    {
+                        { PREGAME_START_TIME_KEY,
+                            startTime },
+                        { ALL_DECKS_READY_KEY, false }
+                    };
+                PhotonNetwork.CurrentRoom
+                    .SetCustomProperties(roomProps);
+            }
+        }
+        else
+        {
+            // If we are a client rejoining during the countdown, read the start time
+            if (PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey(PREGAME_START_TIME_KEY))
+            {
+                double startTime = (double)PhotonNetwork.CurrentRoom.CustomProperties[PREGAME_START_TIME_KEY];
+                StartCoroutine(PreGameSequence(startTime));
+            }
         }
     }
 
@@ -605,3 +643,4 @@ public class PreGameManager : MonoBehaviourPunCallbacks
 //        button.onClick.AddListener(() => OnDeckSelected(deck));
 //    }
 //}
+}

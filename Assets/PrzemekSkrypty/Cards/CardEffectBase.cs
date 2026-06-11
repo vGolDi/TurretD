@@ -1,5 +1,6 @@
 using UnityEngine;
 using Photon.Pun;
+using ElementumDefense.Players;
 
 namespace ElementumDefense.Cards
 {

@@ -1,6 +1,9 @@
 using UnityEngine;
 using Photon.Pun;
 
+
+namespace ElementumDefense.Players
+{
 public class ArenaOwner : MonoBehaviour
 {
     public PhotonView ownerPhotonView;
@@ -27,4 +30,5 @@ public class ArenaOwner : MonoBehaviour
         }
         return ownerHealth;
     }
+}
 }

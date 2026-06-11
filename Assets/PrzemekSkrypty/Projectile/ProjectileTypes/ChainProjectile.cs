@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using ElementumDefense.Enemies;
 
 namespace ElementumDefense.Projectiles
 {
@@ -145,6 +146,10 @@ namespace ElementumDefense.Projectiles
                 EnemyHealth e = hit.GetComponent<EnemyHealth>();
                 if (e != null && !hitEnemies.Contains(e))
                 {
+                    // Pomiń opancerzonych
+                    var armor = e.GetComponent<EnemyArmor>();
+                    if (armor != null && armor.IsArmored) continue;
+
                     float dist = Vector3.Distance(currentPos, e.transform.position);
                     if (dist < minDistance)
                     {

@@ -3,6 +3,9 @@ using Unity.Properties;
 using Unity.VisualScripting;
 using UnityEngine;
 
+
+namespace ElementumDefense.Gameplay
+{
 [RequireComponent(typeof(MeshRenderer))]
 [RequireComponent(typeof(MeshFilter))]
 public class PlaneGenerator : MonoBehaviour
@@ -76,4 +79,5 @@ public class PlaneGenerator : MonoBehaviour
         myMesh.vertices = vertices.ToArray();
         myMesh.triangles = triangles.ToArray();
     }
+}
 }

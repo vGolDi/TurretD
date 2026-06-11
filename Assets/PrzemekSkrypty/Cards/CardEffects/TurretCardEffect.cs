@@ -1,6 +1,7 @@
-﻿    using UnityEngine;
-    using Photon.Pun;
-    using ElementumDefense.Elements;
+    using UnityEngine;
+using Photon.Pun;
+using ElementumDefense.Elements;
+using ElementumDefense.Turrets;
 
     namespace ElementumDefense.Cards
     {
@@ -37,6 +38,13 @@
 
             [Tooltip("Chain lightning targets (0 = no chain)")]
             public int addChainTargets = 0;
+
+            [Header("Tradeoff (Element Avatar / Mastery)")]
+            [Tooltip("If targetElement is set, OTHER element families lose this % damage. " +
+                     "Used by 'Element Avatar' style cards: huge boost for chosen element, " +
+                     "penalty for the rest. 0 = disabled.")]
+            [Range(0f, 50f)]
+            public float otherElementsPenaltyPercent = 0f;
 
             public override void Activate(PhotonView ownerPhotonView)
             {

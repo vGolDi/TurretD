@@ -3,6 +3,9 @@ using UnityEngine.EventSystems;
 using TMPro;
 using UnityEngine.UI;
 
+
+namespace ElementumDefense.UI
+{
 public class MenuButtonAdvanced : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
 {
     [Header("References")]
@@ -54,7 +57,7 @@ public class MenuButtonAdvanced : MonoBehaviour, IPointerEnterHandler, IPointerE
         StartCoroutine(AnimateColor(arrowText, hoverTextColor));
         StartCoroutine(AnimateImageColor(underline, hoverUnderlineColor));
 
-        // LUB z DOTween (jeœli masz):
+        // LUB z DOTween (jeï¿½li masz):
         // titleText.DOColor(hoverTextColor, animationDuration);
         // arrowText.DOColor(hoverTextColor, animationDuration);
         // underline.DOColor(hoverUnderlineColor, animationDuration);
@@ -103,4 +106,5 @@ public class MenuButtonAdvanced : MonoBehaviour, IPointerEnterHandler, IPointerE
 
         image.color = targetColor;
     }
+}
 }

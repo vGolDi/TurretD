@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using ElementumDefense.Cards;
 using ElementumDefense.Skins;
+using ElementumDefense.Turrets;
 
 namespace ElementumDefense.UI
 {
@@ -47,6 +48,7 @@ namespace ElementumDefense.UI
         private VisualElement contentCards;
         private VisualElement contentSabotages;
         private VisualElement contentSkins;
+        private SkinCategory? activeSkinFilter = null; // null = show all
         private VisualElement contentAchievements;
 
         // Filters
@@ -316,9 +318,9 @@ namespace ElementumDefense.UI
                 });
         }
 
-        // ══════════════════════════════
+        // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
         // REFRESH
-        // ══════════════════════════════
+        // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
         private void RefreshAll()
         {
@@ -349,15 +351,15 @@ namespace ElementumDefense.UI
             if (profileLevel != null)
                 profileLevel.text = level.ToString();
 
-            // ── Tier color (based on level) ──
+            // â”€â”€ Tier color (based on level) â”€â”€
             Color tierColor = GetTierColor(level);
 
-            // ── Rank color (based on ELO) ──
+            // â”€â”€ Rank color (based on ELO) â”€â”€
             string rankName = pc.GetRankName();
             Color rankColor = pc.GetRankColor();
             int elo = pc.GetElo();
 
-            // ── Rank label — rank color (ELO-based) ──
+            // â”€â”€ Rank label â€” rank color (ELO-based) â”€â”€
             if (profileRank != null)
             {
                 profileRank.text = rankName;
@@ -376,7 +378,7 @@ namespace ElementumDefense.UI
                             rankColor.b, 0.5f));
             }
 
-            // ── Rank emblem — rank color (ELO-based) ──
+            // â”€â”€ Rank emblem â€” rank color (ELO-based) â”€â”€
             if (rankEmblemBg != null)
             {
                 SetBorderColor(rankEmblemBg,
@@ -401,7 +403,7 @@ namespace ElementumDefense.UI
                             rankColor.g,
                             rankColor.b, 0.8f));
 
-            // ── Avatar frame — tier color (level-based) ──
+            // â”€â”€ Avatar frame â€” tier color (level-based) â”€â”€
             var avatarFrame =
                 root.Q<VisualElement>(
                     className: "avatar-frame");
@@ -427,7 +429,7 @@ namespace ElementumDefense.UI
                 }
             }
 
-            // ── Level badge — tier color (level-based) ──
+            // â”€â”€ Level badge â€” tier color (level-based) â”€â”€
             var avatarSection =
                 root.Q<VisualElement>(
                     className: "identity-avatar-section");
@@ -457,7 +459,7 @@ namespace ElementumDefense.UI
                 }
             }
 
-            // ── Identity card border — tier tint ──
+            // â”€â”€ Identity card border â€” tier tint â”€â”€
             var identityCard =
                 root.Q<VisualElement>(
                     className: "identity-card");
@@ -470,7 +472,7 @@ namespace ElementumDefense.UI
                         tierColor.b, 0.15f));
             }
 
-            // ── XP ──
+            // â”€â”€ XP â”€â”€
             int currentXP = pc.GetCurrentXP();
             int xpNeeded = pc.GetXPForNextLevel();
             float xpPercent = xpNeeded > 0
@@ -492,7 +494,7 @@ namespace ElementumDefense.UI
                     new StyleColor(tierColor);
             }
 
-            // ── XP bar border — tier color ──
+            // â”€â”€ XP bar border â€” tier color â”€â”€
             var xpBarBg =
                 root.Q<VisualElement>(
                     className: "profile-xp-bar-bg");
@@ -510,7 +512,7 @@ namespace ElementumDefense.UI
                     $"NEXT: LEVEL {level + 1}";
         }
 
-        // ── Helper: set all 4 border colors at once ──
+        // â”€â”€ Helper: set all 4 border colors at once â”€â”€
         private void SetBorderColor(
             VisualElement el, Color color)
         {
@@ -522,7 +524,7 @@ namespace ElementumDefense.UI
             el.style.borderRightColor = sc;
         }
 
-        // ── Tier helpers (level-based) ──
+        // â”€â”€ Tier helpers (level-based) â”€â”€
         private string GetTierName(int level)
         {
             if (level >= 51) return "BESTIE";
@@ -587,9 +589,9 @@ namespace ElementumDefense.UI
                     pc.GetLosses().ToString();
         }
 
-        // ══════════════════════════════
+        // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
         // TABS
-        // ══════════════════════════════
+        // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
         private void SwitchTab(string tab)
         {
@@ -654,9 +656,9 @@ namespace ElementumDefense.UI
                 btn.RemoveFromClassList("tab-active");
         }
 
-        // ══════════════════════════════
+        // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
         // FILTERS
-        // ══════════════════════════════
+        // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
         private void SetFilter(CardRarity? rarity)
         {
@@ -685,9 +687,9 @@ namespace ElementumDefense.UI
                     "filter-active");
         }
 
-        // ══════════════════════════════
+        // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
         // CARDS GRID
-        // ══════════════════════════════
+        // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
         private void PopulateCards()
         {
@@ -803,19 +805,24 @@ namespace ElementumDefense.UI
                 info.Add(elemLabel);
             }
 
+            // Lock indicator (only when not owned) — sits at the BOTTOM of the
+            // info column, after name/type/element, instead of as a full-card
+            // absolute overlay. The card itself dims via the
+            // .collection-card-locked class on the wrapper.
+            if (!owned)
+            {
+                var lockIcon = new Label("🔒");
+                lockIcon.AddToClassList("card-lock-inline");
+                info.Add(lockIcon);
+            }
+
             wrapper.Add(info);
 
             // Lock overlay
             if (!owned)
             {
-                var lockOverlay = new VisualElement();
-                lockOverlay.AddToClassList(
-                    "card-lock-overlay");
-                var lockIcon = new Label("🔒");
-                lockIcon.AddToClassList(
-                    "card-lock-icon");
-                lockOverlay.Add(lockIcon);
-                wrapper.Add(lockOverlay);
+                // Inline lock icon is rendered inside `info` above (after name/type/element).
+                // No full-card overlay — keeps the card content visible.
             }
             else
             {
@@ -838,9 +845,9 @@ namespace ElementumDefense.UI
             return wrapper;
         }
 
-        // ══════════════════════════════
+        // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
         // SABOTAGES GRID
-        // ══════════════════════════════
+        // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
         private void PopulateSabotages()
         {
@@ -948,9 +955,9 @@ namespace ElementumDefense.UI
             return wrapper;
         }
 
-        // ══════════════════════════════
+        // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
         // ACHIEVEMENTS (placeholder)
-        // ══════════════════════════════
+        // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
         private void PopulateAchievements()
         {
@@ -998,7 +1005,7 @@ namespace ElementumDefense.UI
 
                 if (completed)
                 {
-                    // No locked class — fully done
+                    // No locked class â€” fully done
                 }
                 else if (claimable)
                 {
@@ -1050,7 +1057,7 @@ namespace ElementumDefense.UI
                 descL.AddToClassList("achievement-desc");
                 info.Add(descL);
 
-                // === STATE: CLAIMABLE — show CLAIM button ===
+                // === STATE: CLAIMABLE â€” show CLAIM button ===
                 if (claimable)
                 {
                     // Show progress as complete
@@ -1064,7 +1071,7 @@ namespace ElementumDefense.UI
                     string rewardStr = "";
                     if (ach.rewardGold > 0) rewardStr += $"🪙{ach.rewardGold} ";
                     if (ach.rewardCrystals > 0) rewardStr += $"💎{ach.rewardCrystals} ";
-                    if (ach.rewardXP > 0) rewardStr += $"⭐{ach.rewardXP}";
+                    if (ach.rewardXP > 0) rewardStr += $"⭐{ach.rewardXP}";
 
                     if (!string.IsNullOrEmpty(rewardStr.Trim()))
                     {
@@ -1106,7 +1113,7 @@ namespace ElementumDefense.UI
                     claimBtn.style.borderRightWidth = 0;
                     info.Add(claimBtn);
                 }
-                // === STATE: COMPLETED — already claimed ===
+                // === STATE: COMPLETED â€” already claimed ===
                 else if (completed)
                 {
                     string tierText = ach.hasTiers
@@ -1160,7 +1167,7 @@ namespace ElementumDefense.UI
                         string rewardStr = "";
                         if (ach.rewardGold > 0) rewardStr += $"🪙{ach.rewardGold} ";
                         if (ach.rewardCrystals > 0) rewardStr += $"💎{ach.rewardCrystals} ";
-                        if (ach.rewardXP > 0) rewardStr += $"⭐{ach.rewardXP}";
+                        if (ach.rewardXP > 0) rewardStr += $"⭐{ach.rewardXP}";
 
                         var rewardLabel = new Label(rewardStr.Trim());
                         rewardLabel.style.fontSize = 9;
@@ -1176,9 +1183,9 @@ namespace ElementumDefense.UI
             }
         }
 
-        // ══════════════════════════════
+        // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
         // DETAIL POPUP
-        // ══════════════════════════════
+        // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
         private void ShowCardDetail(
             CardData card, bool owned)
@@ -1336,9 +1343,9 @@ namespace ElementumDefense.UI
             detailPopup?.AddToClassList("hidden");
         }
 
-        // ══════════════════════════════
+        // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
         // SKINS TAB
-        // ══════════════════════════════
+        // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
         private void PopulateSkins()
         {
@@ -1357,10 +1364,36 @@ namespace ElementumDefense.UI
                 return;
             }
 
+            // ===== FILTER BAR =====
+            var filterBar = new VisualElement();
+            filterBar.style.flexDirection = FlexDirection.Row;
+            filterBar.style.flexWrap = Wrap.Wrap;
+            filterBar.style.marginBottom = 12;
+            filterBar.style.marginLeft = 8;
+            filterBar.style.marginRight = 8;
+
+            // "All" button
+            AddFilterButton(filterBar, "ALL", null);
+            AddFilterButton(filterBar, "\uD83D\uDC64 Character", SkinCategory.Character);
+            AddFilterButton(filterBar, "\uD83D\uDD2B Turret", SkinCategory.Turret);
+            AddFilterButton(filterBar, "\uD83C\uDFE0 Base", SkinCategory.Base);
+            AddFilterButton(filterBar, "\uD83D\uDDFA Map", SkinCategory.Map);
+            AddFilterButton(filterBar, "\u26CF GoldMine", SkinCategory.GoldMine);
+            AddFilterButton(filterBar, "\uD83C\uDF81 Bundle", SkinCategory.Bundle);
+
+            contentSkins.Add(filterBar);
+
+            // ===== FILTERED SKINS =====
             var allSkins = skinInv.GetAllSkins();
-            if (allSkins.Count == 0)
+
+            // Apply category filter
+            var filtered = activeSkinFilter.HasValue
+                ? allSkins.Where(s => s.category == activeSkinFilter.Value).ToList()
+                : allSkins;
+
+            if (filtered.Count() == 0)
             {
-                var msg = new Label("No skins available yet.");
+                var msg = new Label("No skins in this category.");
                 msg.style.color = new StyleColor(new Color(0.5f, 0.5f, 0.5f));
                 msg.style.unityTextAlign = TextAnchor.MiddleCenter;
                 msg.style.marginTop = 40;
@@ -1369,23 +1402,55 @@ namespace ElementumDefense.UI
                 return;
             }
 
-            // Group by target
-            var groups = allSkins
+            // Group by target within filtered results
+            var groups = filtered
                 .GroupBy(s => string.IsNullOrEmpty(s.targetDisplayName) ? s.targetId : s.targetDisplayName)
                 .OrderBy(g => g.Key);
 
             foreach (var group in groups)
             {
+                var groupHeaderRow = new VisualElement();
+                groupHeaderRow.style.flexDirection = FlexDirection.Row;
+                groupHeaderRow.style.alignItems = Align.Center;
+                groupHeaderRow.style.justifyContent = Justify.SpaceBetween;
+                groupHeaderRow.style.marginTop = 16;
+                groupHeaderRow.style.marginBottom = 8;
+                groupHeaderRow.style.marginRight = 16;
+
                 // Section header
                 var header = new Label(group.Key?.ToUpper() ?? "OTHER");
                 header.AddToClassList("collection-card-type");
                 header.style.fontSize = 14;
-                header.style.marginTop = 16;
-                header.style.marginBottom = 8;
                 header.style.marginLeft = 8;
                 header.style.color = new StyleColor(new Color(0.7f, 0.8f, 0.9f));
                 header.style.letterSpacing = 2;
-                contentSkins.Add(header);
+                groupHeaderRow.Add(header);
+
+                // Default button (styled like btn-back)
+                var btnDefault = new Button(() => {
+                    string targetToUnequip = group.First().targetId;
+                    SkinInventory.Instance?.UnequipSkin(targetToUnequip);
+                    PopulateSkins();
+                });
+                btnDefault.text = "EQUIP DEFAULT";
+                
+                // Copy classes from btn-back
+                var btnBack = root?.Q<Button>("btn-back");
+                if (btnBack != null) {
+                    foreach (var cls in btnBack.GetClasses()) {
+                        btnDefault.AddToClassList(cls);
+                    }
+                } else {
+                    btnDefault.style.fontSize = 10;
+                    btnDefault.style.paddingLeft = 8;
+                    btnDefault.style.paddingRight = 8;
+                }
+                btnDefault.style.marginLeft = 16;
+                btnDefault.style.alignSelf = Align.Center;
+                
+                groupHeaderRow.Add(btnDefault);
+
+                contentSkins.Add(groupHeaderRow);
 
                 // Skin grid for this group
                 var grid = new VisualElement();
@@ -1406,12 +1471,58 @@ namespace ElementumDefense.UI
             }
         }
 
+        private void AddFilterButton(VisualElement parent, string label, SkinCategory? category)
+        {
+            var btn = new Button(() =>
+            {
+                activeSkinFilter = category;
+                PopulateSkins();
+            });
+            btn.text = label;
+            btn.style.height = 28;
+            btn.style.marginRight = 4;
+            btn.style.marginBottom = 4;
+            btn.style.paddingLeft = 10;
+            btn.style.paddingRight = 10;
+            btn.style.fontSize = 11;
+            btn.style.borderTopLeftRadius = 6;
+            btn.style.borderTopRightRadius = 6;
+            btn.style.borderBottomLeftRadius = 6;
+            btn.style.borderBottomRightRadius = 6;
+
+            bool isActive = activeSkinFilter == category;
+            
+            // Apply btn-back classes for consistent styling
+            var btnBack = root?.Q<Button>("btn-back");
+            if (btnBack != null) {
+                foreach (var cls in btnBack.GetClasses()) {
+                    btn.AddToClassList(cls);
+                }
+            }
+            
+            // Adjust specific colors for active/inactive state
+            btn.style.backgroundColor = new StyleColor(
+                isActive ? new Color(0.3f, 0.5f, 0.8f) : new Color(0.15f, 0.17f, 0.22f));
+            btn.style.color = new StyleColor(
+                isActive ? Color.white : new Color(0.6f, 0.7f, 0.8f));
+
+            if (isActive)
+            {
+                btn.style.borderBottomColor = new StyleColor(new Color(0.4f, 0.7f, 1f));
+                btn.style.borderBottomWidth = 2;
+            }
+
+            parent.Add(btn);
+        }
+
+
         private VisualElement CreateSkinElement(SkinData skin, bool owned, bool equipped)
         {
             var wrapper = new VisualElement();
             wrapper.AddToClassList("collection-card");
             wrapper.style.width = 140;
-            wrapper.style.height = 180;
+            wrapper.style.minHeight = 180;
+            wrapper.style.height = StyleKeyword.Auto;
             wrapper.style.marginRight = 8;
             wrapper.style.marginBottom = 8;
 
@@ -1459,6 +1570,14 @@ namespace ElementumDefense.UI
             rarityLabel.style.color = new StyleColor(skin.GetRarityColor());
             rarityLabel.style.fontSize = 9;
             info.Add(rarityLabel);
+
+            if (!skin.IsUniversal)
+            {
+                var compatLabel = new Label($"[{string.Join(", ", skin.compatibleArenaTypes)} ONLY]");
+                compatLabel.style.color = new StyleColor(new Color(1f, 0.6f, 0f));
+                compatLabel.style.fontSize = 9;
+                info.Add(compatLabel);
+            }
 
             // Status / action
             if (owned)
@@ -1511,9 +1630,9 @@ namespace ElementumDefense.UI
             return wrapper;
         }
 
-        // ══════════════════════════════
+        // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
         // UTILITIES
-        // ══════════════════════════════
+        // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
         private void SetVisible(
             VisualElement el, bool visible)

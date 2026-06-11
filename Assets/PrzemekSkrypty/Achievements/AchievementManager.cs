@@ -6,12 +6,20 @@ using System.Collections.Generic;
 using System.Linq;
 using ElementumDefense.Auth;
 using ElementumDefense.Cards;
+using ElementumDefense.Lootbox;
+using ElementumDefense.Progression;
+using ElementumDefense.Multiplayer;
 
 namespace ElementumDefense.Achievements
 {
     /// <summary>
     /// Manages achievement progress and unlocks.
     /// Cloud-synced via PlayFab. Auto-tracks stats from game systems.
+    /// 
+    /// Cumulative counters (gold earned/spent, lootboxes opened, quests claimed)
+    /// are populated by SUBSCRIBING to events emitted by other managers
+    /// (PlayerCollection, LootboxManager, QuestManager). No public Add* API —
+    /// that would invite double-counting and was never wired up correctly anyway.
     /// </summary>
     public class AchievementManager : MonoBehaviour
     {
@@ -22,27 +30,36 @@ namespace ElementumDefense.Achievements
         private List<AchievementData> allAchievements = new List<AchievementData>();
 
         // Runtime state
-        private Dictionary<string, AchievementProgress> progressMap = new Dictionary<string, AchievementProgress>();
+        private readonly Dictionary<string, AchievementProgress> progressMap
+            = new Dictionary<string, AchievementProgress>();
 
-        // Cumulative stats (not directly available from PlayerCollection)
+        // Cumulative stats. Persisted on cloud and updated via event subscriptions.
         private int totalGoldEarned = 0;
         private int totalGoldSpent = 0;
         private int totalCrystalsEarned = 0;
         private int totalLootboxesOpened = 0;
         private int totalQuestsCompleted = 0;
 
+        // Event subscription bookkeeping. Last seen balances are needed to
+        // compute deltas from PlayerCollection's "current value" events.
+        private int lastSeenGold = 0;
+        private int lastSeenCrystals = 0;
+        private bool subscribedToCollection = false;
+        private bool subscribedToLootbox = false;
+        private bool subscribedToQuests = false;
+
         // ==========================================
         // EVENTS
         // ==========================================
 
         /// <summary>Fired when an achievement is ready to claim</summary>
-        public event Action<AchievementData, int> OnAchievementClaimable; // data, tier
+        public event Action<AchievementData, int> OnAchievementClaimable;
 
         /// <summary>Fired when an achievement is claimed (reward given)</summary>
-        public event Action<AchievementData, int> OnAchievementClaimed; // data, tier
+        public event Action<AchievementData, int> OnAchievementClaimed;
 
         /// <summary>Fired when progress updates</summary>
-        public event Action<AchievementData, int, int> OnProgressUpdated; // data, current, target
+        public event Action<AchievementData, int, int> OnProgressUpdated;
 
         /// <summary>Fired when data is loaded from cloud</summary>
         public event Action OnAchievementsLoaded;
@@ -70,6 +87,10 @@ namespace ElementumDefense.Achievements
             {
                 AuthManager.Instance.OnCloudReady += OnUserLoggedIn;
             }
+
+            // Connect to source-of-truth events. Wrapped in TrySubscribe so we
+            // gracefully handle scene-load order — managers may not exist yet.
+            TrySubscribeToManagers();
         }
 
         private void OnDestroy()
@@ -78,6 +99,8 @@ namespace ElementumDefense.Achievements
             {
                 AuthManager.Instance.OnCloudReady -= OnUserLoggedIn;
             }
+
+            UnsubscribeFromManagers();
             if (Instance == this) Instance = null;
         }
 
@@ -94,8 +117,21 @@ namespace ElementumDefense.Achievements
 
         private IEnumerator DelayedAchievementCheck()
         {
-            // Wait for other managers to finish loading from cloud
             yield return new WaitForSeconds(5f);
+
+            // Some managers may have come online after Start() — try again.
+            TrySubscribeToManagers();
+
+            // Initialize lastSeen* baselines from current PlayerCollection state
+            // so the FIRST OnGoldChanged delta is computed against the loaded
+            // balance, not zero.
+            var pc = PlayerCollection.Instance;
+            if (pc != null)
+            {
+                lastSeenGold = pc.GetGold();
+                lastSeenCrystals = pc.GetCrystals();
+            }
+
             Debug.Log("[AchievementManager] Delayed re-check of all achievements...");
             CheckAllAchievements();
         }
@@ -116,10 +152,97 @@ namespace ElementumDefense.Achievements
         }
 
         // ==========================================
+        // EVENT SUBSCRIPTIONS (single source of truth for cumulative stats)
+        // ==========================================
+
+        private void TrySubscribeToManagers()
+        {
+            if (!subscribedToCollection && PlayerCollection.Instance != null)
+            {
+                PlayerCollection.Instance.OnGoldChanged += HandleGoldChanged;
+                PlayerCollection.Instance.OnCrystalsChanged += HandleCrystalsChanged;
+                subscribedToCollection = true;
+            }
+
+            if (!subscribedToLootbox && LootboxManager.Instance != null)
+            {
+                LootboxManager.Instance.OnLootboxOpened += HandleLootboxOpened;
+                subscribedToLootbox = true;
+            }
+
+            if (!subscribedToQuests && QuestManager.Instance != null)
+            {
+                QuestManager.Instance.OnQuestClaimed += HandleQuestClaimed;
+                subscribedToQuests = true;
+            }
+        }
+
+        private void UnsubscribeFromManagers()
+        {
+            if (subscribedToCollection && PlayerCollection.Instance != null)
+            {
+                PlayerCollection.Instance.OnGoldChanged -= HandleGoldChanged;
+                PlayerCollection.Instance.OnCrystalsChanged -= HandleCrystalsChanged;
+            }
+            if (subscribedToLootbox && LootboxManager.Instance != null)
+            {
+                LootboxManager.Instance.OnLootboxOpened -= HandleLootboxOpened;
+            }
+            if (subscribedToQuests && QuestManager.Instance != null)
+            {
+                QuestManager.Instance.OnQuestClaimed -= HandleQuestClaimed;
+            }
+        }
+
+        // PlayerCollection.OnGoldChanged passes the CURRENT balance, not a
+        // delta. We diff against lastSeenGold to know if the change was income
+        // (bumps GoldEarned) or expense (bumps GoldSpent).
+        private void HandleGoldChanged(int currentGold)
+        {
+            int delta = currentGold - lastSeenGold;
+            lastSeenGold = currentGold;
+
+            if (delta > 0)
+            {
+                totalGoldEarned += delta;
+                CheckAchievementsForType(AchievementTrackType.GoldEarned);
+            }
+            else if (delta < 0)
+            {
+                totalGoldSpent += -delta;
+                CheckAchievementsForType(AchievementTrackType.GoldSpent);
+            }
+        }
+
+        private void HandleCrystalsChanged(int currentCrystals)
+        {
+            int delta = currentCrystals - lastSeenCrystals;
+            lastSeenCrystals = currentCrystals;
+
+            if (delta > 0)
+            {
+                totalCrystalsEarned += delta;
+                CheckAchievementsForType(AchievementTrackType.CrystalsEarned);
+            }
+            // We don't track crystal spending — no matching achievement type.
+        }
+
+        private void HandleLootboxOpened(LootboxResult _)
+        {
+            totalLootboxesOpened++;
+            CheckAchievementsForType(AchievementTrackType.LootboxesOpened);
+        }
+
+        private void HandleQuestClaimed(Quest _)
+        {
+            totalQuestsCompleted++;
+            CheckAchievementsForType(AchievementTrackType.QuestsCompleted);
+        }
+
+        // ==========================================
         // PUBLIC API - QUERIES
         // ==========================================
 
-        /// <summary>Get all achievement definitions</summary>
         public List<AchievementData> GetAllAchievements()
         {
             return allAchievements
@@ -129,51 +252,23 @@ namespace ElementumDefense.Achievements
                 .ToList();
         }
 
-        /// <summary>Check if an achievement has been claimed (reward collected)</summary>
         public bool IsCompleted(string achievementId)
-        {
-            if (progressMap.TryGetValue(achievementId, out var p))
-                return p.completed;
-            return false;
-        }
+            => progressMap.TryGetValue(achievementId, out var p) && p.completed;
 
-        /// <summary>Check if an achievement is ready to claim (target reached, reward not yet collected)</summary>
         public bool IsClaimable(string achievementId)
-        {
-            if (progressMap.TryGetValue(achievementId, out var p))
-                return p.claimable && !p.completed;
-            return false;
-        }
+            => progressMap.TryGetValue(achievementId, out var p) && p.claimable && !p.completed;
 
-        /// <summary>Get the current tier of a tiered achievement (0-indexed)</summary>
         public int GetCurrentTier(string achievementId)
-        {
-            if (progressMap.TryGetValue(achievementId, out var p))
-                return p.currentTier;
-            return 0;
-        }
+            => progressMap.TryGetValue(achievementId, out var p) ? p.currentTier : 0;
 
-        /// <summary>Get stored progress value for an achievement</summary>
         public int GetProgress(string achievementId)
-        {
-            if (progressMap.TryGetValue(achievementId, out var p))
-                return p.currentValue;
-            return 0;
-        }
+            => progressMap.TryGetValue(achievementId, out var p) ? p.currentValue : 0;
 
-        /// <summary>Get the computed live progress for an achievement (reads from game systems)</summary>
-        public int GetLiveProgress(AchievementData achievement)
-        {
-            return ReadStatValue(achievement.trackType);
-        }
+        public int GetLiveProgress(AchievementData achievement) => ReadStatValue(achievement.trackType);
 
-        /// <summary>Get all completed achievements</summary>
         public List<AchievementData> GetCompletedAchievements()
-        {
-            return allAchievements.Where(a => IsCompleted(a.achievementId)).ToList();
-        }
+            => allAchievements.Where(a => IsCompleted(a.achievementId)).ToList();
 
-        /// <summary>Get completion percentage (0-1)</summary>
         public float GetCompletionPercentage()
         {
             if (allAchievements.Count == 0) return 0f;
@@ -181,19 +276,14 @@ namespace ElementumDefense.Achievements
             return (float)completed / allAchievements.Count;
         }
 
-        /// <summary>Get count of achievements ready to claim</summary>
         public int GetClaimableCount()
-        {
-            return progressMap.Values.Count(p => p.claimable && !p.completed);
-        }
+            => progressMap.Values.Count(p => p.claimable && !p.completed);
 
         // ==========================================
         // PUBLIC API - TRACKING
         // ==========================================
 
-        /// <summary>
-        /// Manually unlock an achievement (for Manual trackType).
-        /// </summary>
+        /// <summary>Manually unlock an achievement (for Manual trackType).</summary>
         public void Unlock(string achievementId)
         {
             AchievementData data = allAchievements.FirstOrDefault(a => a.achievementId == achievementId);
@@ -204,40 +294,6 @@ namespace ElementumDefense.Achievements
             }
 
             SetProgress(achievementId, data.targetValue);
-        }
-
-        /// <summary>
-        /// Increment a cumulative stat and check achievements.
-        /// Call this from game systems when relevant events happen.
-        /// </summary>
-        public void AddGoldEarned(int amount)
-        {
-            totalGoldEarned += amount;
-            CheckAchievementsForType(AchievementTrackType.GoldEarned);
-        }
-
-        public void AddGoldSpent(int amount)
-        {
-            totalGoldSpent += amount;
-            CheckAchievementsForType(AchievementTrackType.GoldSpent);
-        }
-
-        public void AddCrystalsEarned(int amount)
-        {
-            totalCrystalsEarned += amount;
-            CheckAchievementsForType(AchievementTrackType.CrystalsEarned);
-        }
-
-        public void AddLootboxOpened()
-        {
-            totalLootboxesOpened++;
-            CheckAchievementsForType(AchievementTrackType.LootboxesOpened);
-        }
-
-        public void AddQuestCompleted()
-        {
-            totalQuestsCompleted++;
-            CheckAchievementsForType(AchievementTrackType.QuestsCompleted);
         }
 
         /// <summary>
@@ -313,9 +369,7 @@ namespace ElementumDefense.Achievements
             }
             else
             {
-                // Single tier
-                if (!progress.completed && !progress.claimable &&
-                    currentValue >= ach.targetValue)
+                if (!progress.completed && !progress.claimable && currentValue >= ach.targetValue)
                 {
                     progress.claimable = true;
                     changed = true;
@@ -339,30 +393,24 @@ namespace ElementumDefense.Achievements
             if (!progressMap.TryGetValue(achievementId, out var progress)) return false;
             if (!progress.claimable || progress.completed) return false;
 
-            // Grant rewards
             GrantRewards(ach);
 
-            // Mark as claimed
             if (ach.hasTiers)
             {
                 progress.currentTier++;
-                progress.claimable = false; // Reset claimable for next tier
+                progress.claimable = false;
 
                 Debug.Log($"[Achievement] CLAIMED '{ach.achievementName}' tier {progress.currentTier}!");
 
-                // Check if fully completed (all tiers done)
                 if (progress.currentTier >= ach.TierCount)
                 {
                     progress.completed = true;
                 }
                 else
                 {
-                    // Check if next tier is also already reached
                     int nextTarget = ach.GetTargetForTier(progress.currentTier);
                     if (progress.currentValue >= nextTarget)
-                    {
                         progress.claimable = true;
-                    }
                 }
             }
             else
@@ -478,13 +526,9 @@ namespace ElementumDefense.Achievements
             string json = JsonUtility.ToJson(saveData, true);
 
             if (CloudSaveManager.Instance != null)
-            {
                 CloudSaveManager.Instance.SaveData("AchievementData", json);
-            }
             else
-            {
                 Debug.LogWarning("[AchievementManager] CloudSaveManager is null - data NOT saved!");
-            }
         }
 
         private void LoadFromCloud()
@@ -496,7 +540,6 @@ namespace ElementumDefense.Achievements
                     json =>
                     {
                         ProcessLoadedJson(json);
-                        // After loading, check all auto-tracked achievements
                         CheckAllAchievements();
                     },
                     () =>
@@ -521,12 +564,8 @@ namespace ElementumDefense.Achievements
 
                 progressMap.Clear();
                 if (saveData.progress != null)
-                {
                     foreach (var p in saveData.progress)
-                    {
                         progressMap[p.id] = p;
-                    }
-                }
 
                 totalGoldEarned = saveData.goldEarned;
                 totalGoldSpent = saveData.goldSpent;
@@ -562,7 +601,7 @@ namespace ElementumDefense.Achievements
                 bool done = IsCompleted(ach.achievementId);
                 int progress = GetProgress(ach.achievementId);
                 int live = GetLiveProgress(ach);
-                Debug.Log($"  {(done ? "✓" : "○")} {ach.achievementName} — " +
+                Debug.Log($"  {(done ? "OK" : "..")} {ach.achievementName} - " +
                           $"stored:{progress} live:{live}/{ach.targetValue} " +
                           $"tier:{GetCurrentTier(ach.achievementId)}/{ach.TierCount}");
             }

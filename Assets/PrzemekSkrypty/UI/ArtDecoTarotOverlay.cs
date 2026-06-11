@@ -1,8 +1,11 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.UIElements;
 using ElementumDefense.Cards;
 using ElementumDefense.UI;
 
+
+namespace ElementumDefense.UI
+{
 [RequireComponent(typeof(UIDocument))]
 public class ArtDecoTarotOverlay : MonoBehaviour
 {
@@ -574,4 +577,5 @@ public class ArtDecoTarotOverlay : MonoBehaviour
                 buttonClickSound, 0.7f);
         }
     }
+}
 }

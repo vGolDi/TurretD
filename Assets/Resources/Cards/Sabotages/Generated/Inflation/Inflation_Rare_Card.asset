@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 68b61763f6aaed04aa36703e53b1af36, type: 3}
+  m_Name: Inflation_Rare_Card
+  m_EditorClassIdentifier: Assembly-CSharp::ElementumDefense.Cards.SabotageCardData
+  sabotageName: Inflation (Rare)
+  description: Heavy cost increase for opponent's turrets.
+  rarity: 1
+  sabotageTag: 0
+  durationType: 1
+  duration: 0
+  durationRounds: 1
+  sabotageIcon: {fileID: 0}
+  sabotageColor: {r: 1, g: 0, b: 0, a: 1}
+  arenaVFXPrefab: {fileID: 0}
+  arenaVFXDuration: 3
+  turretIndicatorPrefab: {fileID: 0}
+  screenFlashColor: {r: 1, g: 0, b: 0, a: 0}
+  activationSound: {fileID: 0}
+  dropWeight: 25
+  sabotageEffect: {fileID: 11400000, guid: 65a36b234ebc4d34488b31266fc661db, type: 2}
+  targetType: 0
+  rewardGold: 0
+  rewardGoldMultiplier: 1
+  rewardOnSurvive: 1
+  challengeWaves: 1

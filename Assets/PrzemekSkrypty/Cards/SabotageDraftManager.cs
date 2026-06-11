@@ -75,6 +75,15 @@ namespace ElementumDefense.Cards
             // ====================================================================
         }
 
+        public override void OnDisable()
+        {
+            base.OnDisable();
+            if (Instance == this)
+            {
+                Instance = null;
+            }
+        }
+
         private void Start()
         {
             sabotagePool = SabotagePool.Instance;
@@ -216,12 +225,23 @@ namespace ElementumDefense.Cards
 
                 if (!sabotageRaritiesReceived)
                 {
-                    Debug.LogError("[SabotageDraftManager] Timeout waiting for rarities!");
-                    isDrafting = false;
-                    yield break;
+                    // Catch-up case (reconnect): the master already passed this
+                    // wave's draft and won't broadcast rarities. Generate locally
+                    // and continue — the opponent isn't viewing our draft anyway.
+                    Debug.LogWarning("[SabotageDraftManager] No rarities from master " +
+                                     "(catch-up after reconnect?) — generating locally.");
+                    rarityCombination = sabotagePool.GenerateRarityCombinationLocal();
+                    if (rarityCombination == null)
+                    {
+                        Debug.LogError("[SabotageDraftManager] Local rarity generation failed!");
+                        isDrafting = false;
+                        yield break;
+                    }
                 }
-
-                rarityCombination = receivedSabotageRarities;
+                else
+                {
+                    rarityCombination = receivedSabotageRarities;
+                }
             }
 
             // PHASE 2: Draw cards
@@ -344,6 +364,9 @@ namespace ElementumDefense.Cards
             selectedSabotage = currentOfferedCards[choiceIndex];
             sabotageSelected = true;
 
+            // Reconnect save point (b): a network-visible sabotage choice was committed.
+            ElementumDefense.Multiplayer.Reconnect.MatchSnapshotService.Instance?.CaptureAndSave($"sabotage-selected: {selectedSabotage.sabotageName}");
+
             Debug.Log($"[SabotageDraftManager] ✅ Selected: " +
                       $"{selectedSabotage.sabotageName}");
         }
@@ -354,7 +377,7 @@ namespace ElementumDefense.Cards
 
         private void ApplySabotages()
         {
-            // ========== NAPRAWIONE: Ensure we have local PlayerCardManager ==========
+            // ========== Ensure we have local PlayerCardManager ==========
             PlayerCardManager localCardManager = FindLocalPlayerCardManager();
 
             if (localCardManager == null)
@@ -363,16 +386,45 @@ namespace ElementumDefense.Cards
                                "no local PlayerCardManager!");
                 return;
             }
-            // ======================================================================
+            // ============================================================
 
             int myActorNumber = PhotonNetwork.LocalPlayer.ActorNumber;
 
+            // ==========================================
+            // SELF-SABOTAGE: Apply my own selection to myself (if Self type)
+            // ==========================================
+            if (playerSelections.TryGetValue(myActorNumber, out SabotageCardData mySabotage))
+            {
+                if (mySabotage != null && mySabotage.IsSelfSabotage)
+                {
+                    SelfSabotageTracker tracker = localCardManager.GetComponent<SelfSabotageTracker>();
+                    if (tracker == null)
+                        tracker = SelfSabotageTracker.Instance;
+
+                    if (tracker != null)
+                    {
+                        tracker.StartChallenge(mySabotage);
+                        OnSabotageApplied?.Invoke(mySabotage, photonView);
+                        Debug.Log($"[SabotageDraftManager] SELF-SABOTAGE: " +
+                                  $"'{mySabotage.sabotageName}' applied to SELF!");
+                    }
+                    else
+                    {
+                        Debug.LogError("[SabotageDraftManager] SelfSabotageTracker not found! " +
+                                       "Add it to the player object.");
+                    }
+                }
+            }
+
+            // ==========================================
+            // OPPONENT SABOTAGES: Apply everyone else's selection to me
+            // ==========================================
             foreach (var kvp in playerSelections)
             {
                 int casterActorNumber = kvp.Key;
                 SabotageCardData sabotage = kvp.Value;
 
-                // Skip my own sabotage (I don't sabotage myself)
+                // Skip my own sabotage
                 if (casterActorNumber == myActorNumber)
                     continue;
 
@@ -380,6 +432,14 @@ namespace ElementumDefense.Cards
                 {
                     Debug.LogWarning($"[SabotageDraftManager] Null sabotage " +
                                      $"from player {casterActorNumber}");
+                    continue;
+                }
+
+                // Skip if the opponent chose a self-sabotage (it only affects them, not me)
+                if (sabotage.IsSelfSabotage)
+                {
+                    Debug.Log($"[SabotageDraftManager] Player {casterActorNumber} " +
+                              $"chose self-sabotage '{sabotage.sabotageName}' — skipping (doesn't affect us).");
                     continue;
                 }
 
@@ -400,14 +460,12 @@ namespace ElementumDefense.Cards
                     continue;
                 }
 
-                // ========== NAPRAWIONE: Use local card manager ==========
                 localCardManager.ApplySabotage(sabotage, casterView);
                 OnSabotageApplied?.Invoke(sabotage, casterView);
 
                 string casterName = casterView.Owner?.NickName ?? "Unknown";
-                Debug.Log($"[SabotageDraftManager] ✅ Applied " +
+                Debug.Log($"[SabotageDraftManager] Applied " +
                           $"'{sabotage.sabotageName}' from {casterName}");
-                // =======================================================
             }
 
             Debug.Log($"[SabotageDraftManager] All sabotages applied. " +
@@ -480,8 +538,18 @@ namespace ElementumDefense.Cards
                 if (fromPool != null) return fromPool;
             }
 
+            // Direct path first (fast), then recursive search (sabotages live in
+            // subfolders like Cards/Sabotages/Generated/ForcePick/...).
             SabotageCardData sabotage =
                 Resources.Load<SabotageCardData>($"Cards/Sabotages/{name}");
+
+            if (sabotage == null)
+            {
+                foreach (var s in Resources.LoadAll<SabotageCardData>("Cards"))
+                {
+                    if (s != null && s.name == name) { sabotage = s; break; }
+                }
+            }
 
             if (sabotage == null)
                 Debug.LogWarning($"[SabotageDraftManager] '{name}' not found!");
@@ -495,6 +563,38 @@ namespace ElementumDefense.Cards
 
         public bool IsDrafting => isDrafting;
         public int GetNextSabotageWave() => nextSabotageWave;
+
+        // ==========================================
+        // RECONNECT — CAPTURE / RESTORE
+        // ==========================================
+
+        /// <summary>Reconnect: snapshot sabotage-draft state into the draft snapshot.</summary>
+        public void CaptureInto(ElementumDefense.Multiplayer.Reconnect.DraftStateSnapshot snap)
+        {
+            if (snap == null) return;
+            snap.sabotageSelected = sabotageSelected;
+            snap.selectedSabotageName = selectedSabotage != null ? selectedSabotage.name : "";
+            snap.nextSabotageWave = nextSabotageWave;
+        }
+
+        /// <summary>
+        /// Reconnect: restore sabotage-draft flags so a re-delivered AllBuffered
+        /// selection RPC does not cause a second pick to be offered/sent.
+        /// </summary>
+        public void RestoreFrom(ElementumDefense.Multiplayer.Reconnect.DraftStateSnapshot snap)
+        {
+            if (snap == null) return;
+            isDrafting = false;
+            sabotageSelected = snap.sabotageSelected;
+            selectedSabotage = string.IsNullOrEmpty(snap.selectedSabotageName)
+                ? null
+                : FindSabotageByName(snap.selectedSabotageName);
+            // Restore the sabotage cadence (NOT the card draft's nextDraftWave).
+            if (snap.nextSabotageWave > 0) nextSabotageWave = snap.nextSabotageWave;
+
+            Debug.Log($"[SabotageDraftManager] Restored: sabotageSelected={sabotageSelected}, " +
+                      $"next={nextSabotageWave}");
+        }
 
         public Dictionary<int, SabotageCardData> GetPlayerSelections()
         {

@@ -1,6 +1,9 @@
 using UnityEngine;
 using Photon.Pun;
 
+
+namespace ElementumDefense.Players
+{
 /// <summary>
 /// Generates passive gold income when player stands inside zone
 /// Example: Gold mines, resource points
@@ -113,4 +116,5 @@ public class GoldZone : MonoBehaviour
             Gizmos.DrawWireCube(transform.position, col.bounds.size);
         }
     }
+}
 }

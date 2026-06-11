@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
@@ -7,6 +7,7 @@ using ElementumDefense.Elements;
 using ElementumDefense.Progression;
 using ElementumDefense.Lootbox;
 using ElementumDefense.Ranked;
+using ElementumDefense.Multiplayer;
 
 namespace ElementumDefense.Cards
 {
@@ -112,6 +113,7 @@ namespace ElementumDefense.Cards
 
             AutoLoadAllCards();
             AutoLoadAllSabotages();
+            AutoLoadAllDecks();
         }
 
         private void Start()
@@ -200,6 +202,24 @@ namespace ElementumDefense.Cards
                     "[PlayerCollection] " +
                     "No sabotages found in " +
                     "Resources/");
+            }
+        }
+
+        private void AutoLoadAllDecks()
+        {
+            if (defaultDecks == null)
+            {
+                defaultDecks = new List<DeckData>();
+            }
+
+            if (defaultDecks.Count == 0)
+            {
+                DeckData[] loadedDecks = Resources.LoadAll<DeckData>("Decks");
+                if (loadedDecks.Length > 0)
+                {
+                    defaultDecks.AddRange(loadedDecks);
+                    Debug.Log($"[PlayerCollection] Auto-loaded {loadedDecks.Length} default decks from Resources/Decks");
+                }
             }
         }
 
@@ -722,6 +742,11 @@ namespace ElementumDefense.Cards
 
             if (existing != null)
             {
+                if (existing.isDefaultDeck)
+                {
+                    Debug.LogWarning($"[PlayerCollection] Cannot overwrite default/locked deck: {deck.deckName}");
+                    return;
+                }
                 existing.cards =
                     new List<CardData>(deck.cards);
                 existing.preferredArena =
@@ -731,6 +756,7 @@ namespace ElementumDefense.Cards
             {
                 DeckData newDeck = Instantiate(deck);
                 newDeck.name = deck.deckName;
+                newDeck.isDefaultDeck = false;
                 playerDecks.Add(newDeck);
             }
 
@@ -881,6 +907,10 @@ namespace ElementumDefense.Cards
                         runtimeDeck.name = sd.deckName;
                         runtimeDeck.preferredArena =
                             sd.preferredArena;
+
+                        bool isDefault = defaultDecks != null && defaultDecks.Any(dd => dd != null && dd.deckName == sd.deckName);
+                        runtimeDeck.isDefaultDeck = isDefault;
+
                         foreach (string cName in
                             sd.cardNames)
                         {
@@ -938,6 +968,7 @@ namespace ElementumDefense.Cards
                     Instantiate(defDeck);
                 newDeck.name = defDeck.name;
                 newDeck.deckName = defDeck.deckName;
+                newDeck.isDefaultDeck = true;
                 playerDecks.Add(newDeck);
             }
             Debug.Log(
@@ -953,12 +984,27 @@ namespace ElementumDefense.Cards
             currentGold = 0;
             currentCrystals = 0;
 
+            playerDecks.Clear();
+            AssignDefaultDecks();
+
             UnlockStarterCards();
             SaveCollection();
 
             Debug.Log(
                 "[PlayerCollection] " +
                 "Collection reset!");
+        }
+
+        [ContextMenu("Reset Decks to Default")]
+        public void ResetDecksToDefault()
+        {
+            playerDecks.Clear();
+            AssignDefaultDecks();
+            SaveCollection();
+
+            Debug.Log(
+                "[PlayerCollection] " +
+                "Decks reset to default!");
         }
 
         private void OnUserLoggedIn(string username)
@@ -1165,7 +1211,7 @@ namespace ElementumDefense.Cards
         }
 
         [ContextMenu(
-            "FULL RESET (Level, XP, ELO, Currency)")]
+            "FULL RESET (Level, XP, ELO, Currency, Decks)")]
         public void DebugFullProgressionReset()
         {
             currentLevel = 1;
@@ -1175,6 +1221,9 @@ namespace ElementumDefense.Cards
             currentCrystals = 0;
             totalWins = 0;
             totalLosses = 0;
+
+            playerDecks.Clear();
+            AssignDefaultDecks();
 
             OnLevelChanged?.Invoke(currentLevel);
             OnXPChanged?.Invoke(
